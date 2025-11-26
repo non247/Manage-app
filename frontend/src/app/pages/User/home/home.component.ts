@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { SidebarUserComponent } from "../../../component/sidebar-user/sidebar-user.component";
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [SidebarUserComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
