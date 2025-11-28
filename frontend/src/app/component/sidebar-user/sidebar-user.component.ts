@@ -8,4 +8,16 @@ import { Component } from '@angular/core';
 })
 export class SidebarUserComponent {
 
+//   isSidebarOpen = false;
+
+// toggleSidebar() {
+//   this.isSidebarOpen = !this.isSidebarOpen;
+// }
+
+isCollapsed = true;
+
+toggleSidebar() {
+  this.isCollapsed = !this.isCollapsed;
+}
+
 }

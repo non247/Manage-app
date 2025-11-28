@@ -1,0 +1,14 @@
+.layout {
+  display: flex;
+  height: 100vh;  // ให้เต็มจอ
+}
+
+app-sidebar-user {
+  width: 200px;   // ปรับให้เท่ากับความกว้าง sidebar ของคุณ
+  flex-shrink: 0; // ไม่ให้ sidebar หด
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}

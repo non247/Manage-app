@@ -1,26 +1,39 @@
-<nav class="sidebar">
-    <!-- แถบของเมนูแยกกับusername -->
+<!-- <button class="hamburger" (click)="toggleSidebar()">
+  <i class="bi bi-list"></i>
+</button>
+
+<nav class="sidebar" [class.open]="isSidebarOpen">
   <div class="top">
-     <ul class="nav-links">
-        <li routerLinkActive="active">
-          <a routerLink=""> <i class="bi bi-house-fill"></i> Home </a>
-        </li>
-
-        <li routerLinkActive="active">
-          <a routerLink=""> <i class="bi bi-speedometer2"></i> Dashboard </a>
-        </li>
-
-
-        <!-- <li routerLinkActive="active">
-          <a routerLink="/production/about-us"> About Us </a>
-        </li> -->
-      </ul>
+    <ul class="nav-links">
+      <li routerLinkActive="active">
+        <a routerLink=""><i class="bi bi-house-fill"></i> Home</a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink=""><i class="bi bi-speedometer2"></i> Dashboard</a>
+      </li>
+    </ul>
   </div>
-  <!-- ฝั่งแสดงแถบUsernameและปุ่มlogout -->
-  <!-- <div class="bottom">
-    <div class="user-info" style="font-size: 18px;"> {{ Employee_Name }} </div>
-    <button (click)="logout()" class="logout-btn"><i class="bi bi-box-arrow-right" style="color: red;"></i></button>
-  </div> -->
-</nav>
+</nav> -->
+<button class="hamburger" (click)="toggleSidebar()">
+  <i class="bi bi-list"></i>
+</button>
 
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="top">
+    <ul class="nav-links">
+     <li routerLinkActive="active">
+  <a routerLink="/home"> 
+    <i class="bi bi-house-fill"></i>
+    <span class="text">Home</span>
+  </a>
+</li>
 
+   <li routerLinkActive="active">
+  <a routerLink="/dashboard">
+    <i class="bi bi-grid-fill"></i>
+    <span class="text">Dashboard</span>
+  </a>
+</li>
+    </ul>
+  </div>
+</div>
