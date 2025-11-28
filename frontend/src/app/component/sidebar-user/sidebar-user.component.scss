@@ -11,7 +11,8 @@
   z-index: 999;
 
   &.collapsed {
-    width: 60px;          /* ซ่อนให้เหลือแถบเล็ก */
+    width: 60px;
+    /* ซ่อนให้เหลือแถบเล็ก */
   }
 
   .top {
@@ -75,6 +76,9 @@
   z-index: 1001;
 
   &:hover {
-    color: #E5386D;   /* hover ปุ่ม hamburger */
+    color: #E5386D;
+    /* hover ปุ่ม hamburger */
+
+  
   }
 }
