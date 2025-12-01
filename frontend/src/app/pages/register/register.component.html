@@ -1,1 +1,25 @@
-<p>register works!</p>
+<div class="login-page">
+
+  <div class="login-card">
+    <h1>Register</h1>
+
+    <form #loginForm="ngForm">
+      <label for="userid"></label>
+      <input type="text" name="username" [(ngModel)]="Username" required placeholder="Enter username" />
+
+      <label for="password"></label>
+      <input type="password" id="passwordinput" name="password" [(ngModel)]="Password" required
+        placeholder="Enter password" />
+
+      <div class="show-password">
+        <input type="checkbox" id="showpwd" (change)="togglePasswordVisibility()" />
+        <label for="showpwd">Show password</label>
+      </div>
+
+      <button type="submit" class="btn-singin">Register</button>
+
+      <p *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</p>
+    </form>
+
+  </div>
+</div>
