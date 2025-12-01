@@ -3,13 +3,14 @@
   <div class="login-card">
     <h1>Login</h1>
 
-    <form #loginForm="ngForm">
+    <!-- เรียก login() ตอนกดปุ่ม -->
+    <form #loginForm="ngForm" (ngSubmit)="login()">
+
       <label for="userid"></label>
-      <input type="text" name="username" [(ngModel)]="Username" required placeholder="Enter username" />
+      <input type="text" name="username" [(ngModel)]="Username" required placeholder="Enter username"/>
 
       <label for="password"></label>
-      <input type="password" id="passwordinput" name="password" [(ngModel)]="Password" required
-        placeholder="Enter password" />
+      <input type="password" id="passwordinput" name="password" [(ngModel)]="Password" required placeholder="Enter password"/>
 
       <div class="show-password">
         <input type="checkbox" id="showpwd" (change)="togglePasswordVisibility()" />
@@ -18,7 +19,9 @@
 
       <button type="submit" class="btn-singin">Log In</button>
 
-      <p *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</p>
+      <p *ngIf="errorMessage" style="color:red;">
+        {{ errorMessage }}
+      </p>
     </form>
 
   </div>

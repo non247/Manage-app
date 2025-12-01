@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 
@@ -13,9 +14,18 @@ export class RegisterComponent {
   Password: string = '';
   errorMessage: string = '';
 
+  constructor(private router: Router) {}
+
   togglePasswordVisibility() { // แสดงรหัสผ่าน
     const input = document.getElementById('passwordinput') as HTMLInputElement;
     input.type = input.type === 'password' ? 'text' : 'password';
   }
 
+  // login() {
+  //   if (this.Username === 'admin' && this.Password === '1234') {
+  //     this.router.navigate(['/home']);
+  //   } else {
+  //     this.errorMessage = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+  //   }
+  // }
 }
