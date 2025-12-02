@@ -23,7 +23,7 @@ export class LoginComponent {
   }
   login() {
     if (this.Username === '' && this.Password === '') {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/dashboard']);
     } else {
       this.errorMessage = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
     }

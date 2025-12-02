@@ -4,10 +4,10 @@ import { SidebarUserComponent } from "../../../component/sidebar-user/sidebar-us
 @Component({
   selector: 'app-home',
   imports: [SidebarUserComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './Dashboard.component.html',
+  styleUrl: './Dashboard.component.scss',
 })
-export class HomeComponent {
+export class DashboardComponent {
 
   
 }

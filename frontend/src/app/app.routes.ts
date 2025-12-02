@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import { HomeComponent } from './pages/User/home/home.component';
+import { DashboardComponent } from './pages/User/Dashboard/Dashboard.component';
 import { RegisterComponent } from './pages/register/register.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'home', component: HomeComponent },
+  { path: 'dashboard', component: DashboardComponent },
 
   // หน้าเริ่มต้น
   { path: '', redirectTo: 'login', pathMatch: 'full' },
