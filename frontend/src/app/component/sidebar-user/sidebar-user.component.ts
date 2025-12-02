@@ -1,19 +1,13 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar-user',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './sidebar-user.component.html',
   styleUrl: './sidebar-user.component.scss',
 })
 export class SidebarUserComponent {
-
-//   isSidebarOpen = false;
-
-// toggleSidebar() {
-//   this.isSidebarOpen = !this.isSidebarOpen;
-// }
 
 isCollapsed = true;
 
