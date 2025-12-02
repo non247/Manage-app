@@ -1,30 +1,33 @@
-<button class="hamburger" (click)="toggleSidebar()">
+<!-- <button class="hamburger" (click)="toggleSidebar()">
   <i class="bi bi-list"></i>
-</button>
-<div class="sidebar" [class.collapsed]="isCollapsed" [class.no-anim]="disableAnimation">
+</button> -->
+
+<div class="sidebar" [class.collapsed]="isCollapsed" [class.no-anim]="disableAnimation"(mouseenter)="onMouseEnter()"> 
+
   <div class="top">
     <ul class="nav-links">
+
       <li routerLinkActive="active">
-        <a (click)="navigateTo('/dashboard')">
-          <i class="bi bi-grid-fill"></i>
-          <span class="text" [class.show]="!isCollapsed">Dashboard</span>
+        <a routerLink="/dashboard" (click)="navigateTo('/dashboard')">
+          <i class="bi bi-grid-fill" style="font-size: 30px;" ></i>
+          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Dashboard</span>
         </a>
       </li>
 
       <li routerLinkActive="active">
-        <a (click)="navigateTo('/setting')">
-          <i class="bi bi-gear-fill"></i>
-          <span class="text" [class.show]="!isCollapsed">Setting</span>
+        <a routerLink="/setting" (click)="navigateTo('/setting')">
+          <i class="bi bi-gear-fill" style="font-size: 30px;"></i>
+          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Setting</span>
         </a>
       </li>
 
       <li>
         <a (click)="logout()">
-          <i class="bi bi-box-arrow-right"></i>
-          <span class="text" [class.show]="!isCollapsed">Log out</span>
+          <i class="bi bi-box-arrow-right" style="font-size: 30px;"></i>
+          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Log out</span>
         </a>
       </li>
+
     </ul>
   </div>
 </div>
-

@@ -7,66 +7,62 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './sidebar-user.component.html',
   styleUrl: './sidebar-user.component.scss',
 })
-// export class SidebarUserComponent {
-
-// isCollapsed = true;
-// hasInteracted = false;
-// disableAnimation = true; // ปิด animation ชั่วคราว
-
-// constructor(private router: Router) {}
-
-
-// toggleSidebar() {
-//   this.isCollapsed = !this.isCollapsed;
-//   this.hasInteracted = true;   // <-- user กดแล้ว เริ่มเปิด animation ได้
-//   this.disableAnimation = false; // เปิด animation
-// }
-
-//   navigateTo(path: string) {
-//     this.disableAnimation = true; // ปิด animation ชั่วคราว
-//     this.router.navigate([path]).then(() => {
-//       // หลัง navigate สามารถเปิด animation ได้ถ้าต้องการ
-//       if (this.hasInteracted) {
-//         this.disableAnimation = false;
-//       }
-//     });
-//   }
-
-// logout() {
-//   // ตัวอย่าง: ลบ token หรือ session
-//   localStorage.removeItem('token');
-//   // เปลี่ยนเส้นทางไปหน้า login
-//   this.router.navigate(['/login']);
-// }
-// }
 export class SidebarUserComponent {
   isCollapsed = true;
-  hasInteracted = false;    // เคยกด hamburger หรือยัง
-  disableAnimation = true;  // ปิด animation ชั่วคราว
+  hasInteracted = false;       // เคย hover หรือคลิกหรือยัง
+  disableAnimation = true;     // เริ่มต้น → ปิด animation
+  isMobile = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    this.checkScreenSize();
+  }
 
-  // เปิด/ปิด sidebar ด้วย hamburger
+  onMouseEnter() {
+    if (!this.isMobile && !this.hasInteracted) {
+      this.disableAnimation = false;
+      this.hasInteracted = true;
+    }
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 768;
+
+    if (this.isMobile) {
+      this.isCollapsed = true;
+      this.disableAnimation = true;
+    } else {
+      this.disableAnimation = true; // เริ่มแบบไม่ animate
+    }
+  }
+
+  // Hamburger toggle
   toggleSidebar() {
-    this.hasInteracted = true;    // เริ่มเปิด animation หลังจากกด hamburger
-    this.disableAnimation = false; // เปิด animation
+    this.hasInteracted = true;
+    this.disableAnimation = false;
     this.isCollapsed = !this.isCollapsed;
   }
 
-  // เปลี่ยนหน้าเมื่อคลิก icon
   navigateTo(path: string) {
     if (!this.hasInteracted) {
-      // ถ้ายังไม่เคยกด hamburger → ปิด animation
       this.disableAnimation = true;
     } else {
-      // เคยกด hamburgerแล้ว → เปิด animation
       this.disableAnimation = false;
     }
+
+    if (this.isMobile) {
+      this.isCollapsed = true;
+    }
+
     this.router.navigate([path]);
   }
 
   logout() {
     localStorage.removeItem('token');
+
+    if (this.isMobile) {
+      this.isCollapsed = true;
+    }
+
     this.router.navigate(['/login']);
   }
 }

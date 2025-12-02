@@ -1,179 +1,81 @@
-// .sidebar {
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   height: 100vh;
-//   width: 170px;
-//   background-color: #FFBDCB;
-//   padding-top: 55px;
-//   transition: 0.3s ease-in-out;
-
-//   &.collapsed {
-//     width: 60px;
-
-//   &.no-anim {
-//   transition: none !important;
-//   } 
-//   }
-
-//   .top {
-//     .nav-links {
-//       list-style: none;
-//       padding: 0;
-
-//       li a {
-//         display: flex;
-//         align-items: center;
-//         gap: 10px;
-//         padding: 15px 20px;
-//         color: rgb(74, 74, 74);
-//         transition: 0.2s;
-
-//         i {
-//           font-size: 22px;
-//           transition: 0.2s;
-//         }
-
-//         .text {
-//           transition: 0.2s;
-//           white-space: nowrap;
-//         }
-
-//         /* 🚀 Hover Effect */
-//         &:hover {
-//           background-color: #E5386D;
-//           color: #fff;
-//           border-radius: 8px;
-
-//           i {
-//             color: #fff;
-//           }
-
-//           .text {
-//             color: #fff;
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   /* ซ่อนชื่อเมนูเมื่อ collapsed */
-//   &.collapsed .text {
-//     opacity: 0;
-//     margin-left: -20px;
-//     pointer-events: none;
-//   }
-// }
-
-// /* ปุ่ม hamburger */
-// .hamburger {
-//   position: fixed;
-//   top: 15px;
-//   left: 15px;
-//   font-size: 30px;
-//   background: none;
-//   border: none;
-//   cursor: pointer;
-//   z-index: 1001;
-
-//   &:hover {
-//     color: #E5386D;
-//     /* hover ปุ่ม hamburger */
-
-
-//   }
-// }
-/* Sidebar หลัก */
 .sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
   height: 100vh;
-  width: 200px;
+  width: 200px; // ขนาดเต็ม
   background-color: #FFBDCB;
   padding-top: 55px;
   overflow: hidden;
   transition: width 0.3s ease-in-out;
-  
+
   &.no-anim {
     transition: none !important; // ปิด animation ชั่วคราว
   }
 
   &.collapsed {
-    width: 60px;
+    width: 95px;
+
+    // hover ขยายชั่วคราว
+    &:hover {
+      width: 200px;
+
+    }
   }
 }
 
+
 .top {
   .nav-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 15px 20px;
-      color: rgb(74, 74, 74);
-      text-decoration: none;
-      transition: background-color 0.2s, color 0.2s;
-
-      i {
-        font-size: 22px;
+    li {
+      a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 10px 15px;     // ระยะคงที่ ไม่ขยับ
+        color: rgb(74, 74, 74);
+        text-decoration: none;
+        transition: background-color 0.2s, color 0.2s;
+        margin-left: 15px;
         margin-right: 15px;
-        text-align: center;
-        flex-shrink: 0; /* ป้องกัน icon เลื่อน */
-        transition: color 0.2s;
-      }
-
-      .text {
-        display: inline-block;
-        white-space: nowrap;
-        overflow: hidden;
-        transition: opacity 0.3s, width 0.3s;
-
-        &.show {
-          opacity: 1;
-          width: auto;
-        }
-
-        &:not(.show) {
-          opacity: 0;
-          width: 0; /* ซ่อน text ไม่ให้เลื่อน icon */
-        }
-      }
-
-      &:hover {
-        background-color: #E5386D;
-        color: #fff;
-        border-radius: 8px;
+        border-radius: 20px;
 
         i {
-          color: #fff;
+          font-size: 22px;
+          margin-right: 10px;
+          text-align: center;
+          flex-shrink: 0;
+          transition: color 0.2s;
         }
 
+        .text {
+          display: inline-block;
+          overflow: hidden;
+        }
+
+        &:hover {
+          background-color: #E5386D;
+          border-radius: 20px;
+          color: #fff;
+          margin-right: 20px;
+
+          i,
+          .text {
+            color: #fff;
+          }
+        }
+      }
+
+      &.active a {
+        background-color: #E5386D;
+        color: #fff;
+        border-radius: 20px;
+        margin-right: 15px;
+
+        i,
         .text {
           color: #fff;
         }
       }
     }
-  }
-}
-
-/* Hamburger */
-.hamburger {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  font-size: 30px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 1001;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #E5386D;
   }
 }
