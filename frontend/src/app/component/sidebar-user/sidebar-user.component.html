@@ -1,31 +1,30 @@
 <button class="hamburger" (click)="toggleSidebar()">
   <i class="bi bi-list"></i>
 </button>
-
-<div class="sidebar" [class.collapsed]="isCollapsed">
+<div class="sidebar" [class.collapsed]="isCollapsed" [class.no-anim]="disableAnimation">
   <div class="top">
     <ul class="nav-links">
       <li routerLinkActive="active">
-        <a routerLink="/dashboard">
+        <a (click)="navigateTo('/dashboard')">
           <i class="bi bi-grid-fill"></i>
-          <span class="text">Dashboard</span>
+          <span class="text" [class.show]="!isCollapsed">Dashboard</span>
         </a>
       </li>
 
       <li routerLinkActive="active">
-        <a routerLink="/setting">
+        <a (click)="navigateTo('/setting')">
           <i class="bi bi-gear-fill"></i>
-          <span class="text">Setting</span>
+          <span class="text" [class.show]="!isCollapsed">Setting</span>
         </a>
       </li>
 
       <li>
         <a (click)="logout()">
           <i class="bi bi-box-arrow-right"></i>
-          <span class="text">Log out</span>
+          <span class="text" [class.show]="!isCollapsed">Log out</span>
         </a>
       </li>
-
     </ul>
   </div>
 </div>
+
