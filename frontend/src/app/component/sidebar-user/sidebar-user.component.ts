@@ -14,7 +14,6 @@ export class SidebarUserComponent {
   isMobile = false;
 
   constructor(private router: Router) {
-    this.checkScreenSize();
   }
 
   // onMouseEnter() {
@@ -24,16 +23,6 @@ export class SidebarUserComponent {
   //   }
   // }
 
-  checkScreenSize() {
-    this.isMobile = window.innerWidth <= 768;
-
-    if (this.isMobile) {
-      this.isCollapsed = true;
-      this.disableAnimation = true;
-    } else {
-      this.disableAnimation = true; // เริ่มแบบไม่ animate
-    }
-  }
 
   // Hamburger toggle
   toggleSidebar() {
