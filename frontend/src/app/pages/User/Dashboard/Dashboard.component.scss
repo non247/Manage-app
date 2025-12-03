@@ -1,14 +1,60 @@
+// .layout {
+//   display: flex;
+//   height: 100vh;  // ให้เต็มจอ
+// }
+
+// app-sidebar-user {
+//   width: 200px;   // ปรับให้เท่ากับความกว้าง sidebar ของคุณ
+//   flex-shrink: 0; // ไม่ให้ sidebar หด
+// }
+
+// .main-content {
+//   flex: 1;
+//   padding: 20px;
+// }
+
 .layout {
   display: flex;
-  height: 100vh;  // ให้เต็มจอ
+  height: 100vh;
 }
 
+/* Sidebar */
 app-sidebar-user {
-  width: 200px;   // ปรับให้เท่ากับความกว้าง sidebar ของคุณ
-  flex-shrink: 0; // ไม่ให้ sidebar หด
+  width: 200px;
+  flex-shrink: 0;
 }
 
+/* พื้นที่หลัก */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* แถบเมนูด้านบน */
+.top-navbar {
+  height: 60px;
+  background-color: #E5386D;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.top-navbar .nav-links a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* เนื้อหาหลัก */
 .main-content {
   flex: 1;
   padding: 20px;
+  overflow-y: auto;
 }

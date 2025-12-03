@@ -17,12 +17,12 @@ export class SidebarUserComponent {
     this.checkScreenSize();
   }
 
-  onMouseEnter() {
-    if (!this.isMobile && !this.hasInteracted) {
-      this.disableAnimation = false;
-      this.hasInteracted = true;
-    }
-  }
+  // onMouseEnter() {
+  //   if (!this.isMobile && !this.hasInteracted) {
+  //     this.disableAnimation = false;
+  //     this.hasInteracted = true;
+  //   }
+  // }
 
   checkScreenSize() {
     this.isMobile = window.innerWidth <= 768;
