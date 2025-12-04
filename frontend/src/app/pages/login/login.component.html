@@ -6,22 +6,24 @@
     <!-- เรียก login() ตอนกดปุ่ม -->
     <form #loginForm="ngForm" (ngSubmit)="login()">
 
-      <label for="userid"></label>
-      <input style="font-size: 15px;" type="text" name="username" [(ngModel)]="Username" required placeholder="Enter username"/>
-
-      <label for="password"></label>
-      <input style="font-size: 15px;" type="password" id="passwordinput" name="password" [(ngModel)]="Password" required placeholder="Enter password"/>
-
-      <div class="show-password">
-        <input type="checkbox" id="showpwd" (change)="togglePasswordVisibility()" />
-        <label for="showpwd" style="font-size: 15px;">Show password</label>
+      <div class="password-wrapper">
+        <label for="userid"></label>
+        <input style="font-size: 15px;" type="text" name="username" [(ngModel)]="Username" required
+          placeholder="Enter username" />
       </div>
 
-      <button type="submit" class="btn-singin" style="font-size: 20px;">Log In</button>
+      <div class="password-wrapper">
+        <input [type]="showPassword ? 'text' : 'password'" id="passwordinput" name="password" [(ngModel)]="Password"
+          required placeholder="Enter password" />
 
+        <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePasswordVisibility()"></i>
+      </div>
+      
       <p *ngIf="errorMessage" style="color:red;">
         {{ errorMessage }}
       </p>
+      <button type="submit" class="btn-singin" style="font-size: 20px;">Log In</button>
+
     </form>
 
   </div>

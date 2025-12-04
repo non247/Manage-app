@@ -1,3 +1,69 @@
+// $primary-color:#FFBDCB;
+// $background-gradient:linear-gradient(to right, #FFBDCB, $primary-color);
+// $card-bg:#fff;
+// $input-border:#ccc;
+
+// .login-page {
+//   height: 100vh;
+//   background: $background-gradient;
+//   align-items: center;
+//   display: flex;
+//   justify-content: center;
+//   font-family: Georgia;
+
+//   .login-card {
+//     background-color: $card-bg;
+//     border-radius: 30px;
+//     padding: 40px;
+//     width: 480px;
+
+//   }
+
+//   h1 {
+//     text-align: center;
+//     margin: 30px;
+//     font-weight: 100;
+//     font-size: 40px;
+//   }
+
+//   label {
+
+//     display: block;
+//   }
+
+//   input[type="text"],
+//   input[type="password"] {
+
+//     width: 100%;
+//     padding: 10px;
+//     border-radius: 5px;
+//     border: 1px solid $input-border;
+//     margin: 10px;
+//   }
+
+//   .show-password {
+//     font-size: 12px;
+//     margin: 15px;
+//     display: flex;
+//     color: #878787;
+//     gap: 5px;
+
+//   }
+
+
+
+//   .btn-singin {
+//     background-color: #E5386D;
+//     margin-top: 50px;
+//     width: 100%;
+//     padding: 15px;
+//     border-radius: 50px;
+//     border: 1px solid $input-border;
+//     color: #fff;
+//   }
+
+
+// }
 $primary-color:#FFBDCB;
 $background-gradient:linear-gradient(to right, #FFBDCB, $primary-color);
 $card-bg:#fff;
@@ -16,7 +82,6 @@ $input-border:#ccc;
     border-radius: 30px;
     padding: 40px;
     width: 480px;
-
   }
 
   h1 {
@@ -27,29 +92,38 @@ $input-border:#ccc;
   }
 
   label {
-
     display: block;
   }
 
-  input[type="text"],
-  input[type="password"] {
-
+  /* ปรับให้รองรับไอคอนโชว์รหัส */
+  .password-wrapper {
+    position: relative;
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid $input-border;
-    margin: 10px;
+
+    input {
+      width: 100%;
+      padding: 10px;
+      padding-right: 40px; // กันที่ไว้สำหรับไอคอน
+      border-radius: 5px;
+      border: 1px solid $input-border;
+      margin: 10px 0;
+      font-size: 15px;
+    }
+
+    i {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 20px;
+      color: #878787;
+
+      &:hover {
+        color: #555;
+      }
+    }
   }
-
-  .show-password {
-    font-size: 12px;
-    margin: 15px;
-    display: flex;
-    color: #878787;
-    gap: 5px;
-
-  }
-
 
 
   .btn-singin {
@@ -61,6 +135,4 @@ $input-border:#ccc;
     border: 1px solid $input-border;
     color: #fff;
   }
-
-
 }
