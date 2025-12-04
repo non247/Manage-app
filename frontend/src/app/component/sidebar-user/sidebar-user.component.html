@@ -16,7 +16,7 @@
       </li>
 
       <li routerLinkActive="active">
-        <a routerLink="/dashboard" (click)="navigateTo('/dashboard')">
+        <a routerLink="/inventory" (click)="navigateTo('/inventory')">
           <i class="bi bi-box-seam-fill" style="font-size: 30px;" ></i>
           <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Inventory</span>
         </a>
@@ -38,4 +38,8 @@
 
     </ul>
   </div>
+</div>
+
+<div class="content" [class.shifted]="!isCollapsed">
+  <ng-content></ng-content>
 </div>

@@ -1,0 +1,41 @@
+<app-sidebar-user></app-sidebar-user>
+
+<div class="layout">
+  <div class="main-area">
+    <header class="top-navbar">
+      <!-- Navbar content -->
+    </header>
+
+    <div class="main-content">
+      <h1>Inventory</h1>
+
+      <!-- PrimeNG Table -->
+      <p-table 
+        [value]="products"
+        stripedRows
+        [tableStyle]="{ 'width': '100%', 'table-layout': 'auto' }"> <!-- Adjusted table style -->
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 20%;">Code</th> <!-- Adjust width of columns -->
+            <th style="width: 30%;">Name</th>
+            <th style="width: 25%;">Category</th>
+            <th style="width: 25%;">Quantity</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td>{{ product.code }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.quantity }}</td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+      <!-- End table -->
+
+    </div>
+  </div>
+</div>
