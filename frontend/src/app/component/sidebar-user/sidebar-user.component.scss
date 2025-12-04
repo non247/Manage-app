@@ -1,3 +1,13 @@
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100vh;
+  z-index: 999;       /* สำคัญที่สุด – ทำให้ sidebar อยู่ด้านบน table */
+  pointer-events: auto;
+}
+
 .hamburger {
   position: fixed;
   z-index: 20;
@@ -172,4 +182,5 @@
     }
 
   }
+  
 }

@@ -13,7 +13,7 @@ app-sidebar-user {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 90px;
+  background-color: #ffffff;
 }
 
 .top-navbar {
@@ -26,5 +26,6 @@ app-sidebar-user {
 }
 
 .main-content {
-  padding: 20px;
+ padding: 20px;
+ margin-left: 90px;
 }

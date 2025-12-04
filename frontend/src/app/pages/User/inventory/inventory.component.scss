@@ -13,7 +13,7 @@ app-sidebar-user {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 90px;
+  background-color: #ffffff;
 }
 
 .top-navbar {
@@ -27,10 +27,40 @@ app-sidebar-user {
 
 .main-content {
  padding: 20px;
+ margin-left: 90px;
 }
 
-
-p-table {
-  width: 100%; /* ให้ตารางมีความกว้างเต็มที่ */
-  table-layout: fixed; /* จัดการให้คอลัมน์มีขนาดคงที่ */
+.main-content p-table{
+  margin-top: 40px;
 }
+
+.main-content p-table th, 
+.main-content p-table td {
+  text-align: center;
+  padding: 12px; /* เพิ่มระยะห่างระหว่างข้อความ */
+  border-bottom: #e2e2e2;
+  // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
+}
+
+.main-content p-table th {
+  background-color: #ffffff; /* สีพื้นหลังของหัวตาราง */
+  font-size: 20px;
+  font-weight: bold;
+}
+
+::ng-deep .p-datatable tbody tr:nth-child(odd) td {
+  background-color: #E5386D !important; /* สีแถวที่ 1,3,5... */
+  color: white;
+}
+
+::ng-deep .p-datatable tbody tr:nth-child(even) td {
+  background-color: #FFD6E0 !important; /* สีแถวที่ 2,4,6... */
+}
+
+/* ปรับแต่ง border และ padding เหมือนเดิม */
+::ng-deep .p-datatable tbody td {
+  text-align: center;
+  padding: 12px;
+  border-bottom: #e2e2e2;
+}
+

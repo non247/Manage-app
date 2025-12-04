@@ -1,6 +1,8 @@
 <app-sidebar-user></app-sidebar-user>
 
 <div class="layout">
+
+  <!-- Main content -->
   <div class="main-area">
     <header class="top-navbar">
       <!-- Navbar content -->
@@ -9,22 +11,37 @@
     <div class="main-content">
       <h1>Inventory</h1>
 
-      <!-- PrimeNG Table -->
-      <p-table 
-        [value]="products"
-        stripedRows
-        [tableStyle]="{ 'width': '100%', 'table-layout': 'auto' }"> <!-- Adjusted table style -->
-
-        <ng-template pTemplate="header">
+      <p-table [value]="products" [tableStyle]="{'min-width': '60rem'}">
+        <ng-template #header>
           <tr>
-            <th style="width: 20%;">Code</th> <!-- Adjust width of columns -->
-            <th style="width: 30%;">Name</th>
-            <th style="width: 25%;">Category</th>
-            <th style="width: 25%;">Quantity</th>
+            <th pSortableColumn="code" style="width:20%">
+              <div class="flex items-center gap-2">
+                Code
+                <p-sortIcon field="code" />
+              </div>
+            </th>
+            <th pSortableColumn="name" style="width:20%">
+              <div class="flex items-center gap-2">
+                Name
+                <p-sortIcon field="name" />
+              </div>
+            </th>
+            <th pSortableColumn="category" style="width:20%">
+              <div class="flex items-center gap-2">
+                Category
+                <p-sortIcon field="category" />
+              </div>
+            </th>
+            <th pSortableColumn="quantity" style="width:20%">
+              <div class="flex items-center gap-2">
+                Quantity
+                <p-sortIcon field="quantity" />
+              </div>
+            </th>
           </tr>
         </ng-template>
-
-        <ng-template pTemplate="body" let-product>
+        
+        <ng-template #body let-product>
           <tr>
             <td>{{ product.code }}</td>
             <td>{{ product.name }}</td>
@@ -32,10 +49,9 @@
             <td>{{ product.quantity }}</td>
           </tr>
         </ng-template>
-
       </p-table>
-      <!-- End table -->
 
     </div>
   </div>
+
 </div>
