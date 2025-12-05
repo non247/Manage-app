@@ -1,7 +1,7 @@
 .layout {
   display: flex;
   height: 100vh;
-
+  overflow: hidden;
 }
 
 app-sidebar-user {
@@ -14,15 +14,16 @@ app-sidebar-user {
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
+  overflow-y: auto;
 }
 
 .top-navbar {
-  height: 60px;
   background-color: #E5386D;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
+  padding: 15px 20px;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .main-content {
