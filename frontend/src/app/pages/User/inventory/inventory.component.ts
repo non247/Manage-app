@@ -13,7 +13,19 @@ export class InventoryComponent {
     products = [
     { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50 },
     { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
-    { code: 'P003', name: 'Book', category: 'box', quantity: 5 }
+    { code: 'P003', name: 'Book', category: 'box', quantity: 5 },
+   { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50 },
+    { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
+    { code: 'P003', name: 'Book', category: 'box', quantity: 5 },
+    { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50 },
+    { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
+    { code: 'P003', name: 'Book', category: 'box', quantity: 5 },
+     { code: 'P003', name: 'Book', category: 'box', quantity: 5 },
+      { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
+    { code: 'P003', name: 'Book', category: 'box', quantity: 5 },
+     { code: 'P003', name: 'Book', category: 'box', quantity: 5 }
+   
+   
    
   ];
 }

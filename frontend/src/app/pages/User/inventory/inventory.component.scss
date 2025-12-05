@@ -38,7 +38,7 @@ app-sidebar-user {
 .main-content p-table th, 
 .main-content p-table td {
   text-align: center;
-  padding: 12px; /* เพิ่มระยะห่างระหว่างข้อความ */
+  padding: 11px; /* เพิ่มระยะห่างระหว่างข้อความ */
   border-bottom: #e2e2e2;
   // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
 }
@@ -47,6 +47,7 @@ app-sidebar-user {
   background-color: #FFD6E0; /* สีพื้นหลังของหัวตาราง */
   font-size: 30px;
   font-weight: bold;
+  color: #E5386D;
 }
 
 .main-content p-table td {
@@ -69,3 +70,11 @@ app-sidebar-user {
   border-bottom: #e2e2e2;
 }
 
+.table-box {
+  padding: 20px;
+  background: #FFD6E0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-top: 20px;
+  height: 620px; 
+}

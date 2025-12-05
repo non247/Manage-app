@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-sidebar-user',
@@ -56,13 +58,51 @@ export class SidebarUserComponent {
 }
 
 
-  logout() {
-    localStorage.removeItem('token');
+//   logout() {
+//     localStorage.removeItem('token');
 
-    if (this.isMobile) {
-      this.isCollapsed = true;
+//     if (this.isMobile) {
+//       this.isCollapsed = true;
+//     }
+
+//     this.router.navigate(['/login']);
+//   }
+// }
+logout() {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, logout"
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      // ลบ token
+      localStorage.removeItem('token');
+
+      // ปิด sidebar ถ้าเป็น mobile
+      if (this.isMobile) {
+        this.isCollapsed = true;
+      }
+
+      // // แจ้งว่า logout สำเร็จ
+      // Swal.fire({
+      //   title: "Logged out!",
+      //   text: "You have been logged out successfully.",
+      //   icon: "success",
+      //   timer: 1500,
+      //   showConfirmButton: false
+      // });
+
+      // redirect ไปหน้า login หลังจากแสดง alert แป๊บหนึ่ง
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 1200);
     }
-
-    this.router.navigate(['/login']);
-  }
+  });
+}
 }
