@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/User/Dashboard/Dashboard.component';
 import { InventoryComponent } from './pages/User/inventory/inventory.component';
+import { HistoryComponent } from './pages/User/history/history.component';
 import { SettingComponent } from './pages/User/setting/setting.component';
 
 export const routes: Routes = [
@@ -10,6 +11,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'inventory', component: InventoryComponent},
+  { path: 'history', component: HistoryComponent},
   { path: 'setting',component: SettingComponent },
 
   // หน้าเริ่มต้น

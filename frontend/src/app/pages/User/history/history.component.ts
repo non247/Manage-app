@@ -3,14 +3,13 @@ import { SidebarUserComponent } from "../../../component/sidebar-user/sidebar-us
 import { TableModule } from 'primeng/table';
 
 @Component({
-  selector: 'app-Dashboard',
+  selector: 'app-history',
   imports: [SidebarUserComponent,TableModule],
-  templateUrl: './Dashboard.component.html',
-  styleUrl: './Dashboard.component.scss',
+  templateUrl: './history.component.html',
+  styleUrl: './history.component.scss',
 })
-export class DashboardComponent {
-
-      lowStockProducts = [
+export class HistoryComponent {
+      products = [
     { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50 },
     { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
     { code: 'P003', name: 'Book', category: 'box', quantity: 5 },

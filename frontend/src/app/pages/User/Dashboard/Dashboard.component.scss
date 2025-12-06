@@ -64,13 +64,13 @@ app-sidebar-user {
 
 .top-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr); // repeat(n, 1fr) แสดงจำนวนช่อง
   gap: 20px;
-  margin-top: 20px;
+
 }
 
 .card {
-  background-color: #FFE4EC;
+  background-color: #FFD6E0;
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -102,39 +102,50 @@ app-sidebar-user {
   }
 }
 
-.lower-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+.main-content p-table{
+  margin-top: 10px;
+}
+
+.main-content p-table th, 
+.main-content p-table td {
+  text-align: center;
+  padding: 11px; /* เพิ่มระยะห่างระหว่างข้อความ */
+  border-bottom: #e2e2e2;
+  // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
+}
+
+.main-content p-table th {
+  background-color: #FFD6E0; /* สีพื้นหลังของหัวตาราง */
+  font-size: 20px;
+  font-weight: bold;
+  color: #E5386D;
+}
+
+.main-content p-table td {
+  font-size: 20px;
+}
+
+::ng-deep .p-datatable tbody tr:nth-child(odd) td {
+  background-color: #E5386D !important; /* สีแถวที่ 1,3,5... */
+  color: white;
+}
+
+::ng-deep .p-datatable tbody tr:nth-child(even) td {
+  background-color: #FFD6E0 !important; /* สีแถวที่ 2,4,6... */
+}
+
+/* ปรับแต่ง border และ padding เหมือนเดิม */
+::ng-deep .p-datatable tbody td {
+  text-align: center;
+  padding: 12px;
+  border-bottom: #e2e2e2;
+}
+
+.table-box {
+  padding: 20px;
+  background: #FFD6E0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   margin-top: 20px;
-
-  .table-box {
-    background-color: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    height: 250px;
-    overflow-y: auto;
-
-    h3 {
-      margin-bottom: 10px;
-      color: #E5386D;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-
-      th {
-        background-color: #FFBDCB;
-        color: #fff;
-        padding: 8px;
-      }
-
-      td {
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-      }
-    }
-  }
+  height: 450px; 
 }

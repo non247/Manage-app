@@ -90,3 +90,25 @@ app-sidebar-user {
   color: #E5386D;
   margin: 0;
 }
+
+.btn-excel {
+  background-color: #008000; 
+  color: #fff;
+  border: none;
+  border-radius: 20px;  
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-excel .pi {
+  font-size: 28px;
+}
+
+.btn-excel:hover {
+  background-color: #24a840f2;
+}

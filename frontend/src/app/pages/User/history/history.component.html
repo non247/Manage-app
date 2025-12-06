@@ -6,13 +6,18 @@
   <div class="main-area">
     <div class="main-content">
       <header class="top-navbar">
-        <h1>Inventory</h1>
+        <h1>History</h1>
       </header>
 
+
       <!-- ✅ ใส่ table ในกล่อง table-box -->
+
       <div class="table-box">
         <div class="header-row">
-        <h1 style="color: #E5386D;">List of  Products</h1>
+          <h1 class="title">List of History Products</h1>
+
+          <button type="submit" class="btn-excel">
+            <i class="pi pi-file-excel"></i></button>
         </div>
 
         <p-table [value]="products" [scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '60rem'}">
