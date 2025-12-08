@@ -1,7 +1,7 @@
 .layout {
   display: flex;
   height: 100vh;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 app-sidebar-user {
@@ -89,4 +89,14 @@ app-sidebar-user {
 .title {
   color: #E5386D;
   margin: 0;
+}
+
+::ng-deep .p-multiselect-panel {
+  position: fixed !important;
+  z-index: 99999 !important;
+
+  /* ป้องกันเต็มหน้าจอ */
+  width: max-content !important;
+  max-width: 300px !important;
+  left: auto !important;
 }
