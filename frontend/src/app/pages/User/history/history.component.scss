@@ -99,15 +99,13 @@ app-sidebar-user {
   width: 48px;
   height: 48px;
   cursor: pointer;
+   font-size: 28px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.btn-excel .pi {
-  font-size: 28px;
-}
 
 .btn-excel:hover {
   background-color: #24a840f2;
