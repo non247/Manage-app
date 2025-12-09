@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -14,9 +14,10 @@ export class RegisterComponent {
   Password: string = '';
   errorMessage: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
-  togglePasswordVisibility() { // แสดงรหัสผ่าน
+  togglePasswordVisibility() {
+    // แสดงรหัสผ่าน
     const input = document.getElementById('passwordinput') as HTMLInputElement;
     input.type = input.type === 'password' ? 'text' : 'password';
   }

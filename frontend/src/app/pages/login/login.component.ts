@@ -30,29 +30,29 @@
 //   }
 // }
 // // console.log()
+import { CommonModule, NgIf } from '@angular/common'; // <-- เพิ่ม CommonModule
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { NgIf, CommonModule } from '@angular/common';   // <-- เพิ่ม CommonModule
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, NgIf, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   Username: string = '';
   Password: string = '';
   errorMessage: string = '';
 
-  showPassword: boolean = false;  // <-- เพิ่มตัวแปรนี้
+  showPassword: boolean = false; // <-- เพิ่มตัวแปรนี้
 
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;   // <-- แค่สลับค่า
+    this.showPassword = !this.showPassword; // <-- แค่สลับค่า
   }
 
   login() {
