@@ -1,7 +1,7 @@
-// $primary-color:#FFBDCB;
-// $background-gradient:linear-gradient(to right, #FFBDCB, $primary-color);
-// $card-bg:#fff;
-// $input-border:#ccc;
+// $primary-color: #ffbdcb;
+// $background-gradient: linear-gradient(to right, #ffbdcb, $primary-color);
+// $card-bg: #fff;
+// $input-border: #ccc;
 
 // .login-page {
 //   height: 100vh;
@@ -16,7 +16,6 @@
 //     border-radius: 30px;
 //     padding: 40px;
 //     width: 480px;
-
 //   }
 
 //   h1 {
@@ -27,13 +26,11 @@
 //   }
 
 //   label {
-
 //     display: block;
 //   }
 
 //   input[type="text"],
 //   input[type="password"] {
-
 //     width: 100%;
 //     padding: 10px;
 //     border-radius: 5px;
@@ -47,13 +44,10 @@
 //     display: flex;
 //     color: #878787;
 //     gap: 5px;
-
 //   }
 
-
-
 //   .btn-singin {
-//     background-color: #E5386D;
+//     background-color: #e5386d;
 //     margin-top: 50px;
 //     width: 100%;
 //     padding: 15px;
@@ -61,13 +55,12 @@
 //     border: 1px solid $input-border;
 //     color: #fff;
 //   }
-
-
 // }
-$primary-color:#FFBDCB;
-$background-gradient:linear-gradient(to right, #FFBDCB, $primary-color);
-$card-bg:#fff;
-$input-border:#ccc;
+
+$primary-color: #ffbdcb;
+$background-gradient: linear-gradient(to right, #ffbdcb, $primary-color);
+$card-bg: #fff;
+$input-border: #ccc;
 
 .login-page {
   height: 100vh;
@@ -75,7 +68,7 @@ $input-border:#ccc;
   align-items: center;
   display: flex;
   justify-content: center;
-  font-family: Georgia;
+  font-family: Georgia, sans-serif;
 
   .login-card {
     background-color: $card-bg;
@@ -125,9 +118,8 @@ $input-border:#ccc;
     }
   }
 
-
   .btn-singin {
-    background-color: #E5386D;
+    background-color: #dd1d56;
     margin-top: 50px;
     width: 100%;
     padding: 15px;
