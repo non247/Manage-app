@@ -128,3 +128,20 @@ $input-border: #ccc;
     color: #fff;
   }
 }
+
+.logout-message {
+  position: fixed; // ลอยอยู่หน้าจอ
+  top: 20px; // ระยะจากบน
+  right: 20px; // ระยะจากขวา
+
+  width: auto;
+  max-width: 350px;
+  border-radius: 10px;
+  background-color: #4caf4fae; // สีเขียว
+  color: white; // ตัวอักษรสีขาว
+  border: 2px solid #388E3C; // กรอบสีเขียวเข้ม
+  padding: 20px; // เพิ่ม padding ให้ดูสวย
+  font-size: 23px;
+  white-space: nowrap;
+  
+}

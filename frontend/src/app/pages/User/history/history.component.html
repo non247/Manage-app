@@ -23,12 +23,12 @@
         <p-table [value]="products" [scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '60rem'}">
           <ng-template #header>
             <tr>
-              <th pSortableColumn="code" style="width:16.66%">
+              <!-- <th pSortableColumn="code" style="width:16.66%">
                 <div class="flex items-center gap-2">
                   Code
                   <p-sortIcon field="code" />
                 </div>
-              </th>
+              </th> -->
 
               <th pSortableColumn="name" style="width:16.66%">
                 <div class="flex items-center gap-2">
@@ -65,7 +65,7 @@
 
           <ng-template #body let-product>
             <tr>
-              <td>{{ product.code }}</td>
+              <!-- <td>{{ product.code }}</td> -->
               <td>{{ product.name }}</td>
               <td>{{ product.category }}</td>
               <td>{{ product.quantity }}</td>

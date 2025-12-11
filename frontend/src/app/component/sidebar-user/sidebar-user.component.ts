@@ -100,7 +100,7 @@ logout() {
 
       // redirect ไปหน้า login หลังจากแสดง alert แป๊บหนึ่ง
       setTimeout(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login'], { queryParams: { logoutSuccess: 'true' } });
       }, 1200);
     }
   });

@@ -30,29 +30,44 @@
 //   }
 // }
 // // console.log()
-import { CommonModule, NgIf } from '@angular/common'; // <-- เพิ่ม CommonModule
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, NgIf, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   Username: string = '';
   Password: string = '';
   errorMessage: string = '';
 
-  showPassword: boolean = false; // <-- เพิ่มตัวแปรนี้
+  showPassword: boolean = false;
+  showLogoutMessage: boolean = false;
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router, private readonly route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    // ตรวจสอบ query param ว่ามี logoutSuccess หรือไม่
+    this.route.queryParams.subscribe(params => {
+      if (params['logoutSuccess'] === 'true') {
+        this.showLogoutMessage = true;
+        // ซ่อน message หลัง 3 วินาที
+        setTimeout(() => {
+          this.showLogoutMessage = false;
+        }, 3000);
+      }
+    });
+  }
 
   togglePasswordVisibility() {
-    this.showPassword = !this.showPassword; // <-- แค่สลับค่า
+    this.showPassword = !this.showPassword;
   }
 
   login() {

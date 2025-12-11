@@ -18,7 +18,7 @@
 
 // .top-navbar {
 //   height: 60px;
-//   background-color: #E5386D;
+//   background-color: #D81B60;
 //   display: flex;
 //   justify-content: space-between;
 //   align-items: center;
@@ -49,7 +49,7 @@ app-sidebar-user {
 }
 
 .top-navbar {
-  background-color: #E5386D;
+  background-color: #D81B60;
   padding: 15px 20px;
   border-radius: 15px;
   color: #fff;
@@ -78,7 +78,7 @@ app-sidebar-user {
 
   h3 {
     margin-bottom: 10px;
-    color: #E5386D;
+    color: #D81B60;
   }
 
   p {
@@ -118,7 +118,7 @@ app-sidebar-user {
   background-color: #FFD6E0; /* สีพื้นหลังของหัวตาราง */
   font-size: 20px;
   font-weight: bold;
-  color: #E5386D;
+  color: #D81B60;
 }
 
 .main-content p-table td {
@@ -126,7 +126,7 @@ app-sidebar-user {
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  background-color: #E5386D !important; /* สีแถวที่ 1,3,5... */
+  background-color: #D81B60 !important; /* สีแถวที่ 1,3,5... */
   color: white;
 }
 

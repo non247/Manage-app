@@ -18,7 +18,7 @@ app-sidebar-user {
 }
 
 .top-navbar {
-  background-color: #E5386D;
+  background-color: #D81B60;
   padding: 15px 20px;
   border-radius: 15px;
   color: #fff;
@@ -27,27 +27,29 @@ app-sidebar-user {
 }
 
 .main-content {
- padding: 20px;
- margin-left: 90px;
+  padding: 20px;
+  margin-left: 90px;
 }
 
-.main-content p-table{
+.main-content p-table {
   margin-top: 30px;
 }
 
-.main-content p-table th, 
+.main-content p-table th,
 .main-content p-table td {
   text-align: center;
-  padding: 11px; /* เพิ่มระยะห่างระหว่างข้อความ */
+  padding: 11px;
+  /* เพิ่มระยะห่างระหว่างข้อความ */
   border-bottom: #e2e2e2;
   // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
 }
 
 .main-content p-table th {
-  background-color: #FFD6E0; /* สีพื้นหลังของหัวตาราง */
+  background-color: #FFD6E0;
+  /* สีพื้นหลังของหัวตาราง */
   font-size: 30px;
   font-weight: bold;
-  color: #E5386D;
+  color: #D81B60;
 }
 
 .main-content p-table td {
@@ -55,12 +57,14 @@ app-sidebar-user {
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  background-color: #E5386D !important; /* สีแถวที่ 1,3,5... */
+  background-color: #D81B60 !important;
+  /* สีแถวที่ 1,3,5... */
   color: white;
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(even) td {
-  background-color: #FFD6E0 !important; /* สีแถวที่ 2,4,6... */
+  background-color: #FFD6E0 !important;
+  /* สีแถวที่ 2,4,6... */
 }
 
 /* ปรับแต่ง border และ padding เหมือนเดิม */
@@ -74,20 +78,23 @@ app-sidebar-user {
   padding: 20px;
   background: #FFD6E0;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
-  height: 620px; 
+  height: 620px;
+  
 }
 
 .header-row {
   display: flex;
-  justify-content: space-between; /* จัดซ้าย-ขวา */
-  align-items: center;           /* ให้ปุ่มอยู่ระดับเดียวกับหัวข้อ */
+  justify-content: space-between;
+  /* จัดซ้าย-ขวา */
+  align-items: center;
+  /* ให้ปุ่มอยู่ระดับเดียวกับหัวข้อ */
   margin-bottom: 20px;
 }
 
 .title {
-  color: #E5386D;
+  color: #D81B60;
   margin: 0;
 }
 
@@ -99,4 +106,92 @@ app-sidebar-user {
   width: max-content !important;
   max-width: 300px !important;
   left: auto !important;
+}
+
+// .btn-edit {
+//   background: #1E3A8A;
+//   color: rgb(255, 255, 255);
+//   font-size: 23px;
+//   border: none;
+//   padding: 7px;
+//   border-radius: 10px;
+
+//   cursor: pointer;
+// }
+
+// .btn-save {
+//   background: #1e8a39;
+//   color: rgb(255, 255, 255);
+//   border: none;
+//   font-size: 23px;
+//   padding: 7px;
+//   border-radius: 10px;
+//   cursor: pointer;
+// }
+.btn-edit,
+.btn-save {
+  display: inline-flex;           /* ให้ไอคอน + ข้อความอยู่กลาง */
+  justify-content: center;
+  align-items: center;
+  width: 130px;                   /* กำหนดความกว้างเท่ากัน */
+  font-size: 23px;                /* ขนาดตัวอักษรเท่ากัน */
+  padding: 7px;                   /* ระยะห่างภายในปุ่ม */
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  gap: 10px;
+}
+
+/* สีเฉพาะของแต่ละปุ่ม */
+.btn-edit {
+  background: #1E3A8A;
+}
+
+.btn-save {
+  background: #1e8a39;
+}
+
+
+/* Input ในโหมดแก้ไข */
+// input[type="text"],
+// input[type="number"] {
+//   width: 90%;
+//   padding: 5px;
+//   border: 1px solid #ccc;
+//   border-radius: 7px;
+//   font-size: 23px;
+//   text-align: center;
+// }
+
+/* input type number และ text */
+input[type="text"]
+{
+  width: 90%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 23px;
+  text-align: center; /* ตัวเลขตรงกลาง */
+}
+
+input[type="number"] {
+  width: 90%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 23px;
+  text-align: center; /* ตัวเลขตรงกลาง */
+}
+
+// /* ซ่อนปุ่ม spin ของ number input */
+// input[type="number"]::-webkit-inner-spin-button,
+// input[type="number"]::-webkit-outer-spin-button {
+//   -webkit-appearance: none;
+//   margin: 0;
+// }
+
+/* เน้นแถวที่กำลังแก้ไข */
+tr.editing {
+  background-color: #fff3cd;
 }
