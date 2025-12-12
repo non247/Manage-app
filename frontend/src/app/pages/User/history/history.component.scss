@@ -180,7 +180,7 @@ tr.editing {
 
 .search-wrapper {
   position: relative;
-  width: 250px;               /* กำหนดความกว้างตามต้องการ */
+  width: 300px;               /* กำหนดความกว้างตามต้องการ */
   margin-right: auto;          /* เลื่อนช่องค้นหาไปด้านขวา */
 }
 
@@ -192,8 +192,8 @@ tr.editing {
   font-size: 1rem;
   outline: none;
   box-shadow: none;
-  text-align: center;
   transition: border-color 0.3s ease;
+  text-align: center;
 }
 
 

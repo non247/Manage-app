@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -72,5 +73,37 @@ onSave(index: number) {
 onCancel() {
   this.editIndex = -1;
   this.editProduct = null;
+}
+
+onDelete(index: number) {
+  // แสดงการยืนยันการลบ
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // ลบจาก filteredProducts
+      this.filteredProducts.splice(index, 1);
+
+      // ลบจาก products
+      const deletedProduct = this.products[index];
+      const originalIndex = this.products.findIndex(p => p.code === deletedProduct.code);
+      if (originalIndex !== -1) {
+        this.products.splice(originalIndex, 1);
+      }
+
+      // แสดงข้อความแจ้งเตือนว่าได้ลบแล้ว
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your product has been deleted.",
+        icon: "success"
+      });
+    }
+  });
 }
 }

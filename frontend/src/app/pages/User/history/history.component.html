@@ -13,23 +13,27 @@
       <!-- ✅ ใส่ table ในกล่อง table-box -->
 
   <div class="table-box">
-    <div class="header-row" 
-     style="display: flex; align-items: center; justify-content: space-between; width: 100%">
-    <h1 style="color: #D81B60; margin: 0;">List of History Products</h1>
-  <div class="flex" style="display: flex; align-items: center; gap: 10px;">
+<div class="header-row" 
+     style="display: flex; align-items: center; width: 100%; position: relative;">
+
+  <!-- ซ้าย: Title -->
+  <h1 style="color: #D81B60; margin: 0;">List of History Products</h1>
+
+  <!-- กลาง: Search Bar -->
+<div style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px;">
     <span class="p-input-icon-left search-wrapper">
       <i class="pi pi-search"></i>
       <input pInputText type="text" placeholder="Search products"
              (input)="dt.filterGlobal($event.target.value, 'contains')" />
     </span>
-
-    <button type="submit" class="btn-excel">
-      <i class="bi bi-filetype-xlsx"></i>
-    </button>
   </div>
 
-</div>
+  <!-- ขวา: ปุ่ม Excel -->
+  <button type="submit" class="btn-excel" style="margin-left: auto;">
+    <i class="bi bi-filetype-xlsx"></i>
+  </button>
 
+</div>
         <!-- <div class="header-row">
           <h1 class="title">List of History Products</h1>
         <div class="flex">
@@ -144,7 +148,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="5">No products found.</td>
+              <td colspan="5"><i class="bi bi-emoji-frown-fill"></i> Not Found.</td>
             </tr>
           </ng-template>
         </p-table>

@@ -10,20 +10,31 @@
 
       <div class="table-box">
 
-        <div class="header-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%">
-          <h1 style="color: #D81B60;">List of Products</h1>
-        <!-- ช่องค้นหา ย้ายมาอยู่นอก p-table -->
-  <div class="flex" style="display: flex; align-items: center; gap: 10px;">
-    <span class="p-input-icon-left search-wrapper">
-      <i class="pi pi-search"></i>
-      <input pInputText type="text" placeholder="Search products"
-             (input)="dt.filterGlobal($event.target.value, 'contains')" />
-    </span>
-  </div>     
- </div>
+        <div class="header-row" style="display: flex; align-items: center; width: 100%; position: relative;">
+
+          <!-- ซ้าย -->
+          <h1 style="color: #D81B60; margin: 0;">List of Products</h1>
+
+          <!-- กลาง (search bar) -->
+          <div style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px;">
+            <span class="p-input-icon-left search-wrapper">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Search products"
+                (input)="dt.filterGlobal($event.target.value, 'contains')" />
+            </span>
+          </div>
+
+          <!-- ขวา -->
+          <button type="submit" class="btn-add" style="margin-left: auto;">
+           <i class="bi bi-file-earmark-plus-fill"></i> ADD
+          </button>
+
+        </div>
+
 
         <p-table #dt [value]="filteredProducts" [rows]="10"
-          [globalFilterFields]="['name','category','quantity','price']" [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}" [scrollable]="true" scrollHeight="550px">
+          [globalFilterFields]="['name','category','quantity','price']"
+          [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}" [scrollable]="true" scrollHeight="550px">
 
           <ng-template pTemplate="header">
             <tr>
@@ -101,6 +112,11 @@
                   <i class="pi pi-pen-to-square"></i>
                 </button>
 
+                <button class="btn-delete" (click)="onDelete(i)" *ngIf="editIndex !== i">
+                  <i class="bi bi-trash3-fill"></i>
+                </button>
+
+
                 <button class="btn-save" (click)="onSave(i)" *ngIf="editIndex === i">
                   <i class="pi pi-check-square"></i>
                 </button>
@@ -115,7 +131,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="5">No products found.</td>
+              <td colspan="5"><i class="bi bi-emoji-frown-fill"></i> Not Found.</td>
             </tr>
           </ng-template>
         </p-table>

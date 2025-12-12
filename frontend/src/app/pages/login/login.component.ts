@@ -30,11 +30,22 @@
 //   }
 // }
 // // console.log()
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+import {
+  CommonModule,
+  NgIf
+} from '@angular/common';
+import {
+  FormsModule
+} from '@angular/forms';
+import {
+  Router,
+  ActivatedRoute
+} from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',

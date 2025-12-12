@@ -264,15 +264,6 @@ app-sidebar-user {
   border-bottom: #e2e2e2;
 }
 
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  /* จัดซ้าย-ขวา */
-  align-items: center;
-  /* ให้ปุ่มอยู่ระดับเดียวกับหัวข้อ */
-  margin-bottom: 20px;
-}
-
 .title {
   color: #D81B60;
   margin: 0;
@@ -288,27 +279,8 @@ app-sidebar-user {
   left: auto !important;
 }
 
-// .btn-edit {
-//   background: #1E3A8A;
-//   color: rgb(255, 255, 255);
-//   font-size: 23px;
-//   border: none;
-//   padding: 7px;
-//   border-radius: 10px;
-
-//   cursor: pointer;
-// }
-
-// .btn-save {
-//   background: #1e8a39;
-//   color: rgb(255, 255, 255);
-//   border: none;
-//   font-size: 23px;
-//   padding: 7px;
-//   border-radius: 10px;
-//   cursor: pointer;
-// }
 .btn-edit,
+.btn-delete,
 .btn-save,
 .btn-cancel {
   display: inline-flex;           
@@ -328,6 +300,10 @@ app-sidebar-user {
 /* สีเฉพาะของแต่ละปุ่ม */
 .btn-edit {
   background: #1E3A8A;
+}
+
+.btn-delete{
+background: #d21515;
 }
 
 .btn-save {
@@ -371,21 +347,20 @@ tr.editing {
 
 .search-wrapper {
   position: relative;
-  width: 250px;               /* กำหนดความกว้างตามต้องการ */
-  margin-right: auto;         /* เลื่อนช่องค้นหาไปด้านขวา */
-  
+  width: 300px;               /* กำหนดความกว้างตามต้องการ */
+  margin-right: auto;          /* เลื่อนช่องค้นหาไปด้านขวา */
 }
 
 .search-wrapper input {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+  padding: 0.5rem 2.5rem 0.5rem 2rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
   border: 1px solid #ccc;     /* เส้นขอบบาง ๆ สีเทา */
   border-radius: 7px;         /* มุมโค้งมน */
   font-size: 1rem;
   outline: none;
   box-shadow: none;
-  text-align: center;
   transition: border-color 0.3s ease;
+  text-align: center;
 }
 
 
@@ -397,4 +372,29 @@ tr.editing {
   color: #aaa;
   pointer-events: none;       /* ให้คลิกผ่าน icon ได้ */
   font-size: 1.2rem;
+}
+
+
+.btn-add {
+  
+  background-color: #008000; 
+  color: #fff;
+  border: none;
+  border-radius: 20px;  
+  width: 90px;
+  height: 40px;
+  gap: 5px;
+  font-weight: bold;
+  cursor: pointer;
+   font-size: 20px;
+  padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.btn-add:hover {
+  background-color: #24a840f2;
 }
