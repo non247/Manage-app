@@ -129,17 +129,19 @@ app-sidebar-user {
 //   cursor: pointer;
 // }
 .btn-edit,
-.btn-save {
-  display: inline-flex;           /* ให้ไอคอน + ข้อความอยู่กลาง */
+.btn-save,
+.btn-cancel {
+  display: inline-flex;           
   justify-content: center;
   align-items: center;
-  width: 130px;                   /* กำหนดความกว้างเท่ากัน */
-  font-size: 23px;                /* ขนาดตัวอักษรเท่ากัน */
-  padding: 7px;                   /* ระยะห่างภายในปุ่ม */
+  width: 130px;                  
+  font-size: 23px;                
+  padding: 7px;                 
   border-radius: 10px;
   border: none;
   cursor: pointer;
   color: #fff;
+  border: 2px solid white;
   gap: 10px;
 }
 
@@ -151,18 +153,9 @@ app-sidebar-user {
 .btn-save {
   background: #1e8a39;
 }
-
-
-/* Input ในโหมดแก้ไข */
-// input[type="text"],
-// input[type="number"] {
-//   width: 90%;
-//   padding: 5px;
-//   border: 1px solid #ccc;
-//   border-radius: 7px;
-//   font-size: 23px;
-//   text-align: center;
-// }
+.btn-cancel {
+  background: #d21515;
+}
 
 /* input type number และ text */
 input[type="text"]

@@ -93,7 +93,7 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input type="number" [(ngModel)]="editProduct.quantity" />
+                  <input type="number" [(ngModel)]="editProduct.quantity" min="0"/>
                 </ng-template>
               </td>
 
@@ -103,20 +103,25 @@
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input type="number" [(ngModel)]="editProduct.price" />
+                  <input type="number" [(ngModel)]="editProduct.price" min="0" />
                 </ng-template>
               </td>
 
               <!-- ปุ่ม -->
-              <td>
+          <td style="display: flex; gap: 8px; align-items: center;">
             <!-- Edit -->
             <button class="btn-edit" (click)="onEdit(i)" *ngIf="editIndex !== i">
-              <i class="pi pi-pen-to-square"></i> Edit
+              <i class="pi pi-pen-to-square"></i>
             </button>
 
             <!-- Save -->
             <button class="btn-save" (click)="onSave(i)" *ngIf="editIndex === i">
-              <i class="pi pi-check-square"></i> Save
+              <i class="pi pi-check-square"></i>
+            </button>
+
+            <!-- Cancel -->
+            <button class="btn-cancel" (click)="onCancel()" *ngIf="editIndex === i">
+              <i class="bi bi-x-square"></i>
             </button>
           </td>
          </tr>

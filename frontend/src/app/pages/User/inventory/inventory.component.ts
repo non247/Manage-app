@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 })
 export class InventoryComponent {
 
-  editIndex: number | null = null;
+editIndex: number | null = null;
 editProduct: any = {};
 selectedCategories: string[] = [];
 
@@ -67,5 +67,10 @@ onSave(index: number) {
   }
 
   this.editIndex = null;
+}
+
+onCancel() {
+  this.editIndex = -1;
+  this.editProduct = null;
 }
 }
