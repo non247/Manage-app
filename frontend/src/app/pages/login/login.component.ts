@@ -30,21 +30,10 @@
 //   }
 // }
 // // console.log()
-import {
-  Component,
-  OnInit
-} from '@angular/core';
-import {
-  CommonModule,
-  NgIf
-} from '@angular/common';
-import {
-  FormsModule
-} from '@angular/forms';
-import {
-  Router,
-  ActivatedRoute
-} from '@angular/router';
+import {Component,OnInit} from '@angular/core';
+import {CommonModule,NgIf} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {Router,ActivatedRoute} from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -72,7 +61,7 @@ export class LoginComponent implements OnInit {
         // ซ่อน message หลัง 3 วินาที
         setTimeout(() => {
           this.showLogoutMessage = false;
-        }, 3000);
+        }, 5000);
       }
     });
   }
