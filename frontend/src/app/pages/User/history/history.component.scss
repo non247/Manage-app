@@ -39,28 +39,29 @@ app-sidebar-user {
   text-align: center;
   padding: 11px;
   border-bottom: #e2e2e2;
+
 }
 
 .main-content p-table th {
-  background-color: #FFD6E0;
+  background-color: #D81B60;
   font-size: 30px;
   font-weight: bold;
-  color: #D81B60;
+  color: #ffffff;
 }
 
 .main-content p-table td {
   font-size: 23px;
+  border-bottom: 5px solid #D81B60;
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  background-color: #D81B60 !important;
-  color: white;
+  background-color: #FFD6E0 !important;
+  color: rgb(0, 0, 0);
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(even) td {
   background-color: #FFD6E0 !important;
 }
-
 
 ::ng-deep .p-datatable tbody td {
   text-align: center;
