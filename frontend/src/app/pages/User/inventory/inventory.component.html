@@ -16,7 +16,8 @@
           <h1 style="color: #D81B60; margin: 0;">List of Products</h1>
 
           <!-- กลาง (search bar) -->
-          <div style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px;">
+          <div
+            style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px;">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
               <input pInputText type="text" placeholder="Search products"
@@ -25,8 +26,8 @@
           </div>
 
           <!-- ขวา -->
-          <button type="submit" class="btn-add" style="margin-left: auto;">
-           <i class="bi bi-file-earmark-plus-fill"></i> ADD
+          <button type="button" class="btn-add" style="margin-left: auto;" (click)="onCreate()">
+            <i class="bi bi-plus-circle-fill"></i> CREATE NEW
           </button>
 
         </div>
@@ -65,6 +66,14 @@
                   <p-sortIcon field="price"></p-sortIcon>
                 </div>
               </th>
+
+              <th pSortableColumn="price">
+                <div class="flex items-center gap-2">
+                  Date
+                  <p-sortIcon field="price"></p-sortIcon>
+                </div>
+              </th>
+
               <th style="width: 12%"></th>
             </tr>
           </ng-template>
@@ -95,6 +104,15 @@
                 </ng-container>
                 <ng-template #editQty>
                   <input type="number" [(ngModel)]="editProduct.quantity" min="0" />
+                </ng-template>
+              </td>
+
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editPrice">
+                  {{ product.price }}
+                </ng-container>
+                <ng-template #editPrice>
+                  <input type="number" [(ngModel)]="editProduct.price" min="0" />
                 </ng-template>
               </td>
 
