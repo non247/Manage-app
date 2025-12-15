@@ -30,11 +30,10 @@
 //   }
 // }
 // // console.log()
-import {Component,OnInit} from '@angular/core';
-import {CommonModule,NgIf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {Router,ActivatedRoute} from '@angular/router';
-import Swal from 'sweetalert2';
+import { CommonModule, NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -51,11 +50,14 @@ export class LoginComponent implements OnInit {
   showPassword: boolean = false;
   showLogoutMessage: boolean = false;
 
-  constructor(private readonly router: Router, private readonly route: ActivatedRoute) {}
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     // ตรวจสอบ query param ว่ามี logoutSuccess หรือไม่
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['logoutSuccess'] === 'true') {
         this.showLogoutMessage = true;
         // ซ่อน message หลัง 3 วินาที

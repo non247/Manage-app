@@ -29,8 +29,8 @@ $input-border: #ccc;
     display: block;
   }
 
-  input[type="text"],
-  input[type="password"] {
+  input[type='text'],
+  input[type='password'] {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
@@ -47,7 +47,7 @@ $input-border: #ccc;
   }
 
   .btn-singin {
-    background-color: #D81B60;
+    background-color: #d81b60;
     margin-top: 50px;
     width: 100%;
     padding: 15px;
