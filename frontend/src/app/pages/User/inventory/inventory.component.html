@@ -8,60 +8,40 @@
       </header>
 
       <div class="table-box">
-        <div
-          class="header-row"
-          style="
+        <div class="header-row" style="
             display: flex;
             align-items: center;
             width: 100%;
             position: relative;
-          "
-        >
+          ">
           <!-- ซ้าย -->
           <h1 style="color: #d81b60; margin: 0">List of Products</h1>
 
           <!-- กลาง (search bar) -->
-          <div
-            style="
+          <div style="
               position: absolute;
               left: 50%;
               transform: translateX(-50%);
               display: flex;
               align-items: center;
               gap: 10px;
-            "
-          >
+            ">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                placeholder="Search products"
-                (input)="dt.filterGlobal($event.target.value, 'contains')"
-              />
+              <input pInputText type="text" placeholder="Search products"
+                (input)="dt.filterGlobal($event.target.value, 'contains')" />
             </span>
           </div>
 
           <!-- ขวา -->
-          <button
-            type="button"
-            class="btn-add"
-            style="margin-left: auto"
-            (click)="onCreate()"
-          >
+          <button type="button" class="btn-add" style="margin-left: auto" (click)="onCreate()">
             <i class="bi bi-plus-circle-fill"></i> CREATE NEW
           </button>
         </div>
 
-        <p-table
-          #dt
-          [value]="filteredProducts"
-          [rows]="10"
-          [globalFilterFields]="['name', 'category', 'quantity', 'price']"
-          [tableStyle]="{ 'table-layout': 'fixed', width: '100%' }"
-          [scrollable]="true"
-          scrollHeight="550px"
-        >
+        <p-table #dt [value]="filteredProducts" [rows]="10"
+          [globalFilterFields]="['name', 'category', 'quantity', 'price', 'date']"
+          [tableStyle]="{ 'table-layout': 'fixed', width: '100%' }" [scrollable]="true" scrollHeight="500px">
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="name">
@@ -92,10 +72,10 @@
                 </div>
               </th>
 
-              <th pSortableColumn="price">
+              <th pSortableColumn="date">
                 <div class="flex items-center gap-2">
                   Date
-                  <p-sortIcon field="price"></p-sortIcon>
+                  <p-sortIcon field="date"></p-sortIcon>
                 </div>
               </th>
 
@@ -128,11 +108,7 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input
-                    type="number"
-                    [(ngModel)]="editProduct.quantity"
-                    min="0"
-                  />
+                  <input type="number" [(ngModel)]="editProduct.quantity" min="0" />
                 </ng-template>
               </td>
 
@@ -141,57 +117,34 @@
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input
-                    type="number"
-                    [(ngModel)]="editProduct.price"
-                    min="0"
-                  />
+                  <input type="number" [(ngModel)]="editProduct.price" min="0" />
                 </ng-template>
               </td>
 
               <td>
-                <ng-container *ngIf="editIndex !== i; else editPrice">
-                  {{ product.price }}
+                <ng-container *ngIf="editIndex !== i; else editDate">
+                  {{ product.date | date:'dd/MM/yyyy' }}
                 </ng-container>
-                <ng-template #editPrice>
-                  <input
-                    type="number"
-                    [(ngModel)]="editProduct.price"
-                    min="0"
-                  />
+
+                <ng-template #editDate>
+                  <input type="date" [(ngModel)]="editProduct.date" />
                 </ng-template>
               </td>
 
               <td style="display: flex; gap: 8px; align-items: center">
-                <button
-                  class="btn-edit"
-                  (click)="onEdit(i)"
-                  *ngIf="editIndex !== i"
-                >
+                <button class="btn-edit" (click)="onEdit(i)" *ngIf="editIndex !== i">
                   <i class="pi pi-pen-to-square"></i>
                 </button>
 
-                <button
-                  class="btn-delete"
-                  (click)="onDelete(i)"
-                  *ngIf="editIndex !== i"
-                >
+                <button class="btn-delete" (click)="onDelete(i)" *ngIf="editIndex !== i">
                   <i class="bi bi-trash3-fill"></i>
                 </button>
 
-                <button
-                  class="btn-save"
-                  (click)="onSave(i)"
-                  *ngIf="editIndex === i"
-                >
+                <button class="btn-save" (click)="onSave(i)" *ngIf="editIndex === i">
                   <i class="pi pi-check-square"></i>
                 </button>
 
-                <button
-                  class="btn-cancel"
-                  (click)="onCancel()"
-                  *ngIf="editIndex === i"
-                >
+                <button class="btn-cancel" (click)="onCancel()" *ngIf="editIndex === i">
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>

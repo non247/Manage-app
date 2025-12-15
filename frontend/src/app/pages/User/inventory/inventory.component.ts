@@ -122,6 +122,7 @@ interface Product {
   category: string;
   quantity: number;
   price: number;
+  date?: Date;
   isNew?: boolean;
 }
 
@@ -144,15 +145,15 @@ export class InventoryComponent {
   selectedCategories: string[] = [];
 
  products: Product[] = [
-    { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50, price: 10 },
-    { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120, price: 30 },
-    { code: 'P003', name: 'Box A', category: 'Box', quantity: 5, price: 20 }
+    { code: 'P001', name: 'Vanilla', category: 'Ice Cream', quantity: 50, price: 10, date: new Date('2025-12-01')},
+    { code: 'P002', name: 'chocolate', category: 'Ice Cream', quantity: 120, price: 30, date: new Date('2025-12-01')},
+    { code: 'P003', name: 'Box A', category: 'Box', quantity: 5, price: 20, date: new Date('2025-12-01')}
   ];
 
   filteredProducts = [...this.products];
 
   categoryOptions = [
-    { label: 'Stationery', value: 'Stationery' },
+    { label: 'Ice Cream', value: 'Ice Cream' },
     { label: 'Box', value: 'Box' }
   ];
 
@@ -176,6 +177,7 @@ export class InventoryComponent {
       category: '',
       quantity: 0,
       price: 0,
+      date: new Date(new Date().toISOString().split('T')[0]), 
       isNew: true
     };
 

@@ -13,17 +13,8 @@ app-sidebar-user {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: #DCDCDC;
   overflow-y: auto;
-}
-
-.top-navbar {
-  background-color: #D81B60;
-  padding: 15px 20px;
-  border-radius: 15px;
-  color: #fff;
-  font-size: 24px;
-  font-weight: bold;
 }
 
 .main-content {
@@ -51,7 +42,7 @@ app-sidebar-user {
   font-weight: bold;
   color: #D81B60;
 }
-
+  
 .main-content p-table td {
   font-size: 23px;
 }
@@ -80,7 +71,7 @@ app-sidebar-user {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
-  height: 680px;
+  height: 620px;
   
 }
 
@@ -208,10 +199,10 @@ app-sidebar-user {
 }
 
 .top-navbar {
-  background-color: #D81B60;
+  // background-color: #D81B60;
   padding: 15px 20px;
   border-radius: 15px;
-  color: #fff;
+  color: #D81B60;
   font-size: 24px;
   font-weight: bold;
 }
@@ -244,7 +235,7 @@ app-sidebar-user {
 
 .main-content p-table td {
   font-size: 23px;
-  border-bottom: 5px solid #D81B60;
+  border-bottom: 3px solid #D81B60;
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
@@ -399,4 +390,19 @@ tr.editing {
 
 // .btn-add:hover {
 //   background-color: #24a840f2;
+// }
+input[type="date"] {
+  width: 90%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 23px;
+  text-align: center;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+// input[type="date"]::-webkit-calendar-picker-indicator {
+//   opacity: 0;
+//   cursor: pointer;
 // }

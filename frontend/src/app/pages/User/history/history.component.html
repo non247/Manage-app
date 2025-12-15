@@ -32,7 +32,6 @@
   <button type="submit" class="btn-excel" style="margin-left: auto;">
     <i class="bi bi-filetype-xlsx"></i>
   </button>
-
 </div>
         <!-- <div class="header-row">
           <h1 class="title">List of History Products</h1>
@@ -56,8 +55,8 @@
           </div>
         </th> -->
         <p-table #dt [value]="filteredProducts" [rows]="10"
-          [globalFilterFields]="['name','category','quantity','price']" [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}" [scrollable]="true" scrollHeight="550px">
-
+          [globalFilterFields]="['name', 'category', 'quantity', 'price', 'date']"
+          [tableStyle]="{ 'table-layout': 'fixed', width: '100%' }" [scrollable]="true" scrollHeight="500px">
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="name">
@@ -87,6 +86,14 @@
                   <p-sortIcon field="price"></p-sortIcon>
                 </div>
               </th>
+
+              <th pSortableColumn="date">
+                <div class="flex items-center gap-2">
+                  Date
+                  <p-sortIcon field="date"></p-sortIcon>
+                </div>
+              </th>
+
               <th style="width: 12%"></th>
             </tr>
           </ng-template>
@@ -129,7 +136,17 @@
                 </ng-template>
               </td>
 
-              <td style="display: flex; gap: 8px; align-items: center;">
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editDate">
+                  {{ product.date | date:'dd/MM/yyyy' }}
+                </ng-container>
+
+                <ng-template #editDate>
+                  <input type="date" [(ngModel)]="editProduct.date" />
+                </ng-template>
+              </td>
+
+              <td style="display: flex; gap: 8px; align-items: center">
                 <button class="btn-edit" (click)="onEdit(i)" *ngIf="editIndex !== i">
                   <i class="pi pi-pen-to-square"></i>
                 </button>
@@ -142,13 +159,14 @@
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>
-
             </tr>
           </ng-template>
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="5"><i class="bi bi-emoji-frown-fill"></i> Not Found.</td>
+              <td colspan="5">
+                <i class="bi bi-emoji-frown-fill"></i> Not Found.
+              </td>
             </tr>
           </ng-template>
         </p-table>

@@ -35,7 +35,7 @@ export const routes: Routes = [
   // หน้าเริ่มต้น
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard',
     pathMatch: 'full',
   },
 
