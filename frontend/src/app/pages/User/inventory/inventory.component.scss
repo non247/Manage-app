@@ -148,17 +148,9 @@ app-sidebar-user {
 }
 
 /* input type number และ text */
-input[type="text"]
-{
-  width: 90%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 23px;
-  text-align: center; /* ตัวเลขตรงกลาง */
-}
-
-input[type="number"] {
+input[type="text"],
+input[type="number"],
+input[type="date"] {
   width: 90%;
   padding: 5px;
   border: 1px solid #ccc;
@@ -402,7 +394,114 @@ input[type="date"] {
   box-sizing: border-box;
 }
 
-// input[type="date"]::-webkit-calendar-picker-indicator {
-//   opacity: 0;
-//   cursor: pointer;
-// }
+/* Card */
+.create-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 520px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 2000;
+
+  opacity: 0;
+  animation: scaleFadeIn 0.3s ease forwards;
+}
+
+.create-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  color: #d81b60;
+}
+
+.create-card-body {
+  padding: 20px;
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.field.full {
+  grid-column: span 2;
+}
+
+.create-card-footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* Backdrop */
+.create-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+  animation: fadeIn 0.25s ease;
+}
+
+::ng-deep .swal2-container {
+  z-index: 3000 !important;
+}
+
+/* Animations */
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== CLOSE ANIMATION ===== */
+.create-card.closing {
+  animation: scaleFadeOut 0.25s ease forwards;
+}
+
+.create-backdrop.closing {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+/* ===== KEYFRAMES (CLOSE) ===== */
+@keyframes scaleFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}

@@ -53,12 +53,9 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   lowStockProducts = [
-    { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50 },
-    { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
-    { code: 'P003', name: 'Book', category: 'box', quantity: 5 },
-    { code: 'P001', name: 'Pen', category: 'Stationery', quantity: 50 },
-    { code: 'P002', name: 'Book', category: 'Stationery', quantity: 120 },
-    { code: 'P003', name: 'Book', category: 'box', quantity: 5 }
+    { code: 'P001', name: 'Vanilla', category: 'Ice Cream', quantity: 50, price: 10, date: new Date('2025-12-01')},
+    { code: 'P002', name: 'chocolate', category: 'Ice Cream', quantity: 120, price: 30, date: new Date('2025-12-01')},
+    { code: 'P003', name: 'Box A', category: 'Box', quantity: 5, price: 20, date: new Date('2025-12-01')}
   ];
 
  createSalesChart() {
@@ -93,9 +90,9 @@ export class DashboardComponent implements AfterViewInit {
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Pen', 'Book', 'Box'],
+        labels: ['Vanilla', 'chocolate', 'Box'],
         datasets: [{
-          data: [120, 95, 60],
+          data: [120, 50, 5],
           backgroundColor: ['#D81B60', '#F06292', '#F8BBD0'],
           borderRadius: 8
         }]

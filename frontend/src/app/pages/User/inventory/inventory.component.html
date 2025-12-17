@@ -8,24 +8,14 @@
       </header>
 
       <div class="table-box">
-        <div class="header-row" style="
-            display: flex;
-            align-items: center;
-            width: 100%;
-            position: relative;
-          ">
-          <!-- ซ้าย -->
-          <h1 style="color: #d81b60; margin: 0">List of Products</h1>
 
-          <!-- กลาง (search bar) -->
-          <div style="
-              position: absolute;
-              left: 50%;
-              transform: translateX(-50%);
-              display: flex;
-              align-items: center;
-              gap: 10px;
-            ">
+        <!-- HEADER -->
+        <div class="header-row" style="display:flex; align-items:center; width:100%; position:relative;">
+
+          <h1 style="color:#d81b60; margin:0">List of Products</h1>
+
+          <!-- SEARCH -->
+          <div style="position:absolute; left:50%; transform:translateX(-50%);">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
               <input pInputText type="text" placeholder="Search products"
@@ -33,132 +23,163 @@
             </span>
           </div>
 
-          <!-- ขวา -->
-          <button type="button" class="btn-add" style="margin-left: auto" (click)="onCreate()">
+          <!-- CREATE -->
+          <button class="btn-add" style="margin-left:auto" (click)="showCreateForm = !showCreateForm">
             <i class="bi bi-plus-circle-fill"></i> CREATE NEW
           </button>
         </div>
 
+        <!-- BACKDROP -->
+        <div *ngIf="showCreateForm"
+     class="create-backdrop"
+     [class.closing]="isClosing"
+     (click)="onCreateCancel()">
+</div>
+
+        <!-- ✅ CREATE FORM : CARD -->
+        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
+
+          <div class="create-card-header">
+            <h2>Create New Product</h2>
+          </div>
+
+          <div class="create-card-body">
+            <div class="create-grid">
+
+              <div class="field">
+                <label>Name</label>
+                <input type="text" pInputText [(ngModel)]="newProduct.name" />
+              </div>
+
+              <div class="field">
+                <label>Category</label>
+                <input type="text" pInputText [(ngModel)]="newProduct.category" />
+              </div>
+
+              <div class="field">
+                <label>Quantity</label>
+                <input type="number" pInputText [(ngModel)]="newProduct.quantity" min="0" />
+              </div>
+
+              <div class="field">
+                <label>Price</label>
+                <input type="number" pInputText [(ngModel)]="newProduct.price" min="0" />
+              </div>
+
+              <div class="field">
+                <label>Date</label>
+                <input type="date" [(ngModel)]="newProduct.date" />
+              </div>
+
+            </div>
+          </div>
+
+          <div class="create-card-footer">
+            <button class="btn-save" (click)="onCreateSave()">
+              <i class="pi pi-check"></i> Save
+            </button>
+
+            <button class="btn-cancel" (click)="onCreateCancel()">
+              <i class="pi pi-times"></i> Cancel
+            </button>
+          </div>
+
+        </div>
+
+        <!-- TABLE -->
         <p-table #dt [value]="filteredProducts" [rows]="10"
-          [globalFilterFields]="['name', 'category', 'quantity', 'price', 'date']"
-          [tableStyle]="{ 'table-layout': 'fixed', width: '100%' }" [scrollable]="true" scrollHeight="500px">
+          [globalFilterFields]="['name','category','quantity','price','date']"
+          [tableStyle]="{ width:'100%', 'table-layout':'fixed' }" [scrollable]="true" scrollHeight="500px">
+
+          <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="name">
-                <div class="flex items-center gap-2">
-                  Name
-                  <p-sortIcon field="name"></p-sortIcon>
-                </div>
+              <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon>
               </th>
-
-              <th pSortableColumn="category">
-                <div class="flex items-center gap-2">
-                  Category
-                  <p-sortIcon field="category"></p-sortIcon>
-                </div>
+              <th pSortableColumn="category">Category <p-sortIcon field="category"></p-sortIcon>
               </th>
-
-              <th pSortableColumn="quantity">
-                <div class="flex items-center gap-2">
-                  Quantity
-                  <p-sortIcon field="quantity"></p-sortIcon>
-                </div>
+              <th pSortableColumn="quantity">Quantity <p-sortIcon field="quantity"></p-sortIcon>
               </th>
-
-              <th pSortableColumn="price">
-                <div class="flex items-center gap-2">
-                  Price
-                  <p-sortIcon field="price"></p-sortIcon>
-                </div>
+              <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon>
               </th>
-
-              <th pSortableColumn="date">
-                <div class="flex items-center gap-2">
-                  Date
-                  <p-sortIcon field="date"></p-sortIcon>
-                </div>
+              <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon>
               </th>
-
-              <th style="width: 12%"></th>
+              <th style="width:12%"></th>
             </tr>
           </ng-template>
 
+          <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
+              <!-- NAME -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
                 </ng-container>
                 <ng-template #editName>
-                  <input type="text" [(ngModel)]="editProduct.name" />
+                  <input type="text" [(ngModel)]="editProduct!.name" />
                 </ng-template>
               </td>
 
+              <!-- CATEGORY -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editCategory">
                   {{ product.category }}
                 </ng-container>
                 <ng-template #editCategory>
-                  <input type="text" [(ngModel)]="editProduct.category" />
+                  <input type="text" [(ngModel)]="editProduct!.category" />
                 </ng-template>
               </td>
 
+              <!-- QUANTITY -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editQty">
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input type="number" [(ngModel)]="editProduct.quantity" min="0" />
+                  <input type="number" [(ngModel)]="editProduct!.quantity" />
                 </ng-template>
               </td>
 
+              <!-- PRICE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editPrice">
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input type="number" [(ngModel)]="editProduct.price" min="0" />
+                  <input type="number" [(ngModel)]="editProduct!.price" />
                 </ng-template>
               </td>
 
+              <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
                   {{ product.date | date:'dd/MM/yyyy' }}
                 </ng-container>
-
                 <ng-template #editDate>
-                  <input type="date" [(ngModel)]="editProduct.date" />
+                  <input type="date" [(ngModel)]="editProduct!.date" />
                 </ng-template>
               </td>
 
-              <td style="display: flex; gap: 8px; align-items: center">
-                <button class="btn-edit" (click)="onEdit(i)" *ngIf="editIndex !== i">
+              <!-- ACTION -->
+              <td style="display:flex; gap:8px">
+                <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
                   <i class="pi pi-pen-to-square"></i>
                 </button>
-
-                <button class="btn-delete" (click)="onDelete(i)" *ngIf="editIndex !== i">
+                <button *ngIf="editIndex !== i" class="btn-delete" (click)="onDelete(i)">
                   <i class="bi bi-trash3-fill"></i>
                 </button>
-
-                <button class="btn-save" (click)="onSave(i)" *ngIf="editIndex === i">
+                <button *ngIf="editIndex === i" class="btn-save" (click)="onSave(i)">
                   <i class="pi pi-check-square"></i>
                 </button>
-
-                <button class="btn-cancel" (click)="onCancel()" *ngIf="editIndex === i">
+                <button *ngIf="editIndex === i" class="btn-cancel" (click)="onCancel()">
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>
             </tr>
           </ng-template>
-
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="5">
-                <i class="bi bi-emoji-frown-fill"></i> Not Found.
-              </td>
-            </tr>
-          </ng-template>
         </p-table>
+
       </div>
     </div>
   </div>
