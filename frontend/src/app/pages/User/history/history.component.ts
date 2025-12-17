@@ -200,7 +200,7 @@ export class HistoryComponent {
     return !!(p.name && p.category && p.quantity >= 0 && p.price >= 0 && p.date);
   }
 
-  fileName = 'ExcelSheet.xlsx';
+fileName = 'ExcelSheet.xlsx';
 
 exportToExcel() {
   if (!this.selectedProducts || this.selectedProducts.length === 0) {
