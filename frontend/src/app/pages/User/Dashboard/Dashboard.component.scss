@@ -52,33 +52,32 @@ app-sidebar-user {
   // background-color: #D81B60;
   padding: 15px 20px;
   border-radius: 15px;
-  color: #D81B60;
+  color: #d81b60;
   font-size: 24px;
   font-weight: bold;
 }
 
 .main-content {
- padding: 20px;
- margin-left: 90px;
+  padding: 20px;
+  margin-left: 90px;
 }
 
 .top-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr); // repeat(n, 1fr) แสดงจำนวนช่อง
   gap: 20px;
-
 }
 
 .card {
-  background-color: #FFD6E0;
+  background-color: #ffd6e0;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   text-align: center;
 
   h3 {
     margin-bottom: 10px;
-    color: #D81B60;
+    color: #d81b60;
   }
 
   p {
@@ -97,7 +96,7 @@ app-sidebar-user {
     background-color: #fff;
     border-radius: 15px;
     height: 500px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
   }
 }
@@ -116,7 +115,7 @@ app-sidebar-user {
 }
 
 .main-content p-table th {
-  background-color: #D81B60;
+  background-color: #d81b60;
   /* สีพื้นหลังของหัวตาราง */
   font-size: 30px;
   font-weight: bold;
@@ -125,17 +124,17 @@ app-sidebar-user {
 
 .main-content p-table td {
   font-size: 23px;
-  border-bottom: 3px solid #D81B60;
+  border-bottom: 3px solid #d81b60;
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  background-color: #FFD6E0 !important;
+  background-color: #ffd6e0 !important;
   /* สีแถวที่ 1,3,5... */
   color: rgb(0, 0, 0);
 }
 
 ::ng-deep .p-datatable tbody tr:nth-child(even) td {
-  background-color: #FFD6E0 !important;
+  background-color: #ffd6e0 !important;
   /* สีแถวที่ 2,4,6... */
 }
 
@@ -148,9 +147,9 @@ app-sidebar-user {
 
 .table-box {
   padding: 20px;
-  background: #FFD6E0;
+  background: #ffd6e0;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
-  height: 450px; 
+  height: 450px;
 }

@@ -1,7 +1,4 @@
-<app-sidebar-user></app-sidebar-user>
 <div class="layout">
-
-
   <div class="main-area">
     <div class="main-content">
       <header class="top-navbar">
@@ -36,25 +33,28 @@
       </div>
 
       <div class="lower-section">
-
         <!-- สินค้าใกล้หมด -->
         <div class="table-box">
           <div class="header-row">
-            <h3 class="title" style="color: #D81B60">Top Product</h3>
+            <h3 class="title" style="color: #d81b60">Top Product</h3>
           </div>
 
-          <p-table [value]="lowStockProducts" [scrollable]="true" scrollHeight="350px"
-            [tableStyle]="{'min-width': '60rem'}">
+          <p-table
+            [value]="lowStockProducts"
+            [scrollable]="true"
+            scrollHeight="350px"
+            [tableStyle]="{ 'min-width': '60rem' }"
+          >
             <ng-template #header>
               <tr>
-                <th pSortableColumn="code" style="width:20%">
+                <th pSortableColumn="code" style="width: 20%" scope="col">
                   <div class="flex items-center gap-2">
                     Code
                     <p-sortIcon field="code" />
                   </div>
                 </th>
 
-                <th pSortableColumn="quantity" style="width:20%">
+                <th pSortableColumn="quantity" style="width: 20%" scope="col">
                   <div class="flex items-center gap-2">
                     Quantity
                     <p-sortIcon field="quantity" />
@@ -70,16 +70,8 @@
               </tr>
             </ng-template>
           </p-table>
-
         </div>
       </div>
     </div>
-
-    <!-- <div class="table-box">
-    <h3>สินค้าใกล้หมดอายุ</h3>
-    <table>
-      <tr><th>สินค้า</th><th>วันหมดอายุ</th></tr>
-      <tr><td>นมสด 2L</td><td>2025-12-10</td></tr>
-      <tr><td>วิปครีม</td><td>2025-12-15</td></tr>
-    </table>
-  </div> -->
+  </div>
+</div>

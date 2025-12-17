@@ -1,16 +1,25 @@
-<button class="hamburger" style="font-size: 30px;" (click)="toggleSidebar()" [class.collapsed]="isCollapsed">
+<button
+  class="hamburger"
+  style="font-size: 30px"
+  (click)="toggleSidebar()"
+  [class.collapsed]="isCollapsed"
+>
   <i class="bi bi-list"></i>
 </button>
 
-<div class="sidebar" [class.collapsed]="isCollapsed" [class.no-anim]="disableAnimation">
-
+<div
+  class="sidebar"
+  [class.collapsed]="isCollapsed"
+  [class.no-anim]="disableAnimation"
+>
   <div class="top">
     <ul class="nav-links">
-
       <li routerLinkActive="active">
         <a (click)="navigateTo('/dashboard')">
-          <i class="bi bi-grid-fill" style="font-size: 30px;"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Dashboard</span>
+          <i class="bi bi-grid-fill" style="font-size: 30px"></i>
+          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px"
+            >Dashboard</span
+          >
         </a>
       </li>
 
@@ -23,32 +32,28 @@
 
       <li routerLinkActive="active">
         <a (click)="navigateTo('/inventory')">
-          <i class="pi pi-warehouse" style="font-size: 30px;"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Inventory</span>
+          <i class="pi pi-warehouse" style="font-size: 30px"></i>
+          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px"
+            >Inventory</span
+          >
         </a>
       </li>
 
       <li routerLinkActive="active">
         <a (click)="navigateTo('/history')">
-          <i class="bi bi-clock-fill" style="font-size: 30px;"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">History</span>
+          <i class="bi bi-clock-fill" style="font-size: 30px"></i>
+          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px"
+            >History</span
+          >
         </a>
       </li>
 
-      <!-- <li routerLinkActive="active">
-        <a (click)="navigateTo('/setting')">
-          <i class="bi bi-gear-fill" style="font-size: 30px;"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Setting</span>
-        </a>
-      </li> -->
-
-      <li class="logout">
+      <!-- <li class="logout">
         <a (click)="logout()">
           <i class="bi bi-box-arrow-right" style="font-size: 30px;"></i>
           <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Log out</span>
         </a>
-      </li>
-
+      </li> -->
     </ul>
   </div>
 </div>

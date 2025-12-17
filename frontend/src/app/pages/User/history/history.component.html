@@ -1,7 +1,4 @@
-<app-sidebar-user></app-sidebar-user>
-
 <div class="layout">
-
   <!-- Main content -->
   <div class="main-area">
     <div class="main-content">
@@ -9,49 +6,82 @@
         <h1>History</h1>
       </header>
 
-
       <!-- ✅ ใส่ table ในกล่อง table-box -->
-
       <div class="table-box">
-        <div class="header-row" style="display: flex; align-items: center; width: 100%; position: relative;">
-
+        <div
+          class="header-row"
+          style="
+            display: flex;
+            align-items: center;
+            width: 100%;
+            position: relative;
+          "
+        >
           <!-- ซ้าย: Title -->
-          <h1 style="color: #D81B60; margin: 0;">List of History Products</h1>
+          <h1 style="color: #d81b60; margin: 0">List of History Products</h1>
 
           <!-- กลาง: Search Bar -->
-          <div class="search-overlay" style="position: absolute; left: 50%; transform: translateX(-50%);
-           display: flex; align-items: center; gap: 10px;">
+          <div
+            class="search-overlay"
+            style="
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            "
+          >
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search products"
-                (input)="dt.filterGlobal($event.target.value, 'contains')" />
+              <input
+                pInputText
+                type="text"
+                placeholder="Search products"
+                (input)="dt.filterGlobal($event.target.value, 'contains')"
+              />
             </span>
           </div>
 
           <!-- ขวา: ปุ่ม Excel -->
-          <button type="button" class="btn-excel" style="margin-left: auto;" (click)="exportToExcel()">
-  <i class="bi bi-filetype-xlsx"></i>
-</button>
+          <button
+            type="button"
+            class="btn-excel"
+            style="margin-left: auto"
+            (click)="exportToExcel()"
+          >
+            <i class="bi bi-filetype-xlsx"></i>
+          </button>
           <!-- CREATE -->
-          <button class="btn-add" style="margin-left: 10px;" (click)="showCreateForm = !showCreateForm">
+          <button
+            class="btn-add"
+            style="margin-left: 10px"
+            (click)="showCreateForm = !showCreateForm"
+          >
             <i class="bi bi-plus-circle-fill"></i> CREATE NEW
           </button>
         </div>
 
         <!-- BACKDROP -->
-        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
-        </div>
+        <div
+          *ngIf="showCreateForm"
+          class="create-backdrop"
+          [class.closing]="isClosing"
+          (click)="onCreateCancel()"
+        ></div>
 
         <!-- ✅ CREATE FORM : CARD -->
-        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
-
+        <div
+          *ngIf="showCreateForm"
+          class="create-card"
+          [class.closing]="isClosing"
+        >
           <div class="create-card-header">
             <h2>Create New History Product</h2>
           </div>
 
           <div class="create-card-body">
             <div class="create-grid">
-
               <div class="field">
                 <label>Name</label>
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
@@ -59,24 +89,37 @@
 
               <div class="field">
                 <label>Category</label>
-                <input type="text" pInputText [(ngModel)]="newProduct.category" />
+                <input
+                  type="text"
+                  pInputText
+                  [(ngModel)]="newProduct.category"
+                />
               </div>
 
               <div class="field">
                 <label>Quantity</label>
-                <input type="number" pInputText [(ngModel)]="newProduct.quantity" min="0" />
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newProduct.quantity"
+                  min="0"
+                />
               </div>
 
               <div class="field">
                 <label>Price</label>
-                <input type="number" pInputText [(ngModel)]="newProduct.price" min="0" />
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newProduct.price"
+                  min="0"
+                />
               </div>
 
               <div class="field">
                 <label>Date</label>
                 <input type="date" [(ngModel)]="newProduct.date" />
               </div>
-
             </div>
           </div>
 
@@ -89,39 +132,38 @@
               <i class="bi bi-x-square"></i> Cancel
             </button>
           </div>
-
-
         </div>
-        <!-- <div class="header-row">
-          <h1 class="title">List of History Products</h1>
-        <div class="flex">
-          <span class="p-input-icon-left search-wrapper">
-            <i class="pi pi-search"></i>
-            <input pInputText type="text" placeholder="Search products"
-              (input)="dt.filterGlobal($event.target.value, 'contains')" />
-          </span>
-          <button type="submit" class="btn-excel">
-            <i class="bi bi-filetype-xlsx"></i>
-          </button>
-        </div>
-        </div>
-      -->
 
-        <!-- <th pSortableColumn="code" style="width:16.66%">
-          <div class="flex items-center gap-2">
-            Code
-            <p-sortIcon field="code" />
-          </div>
-        </th> -->
-        <p-table #dt [value]="filteredProducts" dataKey="code" selectionMode="multiple" [metaKeySelection]="false"
-          [rows]="10" [globalFilterFields]="['name','category','quantity','price','date']" [scrollable]="true"
-          scrollHeight="500px" [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
-
+        <p-table
+          #dt
+          [value]="filteredProducts"
+          dataKey="code"
+          selectionMode="multiple"
+          [metaKeySelection]="false"
+          [rows]="10"
+          [globalFilterFields]="[
+            'name',
+            'category',
+            'quantity',
+            'price',
+            'date',
+          ]"
+          [scrollable]="true"
+          scrollHeight="500px"
+          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+        >
           <ng-template pTemplate="header">
             <tr>
-              <th style="text-align:center; width: 10%">
-                <input type="checkbox" [checked]="selectedProducts.length === filteredProducts.length"
-                  (change)="onSelectAll($event)" [disabled]="editIndex !== null" style="width: 30px; height: 26px;" />
+              <th style="text-align: center; width: 10%">
+                <input
+                  type="checkbox"
+                  [checked]="
+                    selectedProducts.length === filteredProducts.length
+                  "
+                  (change)="onSelectAll($event)"
+                  [disabled]="editIndex !== null"
+                  style="width: 30px; height: 26px"
+                />
               </th>
 
               <th pSortableColumn="name">
@@ -165,10 +207,9 @@
 
           <!-- <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
-
-                 <td style="text-align:center">
-  <p-tableCheckbox [value]="product"></p-tableCheckbox>
-</td>
+              <td style="text-align: center">
+                <p-tableCheckbox [value]="product"></p-tableCheckbox>
+              </td>
               <td>
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
@@ -192,7 +233,11 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input type="number" [(ngModel)]="editProduct.quantity" min="0" />
+                  <input
+                    type="number"
+                    [(ngModel)]="editProduct.quantity"
+                    min="0"
+                  />
                 </ng-template>
               </td>
 
@@ -201,13 +246,17 @@
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input type="number" [(ngModel)]="editProduct.price" min="0" />
+                  <input
+                    type="number"
+                    [(ngModel)]="editProduct.price"
+                    min="0"
+                  />
                 </ng-template>
               </td>
 
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date:'dd/MM/yyyy' }}
+                  {{ product.date | date: 'dd/MM/yyyy' }}
                 </ng-container>
 
                 <ng-template #editDate>
@@ -216,26 +265,43 @@
               </td>
 
               <td style="display: flex; gap: 8px; align-items: center">
-                <button class="btn-edit" (click)="onEdit(i)" *ngIf="editIndex !== i">
+                <button
+                  class="btn-edit"
+                  (click)="onEdit(i)"
+                  *ngIf="editIndex !== i"
+                >
                   <i class="pi pi-pen-to-square"></i>
                 </button>
 
-                <button class="btn-save" (click)="onSave(i)" *ngIf="editIndex === i">
+                <button
+                  class="btn-save"
+                  (click)="onSave(i)"
+                  *ngIf="editIndex === i"
+                >
                   <i class="pi pi-check-square"></i>
                 </button>
 
-                <button class="btn-cancel" (click)="onCancel()" *ngIf="editIndex === i">
+                <button
+                  class="btn-cancel"
+                  (click)="onCancel()"
+                  *ngIf="editIndex === i"
+                >
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>
             </tr>
           </ng-template> -->
+
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
-              <td style="text-align:center">
-                <input type="checkbox" [checked]="selectedProducts.includes(product)"
-                  (change)="onCheckboxChange($event, product)" [disabled]="editIndex !== null"
-                  style="width: 24px; height: 24px;" />
+              <td style="text-align: center">
+                <input
+                  type="checkbox"
+                  [checked]="selectedProducts.includes(product)"
+                  (change)="onCheckboxChange($event, product)"
+                  [disabled]="editIndex !== null"
+                  style="width: 24px; height: 24px"
+                />
               </td>
               <!-- NAME -->
               <td>
@@ -279,8 +345,8 @@
 
               <!-- DATE -->
               <td>
-                <ng-container *ngIf="editIndex !== i;  else editDate">
-                  {{ product.date | date:'dd/MM/yyyy' }}
+                <ng-container *ngIf="editIndex !== i; else editDate">
+                  {{ product.date | date: 'dd/MM/yyyy' }}
                 </ng-container>
                 <ng-template #editDate>
                   <input type="date" [(ngModel)]="editProduct!.date" />
@@ -288,17 +354,33 @@
               </td>
 
               <!-- ACTION -->
-              <td style="display:flex; gap:8px">
-                <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
+              <td style="display: flex; gap: 8px">
+                <button
+                  *ngIf="editIndex !== i"
+                  class="btn-edit"
+                  (click)="onEdit(i)"
+                >
                   <i class="pi pi-pen-to-square"></i>
                 </button>
-                <button *ngIf="editIndex !== i" class="btn-delete" (click)="onDelete(i)">
+                <button
+                  *ngIf="editIndex !== i"
+                  class="btn-delete"
+                  (click)="onDelete(i)"
+                >
                   <i class="bi bi-trash3-fill"></i>
                 </button>
-                <button *ngIf="editIndex === i" class="btn-save" (click)="onSave(i)">
+                <button
+                  *ngIf="editIndex === i"
+                  class="btn-save"
+                  (click)="onSave(i)"
+                >
                   <i class="pi pi-check-square"></i>
                 </button>
-                <button *ngIf="editIndex === i" class="btn-cancel" (click)="onCancel()">
+                <button
+                  *ngIf="editIndex === i"
+                  class="btn-cancel"
+                  (click)="onCancel()"
+                >
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>
@@ -307,7 +389,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7" style="color: #D81B60;">
+              <td colspan="7" style="color: #d81b60">
                 <i class="bi bi-emoji-frown-fill"></i> Not Found.
               </td>
             </tr>

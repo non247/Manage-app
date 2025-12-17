@@ -1,5 +1,3 @@
-<app-sidebar-user></app-sidebar-user>
-
 <div class="layout">
   <div class="main-area">
     <div class="main-content">
@@ -8,42 +6,70 @@
       </header>
 
       <div class="table-box">
-
         <!-- HEADER -->
-        <div class="header-row" style="display:flex; align-items:center; width:100%; position:relative;">
-
-          <h1 style="color:#d81b60; margin:0">List of Products</h1>
+        <div
+          class="header-row"
+          style="
+            display: flex;
+            align-items: center;
+            width: 100%;
+            position: relative;
+          "
+        >
+          <h1 style="color: #d81b60; margin: 0">List of Products</h1>
 
           <!-- SEARCH -->
           <div
-            style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px;">
+            style="
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            "
+          >
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search products"
-                (input)="dt.filterGlobal($event.target.value, 'contains')" />
+              <input
+                pInputText
+                type="text"
+                placeholder="Search products"
+                (input)="dt.filterGlobal($event.target.value, 'contains')"
+              />
             </span>
           </div>
 
           <!-- CREATE -->
-          <button class="btn-add" style="margin-left:auto" (click)="showCreateForm = !showCreateForm">
+          <button
+            class="btn-add"
+            style="margin-left: auto"
+            (click)="showCreateForm = !showCreateForm"
+          >
             <i class="bi bi-plus-circle-fill"></i> CREATE NEW
           </button>
         </div>
 
         <!-- BACKDROP -->
-        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
-        </div>
+        <div
+          *ngIf="showCreateForm"
+          class="create-backdrop"
+          [class.closing]="isClosing"
+          (click)="onCreateCancel()"
+        ></div>
 
         <!-- ✅ CREATE FORM : CARD -->
-        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
-
+        <div
+          *ngIf="showCreateForm"
+          class="create-card"
+          [class.closing]="isClosing"
+        >
           <div class="create-card-header">
             <h2>Create New Product</h2>
           </div>
 
           <div class="create-card-body">
             <div class="create-grid">
-
               <div class="field">
                 <label>Name</label>
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
@@ -51,24 +77,37 @@
 
               <div class="field">
                 <label>Category</label>
-                <input type="text" pInputText [(ngModel)]="newProduct.category" />
+                <input
+                  type="text"
+                  pInputText
+                  [(ngModel)]="newProduct.category"
+                />
               </div>
 
               <div class="field">
                 <label>Quantity</label>
-                <input type="number" pInputText [(ngModel)]="newProduct.quantity" min="0" />
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newProduct.quantity"
+                  min="0"
+                />
               </div>
 
               <div class="field">
                 <label>Price</label>
-                <input type="number" pInputText [(ngModel)]="newProduct.price" min="0" />
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newProduct.price"
+                  min="0"
+                />
               </div>
 
               <div class="field">
                 <label>Date</label>
                 <input type="date" [(ngModel)]="newProduct.date" />
               </div>
-
             </div>
           </div>
 
@@ -81,28 +120,43 @@
               <i class="bi bi-x-square"></i> Cancel
             </button>
           </div>
-
         </div>
 
         <!-- TABLE -->
-        <p-table #dt [value]="filteredProducts" [rows]="10"
-          [globalFilterFields]="['name','category','quantity','price','date']"
-          [tableStyle]="{ width:'100%', 'table-layout':'fixed' }" [scrollable]="true" scrollHeight="500px">
-
+        <p-table
+          #dt
+          [value]="filteredProducts"
+          [rows]="10"
+          [globalFilterFields]="[
+            'name',
+            'category',
+            'quantity',
+            'price',
+            'date',
+          ]"
+          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+          [scrollable]="true"
+          scrollHeight="500px"
+        >
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon>
+              <th pSortableColumn="name">
+                Name <p-sortIcon field="name"></p-sortIcon>
               </th>
-              <th pSortableColumn="category">Category <p-sortIcon field="category"></p-sortIcon>
+              <th pSortableColumn="category">
+                Category <p-sortIcon field="category"></p-sortIcon>
               </th>
-              <th pSortableColumn="quantity">Quantity <p-sortIcon field="quantity"></p-sortIcon>
+              <th pSortableColumn="quantity">
+                Quantity <p-sortIcon field="quantity"></p-sortIcon>
               </th>
-              <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon>
+              <th pSortableColumn="price">
+                Price <p-sortIcon field="price"></p-sortIcon>
               </th>
-              <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon>
+              <th pSortableColumn="date">
+                Date <p-sortIcon field="date"></p-sortIcon>
               </th>
-              <th style="width:12%"></th>
+              <th style="width: 12%"></th>
             </tr>
           </ng-template>
 
@@ -152,7 +206,7 @@
               <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date:'dd/MM/yyyy' }}
+                  {{ product.date | date: 'dd/MM/yyyy' }}
                 </ng-container>
                 <ng-template #editDate>
                   <input type="date" [(ngModel)]="editProduct!.date" />
@@ -160,17 +214,33 @@
               </td>
 
               <!-- ACTION -->
-              <td style="display:flex; gap:8px">
-                <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
+              <td style="display: flex; gap: 8px">
+                <button
+                  *ngIf="editIndex !== i"
+                  class="btn-edit"
+                  (click)="onEdit(i)"
+                >
                   <i class="pi pi-pen-to-square"></i>
                 </button>
-                <button *ngIf="editIndex !== i" class="btn-delete" (click)="onDelete(i)">
+                <button
+                  *ngIf="editIndex !== i"
+                  class="btn-delete"
+                  (click)="onDelete(i)"
+                >
                   <i class="bi bi-trash3-fill"></i>
                 </button>
-                <button *ngIf="editIndex === i" class="btn-save" (click)="onSave(i)">
+                <button
+                  *ngIf="editIndex === i"
+                  class="btn-save"
+                  (click)="onSave(i)"
+                >
                   <i class="pi pi-check-square"></i>
                 </button>
-                <button *ngIf="editIndex === i" class="btn-cancel" (click)="onCancel()">
+                <button
+                  *ngIf="editIndex === i"
+                  class="btn-cancel"
+                  (click)="onCancel()"
+                >
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>
@@ -179,14 +249,12 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6" style="color: #D81B60;">
+              <td colspan="6" style="color: #d81b60">
                 <i class="bi bi-emoji-frown-fill"></i> Not Found.
               </td>
             </tr>
           </ng-template>
-
         </p-table>
-
       </div>
     </div>
   </div>

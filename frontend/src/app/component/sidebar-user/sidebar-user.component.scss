@@ -4,14 +4,14 @@
   left: 0;
   width: 200px;
   height: 100vh;
-  z-index: 999;       /* สำคัญที่สุด – ทำให้ sidebar อยู่ด้านบน table */
+  z-index: 999; /* สำคัญที่สุด – ทำให้ sidebar อยู่ด้านบน table */
   pointer-events: auto;
 }
 
 .hamburger {
   position: fixed;
   z-index: 20;
-  background: #FFBDCB;
+  background: #ffbdcb;
   border: none;
   margin-top: 15px;
   margin-left: 15px;
@@ -21,7 +21,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.2s ease;
 
   a {
     display: flex;
@@ -57,7 +59,7 @@
   }
 
   &:active {
-    background-color: #D81B60;
+    background-color: #d81b60;
     border-radius: 20px;
     margin-right: 30px;
 
@@ -66,11 +68,11 @@
       color: #fff;
     }
   }
-    &.active {
-    background-color: #D81B60;
+  &.active {
+    background-color: #d81b60;
 
     a {
-      background-color: #D81B60;
+      background-color: #d81b60;
       color: #fff;
 
       i,
@@ -81,25 +83,23 @@
   }
 }
 
-
 .sidebar {
   position: fixed;
   height: 100vh;
   width: 212px; // ขนาดเต็ม
-  background-color: #FFBDCB;
+  background-color: #ffbdcb;
   padding-top: 85px;
   overflow: hidden;
   transition: width 0.3s ease-in-out;
 
   &.no-anim {
     transition: none !important; // ปิด animation ชั่วคราว
-   
   }
 
   &.collapsed {
     width: 95px;
 
-    // // hover ขยายชั่วคราว
+    // hover ขยายชั่วคราว
     // &:hover {
     //   width: 200px;
     // }
@@ -132,7 +132,9 @@
         padding: 10px; // ระยะคงที่ ไม่ขยับ
         color: rgb(74, 74, 74);
         text-decoration: none;
-        transition: background-color 0.2s, color 0.2s;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
         margin-left: 15px;
         border-radius: 20px;
         margin-right: 30px;
@@ -152,7 +154,7 @@
         }
 
         &:hover {
-          background-color: #D81B60;
+          background-color: #d81b60;
           border-radius: 20px;
           color: #fff;
           margin-right: 30px;
@@ -166,7 +168,7 @@
       }
 
       &.active a {
-        background-color: #D81B60;
+        background-color: #d81b60;
         color: #fff;
         border-radius: 20px;
         margin-right: 30px;
@@ -182,7 +184,5 @@
     .logout {
       margin-top: auto;
     }
-
   }
-  
 }
