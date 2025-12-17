@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
 
 interface Product {
@@ -155,6 +156,34 @@ export class HistoryComponent {
     });
   }
 
+//   // selectedProducts คือ array ของ products ที่เลือกจาก checkbox
+// exportToExcel() {
+//   if (!this.selectedProducts || this.selectedProducts.length === 0) {
+//     alert('Please select at least one product to export!');
+//     return;
+//   }
+
+//   // map ข้อมูลให้เป็นรูปแบบ table
+//   const worksheetData = this.selectedProducts.map(p => ({
+//     Name: p.name,
+//     Category: p.category,
+//     Quantity: p.quantity,
+//     Price: p.price,
+//     Date: p.date ? new Date(p.date).toLocaleDateString() : ''
+//   }));
+
+//   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(worksheetData);
+//   const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
+
+//   // สร้างไฟล์ Excel และดาวน์โหลด
+//   const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+//   const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+// }
+
+
+
+
   // ================= UTILS =================
   private getEmptyProduct(): Product {
     return {
@@ -170,4 +199,27 @@ export class HistoryComponent {
   private isValidProduct(p: Product): boolean {
     return !!(p.name && p.category && p.quantity >= 0 && p.price >= 0 && p.date);
   }
+
+  fileName = 'ExcelSheet.xlsx';
+
+exportToExcel() {
+  if (!this.selectedProducts || this.selectedProducts.length === 0) {
+    Swal.fire("Error", "Please select at least one product", "error");
+    return;
+  }
+
+  const worksheetData = this.selectedProducts.map(p => ({
+    Name: p.name,
+    Category: p.category,
+    Quantity: p.quantity,
+    Price: p.price,
+    Date: p.date ? new Date(p.date).toLocaleDateString() : ''
+  }));
+
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(worksheetData);
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Products');
+
+  XLSX.writeFile(wb, 'SelectedProducts.xlsx');
+}
 }

@@ -29,9 +29,9 @@
           </div>
 
           <!-- ขวา: ปุ่ม Excel -->
-          <button type="submit" class="btn-excel" style="margin-left: auto;">
-            <i class="bi bi-filetype-xlsx"></i>
-          </button>
+          <button type="button" class="btn-excel" style="margin-left: auto;" (click)="exportToExcel()">
+  <i class="bi bi-filetype-xlsx"></i>
+</button>
           <!-- CREATE -->
           <button class="btn-add" style="margin-left: 10px;" (click)="showCreateForm = !showCreateForm">
             <i class="bi bi-plus-circle-fill"></i> CREATE NEW
@@ -119,9 +119,9 @@
 
           <ng-template pTemplate="header">
             <tr>
-              <th style="text-align:center" style="width: 10%">
+              <th style="text-align:center; width: 10%">
                 <input type="checkbox" [checked]="selectedProducts.length === filteredProducts.length"
-                  (change)="onSelectAll($event)" style="width: 30px; height: 26px;"/>
+                  (change)="onSelectAll($event)" [disabled]="editIndex !== null" style="width: 30px; height: 26px;" />
               </th>
 
               <th pSortableColumn="name">
@@ -234,7 +234,8 @@
             <tr>
               <td style="text-align:center">
                 <input type="checkbox" [checked]="selectedProducts.includes(product)"
-                  (change)="onCheckboxChange($event, product)" style="width: 24px; height: 24px;" />
+                  (change)="onCheckboxChange($event, product)" [disabled]="editIndex !== null"
+                  style="width: 24px; height: 24px;" />
               </td>
               <!-- NAME -->
               <td>
@@ -278,7 +279,7 @@
 
               <!-- DATE -->
               <td>
-                <ng-container *ngIf="editIndex !== i; else editDate">
+                <ng-container *ngIf="editIndex !== i;  else editDate">
                   {{ product.date | date:'dd/MM/yyyy' }}
                 </ng-container>
                 <ng-template #editDate>
@@ -306,7 +307,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="5">
+              <td colspan="7">
                 <i class="bi bi-emoji-frown-fill"></i> Not Found.
               </td>
             </tr>
