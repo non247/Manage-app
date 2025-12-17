@@ -1,6 +1,180 @@
 .layout {
   display: flex;
   height: 100vh;
+  // overflow: hidden;
+}
+
+app-sidebar-user {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #DCDCDC;
+  overflow-y: auto;
+}
+
+.main-content {
+  padding: 20px;
+  margin-left: 90px;
+}
+
+.main-content p-table {
+  margin-top: 30px;
+}
+
+.main-content p-table th,
+.main-content p-table td {
+  text-align: center;
+  padding: 11px;
+  /* เพิ่มระยะห่างระหว่างข้อความ */
+  border-bottom: #e2e2e2;
+  // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
+}
+
+.main-content p-table th {
+  background-color: #FFD6E0;
+  /* สีพื้นหลังของหัวตาราง */
+  font-size: 30px;
+  font-weight: bold;
+  color: #D81B60;
+}
+  
+.main-content p-table td {
+  font-size: 23px;
+}
+
+::ng-deep .p-datatable tbody tr:nth-child(odd) td {
+  background-color: #D81B60 !important;
+  /* สีแถวที่ 1,3,5... */
+  color: white;
+}
+
+::ng-deep .p-datatable tbody tr:nth-child(even) td {
+  background-color: #FFD6E0 !important;
+  /* สีแถวที่ 2,4,6... */
+}
+
+/* ปรับแต่ง border และ padding เหมือนเดิม */
+::ng-deep .p-datatable tbody td {
+  text-align: center;
+  padding: 12px;
+  border-bottom: #e2e2e2;
+}
+
+.table-box {
+  padding: 20px;
+  background: #FFD6E0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+  height: 620px;
+  
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 20px;
+}
+
+.title {
+  color: #D81B60;
+  margin: 0;
+}
+
+::ng-deep .p-multiselect-panel {
+  position: fixed !important;
+  z-index: 99999 !important;
+
+  /* ป้องกันเต็มหน้าจอ */
+  width: max-content !important;
+  max-width: 300px !important;
+  left: auto !important;
+}
+
+// .btn-edit {
+//   background: #1E3A8A;
+//   color: rgb(255, 255, 255);
+//   font-size: 23px;
+//   border: none;
+//   padding: 7px;
+//   border-radius: 10px;
+
+//   cursor: pointer;
+// }
+
+// .btn-save {
+//   background: #1e8a39;
+//   color: rgb(255, 255, 255);
+//   border: none;
+//   font-size: 23px;
+//   padding: 7px;
+//   border-radius: 10px;
+//   cursor: pointer;
+// }
+.btn-edit,
+.btn-save,
+.btn-cancel {
+  display: inline-flex;           
+  justify-content: center;
+  align-items: center;
+  width: 130px;                  
+  font-size: 23px;                
+  padding: 7px;                 
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  border: 2px solid white;
+  gap: 10px;
+}
+
+/* สีเฉพาะของแต่ละปุ่ม */
+.btn-edit {
+  background: #1E3A8A;
+}
+
+.btn-save {
+  background: #1e8a39;
+}
+.btn-cancel {
+  background: #d21515;
+}
+
+/* input type number และ text */
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  width: 90%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 23px;
+  text-align: center; /* ตัวเลขตรงกลาง */
+}
+
+// /* ซ่อนปุ่ม spin ของ number input */
+// input[type="number"]::-webkit-inner-spin-button,
+// input[type="number"]::-webkit-outer-spin-button {
+//   -webkit-appearance: none;
+//   margin: 0;
+// }
+
+/* เน้นแถวที่กำลังแก้ไข */
+tr.editing {
+  background-color: #fff3cd;
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
+  // overflow: hidden;
 }
 
 app-sidebar-user {
@@ -74,25 +248,6 @@ app-sidebar-user {
   border-bottom: #e2e2e2;
 }
 
-.table-box {
-  padding: 20px;
-  background: #FFD6E0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-top: 20px;
-  height: 620px;
-  
-}
-
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 6px;
-  margin-bottom: 20px;
-
-}
-
 .title {
   color: #D81B60;
   margin: 0;
@@ -102,13 +257,14 @@ app-sidebar-user {
   position: fixed !important;
   z-index: 99999 !important;
 
-
+  /* ป้องกันเต็มหน้าจอ */
   width: max-content !important;
   max-width: 300px !important;
   left: auto !important;
 }
 
 .btn-edit,
+.btn-delete,
 .btn-save,
 .btn-cancel {
   display: inline-flex;           
@@ -130,6 +286,10 @@ app-sidebar-user {
   background: #1E3A8A;
 }
 
+.btn-delete{
+background: #d21515;
+}
+
 .btn-save {
   background: #1e8a39;
 }
@@ -137,6 +297,7 @@ app-sidebar-user {
   background: #d21515;
 }
 
+/* input type number และ text */
 input[type="text"]
 {
   width: 90%;
@@ -144,7 +305,7 @@ input[type="text"]
   border: 1px solid #ccc;
   border-radius: 7px;
   font-size: 23px;
-  text-align: center; 
+  text-align: center; /* ตัวเลขตรงกลาง */
 }
 
 input[type="number"] {
@@ -153,51 +314,19 @@ input[type="number"] {
   border: 1px solid #ccc;
   border-radius: 7px;
   font-size: 23px;
-  text-align: center; 
+  text-align: center; /* ตัวเลขตรงกลาง */
 }
 
-
-tr.editing {
-  background-color: #fff3cd;
-}
-
-
-.btn-excel {
-    background-color: #008000; 
-  color: #fff;
-  border: none;
-  border-radius: 20px;  
-  width: 100px;
-  height: 40px;
-  gap: 5px;
-  font-weight: bold;
-  white-space: nowrap;
-  cursor: pointer;
-   font-size: 30px;
-  // padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-//   background-color: #008000; 
-//   color: #fff;
-//   border: none;
-//   border-radius: 20px;  
-//   width: 48px;
-//   height: 40px;
-//   cursor: pointer;
-//    font-size: 28px;
-//   padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
-
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
+// /* ซ่อนปุ่ม spin ของ number input */
+// input[type="number"]::-webkit-inner-spin-button,
+// input[type="number"]::-webkit-outer-spin-button {
+//   -webkit-appearance: none;
+//   margin: 0;
 // }
 
-
-.btn-excel:hover {
-  background-color: #24a840f2;
+/* เน้นแถวที่กำลังแก้ไข */
+tr.editing {
+  background-color: #fff3cd;
 }
 
 .search-wrapper {
@@ -229,6 +358,31 @@ tr.editing {
   font-size: 1.2rem;
 }
 
+
+.btn-add {
+  
+  background-color: #D81B60; 
+  color: #fff;
+  border: none;
+  border-radius: 20px;  
+  width: 180px;
+  height: 40px;
+  gap: 5px;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+   font-size: 20px;
+  padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+// .btn-add:hover {
+//   background-color: #24a840f2;
+// }
 input[type="date"] {
   width: 90%;
   padding: 5px;
@@ -239,3 +393,528 @@ input[type="date"] {
   font-family: inherit;
   box-sizing: border-box;
 }
+
+/* Card */
+.create-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 520px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 2000;
+
+  opacity: 0;
+  animation: scaleFadeIn 0.3s ease forwards;
+}
+
+.create-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  color: #d81b60;
+}
+
+.create-card-body {
+  padding: 20px;
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.field.full {
+  grid-column: span 2;
+}
+
+.create-card-footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* Backdrop */
+.create-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+  animation: fadeIn 0.25s ease;
+}
+
+::ng-deep .swal2-container {
+  z-index: 3000 !important;
+}
+
+/* Animations */
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== CLOSE ANIMATION ===== */
+.create-card.closing {
+  animation: scaleFadeOut 0.25s ease forwards;
+}
+
+.create-backdrop.closing {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+/* ===== KEYFRAMES (CLOSE) ===== */
+@keyframes scaleFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.btn-excel {
+    background-color: #008000; 
+  color: #fff;
+  border: none;
+  border-radius: 20px;  
+  width: 100px;
+  height: 40px;
+  gap: 5px;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+   font-size: 30px;
+  // padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+// //   background-color: #008000; 
+// //   color: #fff;
+// //   border: none;
+// //   border-radius: 20px;  
+// //   width: 48px;
+// //   height: 40px;
+// //   cursor: pointer;
+// //    font-size: 28px;
+// //   padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+
+// //   display: flex;
+// //   align-items: center;
+// //   justify-content: center;
+// // }
+
+
+.btn-excel:hover {
+  background-color: #24a840f2;
+}
+
+::ng-deep .p-datatable .p-checkbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+::ng-deep .p-datatable .p-checkbox-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid #D81B60 !important;
+  background-color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .p-datatable .p-checkbox-box:hover {
+  border-color: #ad1457 !important;
+}
+
+::ng-deep .p-datatable .p-checkbox-box.p-highlight {
+  background-color: #D81B60 !important;
+  border-color: #D81B60 !important;
+}
+
+::ng-deep .p-datatable .p-checkbox-icon {
+  color: #ffffff !important;
+  font-size: 14px;
+}
+
+/* header checkbox */
+::ng-deep .p-datatable thead .p-checkbox-box {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+::ng-deep .p-datatable thead .p-checkbox-box.p-highlight {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+::ng-deep .p-datatable thead .p-checkbox-icon {
+  color: #D81B60 !important;
+}
+
+::ng-deep .p-checkbox,
+::ng-deep .p-checkbox-box {
+  pointer-events: auto !important;
+  z-index: 10;
+}
+
+.header-row {
+  pointer-events: none;
+}
+
+.header-row * {
+  pointer-events: auto;
+}
+
+.search-overlay {
+  pointer-events: auto; /* input ใช้งานได้ */
+}
+
+.search-overlay::before {
+  pointer-events: none;
+}
+
+
+// .layout {
+//   display: flex;
+//   height: 100vh;
+// }
+
+// app-sidebar-user {
+//   width: 200px;
+//   flex-shrink: 0;
+// }
+
+// .main-area {
+//   flex: 1;
+//   display: flex;
+//   flex-direction: column;
+//   background-color: #ffffff;
+//   overflow-y: auto;
+// }
+
+// .top-navbar {
+//   // background-color: #D81B60;
+//   padding: 15px 20px;
+//   border-radius: 15px;
+//   color: #D81B60;
+//   font-size: 24px;
+//   font-weight: bold;
+// }
+
+// .main-content {
+//   padding: 20px;
+//   margin-left: 90px;
+// }
+
+// .main-content p-table {
+//   margin-top: 30px;
+// }
+
+// .main-content p-table th,
+// .main-content p-table td {
+//   text-align: center;
+//   padding: 11px;
+//   /* เพิ่มระยะห่างระหว่างข้อความ */
+//   border-bottom: #e2e2e2;
+//   // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
+// }
+
+// .main-content p-table th {
+//   background-color: #D81B60;
+//   /* สีพื้นหลังของหัวตาราง */
+//   font-size: 30px;
+//   font-weight: bold;
+//   color: #ffffff;
+// }
+
+// .main-content p-table td {
+//   font-size: 23px;
+//   border-bottom: 3px solid #D81B60;
+// }
+
+// ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
+//   background-color: #FFD6E0 !important;
+//   /* สีแถวที่ 1,3,5... */
+//   color: rgb(0, 0, 0);
+// }
+
+// ::ng-deep .p-datatable tbody tr:nth-child(even) td {
+//   background-color: #FFD6E0 !important;
+//   /* สีแถวที่ 2,4,6... */
+// }
+
+// /* ปรับแต่ง border และ padding เหมือนเดิม */
+// ::ng-deep .p-datatable tbody td {
+//   text-align: center;
+//   padding: 12px;
+//   border-bottom: #e2e2e2;
+// }
+
+// .table-box {
+//   padding: 20px;
+//   background: #FFD6E0;
+//   border-radius: 12px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+//   margin-top: 20px;
+//   height: 620px;
+  
+// }
+
+// .header-row {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   margin-top: 6px;
+//   margin-bottom: 20px;
+  
+// }
+
+// .title {
+//   color: #D81B60;
+//   margin: 0;
+// }
+
+// ::ng-deep .p-multiselect-panel {
+//   position: fixed !important;
+//   z-index: 99999 !important;
+
+
+//   width: max-content !important;
+//   max-width: 300px !important;
+//   left: auto !important;
+// }
+
+// .btn-edit,
+// .btn-save,
+// .btn-cancel {
+//   display: inline-flex;           
+//   justify-content: center;
+//   align-items: center;
+//   width: 130px;                  
+//   font-size: 23px;                
+//   padding: 7px;                 
+//   border-radius: 10px;
+//   border: none;
+//   cursor: pointer;
+//   color: #fff;
+//   // border: 2px solid white;
+//   gap: 10px;
+// }
+
+// /* สีเฉพาะของแต่ละปุ่ม */
+// .btn-edit {
+//   background: #1E3A8A;
+// }
+
+// .btn-save {
+//   background: #1e8a39;
+// }
+// .btn-cancel {
+//   background: #d21515;
+// }
+
+// input[type="text"]
+// {
+//   width: 90%;
+//   padding: 5px;
+//   border: 1px solid #ccc;
+//   border-radius: 7px;
+//   font-size: 23px;
+//   text-align: center; 
+// }
+
+// input[type="number"] {
+//   width: 90%;
+//   padding: 5px;
+//   border: 1px solid #ccc;
+//   border-radius: 7px;
+//   font-size: 23px;
+//   text-align: center; 
+// }
+
+
+// tr.editing {
+//   background-color: #fff3cd;
+// }
+
+
+// .btn-excel {
+//     background-color: #008000; 
+//   color: #fff;
+//   border: none;
+//   border-radius: 20px;  
+//   width: 100px;
+//   height: 40px;
+//   gap: 5px;
+//   font-weight: bold;
+//   white-space: nowrap;
+//   cursor: pointer;
+//    font-size: 30px;
+//   // padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+// //   background-color: #008000; 
+// //   color: #fff;
+// //   border: none;
+// //   border-radius: 20px;  
+// //   width: 48px;
+// //   height: 40px;
+// //   cursor: pointer;
+// //    font-size: 28px;
+// //   padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+
+// //   display: flex;
+// //   align-items: center;
+// //   justify-content: center;
+// // }
+
+
+// .btn-excel:hover {
+//   background-color: #24a840f2;
+// }
+
+// .search-wrapper {
+//   position: relative;
+//   width: 300px;               /* กำหนดความกว้างตามต้องการ */
+//   margin-right: auto;          /* เลื่อนช่องค้นหาไปด้านขวา */
+// }
+
+// .search-wrapper input {
+//   width: 100%;
+//   padding: 0.5rem 2.5rem 0.5rem 2rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
+//   border: 1px solid #ccc;     /* เส้นขอบบาง ๆ สีเทา */
+//   border-radius: 7px;         /* มุมโค้งมน */
+//   font-size: 1rem;
+//   outline: none;
+//   box-shadow: none;
+//   transition: border-color 0.3s ease;
+//   text-align: center;
+// }
+
+
+// .search-wrapper .pi-search {
+//   position: absolute;
+//   left: 10px;
+//   top: 50%;
+//   transform: translateY(-50%);
+//   color: #aaa;
+//   pointer-events: none;       /* ให้คลิกผ่าน icon ได้ */
+//   font-size: 1.2rem;
+// }
+
+// input[type="date"] {
+//   width: 90%;
+//   padding: 5px;
+//   border: 1px solid #ccc;
+//   border-radius: 7px;
+//   font-size: 23px;
+//   text-align: center;
+//   font-family: inherit;
+//   box-sizing: border-box;
+// }
+
+// ::ng-deep .p-datatable .p-checkbox {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+
+// ::ng-deep .p-datatable .p-checkbox-box {
+//   width: 22px;
+//   height: 22px;
+//   border-radius: 6px;
+//   border: 2px solid #D81B60 !important;
+//   background-color: #ffffff !important;
+//   transition: all 0.2s ease;
+// }
+
+// ::ng-deep .p-datatable .p-checkbox-box:hover {
+//   border-color: #ad1457 !important;
+// }
+
+// ::ng-deep .p-datatable .p-checkbox-box.p-highlight {
+//   background-color: #D81B60 !important;
+//   border-color: #D81B60 !important;
+// }
+
+// ::ng-deep .p-datatable .p-checkbox-icon {
+//   color: #ffffff !important;
+//   font-size: 14px;
+// }
+
+// /* header checkbox */
+// ::ng-deep .p-datatable thead .p-checkbox-box {
+//   background-color: #ffffff !important;
+//   border-color: #ffffff !important;
+// }
+
+// ::ng-deep .p-datatable thead .p-checkbox-box.p-highlight {
+//   background-color: #ffffff !important;
+//   border-color: #ffffff !important;
+// }
+
+// ::ng-deep .p-datatable thead .p-checkbox-icon {
+//   color: #D81B60 !important;
+// }
+
+// ::ng-deep .p-checkbox,
+// ::ng-deep .p-checkbox-box {
+//   pointer-events: auto !important;
+//   z-index: 10;
+// }
+
+// .header-row {
+//   pointer-events: none;
+// }
+
+// .header-row * {
+//   pointer-events: auto;
+// }
+
+// .search-overlay {
+//   pointer-events: auto; /* input ใช้งานได้ */
+// }
+
+// .search-overlay::before {
+//   pointer-events: none;
+// }

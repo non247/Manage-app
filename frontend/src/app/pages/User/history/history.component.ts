@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { SidebarUserComponent } from "../../../component/sidebar-user/sidebar-user.component";
 import { TableModule } from 'primeng/table';
+import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 interface Product {
   code: string;
@@ -10,34 +12,44 @@ interface Product {
   category: string;
   quantity: number;
   price: number;
-  date?: Date;
-  isNew?: boolean;
+  date: Date;
 }
 
 @Component({
   selector: 'app-history',
-  imports: [SidebarUserComponent,TableModule,FormsModule,CommonModule],
+  imports: [SidebarUserComponent,TableModule,FormsModule,CommonModule,CheckboxModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
 export class HistoryComponent {
+  // ===== TABLE / EDIT =====
   editIndex: number | null = null;
-  editProduct: any = {};
+  editProduct: Product | null = null;
+
+  // ===== CREATE FORM =====
+  showCreateForm = false;
+  isClosing = false;
+
+  newProduct: Product = this.getEmptyProduct();
+
+  // ===== FILTER =====
   selectedCategories: string[] = [];
 
- products: Product[] = [
-    { code: 'P001', name: 'Vanilla', category: 'Ice Cream', quantity: 50, price: 10, date: new Date('2025-12-01')},
-    { code: 'P002', name: 'chocolate', category: 'Ice Cream', quantity: 120, price: 30, date: new Date('2025-12-01')},
-    { code: 'P003', name: 'Box A', category: 'Box', quantity: 5, price: 20, date: new Date('2025-12-01')}
+  // ===== DATA =====
+  products: Product[] = [
+    { code: 'P001', name: 'Vanilla', category: 'Ice Cream', quantity: 50, price: 10, date: new Date('2025-12-01') },
+    { code: 'P002', name: 'Chocolate', category: 'Ice Cream', quantity: 120, price: 30, date: new Date('2025-12-01') },
+    { code: 'P003', name: 'Box A', category: 'Box', quantity: 5, price: 20, date: new Date('2025-12-01') }
   ];
 
-  filteredProducts = [...this.products];
+  filteredProducts: Product[] = [...this.products];
 
   categoryOptions = [
     { label: 'Ice Cream', value: 'Ice Cream' },
     { label: 'Box', value: 'Box' }
   ];
 
+  // ================= FILTER =================
   filterProducts() {
     if (this.selectedCategories.length === 0) {
       this.filteredProducts = [...this.products];
@@ -49,58 +61,124 @@ export class HistoryComponent {
     );
   }
 
+  // ================= CREATE =================
   onCreate() {
     if (this.editIndex !== null) return;
-
-    const newProduct = {
-      code: 'NEW-' + Date.now(),
-      name: '',
-      category: '',
-      quantity: 0,
-      price: 0,
-      date: new Date(new Date().toISOString().split('T')[0]), 
-      isNew: true
-    };
-
-    this.filteredProducts.unshift(newProduct);
-    this.editIndex = 0;
-    this.editProduct = { ...newProduct };
+    this.showCreateForm = true;
   }
 
+onCreateSave() {
+  if (!this.isValidProduct(this.newProduct)) {
+    Swal.fire("Error", "Please fill all fields", "error");
+    return;
+  }
+
+  const product: Product = {
+    ...this.newProduct,
+    code: 'P' + Date.now()
+  };
+
+  this.products.unshift(product);
+  this.filteredProducts = [...this.products];
+
+  this.onCreateCancel(); // ✅ ใช้ animation ปิด
+
+  Swal.fire("Success", "Product created successfully", "success");
+}
+
+  onCreateCancel() {
+  this.isClosing = true;
+
+  setTimeout(() => {
+    this.showCreateForm = false;
+    this.isClosing = false;
+    this.newProduct = this.getEmptyProduct();
+  }, 250); // ต้องตรงกับเวลา animation ใน CSS
+}
+
+  private resetCreateForm() {
+  this.newProduct = this.getEmptyProduct();
+}
+
+  // ================= EDIT =================
   onEdit(index: number) {
+    if (this.showCreateForm) return;
+
     this.editIndex = index;
     this.editProduct = { ...this.filteredProducts[index] };
   }
 
   onSave(index: number) {
+    if (!this.editProduct) return;
+
     const updated = { ...this.editProduct };
-    delete updated.isNew;
 
     this.filteredProducts[index] = updated;
 
- 
     const originalIndex = this.products.findIndex(
       p => p.code === updated.code
     );
 
     if (originalIndex !== -1) {
       this.products[originalIndex] = updated;
-    } else {
-
-      this.products.unshift(updated);
     }
 
     this.editIndex = null;
-    this.editProduct = {};
+    this.editProduct = null;
   }
 
   onCancel() {
-    if (this.editIndex !== null &&
-        this.filteredProducts[this.editIndex]?.isNew) {
-      this.filteredProducts.splice(this.editIndex, 1);
-    }
-
     this.editIndex = null;
-    this.editProduct = {};
+    this.editProduct = null;
+  }
+
+  // ================= DELETE =================
+  onDelete(index: number) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const deleted = this.filteredProducts[index];
+
+        this.filteredProducts.splice(index, 1);
+
+        const originalIndex = this.products.findIndex(
+          p => p.code === deleted.code
+        );
+
+        if (originalIndex !== -1) {
+          this.products.splice(originalIndex, 1);
+        }
+
+        Swal.fire("Deleted!", "Product has been deleted.", "success");
+      }
+    });
+  }
+
+  // ================= UTILS =================
+  private getEmptyProduct(): Product {
+    return {
+      code: '',
+      name: '',
+      category: '',
+      quantity: 0,
+      price: 0,
+      date: new Date()
+    };
+  }
+
+  private isValidProduct(p: Product): boolean {
+    return !!(
+      p.name &&
+      p.category &&
+      p.quantity >= 0 &&
+      p.price >= 0 &&
+      p.date
+    );
   }
 }

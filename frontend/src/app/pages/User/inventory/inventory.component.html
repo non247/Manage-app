@@ -15,7 +15,8 @@
           <h1 style="color:#d81b60; margin:0">List of Products</h1>
 
           <!-- SEARCH -->
-          <div style="position:absolute; left:50%; transform:translateX(-50%);">
+          <div
+            style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px;">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
               <input pInputText type="text" placeholder="Search products"
@@ -30,11 +31,8 @@
         </div>
 
         <!-- BACKDROP -->
-        <div *ngIf="showCreateForm"
-     class="create-backdrop"
-     [class.closing]="isClosing"
-     (click)="onCreateCancel()">
-</div>
+        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
+        </div>
 
         <!-- ✅ CREATE FORM : CARD -->
         <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
@@ -76,11 +74,11 @@
 
           <div class="create-card-footer">
             <button class="btn-save" (click)="onCreateSave()">
-              <i class="pi pi-check"></i> Save
+              <i class="pi pi-check-square"></i> Save
             </button>
 
             <button class="btn-cancel" (click)="onCreateCancel()">
-              <i class="pi pi-times"></i> Cancel
+              <i class="bi bi-x-square"></i> Cancel
             </button>
           </div>
 
