@@ -46,7 +46,7 @@
         <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
 
           <div class="create-card-header">
-            <h2>Create New Product</h2>
+            <h2>Create New History Product</h2>
           </div>
 
           <div class="create-card-body">
@@ -119,8 +119,9 @@
 
           <ng-template pTemplate="header">
             <tr>
-              <th style="width:50px; text-align:center">
-                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              <th style="text-align:center" style="width: 10%">
+                <input type="checkbox" [checked]="selectedProducts.length === filteredProducts.length"
+                  (change)="onSelectAll($event)" style="width: 30px; height: 26px;"/>
               </th>
 
               <th pSortableColumn="name">
@@ -232,7 +233,8 @@
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <td style="text-align:center">
-                <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                <input type="checkbox" [checked]="selectedProducts.includes(product)"
+                  (change)="onCheckboxChange($event, product)" style="width: 24px; height: 24px;" />
               </td>
               <!-- NAME -->
               <td>

@@ -29,7 +29,6 @@ export class HistoryComponent {
   // ===== CREATE FORM =====
   showCreateForm = false;
   isClosing = false;
-
   newProduct: Product = this.getEmptyProduct();
 
   // ===== FILTER =====
@@ -49,13 +48,32 @@ export class HistoryComponent {
     { label: 'Box', value: 'Box' }
   ];
 
+  // ===== SELECTION (แทน checkbox ของ PrimeNG) =====
+  selectedProducts: Product[] = [];
+
+  onCheckboxChange(event: any, product: Product) {
+    if (event.target.checked) {
+      this.selectedProducts.push(product);
+    } else {
+      const index = this.selectedProducts.indexOf(product);
+      if (index > -1) this.selectedProducts.splice(index, 1);
+    }
+  }
+
+  onSelectAll(event: any) {
+    if (event.target.checked) {
+      this.selectedProducts = [...this.filteredProducts];
+    } else {
+      this.selectedProducts = [];
+    }
+  }
+
   // ================= FILTER =================
   filterProducts() {
     if (this.selectedCategories.length === 0) {
       this.filteredProducts = [...this.products];
       return;
     }
-
     this.filteredProducts = this.products.filter(p =>
       this.selectedCategories.includes(p.category)
     );
@@ -67,61 +85,46 @@ export class HistoryComponent {
     this.showCreateForm = true;
   }
 
-onCreateSave() {
-  if (!this.isValidProduct(this.newProduct)) {
-    Swal.fire("Error", "Please fill all fields", "error");
-    return;
+  onCreateSave() {
+    if (!this.isValidProduct(this.newProduct)) {
+      Swal.fire("Error", "Please fill all fields", "error");
+      return;
+    }
+
+    const product: Product = {
+      ...this.newProduct,
+      code: 'P' + Date.now()
+    };
+
+    this.products.unshift(product);
+    this.filteredProducts = [...this.products];
+    this.onCreateCancel();
+    Swal.fire("Success", "Product created successfully", "success");
   }
 
-  const product: Product = {
-    ...this.newProduct,
-    code: 'P' + Date.now()
-  };
-
-  this.products.unshift(product);
-  this.filteredProducts = [...this.products];
-
-  this.onCreateCancel(); // ✅ ใช้ animation ปิด
-
-  Swal.fire("Success", "Product created successfully", "success");
-}
-
   onCreateCancel() {
-  this.isClosing = true;
-
-  setTimeout(() => {
-    this.showCreateForm = false;
-    this.isClosing = false;
-    this.newProduct = this.getEmptyProduct();
-  }, 250); // ต้องตรงกับเวลา animation ใน CSS
-}
-
-  private resetCreateForm() {
-  this.newProduct = this.getEmptyProduct();
-}
+    this.isClosing = true;
+    setTimeout(() => {
+      this.showCreateForm = false;
+      this.isClosing = false;
+      this.newProduct = this.getEmptyProduct();
+    }, 250);
+  }
 
   // ================= EDIT =================
   onEdit(index: number) {
     if (this.showCreateForm) return;
-
     this.editIndex = index;
     this.editProduct = { ...this.filteredProducts[index] };
   }
 
   onSave(index: number) {
     if (!this.editProduct) return;
-
     const updated = { ...this.editProduct };
-
     this.filteredProducts[index] = updated;
 
-    const originalIndex = this.products.findIndex(
-      p => p.code === updated.code
-    );
-
-    if (originalIndex !== -1) {
-      this.products[originalIndex] = updated;
-    }
+    const originalIndex = this.products.findIndex(p => p.code === updated.code);
+    if (originalIndex !== -1) this.products[originalIndex] = updated;
 
     this.editIndex = null;
     this.editProduct = null;
@@ -144,17 +147,9 @@ onCreateSave() {
     }).then((result) => {
       if (result.isConfirmed) {
         const deleted = this.filteredProducts[index];
-
         this.filteredProducts.splice(index, 1);
-
-        const originalIndex = this.products.findIndex(
-          p => p.code === deleted.code
-        );
-
-        if (originalIndex !== -1) {
-          this.products.splice(originalIndex, 1);
-        }
-
+        const originalIndex = this.products.findIndex(p => p.code === deleted.code);
+        if (originalIndex !== -1) this.products.splice(originalIndex, 1);
         Swal.fire("Deleted!", "Product has been deleted.", "success");
       }
     });
@@ -173,12 +168,6 @@ onCreateSave() {
   }
 
   private isValidProduct(p: Product): boolean {
-    return !!(
-      p.name &&
-      p.category &&
-      p.quantity >= 0 &&
-      p.price >= 0 &&
-      p.date
-    );
+    return !!(p.name && p.category && p.quantity >= 0 && p.price >= 0 && p.date);
   }
 }
