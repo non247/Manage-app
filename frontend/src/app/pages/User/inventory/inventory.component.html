@@ -18,28 +18,6 @@
         >
           <h1 style="color: #d81b60; margin: 0">List of Products</h1>
 
-          <!-- SEARCH -->
-          <div
-            style="
-              position: absolute;
-              left: 50%;
-              transform: translateX(-50%);
-              display: flex;
-              align-items: center;
-              gap: 10px;
-            "
-          >
-            <span class="p-input-icon-left search-wrapper">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                placeholder="Search products"
-                (input)="dt.filterGlobal($event.target.value, 'contains')"
-              />
-            </span>
-          </div>
-
           <!-- CREATE -->
           <button
             class="btn-add"
@@ -71,12 +49,12 @@
           <div class="create-card-body">
             <div class="create-grid">
               <div class="field">
-                <label>Name</label>
+                <label for="name">Name</label>
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
               </div>
 
               <div class="field">
-                <label>Category</label>
+                <label for="category">Category</label>
                 <input
                   type="text"
                   pInputText
@@ -85,7 +63,7 @@
               </div>
 
               <div class="field">
-                <label>Quantity</label>
+                <label for="quantity">Quantity</label>
                 <input
                   type="number"
                   pInputText
@@ -95,7 +73,7 @@
               </div>
 
               <div class="field">
-                <label>Price</label>
+                <label for="price">Price</label>
                 <input
                   type="number"
                   pInputText
@@ -105,7 +83,7 @@
               </div>
 
               <div class="field">
-                <label>Date</label>
+                <label for="date">Date</label>
                 <input type="date" [(ngModel)]="newProduct.date" />
               </div>
             </div>
@@ -141,19 +119,19 @@
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="name">
+              <th pSortableColumn="name" scope="col">
                 Name <p-sortIcon field="name"></p-sortIcon>
               </th>
-              <th pSortableColumn="category">
+              <th pSortableColumn="category" scope="col">
                 Category <p-sortIcon field="category"></p-sortIcon>
               </th>
-              <th pSortableColumn="quantity">
+              <th pSortableColumn="quantity" scope="col">
                 Quantity <p-sortIcon field="quantity"></p-sortIcon>
               </th>
-              <th pSortableColumn="price">
+              <th pSortableColumn="price" scope="col">
                 Price <p-sortIcon field="price"></p-sortIcon>
               </th>
-              <th pSortableColumn="date">
+              <th pSortableColumn="date" scope="col">
                 Date <p-sortIcon field="date"></p-sortIcon>
               </th>
               <th style="width: 12%"></th>
@@ -249,9 +227,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6" style="color: #d81b60">
-                <i class="bi bi-emoji-frown-fill"></i> Not Found.
-              </td>
+              <td colspan="6">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>

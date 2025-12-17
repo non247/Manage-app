@@ -5,7 +5,6 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
-import { SidebarUserComponent } from '../../../component/sidebar-user/sidebar-user.component';
 
 interface Product {
   code: string;
@@ -18,13 +17,7 @@ interface Product {
 
 @Component({
   selector: 'app-history',
-  imports: [
-    SidebarUserComponent,
-    TableModule,
-    FormsModule,
-    CommonModule,
-    CheckboxModule,
-  ],
+  imports: [TableModule, FormsModule, CommonModule, CheckboxModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })

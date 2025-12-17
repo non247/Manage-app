@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
-import { SidebarUserComponent } from '../../../component/sidebar-user/sidebar-user.component';
 
 interface Product {
   code: string;
@@ -18,13 +17,7 @@ interface Product {
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [
-    SidebarUserComponent,
-    TableModule,
-    MultiSelectModule,
-    FormsModule,
-    CommonModule,
-  ],
+  imports: [TableModule, MultiSelectModule, FormsModule, CommonModule],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss',
 })

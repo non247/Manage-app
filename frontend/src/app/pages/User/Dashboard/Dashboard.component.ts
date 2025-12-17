@@ -1,14 +1,13 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { SidebarUserComponent } from '../../../component/sidebar-user/sidebar-user.component';
-import { TableModule } from 'primeng/table';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { TableModule } from 'primeng/table';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarUserComponent, TableModule],
+  imports: [TableModule],
   templateUrl: './Dashboard.component.html',
   styleUrl: './Dashboard.component.scss',
 })

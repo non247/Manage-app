@@ -30,20 +30,6 @@ export class SidebarUserComponent {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  // navigateTo(path: string) {
-  //   if (!this.hasInteracted) {
-  //     this.disableAnimation = true;
-  //   } else {
-  //     this.disableAnimation = false;
-  //   }
-
-  //   if (this.isMobile) {
-  //     this.isCollapsed = true;
-  //   }
-
-  //   this.router.navigate([path]);
-  // }
-
   navigateTo(path: string) {
     this.disableAnimation = false; // เปิด animation
     this.isCollapsed = true; // ปิด sidebar พร้อม animate
@@ -53,17 +39,6 @@ export class SidebarUserComponent {
       this.router.navigate([path]);
     }, 300); // ต้องตรงกับ transition 0.3s ใน CSS
   }
-
-  //   logout() {
-  //     localStorage.removeItem('token');
-
-  //     if (this.isMobile) {
-  //       this.isCollapsed = true;
-  //     }
-
-  //     this.router.navigate(['/login']);
-  //   }
-  // }
 
   logout() {
     Swal.fire({

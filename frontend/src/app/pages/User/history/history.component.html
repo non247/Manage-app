@@ -19,30 +19,6 @@
         >
           <!-- ซ้าย: Title -->
           <h1 style="color: #d81b60; margin: 0">List of History Products</h1>
-
-          <!-- กลาง: Search Bar -->
-          <div
-            class="search-overlay"
-            style="
-              position: absolute;
-              left: 50%;
-              transform: translateX(-50%);
-              display: flex;
-              align-items: center;
-              gap: 10px;
-            "
-          >
-            <span class="p-input-icon-left search-wrapper">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                placeholder="Search products"
-                (input)="dt.filterGlobal($event.target.value, 'contains')"
-              />
-            </span>
-          </div>
-
           <!-- ขวา: ปุ่ม Excel -->
           <button
             type="button"
@@ -83,12 +59,12 @@
           <div class="create-card-body">
             <div class="create-grid">
               <div class="field">
-                <label>Name</label>
+                <label for="name">Name</label>
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
               </div>
 
               <div class="field">
-                <label>Category</label>
+                <label for="category">Category</label>
                 <input
                   type="text"
                   pInputText
@@ -97,7 +73,7 @@
               </div>
 
               <div class="field">
-                <label>Quantity</label>
+                <label for="quantity">Quantity</label>
                 <input
                   type="number"
                   pInputText
@@ -107,7 +83,7 @@
               </div>
 
               <div class="field">
-                <label>Price</label>
+                <label for="price">Price</label>
                 <input
                   type="number"
                   pInputText
@@ -117,7 +93,7 @@
               </div>
 
               <div class="field">
-                <label>Date</label>
+                <label for="date">Date</label>
                 <input type="date" [(ngModel)]="newProduct.date" />
               </div>
             </div>
@@ -166,35 +142,35 @@
                 />
               </th>
 
-              <th pSortableColumn="name">
+              <th pSortableColumn="name" scope="col">
                 <div class="flex items-center gap-2">
                   Name
                   <p-sortIcon field="name"></p-sortIcon>
                 </div>
               </th>
 
-              <th pSortableColumn="category">
+              <th pSortableColumn="category" scope="col">
                 <div class="flex items-center gap-2">
                   Category
                   <p-sortIcon field="category"></p-sortIcon>
                 </div>
               </th>
 
-              <th pSortableColumn="quantity">
+              <th pSortableColumn="quantity" scope="col">
                 <div class="flex items-center gap-2">
                   Quantity
                   <p-sortIcon field="quantity"></p-sortIcon>
                 </div>
               </th>
 
-              <th pSortableColumn="price">
+              <th pSortableColumn="price" scope="col">
                 <div class="flex items-center gap-2">
                   Price
                   <p-sortIcon field="price"></p-sortIcon>
                 </div>
               </th>
 
-              <th pSortableColumn="date">
+              <th pSortableColumn="date" scope="col">
                 <div class="flex items-center gap-2">
                   Date
                   <p-sortIcon field="date"></p-sortIcon>
@@ -204,94 +180,6 @@
               <th style="width: 12%"></th>
             </tr>
           </ng-template>
-
-          <!-- <ng-template pTemplate="body" let-product let-i="rowIndex">
-            <tr>
-              <td style="text-align: center">
-                <p-tableCheckbox [value]="product"></p-tableCheckbox>
-              </td>
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editName">
-                  {{ product.name }}
-                </ng-container>
-                <ng-template #editName>
-                  <input type="text" [(ngModel)]="editProduct.name" />
-                </ng-template>
-              </td>
-
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editCategory">
-                  {{ product.category }}
-                </ng-container>
-                <ng-template #editCategory>
-                  <input type="text" [(ngModel)]="editProduct.category" />
-                </ng-template>
-              </td>
-
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editQty">
-                  {{ product.quantity }}
-                </ng-container>
-                <ng-template #editQty>
-                  <input
-                    type="number"
-                    [(ngModel)]="editProduct.quantity"
-                    min="0"
-                  />
-                </ng-template>
-              </td>
-
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editPrice">
-                  {{ product.price }}
-                </ng-container>
-                <ng-template #editPrice>
-                  <input
-                    type="number"
-                    [(ngModel)]="editProduct.price"
-                    min="0"
-                  />
-                </ng-template>
-              </td>
-
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date: 'dd/MM/yyyy' }}
-                </ng-container>
-
-                <ng-template #editDate>
-                  <input type="date" [(ngModel)]="editProduct.date" />
-                </ng-template>
-              </td>
-
-              <td style="display: flex; gap: 8px; align-items: center">
-                <button
-                  class="btn-edit"
-                  (click)="onEdit(i)"
-                  *ngIf="editIndex !== i"
-                >
-                  <i class="pi pi-pen-to-square"></i>
-                </button>
-
-                <button
-                  class="btn-save"
-                  (click)="onSave(i)"
-                  *ngIf="editIndex === i"
-                >
-                  <i class="pi pi-check-square"></i>
-                </button>
-
-                <button
-                  class="btn-cancel"
-                  (click)="onCancel()"
-                  *ngIf="editIndex === i"
-                >
-                  <i class="bi bi-x-square"></i>
-                </button>
-              </td>
-            </tr>
-          </ng-template> -->
-
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <td style="text-align: center">
@@ -389,9 +277,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7" style="color: #d81b60">
-                <i class="bi bi-emoji-frown-fill"></i> Not Found.
-              </td>
+              <td colspan="7">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>
