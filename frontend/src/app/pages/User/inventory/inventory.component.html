@@ -2,7 +2,7 @@
   <div class="main-area">
     <div class="main-content">
       <header class="top-navbar">
-        <h1>Inventory</h1>
+        <h1>รายการสินค้า</h1>
       </header>
 
       <div class="table-box">
@@ -16,7 +16,7 @@
             position: relative;
           "
         >
-          <h1 style="color: #d81b60; margin: 0">List of Products</h1>
+          <!-- <h1 style="color: #d81b60; margin: 0">List of Products</h1> -->
 
           <!-- CREATE -->
           <button
@@ -24,7 +24,7 @@
             style="margin-left: auto"
             (click)="showCreateForm = !showCreateForm"
           >
-            <i class="bi bi-plus-circle-fill"></i> CREATE NEW
+            <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
         </div>
 
@@ -43,18 +43,18 @@
           [class.closing]="isClosing"
         >
           <div class="create-card-header">
-            <h2>Create New Product</h2>
+            <h2>สร้างรายการสินค้าใหม่</h2>
           </div>
 
           <div class="create-card-body">
             <div class="create-grid">
               <div class="field">
-                <label for="name">Name</label>
+                <label for="name">ชื่อสินค้า</label>
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
               </div>
 
               <div class="field">
-                <label for="category">Category</label>
+                <label for="category">ประเภท</label>
                 <input
                   type="text"
                   pInputText
@@ -63,7 +63,7 @@
               </div>
 
               <div class="field">
-                <label for="quantity">Quantity</label>
+                <label for="quantity">จำนวน</label>
                 <input
                   type="number"
                   pInputText
@@ -73,7 +73,7 @@
               </div>
 
               <div class="field">
-                <label for="price">Price</label>
+                <label for="price">ราคา</label>
                 <input
                   type="number"
                   pInputText
@@ -83,7 +83,7 @@
               </div>
 
               <div class="field">
-                <label for="date">Date</label>
+                <label for="date">วันที่</label>
                 <input type="date" [(ngModel)]="newProduct.date" />
               </div>
             </div>
@@ -91,11 +91,11 @@
 
           <div class="create-card-footer">
             <button class="btn-save" (click)="onCreateSave()">
-              <i class="pi pi-check-square"></i> Save
+              <i class="pi pi-check-square"></i> บันทึก
             </button>
 
             <button class="btn-cancel" (click)="onCreateCancel()">
-              <i class="bi bi-x-square"></i> Cancel
+              <i class="bi bi-x-square"></i> ยกเลิก
             </button>
           </div>
         </div>
@@ -119,21 +119,22 @@
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
+              <th pSortableColumn="date" scope="col">
+                วันที่ <p-sortIcon field="date"></p-sortIcon>
+              </th>
               <th pSortableColumn="name" scope="col">
-                Name <p-sortIcon field="name"></p-sortIcon>
+                ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
               <th pSortableColumn="category" scope="col">
-                Category <p-sortIcon field="category"></p-sortIcon>
+                ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
               <th pSortableColumn="quantity" scope="col">
-                Quantity <p-sortIcon field="quantity"></p-sortIcon>
+                จำนวน <p-sortIcon field="quantity"></p-sortIcon>
               </th>
               <th pSortableColumn="price" scope="col">
-                Price <p-sortIcon field="price"></p-sortIcon>
+                ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
-              <th pSortableColumn="date" scope="col">
-                Date <p-sortIcon field="date"></p-sortIcon>
-              </th>
+              
               <th style="width: 12%"></th>
             </tr>
           </ng-template>
@@ -141,6 +142,16 @@
           <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
+
+               <!-- DATE -->
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editDate">
+                  {{ product.date | date: 'dd/MM/yyyy' }}
+                </ng-container>
+                <ng-template #editDate>
+                  <input type="date" [(ngModel)]="editProduct!.date" />
+                </ng-template>
+              </td>
               <!-- NAME -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editName">
@@ -181,15 +192,7 @@
                 </ng-template>
               </td>
 
-              <!-- DATE -->
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date: 'dd/MM/yyyy' }}
-                </ng-container>
-                <ng-template #editDate>
-                  <input type="date" [(ngModel)]="editProduct!.date" />
-                </ng-template>
-              </td>
+             
 
               <!-- ACTION -->
               <td style="display: flex; gap: 8px">

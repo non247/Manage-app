@@ -38,24 +38,24 @@ export class HistoryComponent {
   products: Product[] = [
     {
       code: 'P001',
-      name: 'Vanilla',
-      category: 'Ice Cream',
+      name: 'วนิลลา',
+      category: 'ไอศครีม',
       quantity: 50,
       price: 10,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P002',
-      name: 'Chocolate',
-      category: 'Ice Cream',
+      name: 'ช็อคโกแลต',
+      category: 'ไอศครีม',
       quantity: 120,
       price: 30,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P003',
-      name: 'Box A',
-      category: 'Box',
+      name: 'สตรอเบอร์รี่',
+      category: 'ไอศครีม',
       quantity: 5,
       price: 20,
       date: new Date('2025-12-01'),
@@ -108,7 +108,7 @@ export class HistoryComponent {
 
   onCreateSave() {
     if (!this.isValidProduct(this.newProduct)) {
-      Swal.fire('Error', 'Please fill all fields', 'error');
+      Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
       return;
     }
 
@@ -120,7 +120,7 @@ export class HistoryComponent {
     this.products.unshift(product);
     this.filteredProducts = [...this.products];
     this.onCreateCancel();
-    Swal.fire('Success', 'Product created successfully', 'success');
+    Swal.fire('เสร็จสิ้น', 'สร้างรายการสำเร็จแล้ว', 'success');
   }
 
   onCreateCancel() {
@@ -161,12 +161,12 @@ export class HistoryComponent {
   // ================= DELETE =================
   onDelete(index: number) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      title: 'ยืนยันที่จะลบ?',
+      text: "รายการนี้จะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้เมื่อถูกลบ",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: 'ตกลง',
+      cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (result.isConfirmed) {
         const deleted = this.filteredProducts[index];
@@ -231,16 +231,16 @@ export class HistoryComponent {
 
   exportToExcel() {
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      Swal.fire('Error', 'Please select at least one product', 'error');
+      Swal.fire('ผิดพลาด', 'โปรดเลือกสินค้าอย่างน้อยหนึ่งรายการ', 'error');
       return;
     }
 
     const worksheetData = this.selectedProducts.map((p) => ({
-      Name: p.name,
-      Category: p.category,
-      Quantity: p.quantity,
-      Price: p.price,
-      Date: p.date ? new Date(p.date).toLocaleDateString() : '',
+    'ชื่อสินค้า': p.name,
+    'หมวดหมู่': p.category,
+    'จำนวน': p.quantity,
+    'ราคา': p.price,
+    'วันที่': p.date ? new Date(p.date).toLocaleDateString('th-TH') : '',
     }));
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(worksheetData);

@@ -39,24 +39,24 @@ export class InventoryComponent {
   products: Product[] = [
     {
       code: 'P001',
-      name: 'Vanilla',
-      category: 'Ice Cream',
+      name: 'วนิลลา',
+      category: 'ไอศครีม',
       quantity: 50,
       price: 10,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P002',
-      name: 'Chocolate',
-      category: 'Ice Cream',
+      name: 'ช็อคโกแลต',
+      category: 'ไอศครีม',
       quantity: 120,
       price: 30,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P003',
-      name: 'Box A',
-      category: 'Box',
+      name: 'สตรอเบอร์รี่',
+      category: 'ไอศครีม',
       quantity: 5,
       price: 20,
       date: new Date('2025-12-01'),
@@ -66,8 +66,8 @@ export class InventoryComponent {
   filteredProducts: Product[] = [...this.products];
 
   categoryOptions = [
-    { label: 'Ice Cream', value: 'Ice Cream' },
-    { label: 'Box', value: 'Box' },
+    { label: 'ไอศครีม', value: 'ไอศครีม' },
+    { label: 'กล่อง', value: 'กล่อง' },
   ];
 
   // ================= FILTER =================
@@ -90,7 +90,7 @@ export class InventoryComponent {
 
   onCreateSave() {
     if (!this.isValidProduct(this.newProduct)) {
-      Swal.fire('Error', 'Please fill all fields', 'error');
+      Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
       return;
     }
 
@@ -156,8 +156,8 @@ export class InventoryComponent {
   // ================= DELETE =================
   onDelete(index: number) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      title: 'ยืนยันที่จะลบ?',
+      text: "รายการนี้จะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้เมื่อถูกลบ",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',

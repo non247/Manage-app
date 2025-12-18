@@ -23,24 +23,24 @@ export class DashboardComponent implements AfterViewInit {
   lowStockProducts = [
     {
       code: 'P001',
-      name: 'Vanilla',
-      category: 'Ice Cream',
+      name: 'วนิลลา',
+      category: 'ไอศครีม',
       quantity: 50,
       price: 10,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P002',
-      name: 'chocolate',
-      category: 'Ice Cream',
+      name: 'ช็อคโกแลต',
+      category: 'ไอศครีม',
       quantity: 120,
       price: 30,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P003',
-      name: 'Box A',
-      category: 'Box',
+      name: 'สตรอเบอร์รี่',
+      category: 'ไอศครีม',
       quantity: 5,
       price: 20,
       date: new Date('2025-12-01'),
@@ -54,10 +54,10 @@ export class DashboardComponent implements AfterViewInit {
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels: ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'],
         datasets: [
           {
-            label: 'Daily Sales (฿)',
+            label: 'ยอดขายรายวัน',
             data: [1200, 1900, 3000, 2500, 4200, 3800, 4520],
             borderColor: '#D81B60',
             backgroundColor: 'rgba(216,27,96,0.2)',
@@ -67,13 +67,24 @@ export class DashboardComponent implements AfterViewInit {
           },
         ],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.raw + ' บาท';
+            },
+          },
+        },
       },
-    });
-  }
-
+    },
+  });
+}
   createTopSellerChart() {
     const ctx = this.topSellerCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
@@ -81,7 +92,7 @@ export class DashboardComponent implements AfterViewInit {
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Vanilla', 'Chocolate', 'Box'],
+        labels: ['วนิลลา', 'ช็อคโกแลต', 'สตรอเบอร์รี่'],
         datasets: [
           {
             data: [120, 50, 5],
@@ -90,13 +101,31 @@ export class DashboardComponent implements AfterViewInit {
           },
         ],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.raw + ' บาท';
+            },
+          },
         },
       },
-    });
-  }
+      // scales: {
+      //   y: {
+      //     ticks: {
+      //       callback: function (value) {
+      //         return value + ' บาท';
+      //       },
+      //     },
+      //   },
+      // },
+    },
+  });
+}
 }
