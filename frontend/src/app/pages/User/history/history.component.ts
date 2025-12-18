@@ -236,9 +236,14 @@ export class HistoryComponent {
 
   exportToExcel() {
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      Swal.fire('ผิดพลาด', 'โปรดเลือกสินค้าอย่างน้อยหนึ่งรายการ', 'error');
-      return;
-    }
+    Swal.fire({
+      title: 'ผิดพลาด',
+      text: 'กรุณากรอกข้อมูลให้ครบทุกช่อง',
+      icon: 'error',
+      confirmButtonText: 'ตกลง'
+    });
+    return;
+  }
 
     const worksheetData = this.selectedProducts.map((p) => ({
     'ชื่อสินค้า': p.name,
