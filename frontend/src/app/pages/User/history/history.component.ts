@@ -38,26 +38,26 @@ export class HistoryComponent {
   products: Product[] = [
     {
       code: 'P001',
-      name: 'วนิลลา',
+      name: 'วนิลา',
       category: 'ไอศครีม',
-      quantity: 50,
-      price: 10,
+      quantity: 1,
+      price: 35,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P002',
       name: 'ช็อคโกแลต',
       category: 'ไอศครีม',
-      quantity: 120,
-      price: 30,
+      quantity: 2,
+      price: 70,
       date: new Date('2025-12-01'),
     },
     {
       code: 'P003',
       name: 'สตรอเบอร์รี่',
       category: 'ไอศครีม',
-      quantity: 5,
-      price: 20,
+      quantity: 1,
+      price: 40,
       date: new Date('2025-12-01'),
     },
   ];

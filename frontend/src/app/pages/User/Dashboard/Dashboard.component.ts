@@ -23,7 +23,7 @@ export class DashboardComponent implements AfterViewInit {
   lowStockProducts = [
     {
       code: 'P001',
-      name: 'วนิลลา',
+      name: 'วนิลา',
       category: 'ไอศครีม',
       quantity: 50,
       price: 10,
@@ -58,7 +58,7 @@ export class DashboardComponent implements AfterViewInit {
         datasets: [
           {
             label: 'ยอดขายรายวัน',
-            data: [1200, 1900, 3000, 2500, 4200, 3800, 4520],
+            data: [1200, 1700, 800, 1000, 1100, 900, 700],
             borderColor: '#D81B60',
             backgroundColor: 'rgba(216,27,96,0.2)',
             pointRadius: 5,
@@ -92,10 +92,10 @@ export class DashboardComponent implements AfterViewInit {
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['วนิลลา', 'ช็อคโกแลต', 'สตรอเบอร์รี่'],
+        labels: ['วนิลา', 'ช็อคโกแลต', 'สตรอเบอร์รี่'],
         datasets: [
           {
-            data: [120, 50, 5],
+            data: [140, 70, 35],
             backgroundColor: ['#D81B60', '#F06292', '#F8BBD0'],
             borderRadius: 8,
           },
