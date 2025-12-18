@@ -89,10 +89,15 @@ export class InventoryComponent {
   }
 
   onCreateSave() {
-    if (!this.isValidProduct(this.newProduct)) {
-      Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
-      return;
-    }
+      if (!this.isValidProduct(this.newProduct)) {
+    Swal.fire({
+      title: 'ผิดพลาด',
+      text: 'กรุณากรอกข้อมูลให้ครบทุกช่อง',
+      icon: 'error',
+      confirmButtonText: 'ตกลง'
+    });
+    return;
+  }
 
     const product: Product = {
       ...this.newProduct,
@@ -160,8 +165,8 @@ export class InventoryComponent {
       text: "รายการนี้จะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้เมื่อถูกลบ",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: 'ตกลง',
+      cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (result.isConfirmed) {
         const deleted = this.filteredProducts[index];

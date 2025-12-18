@@ -107,10 +107,15 @@ export class HistoryComponent {
   }
 
   onCreateSave() {
-    if (!this.isValidProduct(this.newProduct)) {
-      Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
-      return;
-    }
+      if (!this.isValidProduct(this.newProduct)) {
+    Swal.fire({
+      title: 'ผิดพลาด',
+      text: 'กรุณากรอกข้อมูลให้ครบทุกช่อง',
+      icon: 'error',
+      confirmButtonText: 'ตกลง'
+    });
+    return;
+  }
 
     const product: Product = {
       ...this.newProduct,
