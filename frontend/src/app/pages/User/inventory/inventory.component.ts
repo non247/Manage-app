@@ -109,7 +109,7 @@ export class InventoryComponent {
 
     this.onCreateCancel(); // ✅ ใช้ animation ปิด
 
-    Swal.fire('Success', 'Product created successfully', 'success');
+    Swal.fire({title:'เสร็จสิ้น',text:'สร้างรายการสำเร็จแล้ว', icon:'success',confirmButtonText: 'ตกลง'});
   }
 
   onCreateCancel() {
@@ -181,8 +181,7 @@ export class InventoryComponent {
           this.products.splice(originalIndex, 1);
         }
 
-        Swal.fire('Deleted!', 'Product has been deleted.', 'success');
-      }
+Swal.fire({title:'ลบรายการสำเร็จ!', text:'รายการลบเสร็จสิ้น', icon:'success',confirmButtonText: 'ตกลง',});      }
     });
   }
 

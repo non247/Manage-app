@@ -51,39 +51,44 @@ export class DashboardComponent implements AfterViewInit {
     const ctx = this.salesCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'],
-        datasets: [
-          {
-            label: 'ยอดขายรายวัน',
-            data: [1200, 1700, 800, 1000, 1100, 900, 700],
-            borderColor: '#D81B60',
-            backgroundColor: 'rgba(216,27,96,0.2)',
-            pointRadius: 5,
-            tension: 0.4,
-            fill: true,
-          },
-        ],
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'],
+    datasets: [
+      {
+        label: 'ยอดขายรายวัน',
+        data: [1200, 1700, 800, 1000, 1100, 900, 700],
+        borderColor: '#D81B60',
+        backgroundColor: 'rgba(216,27,96,0.2)',
+        pointRadius: 5,
+        pointHitRadius: 15,   // ⭐ สำคัญ
+        tension: 0.4,
+        fill: true,
       },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              return context.raw + ' บาท';
-            },
-          },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    interaction: {
+      mode: 'nearest',
+      intersect: false,      // ⭐ ทำให้ hover ง่ายขึ้น
+    },
+
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: (context) => `${context.raw} บาท`,
         },
       },
     },
-  });
+  },
+});
+
 }
   createTopSellerChart() {
     const ctx = this.topSellerCanvas.nativeElement.getContext('2d');

@@ -125,7 +125,7 @@ export class HistoryComponent {
     this.products.unshift(product);
     this.filteredProducts = [...this.products];
     this.onCreateCancel();
-    Swal.fire('เสร็จสิ้น', 'สร้างรายการสำเร็จแล้ว', 'success');
+    Swal.fire({title:'เสร็จสิ้น',text:'สร้างรายการสำเร็จแล้ว', icon:'success',confirmButtonText: 'ตกลง'});
   }
 
   onCreateCancel() {
@@ -180,7 +180,7 @@ export class HistoryComponent {
           (p) => p.code === deleted.code
         );
         if (originalIndex !== -1) this.products.splice(originalIndex, 1);
-        Swal.fire('Deleted!', 'Product has been deleted.', 'success');
+        Swal.fire({title:'ลบรายการสำเร็จ!', text:'รายการลบเสร็จสิ้น', icon:'success',confirmButtonText: 'ตกลง',});
       }
     });
   }
