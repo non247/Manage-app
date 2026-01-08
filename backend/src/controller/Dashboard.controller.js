@@ -38,9 +38,7 @@ exports.getDashboard = async (req, res) => {
  res.json(result.recordset);
   } 
   catch (error) {
-    console.error('Dashboard Error:', error);
-    res.status(500).json({
-      message: 'เกิดข้อผิดพลาดในการโหลดข้อมูล Dashboard'
-    });
+    console.error("Error executing query:", error.stack);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
