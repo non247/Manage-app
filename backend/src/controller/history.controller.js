@@ -1,30 +1,31 @@
-const { poolPromise } = require('../config/database');
+const pool = require('../config/database');
+
 exports.getHistory = async (req, res) => {
   try {
-    const pool = await poolPromise;
+    const result = await pool.query(`
+      SELECT * FROM history
+      ORDER BY date DESC
+    `);
 
-    const result = await pool.request().query();
-
-    res.status(200).json(result.recordset);
+    res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'โหลดข้อมูลประวัติไม่สำเร็จ' });
   }
 };
 
+
 exports.createHistory = async (req, res) => {
   try {
     const { name, category, quantity, price, date } = req.body;
-    const pool = await poolPromise;
 
-    await pool
-      .request()
-      .input('name', name)
-      .input('category', category)
-      .input('quantity', quantity)
-      .input('price', price)
-      .input('date', date)
-      .query();
+    await pool.query(
+      `
+      INSERT INTO history (name, category, quantity, price, date)
+      VALUES ($1, $2, $3, $4, $5)
+      `,
+      [name, category, quantity, price, date]
+    );
 
     res.status(201).json({ message: 'เพิ่มข้อมูลสำเร็จ' });
   } catch (err) {
@@ -38,17 +39,19 @@ exports.updateHistory = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, category, quantity, price, date } = req.body;
-    const pool = await poolPromise;
 
-    await pool
-      .request()
-      .input('id', id)
-      .input('name', name)
-      .input('category', category)
-      .input('quantity', quantity)
-      .input('price', price)
-      .input('date', date)
-      .query();
+    await pool.query(
+      `
+      UPDATE history
+      SET name = $1,
+          category = $2,
+          quantity = $3,
+          price = $4,
+          date = $5
+      WHERE id = $6
+      `,
+      [name, category, quantity, price, date, id]
+    );
 
     res.status(200).json({ message: 'แก้ไขข้อมูลสำเร็จ' });
   } catch (err) {
@@ -57,15 +60,15 @@ exports.updateHistory = async (req, res) => {
   }
 };
 
+
 exports.deleteHistory = async (req, res) => {
   try {
     const { id } = req.params;
-    const pool = await poolPromise;
 
-    await pool
-      .request()
-      .input()
-      .query();
+    await pool.query(
+      `DELETE FROM history WHERE id = $1`,
+      [id]
+    );
 
     res.status(200).json({ message: 'ลบข้อมูลสำเร็จ' });
   } catch (err) {
