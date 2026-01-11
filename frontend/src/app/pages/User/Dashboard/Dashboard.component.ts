@@ -101,7 +101,7 @@ new Chart(ctx, {
         datasets: [
           {
             data: [140, 70, 35],
-            backgroundColor: ['#D81B60', '#F06292', '#F8BBD0'],
+            backgroundColor: ['#F3E5AB', '#713600', '#F8BBD0'],
             borderRadius: 8,
           },
         ],
