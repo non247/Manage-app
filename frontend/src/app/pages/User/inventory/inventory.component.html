@@ -178,8 +178,13 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input type="number" [(ngModel)]="editProduct!.quantity" />
-                </ng-template>
+                  <input
+                  type="number"
+                  min="0"
+                  [ngModel]="editProduct!.quantity"
+                  (ngModelChange)="editProduct!.quantity = +$event < 0 ? 0 : +$event"
+                />
+              </ng-template>
               </td>
 
               <!-- PRICE -->
@@ -188,7 +193,12 @@
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input type="number" [(ngModel)]="editProduct!.price" />
+                <input
+                type="number"
+                min="0"
+                [ngModel]="editProduct!.price"
+                (ngModelChange)="editProduct!.price = +$event < 0 ? 0 : +$event"
+                />
                 </ng-template>
               </td>
 

@@ -542,7 +542,7 @@ export interface Product {
   category: string;
   quantity: number;
   price: number;
-  date: Date;
+  date: string;
 }
 
 @Component({
@@ -623,33 +623,71 @@ export class HistoryComponent implements OnInit {
     this.showCreateForm = true;
   }
 
-onCreateSave() {
-  if (!this.isValidProduct(this.newProduct)) {
-    Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
-    return;
-  }
-
-  const payload = {
-    ...this.newProduct,
-    code: 'P' + Date.now(),
-    // แปลง Date → yyyy-mm-dd (PostgreSQL ชอบ format นี้)
-    date: this.newProduct.date instanceof Date
-      ? this.newProduct.date.toISOString().split('T')[0]
-      : this.newProduct.date
-  };
-
+    onCreateSave() {
+      if (!this.isValidProduct(this.newProduct)) {
+        Swal.fire({
+        title:'ผิดพลาด',
+        text:'กรุณากรอกข้อมูลให้ครบ', 
+        icon:'error',
+        confirmButtonText: 'ตกลง'});
+        return;
+      }
+  
+      const payload: Product = {
+        ...this.newProduct,
+        code: 'P' + Date.now(),
+      };
+  
   this.historyService.create(payload).subscribe({
     next: () => {
       this.loadProducts();
       this.onCreateCancel(); // reset form
-      Swal.fire('สำเร็จ', 'สร้างรายการสำเร็จแล้ว', 'success');
+      Swal.fire({
+        title: 'สำเร็จ',
+        text: 'สร้างรายการเรียบร้อย',
+        icon: 'success',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
     },
     error: (err) => {
       console.error(err);
-      Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้', 'error');
+      Swal.fire({
+        title:'ผิดพลาด',
+        text:'ไม่สามารถบันทึกข้อมูลได้', 
+        icon:'error',
+        confirmButtonText: 'ตกลง'});
     }
   });
 }
+// onCreateSave() {
+//   if (!this.isValidProduct(this.newProduct)) {
+//     Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
+//     return;
+//   }
+
+//   const payload = {
+//     ...this.newProduct,
+//     code: 'P' + Date.now(),
+//     // แปลง Date → yyyy-mm-dd (PostgreSQL ชอบ format นี้)
+//     date: this.newProduct.date instanceof Date
+//       ? this.newProduct.date.toISOString().split('T')[0]
+//       : this.newProduct.date
+//   };
+
+//   this.historyService.create(payload).subscribe({
+//     next: () => {
+//       this.loadProducts();
+//       this.onCreateCancel(); // reset form
+//       Swal.fire('สำเร็จ', 'สร้างรายการสำเร็จแล้ว', 'success');
+//     },
+//     error: (err) => {
+//       console.error(err);
+//       Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้', 'error');
+//     }
+//   });
+// }
 
 
   onCreateCancel() {
@@ -674,14 +712,21 @@ onCreateSave() {
     const product = this.filteredProducts[index];
     const payload = {
       ...this.editProduct,
-      date: this.editProduct.date.toISOString().split('T')[0],
+      date: String(this.editProduct.date),
     };
 
     this.historyService.update(product.id!, payload).subscribe(() => {
       this.loadProducts();
       this.editIndex = null;
       this.editProduct = null;
-      Swal.fire('สำเร็จ', 'แก้ไขข้อมูลเรียบร้อย', 'success');
+      Swal.fire({
+        title: 'สำเร็จ',
+        text: 'แก้ไขข้อมูลเรียบร้อย',
+        icon: 'success',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
     });
   }
 
@@ -696,7 +741,7 @@ onCreateSave() {
 
     Swal.fire({
       title: 'ยืนยันที่จะลบ?',
-      text: 'ข้อมูลจะไม่สามารถกู้คืนได้',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'ตกลง',
@@ -705,7 +750,14 @@ onCreateSave() {
       if (result.isConfirmed) {
         this.historyService.delete(product.id!).subscribe(() => {
           this.loadProducts();
-          Swal.fire('ลบสำเร็จ', 'รายการถูกลบแล้ว', 'success');
+          Swal.fire({
+        title: 'สำเร็จ',
+        text: 'รายการถูกลบแล้ว',
+        icon: 'success',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
         });
       }
     });
@@ -714,7 +766,11 @@ onCreateSave() {
   // ================= EXPORT EXCEL =================
   exportToExcel() {
     if (this.selectedProducts.length === 0) {
-      Swal.fire('ผิดพลาด', 'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ', 'error');
+      Swal.fire({
+        title:'ผิดพลาด',
+        text:'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ', 
+        icon:'error',
+        confirmButtonText: 'ตกลง'});
       return;
     }
 
@@ -723,7 +779,7 @@ onCreateSave() {
       'หมวดหมู่': p.category,
       'จำนวน': p.quantity,
       'ราคา': p.price,
-      'วันที่': p.date.toLocaleDateString('th-TH'),
+      'วันที่': new Date(p.date).toLocaleDateString('th-TH'),
     }));
 
     const ws = XLSX.utils.json_to_sheet(worksheetData);
@@ -740,7 +796,8 @@ onCreateSave() {
       category: '',
       quantity: 0,
       price: 0,
-      date: new Date(),
+      date: new Date().toISOString().split('T')[0],
+
     };
   }
 

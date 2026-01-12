@@ -503,7 +503,11 @@ export class InventoryComponent implements OnInit {
 
   onCreateSave() {
     if (!this.isValidProduct(this.newProduct)) {
-      Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error');
+      Swal.fire({
+        title:'ผิดพลาด',
+        text:'กรุณากรอกข้อมูลให้ครบ', 
+        icon:'error',
+        confirmButtonText: 'ตกลง'});
       return;
     }
 
@@ -516,10 +520,21 @@ export class InventoryComponent implements OnInit {
       next: () => {
         this.loadProducts();
         this.onCreateCancel();
-        Swal.fire('สำเร็จ', 'สร้างรายการเรียบร้อย', 'success');
+        Swal.fire({
+        title: 'สำเร็จ',
+        text: 'รายการถูกลบแล้ว',
+        icon: 'success',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
       },
       error: () => {
-        Swal.fire('ผิดพลาด', 'ไม่สามารถสร้างรายการได้', 'error');
+        Swal.fire({
+        title:'ผิดพลาด',
+        text:'ไม่สามารถสร้างรายการได้', 
+        icon:'error',
+        confirmButtonText: 'ตกลง'});
       },
     });
   }
@@ -572,7 +587,14 @@ onSave(index: number) {
 
       this.editIndex = null;
       this.editProduct = null;
-      Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
+      Swal.fire({
+        title: 'สำเร็จ',
+        text: 'บันทึกข้อมูลเรียบร้อย',
+        icon: 'success',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
     },
     error: () => {
       Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error');
@@ -597,6 +619,7 @@ onSave(index: number) {
 
     Swal.fire({
       title: 'ยืนยันที่จะลบ?',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'ตกลง',
@@ -606,10 +629,24 @@ onSave(index: number) {
         this.inventoryService.delete(product.id!).subscribe({
           next: () => {
             this.loadProducts();
-            Swal.fire('สำเร็จ', 'ลบรายการเรียบร้อย', 'success');
+            Swal.fire({
+        title: 'สำเร็จ',
+        text: 'ลบรายการสำเร็จ',
+        icon: 'success',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
           },
           error: () => {
-            Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error');
+            Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ลบรายการไม่สำเร็จ',
+        icon: 'error',
+        timer: 1500,            // เวลาแสดง (ms)
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
           },
         });
       }
