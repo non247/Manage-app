@@ -535,35 +535,25 @@ export class InventoryComponent implements OnInit {
   }
 
   /* ================= EDIT ================= */
-  onEdit(index: number) {
-    if (this.showCreateForm) return;
+onEdit(index: number) {
+  if (this.showCreateForm) return;
 
-    this.editIndex = index;
-    this.editProduct = { ...this.filteredProducts[index] }; // date ไม่โดนแปลง
-  }
+  const p = this.filteredProducts[index];
+  this.editIndex = index;
+  this.editProduct = {
+    ...p,
+    date: this.formatDate(p.date), // แปลงเป็น yyyy-MM-dd เสมอ
+  };
+}
 
-// onSave(index: number) {
-//   if (!this.editProduct || !this.editProduct.id) return;
+private formatDate(date: string | Date): string {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const day = d.getDate().toString().padStart(2, '0');
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
-//   // สร้าง payload ให้แน่ใจว่า date เป็น string 'yyyy-MM-dd'
-//   const payload = {
-//     ...this.editProduct,
-//     date: this.editProduct.date  // เก็บเป็น string ตรง ๆ
-//   };
-
-//   this.inventoryService.update(this.editProduct.id, payload).subscribe({
-//     next: () => {
-//       // โหลดข้อมูลใหม่ แต่ไม่แปลงวันที่
-//       this.loadProducts(); // ตรวจสอบว่า loadProducts() ไม่แปลง date เป็น Date object
-//       this.editIndex = null;
-//       this.editProduct = null;
-//       Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
-//     },
-//     error: () => {
-//       Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error');
-//     },
-//   });
-// }
 onSave(index: number) {
   if (!this.editProduct || !this.editProduct.id) return;
 
