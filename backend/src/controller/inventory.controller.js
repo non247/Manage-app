@@ -3,8 +3,8 @@ const pool = require('../config/database');
 exports.getInventory = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT * FROM inventory
-      ORDER BY date DESC
+      SELECT * FROM "Inventory"
+      ORDER BY id DESC
     `);
 
     res.status(200).json(result.rows);
@@ -21,7 +21,7 @@ exports.createInventory = async (req, res) => {
 
     await pool.query(
       `
-      INSERT INTO inventory (name, category, quantity, price, date)
+      INSERT INTO "Inventory" (name, category, quantity, price, date)
       VALUES ($1, $2, $3, $4, $5)
       `,
       [name, category, quantity, price, date]
@@ -42,7 +42,7 @@ exports.updateInventory = async (req, res) => {
 
     await pool.query(
       `
-      UPDATE inventory
+      UPDATE "Inventory"
       SET name = $1,
           category = $2,
           quantity = $3,
@@ -66,7 +66,7 @@ exports.deleteInventory = async (req, res) => {
     const { id } = req.params;
 
     await pool.query(
-      `DELETE FROM inventory WHERE id = $1`,
+      `DELETE FROM "Inventory" WHERE id = $1`,
       [id]
     );
 
