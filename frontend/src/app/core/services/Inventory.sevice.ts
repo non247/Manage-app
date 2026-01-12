@@ -48,7 +48,7 @@ export interface Product {
   category: string;
   quantity: number;
   price: number;
-  date: Date; // yyyy-MM-dd
+  date: string; // yyyy-MM-dd
 }
 
 @Injectable({
@@ -63,15 +63,15 @@ export class InventoryService {
     return this.http.get<Product[]>(this.apiUrl);
   }
 
-  create(data: Product): Observable<Product> {
-    return this.http.post<Product>(this.apiUrl, data);
+  create(product: Product): Observable<Product> {
+    return this.http.post<Product>(this.apiUrl, product);
   }
 
-  update(id: number, data: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, data);
+  update(id: number, product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, product);
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
