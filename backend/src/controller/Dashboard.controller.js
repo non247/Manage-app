@@ -34,48 +34,47 @@ exports.getDashboard = async (req, res) => {
 
     // 1️⃣ ยอดขายวันนี้
     const todaySalesResult = await pool.query(`
-      SELECT COALESCE(SUM(total_price), 0) AS today_sales
-      FROM orders
-      WHERE DATE(order_date) = CURRENT_DATE
+      SELECT COALESCE(SUM(price * quantity), 0) AS today_sales
+      FROM "History"
+      WHERE DATE(date) = CURRENT_DATE
     `);
 
     // 2️⃣ จำนวนสินค้าทั้งหมด
     const totalProductsResult = await pool.query(`
-      SELECT COUNT(*) AS total_products
-      FROM products
+      SELECT COUNT(DISTINCT name) AS total_products
+      FROM "History"
     `);
 
-    // 3️⃣ กราฟยอดขาย (รายวัน)
+    // 3️⃣ กราฟยอดขายรายวัน
     const salesChartResult = await pool.query(`
       SELECT 
-        DATE(order_date) AS date,
-        SUM(total_price) AS total
-      FROM orders
-      GROUP BY DATE(order_date)
+        DATE(date) AS date,
+        SUM(price * quantity) AS total
+      FROM "History"
+      GROUP BY DATE(date)
       ORDER BY date
     `);
 
     // 4️⃣ สินค้าขายดีที่สุด
     const topSellerResult = await pool.query(`
       SELECT 
-        p.name,
-        SUM(oi.quantity) AS sold
-      FROM order_items oi
-      JOIN products p ON oi.product_id = p.id
-      GROUP BY p.name
+        name,
+        SUM(quantity) AS sold
+      FROM "History"
+      GROUP BY name
       ORDER BY sold DESC
       LIMIT 5
     `);
 
     res.status(200).json({
-      todaySales: todaySalesResult.rows[0].today_sales,
-      totalProducts: totalProductsResult.rows[0].total_products,
+      todaySales: Number(todaySalesResult.rows[0].today_sales),
+      totalProducts: Number(totalProductsResult.rows[0].total_products),
       salesChart: salesChartResult.rows,
       topSellers: topSellerResult.rows
     });
 
   } catch (error) {
-    console.error('Error executing dashboard query:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('❌ Dashboard API Error:', error.message);
+    res.status(500).json({ error: error.message });
   }
 };
