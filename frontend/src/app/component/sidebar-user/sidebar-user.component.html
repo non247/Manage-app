@@ -14,46 +14,59 @@
 >
   <div class="top">
     <ul class="nav-links">
-      <li routerLinkActive="active">
+
+      <!-- Dashboard -->
+      <li
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
         <a (click)="navigateTo('/dashboard')">
           <i class="bi bi-grid-fill" style="font-size: 30px"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px"
-            >ภาพรวม</span
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
           >
+            ภาพรวม
+          </span>
         </a>
       </li>
 
-      <!-- <li routerLinkActive="active">
-        <a (click)="navigateTo('/product')">
-        <i class="bi bi-box-seam-fill" style="font-size: 30px;"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Product</span>
-        </a>
-      </li> -->
-
-      <li routerLinkActive="active">
+      <!-- Inventory -->
+      <li
+        routerLink="/inventory"
+        routerLinkActive="active"
+      >
         <a (click)="navigateTo('/inventory')">
           <i class="pi pi-warehouse" style="font-size: 30px"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px"
-            >รายการสินค้า</span
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
           >
+            รายการสินค้า
+          </span>
         </a>
       </li>
 
-      <li routerLinkActive="active">
+      <!-- History -->
+      <li
+        routerLink="/history"
+        routerLinkActive="active"
+      >
         <a (click)="navigateTo('/history')">
           <i class="bi bi-clock-fill" style="font-size: 30px"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px"
-            >ประวัติ</span
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
           >
+            ประวัติ
+          </span>
         </a>
       </li>
 
-      <!-- <li class="logout">
-        <a (click)="logout()">
-          <i class="bi bi-box-arrow-right" style="font-size: 30px;"></i>
-          <span class="text" [class.show]="!isCollapsed" style="font-size: 20px;">Log out</span>
-        </a>
-      </li> -->
     </ul>
   </div>
 </div>
