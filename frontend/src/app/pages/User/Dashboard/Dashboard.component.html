@@ -10,29 +10,27 @@
   <div class="top-cards">
 
     <div class="card">
-      <h3>ยอดขายวันนี้</h3>
-      <p>{{ todaySales | number }} บาท</p>
+      <div class="card-icon">
+        <i class="bi bi-cash-coin"></i>
+      </div>
+      <div class="card-content">
+        <h3>ยอดขายวันนี้</h3>
+        <p>{{ todaySales | number }} บาท</p>
+      </div>
     </div>
 
     <div class="card">
-      <h3>สินค้าทั้งหมด</h3>
-      <p>{{ totalProducts }}</p>
+      <div class="card-icon">
+        <i class="bi bi-box-seam"></i>
+      </div>
+      <div class="card-content">
+        <h3>สินค้าทั้งหมด</h3>
+        <p>{{ totalProducts }} ชิ้น</p>
+      </div>
     </div>
   </div>
 
-      <div class="graphs">
-        <div class="graph-box">
-          <h3>สินค้าทั้งหมด</h3>
-          <canvas #productChartCanvas></canvas>
-        </div>
-
-        <!-- Top Seller -->
-        <div class="graph-box">
-          <h3>ขายดีที่สุด</h3>
-          <canvas #topSellerCanvas></canvas>
-        </div>
-        
-<div class="graph-box">
+  <div class="graph-box">
   <div class="graph-header">
     <h3>ภาพรวมยอดขาย</h3>
 
@@ -51,10 +49,23 @@
     </div>
   </div>
 
-
   <canvas #salesCanvas></canvas>
 
 </div>
+
+      <div class="graphs">
+        <div class="graph-box">
+          <h3>สินค้าทั้งหมด</h3>
+          <canvas #productChartCanvas></canvas>
+        </div>
+
+        <!-- Top Seller -->
+        <div class="graph-box">
+          <h3>ขายดีที่สุด</h3>
+          <canvas #topSellerCanvas></canvas>
+        </div>
+        
+
       </div>
 
       <!-- <div class="lower-section">

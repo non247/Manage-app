@@ -135,13 +135,13 @@ toDaily(data: any[]) {
 
   // สีประจำวัน (จันทร์ - อาทิตย์)
   const colors = [
-    '#FFCB2F', // จันทร์
-    '#FD3259', // อังคาร
-    '#53D86A', // พุธ
+    '#FCEE9E', // จันทร์
+    '#FFBFC5', // อังคาร
+    '#ADD495', // พุธ
     '#FF9800', // พฤหัส
-    '#3CABDB', // ศุกร์
-    '#595BD4', // เสาร์
-    '#FD3D39'  // อาทิตย์
+    '#A8D1E7', // ศุกร์
+    '#E0C7EE', // เสาร์
+    '#F898A4'  // อาทิตย์
   ];
 
   const today = new Date();
@@ -445,7 +445,7 @@ createProductChart(dataSource: any[]) {
         label: d.name,
         data: [Number(d.sold)],          // จำนวนขาย
         borderRadius: 8,
-
+        
         // ราคารวมจาก backend
         totalSales: Number(d.total_sales),
       })),
