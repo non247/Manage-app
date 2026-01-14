@@ -32,23 +32,29 @@
           <canvas #topSellerCanvas></canvas>
         </div>
         
-        <!-- Sales Graph -->
 <div class="graph-box">
   <div class="graph-header">
     <h3>ภาพรวมยอดขาย</h3>
 
-    <div class="filter">
-      <button (click)="changeSalesView('day')">รายวัน</button>
-      <button (click)="changeSalesView('week')">รายสัปดาห์</button>
-      <button (click)="changeSalesView('month')">รายเดือน</button>
+    <div class="button-group">
+<button
+  [class.active]="salesView === 'day'"
+  (click)="changeSalesView('day')">รายสัปดาห์</button>
+
+<button
+  [class.active]="salesView === 'month'"
+  (click)="changeSalesView('month')">รายเดือน</button>
+
+  <button
+  [class.active]="salesView === 'year'"
+  (click)="changeSalesView('year')">รายปี</button>
     </div>
   </div>
 
+
   <canvas #salesCanvas></canvas>
+
 </div>
-
-
-
       </div>
 
       <!-- <div class="lower-section">

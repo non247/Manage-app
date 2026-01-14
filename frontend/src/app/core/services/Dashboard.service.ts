@@ -57,17 +57,9 @@ export interface DashboardResponse {
   
   salesChart: { date: string; total: number }[];
    // ✅ รายสัปดาห์
-  salesChartWeekly: {
-    week: number;
-    total: number;
-  }[];
-
+  salesChartWeekly: {week: number;total: number;}[];
   // ✅ รายเดือน
-  salesChartMonthly: {
-    month: string;
-    total: number;
-  }[];
-
+  salesChartMonthly: {month: string; total: number;}[];
   topSellers: { name: string; sold: number }[];
   productChart: { name: string; sold: number }[];
 }
