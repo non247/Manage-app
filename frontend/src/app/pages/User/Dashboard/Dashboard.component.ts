@@ -3,39 +3,43 @@ import {Chart,registerables} from 'chart.js';
 import {TableModule} from 'primeng/table';
 import {DashboardService} from '../../../core/services/Dashboard.service';
 import {DashboardResponse} from '../../../core/services/Dashboard.service';
+import { CommonModule } from '@angular/common';
+
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TableModule],
+  imports: [TableModule,CommonModule],
   templateUrl: './Dashboard.component.html',
   styleUrl: './Dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('salesCanvas') salesCanvas!: ElementRef < HTMLCanvasElement > ;
-  @ViewChild('topSellerCanvas') topSellerCanvas!: ElementRef < HTMLCanvasElement > ;
-  @ViewChild('productChartCanvas') productChartCanvas!: ElementRef < HTMLCanvasElement > ;
+  @ViewChild('salesCanvas') salesCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('topSellerCanvas') topSellerCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('productChartCanvas') productChartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  salesChart ? : Chart;
-  topSellerChart ? : Chart;
-  productChart ? : Chart;
+  salesChart?: Chart;
+  topSellerChart?: Chart;
+  productChart?: Chart;
 
   todaySales = 0;
   totalProducts = 0;
 
-  private dashboardData ? : DashboardResponse;
+  salesView: 'day' | 'week' | 'month' = 'day';
+
+  private dashboardData?: DashboardResponse;
 
   constructor(private dashboardService: DashboardService) {}
 
-  // 1️⃣ โหลดข้อมูลอย่างเดียว
+  // 1️⃣ โหลดข้อมูล
   ngOnInit(): void {
     this.loadDashboard();
   }
 
-  // 2️⃣ สร้าง chart หลัง view พร้อม
+  // 2️⃣ render หลัง view พร้อม
   ngAfterViewInit(): void {
     if (this.dashboardData) {
       this.renderCharts();
@@ -50,10 +54,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
         this.todaySales = Number(res.todaySales);
         this.totalProducts = Number(res.totalProducts);
-
         this.dashboardData = res;
 
-        // ถ้า view พร้อมแล้ว ให้ render ได้เลย
         if (this.salesCanvas) {
           this.renderCharts();
         }
@@ -64,17 +66,38 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // 🔹 รวมการสร้าง chart ไว้ที่เดียว
+  // 🔹 render chart ทั้งหมด
   renderCharts() {
     if (!this.dashboardData) return;
 
-    this.createSalesChart(this.dashboardData.salesChart);
+    this.changeSalesView(this.salesView);
     this.createTopSellerChart(this.dashboardData.topSellers);
     this.createProductChart(this.dashboardData.productChart);
   }
 
-  // 🔹 กราฟยอดขายรายวัน
-  createSalesChart(dataSource: any[]) {
+  // 🔁 สลับ รายวัน / รายสัปดาห์ / รายเดือน
+  changeSalesView(view: 'day' | 'week' | 'month') {
+    this.salesView = view;
+
+    if (!this.dashboardData) return;
+
+    let dataSource: any[] = [];
+
+    if (view === 'day') {
+      dataSource = this.dashboardData.salesChart;
+    }
+    if (view === 'week') {
+      dataSource = this.dashboardData.salesChartWeekly;
+    }
+    if (view === 'month') {
+      dataSource = this.dashboardData.salesChartMonthly;
+    }
+
+    this.createSalesChart(dataSource, view);
+  }
+
+  // 📈 กราฟยอดขาย
+  createSalesChart(dataSource: any[], view: 'day' | 'week' | 'month') {
     const ctx = this.salesCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
@@ -83,75 +106,120 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.salesChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: dataSource.map(d =>
-          new Date(d.date).toLocaleDateString('th-TH')
-        ),
-        datasets: [{
-          data: dataSource.map(d => Number(d.total)),
-          borderColor: '#D81B60',
-          backgroundColor: 'rgba(216,27,96,0.2)',
-          tension: 0.4,
-          fill: true,
-        }, ],
+        labels: dataSource.map(d => {
+          if (view === 'day') {
+            return new Date(d.date).toLocaleDateString('th-TH');
+          }
+          if (view === 'week') {
+            return `สัปดาห์ ${d.week}`;
+          }
+          return d.month; // เช่น "ม.ค. 2567"
+        }),
+        datasets: [
+          {
+            label: 'ยอดขาย (บาท)',
+            data: dataSource.map(d => Number(d.total)),
+            borderColor: '#D81B60',
+            backgroundColor: 'rgba(216,27,96,0.2)',
+            tension: 0.4,
+            fill: true,
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
-          }
+          legend: { display: false },
+          tooltip: {
+  callbacks: {
+    label: (ctx) => {
+      const value = ctx.parsed?.y ?? 0;
+      return `ยอดขาย ${value.toLocaleString()} บาท`;
+    }
+  }
+}
         },
-      },
+        scales: {
+          y: {
+            ticks: {
+              callback: (value) => `${value.toLocaleString()} ฿`
+            }
+          }
+        }
+      }
     });
   }
 
   // 🔹 กราฟสินค้าขายดีที่สุด
   createTopSellerChart(dataSource: any[]) {
-    const ctx = this.topSellerCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
+  const ctx = this.topSellerCanvas.nativeElement.getContext('2d');
+  if (!ctx) return;
 
-    if (this.topSellerChart) this.topSellerChart.destroy();
+  if (this.topSellerChart) this.topSellerChart.destroy();
 
-    this.topSellerChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: dataSource.map(d => d.name),
-        datasets: [{
+  this.topSellerChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: dataSource.map(d => d.name),
+      datasets: [
+        {
           data: dataSource.map(d => Number(d.sold)), // จำนวนที่ขาย
-        }, ],
+          // ❌ ห้ามใส่ radius ที่นี่ (TS error)
+        }
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      // ⭐ เว้นระยะรอบกราฟ (แก้ปัญหาชิดขอบ)
+      layout: {
+        padding: {
+          top: 20,
+          bottom: 20,
+          left: 20,
+          right: 40,
+        }
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'right',
-            labels: {
-              usePointStyle: true,
-              pointStyle: 'circle',
-            },
+
+      // ⭐ ตั้งค่า arc อย่างถูกต้อง (TS รองรับ)
+      elements: {
+        arc: {
+          borderWidth: 2,
+        }
+      },
+
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'circle',
+            padding: 20, // ⭐ เว้นระยะ legend
           },
-          tooltip: {
-            callbacks: {
-              label: (context) => {
-                const index = context.dataIndex;
-                const item = dataSource[index];
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const index = context.dataIndex;
+              const item = dataSource[index];
 
-                const sold = Number(item.sold);
-                const totalSales = Number(item.total_sales || 0);
+              const sold = Number(item.sold);
+              const totalSales = Number(item.total_sales || 0);
 
-                return [
-                  `จำนวนขาย: ${sold} ชิ้น`,
-                  `ยอดขายรวม: ${totalSales.toLocaleString()} บาท`
-                ];
-              }
+              return [
+                `จำนวนขาย: ${sold} ชิ้น`,
+                `ยอดขายรวม: ${totalSales.toLocaleString()} บาท`
+              ];
             }
           }
-        },
+        }
       },
-    });
-  }
+    },
+  });
+}
+
 
 // 🔹 กราฟสินค้าทั้งหมด
 createProductChart(dataSource: any[]) {

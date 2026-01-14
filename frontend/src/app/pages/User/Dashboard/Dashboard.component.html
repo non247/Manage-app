@@ -6,17 +6,19 @@
       </header>
     </div>
 
-    <div class="main-content">
-      <div class="top-cards">
-        <div class="card">
-          <h3>ยอดขายวันนี้</h3>
-          <p>800 บาท</p>
-        </div>
-        <div class="card">
-          <h3>สินค้าทั้งหมด</h3>
-          <p>3</p>
-        </div>
-      </div>
+<div class="main-content">
+  <div class="top-cards">
+
+    <div class="card">
+      <h3>ยอดขายวันนี้</h3>
+      <p>{{ todaySales | number }} บาท</p>
+    </div>
+
+    <div class="card">
+      <h3>สินค้าทั้งหมด</h3>
+      <p>{{ totalProducts }}</p>
+    </div>
+  </div>
 
       <div class="graphs">
         <div class="graph-box">
@@ -31,10 +33,19 @@
         </div>
         
         <!-- Sales Graph -->
-        <div class="graph-box">
-          <h3>ภาพรวมยอดขาย</h3>
-          <canvas #salesCanvas></canvas>
-        </div>
+<div class="graph-box">
+  <div class="graph-header">
+    <h3>ภาพรวมยอดขาย</h3>
+
+    <div class="filter">
+      <button (click)="changeSalesView('day')">รายวัน</button>
+      <button (click)="changeSalesView('week')">รายสัปดาห์</button>
+      <button (click)="changeSalesView('month')">รายเดือน</button>
+    </div>
+  </div>
+
+  <canvas #salesCanvas></canvas>
+</div>
 
 
 
