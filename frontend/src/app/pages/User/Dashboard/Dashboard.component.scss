@@ -55,19 +55,34 @@ app-sidebar-user {
 }
 
 .graphs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // ⭐ แถวละ 2 กราฟ
   gap: 20px;
   margin-top: 20px;
-
-  .graph-box {
-    flex: 1;
-    background-color: #fff;
-    border-radius: 15px;
-    height: 500px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
 }
+
+.graph-box {
+  background-color: #fff;
+  border-radius: 15px;
+  height: 500px; // สำคัญกับ Chart.js
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+// .graphs {
+//   display: flex;
+//   gap: 20px;
+//   margin-top: 20px;
+
+//   .graph-box {
+//     flex: 1;
+//     background-color: #fff;
+//     border-radius: 15px;
+//     height: 500px;
+//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+//     padding: 20px;
+//   }
+// }
 
 .main-content p-table {
   margin-top: 30px;

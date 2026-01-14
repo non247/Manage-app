@@ -56,4 +56,5 @@ export interface DashboardResponse {
   totalProducts: number;
   salesChart: { date: string; total: number }[];
   topSellers: { name: string; sold: number }[];
+  productChart: { name: string; sold: number }[];
 }

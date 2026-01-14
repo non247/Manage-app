@@ -136,10 +136,17 @@
 // }
 // }
 
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  OnInit,
+  AfterViewInit
+} from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { TableModule } from 'primeng/table';
 import { DashboardService } from '../../../core/services/Dashboard.service';
+import { DashboardResponse } from '../../../core/services/Dashboard.service';
 
 Chart.register(...registerables);
 
@@ -150,58 +157,84 @@ Chart.register(...registerables);
   templateUrl: './Dashboard.component.html',
   styleUrl: './Dashboard.component.scss',
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild('salesCanvas') salesCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('topSellerCanvas') topSellerCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('productChartCanvas') productChartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  salesChart!: Chart;
-  topSellerChart!: Chart;
+  salesChart?: Chart;
+  topSellerChart?: Chart;
+  productChart?: Chart;
 
   todaySales = 0;
   totalProducts = 0;
 
+  private dashboardData?: DashboardResponse;
+
   constructor(private dashboardService: DashboardService) {}
 
-  ngAfterViewInit(): void {
+  // 1️⃣ โหลดข้อมูลอย่างเดียว
+  ngOnInit(): void {
     this.loadDashboard();
+  }
+
+  // 2️⃣ สร้าง chart หลัง view พร้อม
+  ngAfterViewInit(): void {
+    if (this.dashboardData) {
+      this.renderCharts();
+    }
   }
 
   // 🔹 โหลดข้อมูลจาก Backend
   loadDashboard() {
-    this.dashboardService.getDashboard().subscribe(res => {
-      this.todaySales = Number(res.todaySales);
-      this.totalProducts = Number(res.totalProducts);
+    this.dashboardService.getDashboard().subscribe({
+      next: (res) => {
+        console.log('🔥 dashboard data:', res);
 
-      this.createSalesChart(res.salesChart);
-      this.createTopSellerChart(res.topSellers);
+        this.todaySales = Number(res.todaySales);
+        this.totalProducts = Number(res.totalProducts);
+
+        this.dashboardData = res;
+
+        // ถ้า view พร้อมแล้ว ให้ render ได้เลย
+        if (this.salesCanvas) {
+          this.renderCharts();
+        }
+      },
+      error: (err) => {
+        console.error('❌ Dashboard API error:', err);
+      }
     });
   }
 
+  // 🔹 รวมการสร้าง chart ไว้ที่เดียว
+  renderCharts() {
+    if (!this.dashboardData) return;
+
+    this.createSalesChart(this.dashboardData.salesChart);
+    this.createTopSellerChart(this.dashboardData.topSellers);
+    this.createProductChart(this.dashboardData.productChart);
+  }
+
   // 🔹 กราฟยอดขายรายวัน
-  createSalesChart(salesChartData: any[]) {
+  createSalesChart(dataSource: any[]) {
     const ctx = this.salesCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
-
-    const labels = salesChartData.map(item =>
-      new Date(item.date).toLocaleDateString('th-TH')
-    );
-    const data = salesChartData.map(item => Number(item.total));
 
     if (this.salesChart) this.salesChart.destroy();
 
     this.salesChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels,
+        labels: dataSource.map(d =>
+          new Date(d.date).toLocaleDateString('th-TH')
+        ),
         datasets: [
           {
-            label: 'ยอดขายรายวัน',
-            data,
+            data: dataSource.map(d => Number(d.total)),
             borderColor: '#D81B60',
             backgroundColor: 'rgba(216,27,96,0.2)',
-            pointRadius: 5,
-            pointHitRadius: 15,
             tension: 0.4,
             fill: true,
           },
@@ -210,57 +243,259 @@ export class DashboardComponent implements AfterViewInit {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          mode: 'nearest',
-          intersect: false,
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) =>
-                `฿${Number(ctx.raw).toLocaleString()}`,
-            },
-          },
-        },
+        plugins: { legend: { display: false } },
       },
     });
   }
 
   // 🔹 กราฟสินค้าขายดีที่สุด
-  createTopSellerChart(topSellers: any[]) {
-    const ctx = this.topSellerCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
+createTopSellerChart(dataSource: any[]) {
+  const ctx = this.topSellerCanvas.nativeElement.getContext('2d');
+  if (!ctx) return;
 
-    const labels = topSellers.map(item => item.name);
-    const data = topSellers.map(item => Number(item.sold));
+  if (this.topSellerChart) this.topSellerChart.destroy();
 
-    if (this.topSellerChart) this.topSellerChart.destroy();
-
-    this.topSellerChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            data,
-            backgroundColor: ['#F3E5AB', '#713600', '#F8BBD0'],
-            borderRadius: 8,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => `${ctx.raw} ชิ้น`,
-            },
-          },
+  this.topSellerChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: dataSource.map(d => d.name),
+      datasets: [
+        {
+          data: dataSource.map(d => Number(d.sold)),
         },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `${context.label}: ${context.parsed} ชิ้น`
+          }
+        }
       },
-    });
-  }
+    },
+  });
 }
+// 🔹 กราฟสินค้าทั้งหมด
+createProductChart(dataSource: any[]) {
+  const ctx = this.productChartCanvas.nativeElement.getContext('2d');
+  if (!ctx) return;
+
+  if (this.productChart) this.productChart.destroy();
+
+  this.productChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dataSource.map(d => d.name),
+      datasets: [
+        {
+          data: dataSource.map(d => Number(d.sold)),
+          borderRadius: 8,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context) => `${context.parsed.y} ชิ้น`
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: (value) => `${value} ชิ้น`
+          }
+        }
+      }
+    },
+  });
+}
+}
+
+// import { OnInit, Component, ElementRef, ViewChild } from '@angular/core';
+// import { Chart, registerables } from 'chart.js';
+// import { TableModule } from 'primeng/table';
+// import { DashboardService } from '../../../core/services/Dashboard.service';
+
+// Chart.register(...registerables);
+
+// @Component({
+//   selector: 'app-dashboard',
+//   standalone: true,
+//   imports: [TableModule],
+//   templateUrl: './Dashboard.component.html',
+//   styleUrl: './Dashboard.component.scss',
+// })
+// export class DashboardComponent implements OnInit {
+
+//   @ViewChild('salesCanvas') salesCanvas!: ElementRef<HTMLCanvasElement>;
+//   @ViewChild('topSellerCanvas') topSellerCanvas!: ElementRef<HTMLCanvasElement>;
+//   @ViewChild('productChartCanvas') productChartCanvas!: ElementRef<HTMLCanvasElement>;
+
+
+//   salesChart!: Chart;
+//   topSellerChart!: Chart;
+//   productChart!: Chart;
+
+//   todaySales = 0;
+//   totalProducts = 0;
+
+//   constructor(private dashboardService: DashboardService) {}
+
+//   ngOnInit(): void {
+//     this.loadDashboard();
+//   }
+
+//   // 🔹 โหลดข้อมูลจาก Backend
+// loadDashboard() {
+//   this.dashboardService.getDashboard().subscribe({
+//     next: (res) => {
+//       console.log('🔥 dashboard data:', res);
+
+//       this.todaySales = Number(res.todaySales);
+//       this.totalProducts = Number(res.totalProducts);
+
+//       this.createSalesChart(res.salesChart);
+//       this.createTopSellerChart(res.topSellers);
+//       this.createproductChart(res.productChart);
+//     },
+//     error: (err) => {
+//       console.error('❌ Dashboard API error:', err);
+//     }
+//   });
+// }
+
+//   // 🔹 กราฟยอดขายรายวัน
+//   createSalesChart(salesChartData: any[]) {
+//     const ctx = this.salesCanvas.nativeElement.getContext('2d');
+//     if (!ctx) return;
+
+//     const labels = salesChartData.map(item =>
+//       new Date(item.date).toLocaleDateString('th-TH')
+//     );
+//     const data = salesChartData.map(item => Number(item.total));
+
+//     if (this.salesChart) this.salesChart.destroy();
+
+//     this.salesChart = new Chart(ctx, {
+//       type: 'line',
+//       data: {
+//         labels,
+//         datasets: [
+//           {
+//             label: 'ยอดขายรายวัน',
+//             data,
+//             borderColor: '#D81B60',
+//             backgroundColor: 'rgba(216,27,96,0.2)',
+//             pointRadius: 5,
+//             pointHitRadius: 15,
+//             tension: 0.4,
+//             fill: true,
+//           },
+//         ],
+//       },
+//       options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         interaction: {
+//           mode: 'nearest',
+//           intersect: false,
+//         },
+//         plugins: {
+//           legend: { display: false },
+//           tooltip: {
+//             callbacks: {
+//               label: (ctx) =>
+//                 `฿${Number(ctx.raw).toLocaleString()}`,
+//             },
+//           },
+//         },
+//       },
+//     });
+//   }
+
+//   // 🔹 กราฟสินค้าขายดีที่สุด
+//   createTopSellerChart(topSellers: any[]) {
+//     const ctx = this.topSellerCanvas.nativeElement.getContext('2d');
+//     if (!ctx) return;
+
+//     const labels = topSellers.map(item => item.name);
+//     const data = topSellers.map(item => Number(item.sold));
+
+//     if (this.topSellerChart) this.topSellerChart.destroy();
+
+//     this.topSellerChart = new Chart(ctx, {
+//       type: 'bar',
+//       data: {
+//         labels,
+//         datasets: [
+//           {
+//             data,
+//             backgroundColor: ['#F3E5AB', '#713600', '#F8BBD0'],
+//             borderRadius: 8,
+//           },
+//         ],
+//       },
+//       options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         plugins: {
+//           legend: { display: false },
+//           tooltip: {
+//             callbacks: {
+//               label: (ctx) => `${ctx.raw} ชิ้น`,
+//             },
+//           },
+//         },
+//       },
+//     });
+//   }
+
+//     createproductChart(productChart: any[]) {
+//     const ctx = this.productChartCanvas.nativeElement.getContext('2d');
+//     if (!ctx) return;
+
+//     const labels = productChart.map(item => item.name);
+//     const data = productChart.map(item => Number(item.sold));
+
+//     if (this.productChart) this.productChart.destroy();
+
+//     this.productChart = new Chart(ctx, {
+//       type: 'bar',
+//       data: {
+//         labels,
+//         datasets: [
+//           {
+//             data,
+//             backgroundColor: ['#F3E5AB', '#713600', '#F8BBD0'],
+//             borderRadius: 8,
+//           },
+//         ],
+//       },
+//       options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         plugins: {
+//           legend: { display: false },
+//           tooltip: {
+//             callbacks: {
+//               label: (ctx) => `${ctx.raw} ชิ้น`,
+//             },
+//           },
+//         },
+//       },
+//     });
+//   }
+
+// }
