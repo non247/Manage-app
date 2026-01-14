@@ -14,7 +14,6 @@ exports.getInventory = async (req, res) => {
   }
 };
 
-
 exports.createInventory = async (req, res) => {
   try {
     const { name, category, quantity, price, date } = req.body;
@@ -33,7 +32,6 @@ exports.createInventory = async (req, res) => {
     res.status(500).json({ message: 'เพิ่มข้อมูลไม่สำเร็จ' });
   }
 };
-
 
 exports.updateInventory = async (req, res) => {
   try {
@@ -60,15 +58,11 @@ exports.updateInventory = async (req, res) => {
   }
 };
 
-
 exports.deleteInventory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await pool.query(
-      `DELETE FROM "Inventory" WHERE id = $1`,
-      [id]
-    );
+    await pool.query(`DELETE FROM "Inventory" WHERE id = $1`, [id]);
 
     res.status(200).json({ message: 'ลบข้อมูลสำเร็จ' });
   } catch (err) {

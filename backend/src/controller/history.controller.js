@@ -19,7 +19,7 @@ exports.createHistory = async (req, res) => {
 
     await pool.query(
       `
-      INSERT INTO "History" (name, category, quantity, price, "date")
+      INSERT INTO "History" (name, category, quantity, price, date)
       VALUES ($1, $2, $3, $4, $5)
       `,
       [name, category, quantity, price, date]
@@ -61,10 +61,7 @@ exports.deleteHistory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await pool.query(
-      `DELETE FROM "History" WHERE id = $1`,
-      [id]
-    );
+    await pool.query(`DELETE FROM "History" WHERE id = $1`, [id]);
 
     res.status(200).json({ message: 'ลบข้อมูลสำเร็จ' });
   } catch (err) {

@@ -134,7 +134,7 @@
               <th pSortableColumn="price" scope="col">
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
-              
+
               <th style="width: 12%"></th>
             </tr>
           </ng-template>
@@ -142,8 +142,7 @@
           <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
-
-               <!-- DATE -->
+              <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
                   {{ product.date | date: 'dd/MM/yyyy' }}
@@ -179,12 +178,14 @@
                 </ng-container>
                 <ng-template #editQty>
                   <input
-                  type="number"
-                  min="0"
-                  [ngModel]="editProduct!.quantity"
-                  (ngModelChange)="editProduct!.quantity = +$event < 0 ? 0 : +$event"
-                />
-              </ng-template>
+                    type="number"
+                    min="0"
+                    [ngModel]="editProduct!.quantity"
+                    (ngModelChange)="
+                      editProduct!.quantity = +$event < 0 ? 0 : +$event
+                    "
+                  />
+                </ng-template>
               </td>
 
               <!-- PRICE -->
@@ -193,16 +194,16 @@
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                <input
-                type="number"
-                min="0"
-                [ngModel]="editProduct!.price"
-                (ngModelChange)="editProduct!.price = +$event < 0 ? 0 : +$event"
-                />
+                  <input
+                    type="number"
+                    min="0"
+                    [ngModel]="editProduct!.price"
+                    (ngModelChange)="
+                      editProduct!.price = +$event < 0 ? 0 : +$event
+                    "
+                  />
                 </ng-template>
               </td>
-
-             
 
               <!-- ACTION -->
               <td style="display: flex; gap: 8px">
