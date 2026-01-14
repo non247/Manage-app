@@ -775,11 +775,11 @@ export class HistoryComponent implements OnInit {
     }
 
     const worksheetData = this.selectedProducts.map((p) => ({
+      'วันที่': new Date(p.date).toLocaleDateString('th-TH'),
       'ชื่อสินค้า': p.name,
       'หมวดหมู่': p.category,
       'จำนวน': p.quantity,
       'ราคา': p.price,
-      'วันที่': new Date(p.date).toLocaleDateString('th-TH'),
     }));
 
     const ws = XLSX.utils.json_to_sheet(worksheetData);
