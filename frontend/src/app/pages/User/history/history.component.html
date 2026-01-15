@@ -21,7 +21,7 @@
           <button
             type="button"
             class="btn-excel"
-            style="margin-left: auto"
+            style="margin-left: auto; visibility: hidden;"
             (click)="exportToExcel()"
           >
             <i class="bi bi-filetype-xlsx"></i>
@@ -129,7 +129,7 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="text-align: center; width: 10%">
+              <!-- <th style="text-align: center; width: 10%">
                 <input
                   type="checkbox"
                   [checked]="
@@ -139,7 +139,7 @@
                   [disabled]="editIndex !== null"
                   style="width: 30px; height: 26px"
                 />
-              </th>
+              </th> -->
 
               <th pSortableColumn="date" scope="col">
                 <div class="flex items-center gap-2">
@@ -179,7 +179,7 @@
           </ng-template>
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
-              <td style="text-align: center">
+              <!-- <td style="text-align: center">
                 <input
                   type="checkbox"
                   [checked]="selectedProducts.includes(product)"
@@ -187,7 +187,7 @@
                   [disabled]="editIndex !== null"
                   style="width: 24px; height: 24px"
                 />
-              </td>
+              </td> -->
 
               <!-- DATE -->
               <td>
@@ -242,7 +242,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7">ไม่พบข้อมูล</td>
+              <td colspan="6">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>
