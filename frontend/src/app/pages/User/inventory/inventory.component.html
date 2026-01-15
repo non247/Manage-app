@@ -43,7 +43,7 @@
           [class.closing]="isClosing"
         >
           <div class="create-card-header">
-            <h2>สร้างรายการสินค้าใหม่</h2>
+            <h2>เพิ่มสินค้า</h2>
           </div>
 
           <div class="create-card-body">
@@ -103,6 +103,7 @@
         <!-- TABLE -->
         <p-table
           #dt
+          stripedRows
           [value]="filteredProducts"
           [rows]="10"
           [globalFilterFields]="[
@@ -119,23 +120,13 @@
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="date" scope="col">
-                วันที่ <p-sortIcon field="date"></p-sortIcon>
-              </th>
-              <th pSortableColumn="name" scope="col">
-                ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
-              </th>
-              <th pSortableColumn="category" scope="col">
-                ประเภท <p-sortIcon field="category"></p-sortIcon>
-              </th>
-              <th pSortableColumn="quantity" scope="col">
-                จำนวน <p-sortIcon field="quantity"></p-sortIcon>
-              </th>
-              <th pSortableColumn="price" scope="col">
-                ราคา <p-sortIcon field="price"></p-sortIcon>
-              </th>
+              <th scope="col">วันที่</th>
+              <th scope="col">ชื่อสินค้า</th>
+              <th scope="col">ประเภท</th>
+              <th scope="col">จำนวน</th>
+              <th scope="col">ราคา</th>
 
-              <th style="width: 12%"></th>
+              <th style="width: 12%" scope="col"></th>
             </tr>
           </ng-template>
 

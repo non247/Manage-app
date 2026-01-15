@@ -70,8 +70,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   renderCharts() {
     if (!this.dashboardData) return;
 
-    this.changeSalesView(this.salesView);
-    this.createTopSellerChart(this.dashboardData.topSellers);
+    // this.changeSalesView(this.salesView);
+    // this.createTopSellerChart(this.dashboardData.topSellers);
     this.createProductChart(this.dashboardData.productChart);
   }
 
@@ -98,36 +98,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // toDaily(data: any[]) {
-  //   const map = new Map<string, number>();
-
-  //   // แปลงข้อมูลจาก backend ใส่ map
-  //   data.forEach(d => {
-  //     const date = new Date(d.date);
-  //     const key = date.toISOString().split('T')[0]; // yyyy-mm-dd
-  //     map.set(key, Number(d.total));
-  //   });
-
-  //   const result: { label: string; total: number }[] = [];
-
-  //   // ย้อนหลัง 7 วัน
-  //   for (let i = 6; i >= 0; i--) {
-  //     const date = new Date();
-  //     date.setDate(date.getDate() - i);
-
-  //     const key = date.toISOString().split('T')[0];
-
-  //     result.push({
-  //       label: date.toLocaleDateString('th-TH', {
-  //         day: 'numeric',
-  //         month: 'long'
-  //       }),
-  //       total: map.get(key) || 0
-  //     });
-  //   }
-
-  //   return result;
-  // }
   toDaily(data: any[]) {
     const map = new Map<string, number>();
 
@@ -211,64 +181,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }));
   }
 
-  // createSalesChart(dataSource: any[], view: 'day' | 'month' | 'year') {
-  //   const ctx = this.salesCanvas.nativeElement.getContext('2d');
-  //   if (!ctx) return;
-
-  //   if (this.salesChart) this.salesChart.destroy();
-
-  //   this.salesChart = new Chart(ctx, {
-  //     type: 'bar',
-  //     data: {
-  //       labels: dataSource.map(d => d.label),
-  //       datasets: [
-  //         {
-  //           label: 'ยอดขายรวม',
-  //           data: dataSource.map(d => d.total),
-  //           backgroundColor: '#CBD5E1',
-  //           borderRadius: 10,
-  //           barPercentage: 0.6
-  //         }
-  //       ]
-  //     },
-  //     options: {
-  //       responsive: true,
-  //       maintainAspectRatio: false,
-
-  //        layout: {
-  //     padding: {
-  //       top: 20,
-  //       bottom: 20   // 👈 ดันแกน X เข้าในกรอบ
-  //     }
-  //   },
-  //       plugins: {
-  //         legend: { display: false },
-  //         tooltip: {
-  //   callbacks: {
-  //     label: (ctx) => {
-  //       const value = ctx.parsed?.y ?? 0;
-  //       return `ยอดขาย ${value.toLocaleString()} บาท`;
-  //     }
-  //   }
-  // }
-  // },
-  // scales: {
-  //   x: {
-  //     grid: { display: false },
-  //     ticks: {
-  //       maxRotation: 0,
-  //       autoSkip: true
-  //     }
-  //   },
-  //   y: {
-  //     ticks: {
-  //       callback: (v) => `${v.toLocaleString()}`
-  //     }
-  //   }
-  // }
-  //     }
-  //   });
-  // }
   createSalesChart(dataSource: any[], view: 'day' | 'month' | 'year') {
     const ctx = this.salesCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
