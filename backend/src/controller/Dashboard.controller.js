@@ -11,7 +11,7 @@ exports.getDashboard = async (req, res) => {
 
     // 2️⃣ จำนวนสินค้าทั้งหมด
     const totalProductsResult = await pool.query(`
-      SELECT COUNT(DISTINCT name) AS total_products
+      SELECT COUNT(name) AS total_products
       FROM "History"
     `);
 
