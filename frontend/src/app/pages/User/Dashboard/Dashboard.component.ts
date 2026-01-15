@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   todaySales = 0;
   totalProducts = 0;
+  totalSold = 0;
 
   salesView: 'day' | 'month' | 'year' = 'day';
 
@@ -57,6 +58,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       next: (res) => {
         this.todaySales = Number(res.todaySales);
         this.totalProducts = Number(res.totalProducts);
+        this.totalSold = Number(res.totalSold);
         this.dashboardData = res;
 
         if (this.salesCanvas) {

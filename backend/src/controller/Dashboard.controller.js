@@ -15,6 +15,12 @@ exports.getDashboard = async (req, res) => {
       FROM "History"
     `);
 
+    // จำนวนสินค้าทั้งหมดที่ขายได้
+    const totalSoldResult = await pool.query(`
+      SELECT COALESCE(SUM(quantity), 0) AS total_sold
+      FROM "History"
+    `);
+
     // 3️⃣ กราฟยอดขายรายวัน
     const salesChartResult = await pool.query(`
       SELECT 
@@ -50,6 +56,7 @@ exports.getDashboard = async (req, res) => {
     res.status(200).json({
       todaySales: Number(todaySalesResult.rows[0].today_sales),
       totalProducts: Number(totalProductsResult.rows[0].total_products),
+      totalSold: Number(totalSoldResult.rows[0].total_sold),
       salesChart: salesChartResult.rows,
       topSellers: topSellerResult.rows,
       productChart: productChartResult.rows,

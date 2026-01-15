@@ -19,6 +19,7 @@ export class DashboardService {
 export interface DashboardResponse {
   todaySales: number;
   totalProducts: number;
+  totalSold: number;
 
   salesChart: { date: string; total: number }[];
   // ✅ รายสัปดาห์
