@@ -86,7 +86,7 @@
 .sidebar {
   position: fixed;
   height: 100vh;
-  width: 220px; // ขนาดเต็ม
+  width: 240px; // ขนาดเต็ม
   background-color: #ffbdcb;
   padding-top: 85px;
   overflow: hidden;
@@ -98,11 +98,6 @@
 
   &.collapsed {
     width: 95px;
-
-    // hover ขยายชั่วคราว
-    // &:hover {
-    //   width: 200px;
-    // }
   }
 
   // **เพิ่ม flex column เพื่อจัดการ layout แนวตั้ง**

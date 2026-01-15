@@ -3,7 +3,7 @@
   <div class="main-area">
     <div class="main-content">
       <header class="top-navbar">
-        <h1>ประวัติ</h1>
+        <h1>ประวัติการขาย</h1>
       </header>
 
       <!-- ✅ ใส่ table ในกล่อง table-box -->
@@ -17,8 +17,6 @@
             position: relative;
           "
         >
-          <!-- ซ้าย: Title -->
-          <!-- <h1 style="color: #d81b60; margin: 0">List of History Products</h1> -->
           <!-- ขวา: ปุ่ม Excel -->
           <button
             type="button"
@@ -53,7 +51,7 @@
           [class.closing]="isClosing"
         >
           <div class="create-card-header">
-            <h2>สร้างรายการประวัติใหม่</h2>
+            <h2>เพิ่มรายการขาย</h2>
           </div>
 
           <div class="create-card-body">
@@ -126,6 +124,7 @@
           ]"
           [scrollable]="true"
           scrollHeight="500px"
+          stripedRows
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
           <ng-template pTemplate="header">
@@ -176,8 +175,6 @@
                   <p-sortIcon field="price"></p-sortIcon>
                 </div>
               </th>
-
-              <th style="width: 12%"></th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-product let-i="rowIndex">
@@ -239,38 +236,6 @@
                 <ng-template #editPrice>
                   <input type="number" [(ngModel)]="editProduct!.price" />
                 </ng-template>
-              </td>
-
-              <!-- ACTION -->
-              <td style="display: flex; gap: 8px">
-                <!-- <button
-                  *ngIf="editIndex !== i"
-                  class="btn-edit"
-                  (click)="onEdit(i)"
-                >
-                  <i class="pi pi-pen-to-square"></i>
-                </button> -->
-                <button
-                  *ngIf="editIndex !== i"
-                  class="btn-delete"
-                  (click)="onDelete(i)"
-                >
-                  <i class="bi bi-trash3-fill"></i>
-                </button>
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-save"
-                  (click)="onSave(i)"
-                >
-                  <i class="pi pi-check-square"></i>
-                </button>
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-cancel"
-                  (click)="onCancel()"
-                >
-                  <i class="bi bi-x-square"></i>
-                </button>
               </td>
             </tr>
           </ng-template>
