@@ -19,6 +19,7 @@ exports.getDashboard = async (req, res) => {
     const totalSoldResult = await pool.query(`
       SELECT COALESCE(SUM(quantity), 0) AS total_sold
       FROM "History"
+      WHERE DATE(date) = CURRENT_DATE
     `);
 
     // 3️⃣ กราฟยอดขายรายวัน
