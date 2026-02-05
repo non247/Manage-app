@@ -403,6 +403,43 @@ input[type='date'] {
   grid-column: span 2;
 }
 
+/* ===== SELECT / DROPDOWN ===== */
+.field select {
+  width: 90%;
+  padding: 5px 35px 5px 8px;
+
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 23px;
+  font-family: inherit;
+
+  background-color: #fff;
+  cursor: pointer;
+  outline: none;
+
+  /* ลูกศร dropdown */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23999' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 7l4.5 4.5L14.5 7'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 18px;
+}
+
+/* focus */
+.field select:focus {
+  border-color: #000000;
+}
+
+/* option disabled */
+.field select option:disabled {
+  color: #aaa;
+}
+
+
+
 .create-card-footer {
   padding: 16px 20px;
   display: flex;
