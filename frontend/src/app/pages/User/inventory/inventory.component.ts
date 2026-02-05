@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+// import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
-import { InventoryService } from '../../../core/services/Inventory.sevice';
+import { InventoryService } from '../../../core/services/Inventory.service';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -41,10 +42,11 @@ export class InventoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  categoryOptions = [
-    { label: 'ไอศครีม', value: 'ไอศครีม' },
-    { label: 'กล่อง', value: 'กล่อง' },
-  ];
+categories = [
+  { label: 'โคน', value: 'โคน' },
+  { label: 'ถ้วย', value: 'ถ้วย' }
+];
+
 
   constructor(private inventoryService: InventoryService) {}
 
