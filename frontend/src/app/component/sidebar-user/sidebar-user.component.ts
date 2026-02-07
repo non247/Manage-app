@@ -143,13 +143,14 @@ export class SidebarUserComponent {
   // ✅ Logout
   logout() {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will be logged out.',
+      title: 'ยืนยันที่จะออกจากระบบ?',
+      // text: 'You will be logged out.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, logout',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#8F8F8F',
+      confirmButtonText: 'ออกจากระบบ',
+      cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem('token');

@@ -92,6 +92,7 @@ categories = [
         title: 'ผิดพลาด',
         text: 'กรุณากรอกข้อมูลให้ครบ',
         icon: 'error',
+        confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
       });
       return;
@@ -120,6 +121,7 @@ categories = [
           title: 'ผิดพลาด',
           text: 'ไม่สามารถสร้างรายการได้',
           icon: 'error',
+          confirmButtonColor: '#3085d6',
           confirmButtonText: 'ตกลง',
         });
       },
@@ -210,6 +212,7 @@ categories = [
       html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#3085d6',
       confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {

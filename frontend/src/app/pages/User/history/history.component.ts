@@ -101,6 +101,7 @@ export class HistoryComponent implements OnInit {
         title: 'ผิดพลาด',
         text: 'กรุณากรอกข้อมูลให้ครบ',
         icon: 'error',
+        confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
       });
       return;
@@ -130,6 +131,7 @@ export class HistoryComponent implements OnInit {
           title: 'ผิดพลาด',
           text: 'ไม่สามารถบันทึกข้อมูลได้',
           icon: 'error',
+          confirmButtonColor: '#3085d6',
           confirmButtonText: 'ตกลง',
         });
       },
@@ -190,6 +192,7 @@ export class HistoryComponent implements OnInit {
       html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#3085d6',
       confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
@@ -216,6 +219,7 @@ export class HistoryComponent implements OnInit {
         title: 'ผิดพลาด',
         text: 'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ',
         icon: 'error',
+        confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
       });
       return;

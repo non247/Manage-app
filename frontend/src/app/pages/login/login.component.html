@@ -5,7 +5,7 @@
   </div>
 
   <div class="login-card">
-    <h1>Login</h1>
+    <h1>เข้าสู่ระบบ</h1>
 
     <!-- เรียก login() ตอนกดปุ่ม -->
     <form #loginForm="ngForm" (ngSubmit)="login()">
@@ -17,7 +17,7 @@
           name="username"
           [(ngModel)]="Username"
           required
-          placeholder="Enter username"
+          placeholder="ชื่อผู้ใช้"
         />
       </div>
 
@@ -28,7 +28,7 @@
           name="password"
           [(ngModel)]="Password"
           required
-          placeholder="Enter password"
+          placeholder="ป้อนรหัสผ่าน"
         />
 
         <i
@@ -42,7 +42,7 @@
         {{ errorMessage }}
       </p>
       <button type="submit" class="btn-singin" style="font-size: 20px">
-        Log In
+        เข้าสู่ระบบ
       </button>
     </form>
   </div>
