@@ -1,2 +1,5 @@
-<app-sidebar-user></app-sidebar-user>
+<!-- <app-sidebar-user></app-sidebar-user>
+<router-outlet></router-outlet> -->
+
+<app-sidebar-user *ngIf="!hideSidebar"></app-sidebar-user>
 <router-outlet></router-outlet>

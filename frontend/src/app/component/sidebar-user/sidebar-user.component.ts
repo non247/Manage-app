@@ -10,36 +10,46 @@
 // })
 // export class SidebarUserComponent {
 //   isCollapsed = true;
-//   hasInteracted = false; // เคย hover หรือคลิกหรือยัง
-//   disableAnimation = true; // เริ่มต้น → ปิด animation
+//   hasInteracted = false;
+//   disableAnimation = true;
 //   isMobile = false;
+
+//   // ✅ เพิ่ม state เช็คว่าเปิดด้วย hamburger หรือไม่
+//   openedByHamburger = false;
 
 //   constructor(private readonly router: Router) {}
 
-//   // onMouseEnter() {
-//   //   if (!this.isMobile && !this.hasInteracted) {
-//   //     this.disableAnimation = false;
-//   //     this.hasInteracted = true;
-//   //   }
-//   // }
-
-//   // Hamburger toggle
+//   // ✅ Hamburger toggle
 //   toggleSidebar() {
 //     this.hasInteracted = true;
 //     this.disableAnimation = false;
+
 //     this.isCollapsed = !this.isCollapsed;
+
+//     // ถ้า sidebar เปิด = เปิดโดย hamburger
+//     this.openedByHamburger = !this.isCollapsed;
+
+//     // ถ้าปิดเอง → reset
+//     if (this.isCollapsed) {
+//       this.openedByHamburger = false;
+//     }
 //   }
 
+//   // ✅ คลิกเมนู
 //   navigateTo(path: string) {
-//     this.disableAnimation = false; // เปิด animation
-//     this.isCollapsed = true; // ปิด sidebar พร้อม animate
+//     this.disableAnimation = false;
 
-//     // รอให้ animation จบก่อน navigate
+//     // ❗ ถ้าไม่ได้เปิดด้วย hamburger → ปิด sidebar
+//     if (!this.openedByHamburger) {
+//       this.isCollapsed = true;
+//     }
+
 //     setTimeout(() => {
 //       this.router.navigate([path]);
-//     }, 300); // ต้องตรงกับ transition 0.3s ใน CSS
+//     }, 300); // ต้องตรงกับ transition CSS
 //   }
 
+//   // ✅ Logout
 //   logout() {
 //     Swal.fire({
 //       title: 'Are you sure?',
@@ -51,24 +61,14 @@
 //       confirmButtonText: 'Yes, logout',
 //     }).then((result) => {
 //       if (result.isConfirmed) {
-//         // ลบ token
 //         localStorage.removeItem('token');
 
-//         // ปิด sidebar ถ้าเป็น mobile
+//         // ถ้า mobile ให้ปิด sidebar
 //         if (this.isMobile) {
 //           this.isCollapsed = true;
+//           this.openedByHamburger = false;
 //         }
 
-//         // แจ้งว่า logout สำเร็จ
-//         // Swal.fire({
-//         //   title: "Logged out!",
-//         //   text: "You have been logged out successfully.",
-//         //   icon: "success",
-//         //   timer: 1500,
-//         //   showConfirmButton: false
-//         // });
-
-//         // redirect ไปหน้า login หลังจากแสดง alert แป๊บหนึ่ง
 //         setTimeout(() => {
 //           this.router.navigate(['/login'], {
 //             queryParams: { logoutSuccess: 'true' },
@@ -80,7 +80,7 @@
 // }
 
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -95,10 +95,24 @@ export class SidebarUserComponent {
   disableAnimation = true;
   isMobile = false;
 
-  // ✅ เพิ่ม state เช็คว่าเปิดด้วย hamburger หรือไม่
+  // ✅ เพิ่ม
   openedByHamburger = false;
+  showSidebar = true; // ⭐ ใช้ซ่อน sidebar
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router) {
+    // ✅ เช็ค route
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.showSidebar = !event.url.includes('/login');
+
+        // กัน edge case
+        if (!this.showSidebar) {
+          this.isCollapsed = true;
+          this.openedByHamburger = false;
+        }
+      }
+    });
+  }
 
   // ✅ Hamburger toggle
   toggleSidebar() {
@@ -106,11 +120,8 @@ export class SidebarUserComponent {
     this.disableAnimation = false;
 
     this.isCollapsed = !this.isCollapsed;
-
-    // ถ้า sidebar เปิด = เปิดโดย hamburger
     this.openedByHamburger = !this.isCollapsed;
 
-    // ถ้าปิดเอง → reset
     if (this.isCollapsed) {
       this.openedByHamburger = false;
     }
@@ -120,14 +131,13 @@ export class SidebarUserComponent {
   navigateTo(path: string) {
     this.disableAnimation = false;
 
-    // ❗ ถ้าไม่ได้เปิดด้วย hamburger → ปิด sidebar
     if (!this.openedByHamburger) {
       this.isCollapsed = true;
     }
 
     setTimeout(() => {
       this.router.navigate([path]);
-    }, 300); // ต้องตรงกับ transition CSS
+    }, 300);
   }
 
   // ✅ Logout
@@ -144,7 +154,6 @@ export class SidebarUserComponent {
       if (result.isConfirmed) {
         localStorage.removeItem('token');
 
-        // ถ้า mobile ให้ปิด sidebar
         if (this.isMobile) {
           this.isCollapsed = true;
           this.openedByHamburger = false;
