@@ -56,30 +56,29 @@ import { AuthGuard } from './core/Auth/auth.guard';
 import { RoleGuard } from './core/Auth/auth.role'; 
 
 export const routes: Routes = [
+
+  // ===== DEFAULT =====
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
   },
 
+  // ===== LOGIN =====
   {
     path: 'login',
     component: LoginComponent,
     data: { hideSidebar: true }
   },
 
-  // ===== USER =====
+  // ================= USER =================
   {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard],
+    data: { role: 'user' } // 👈 เพิ่ม
   },
-  {
-    path: 'inventory',
-    component: InventoryComponent,
-    canActivate: [AuthGuard],
-    data: { role: 'user' },
-  },
+
   {
     path: 'history',
     component: HistoryComponent,
@@ -87,7 +86,7 @@ export const routes: Routes = [
     data: { role: 'user' },
   },
 
-  // ===== ADMIN =====
+  // ================= ADMIN =================
   {
     path: 'product',
     component: ProductComponent,
@@ -95,13 +94,25 @@ export const routes: Routes = [
     data: { role: 'admin' },
   },
 
-  // ===== AI / Predict (ให้ทั้งคู่เข้าได้) =====
+    {
+    path: 'inventory',
+    component: InventoryComponent,
+    canActivate: [AuthGuard,RoleGuard],
+    data: { role: 'admin' },
+    
+    // หรือ 'admin' หรือทำ dynamic จาก token ก็ได้
+  },
+  // ============== BOTH (ใช้ร่วม) ==============
+
+
   {
     path: 'predict',
     component: ModelComponent,
     canActivate: [AuthGuard],
+    data: { role: 'user' } 
   },
 
+  // ===== NOT FOUND =====
   {
     path: '**',
     redirectTo: 'login',

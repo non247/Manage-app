@@ -61,25 +61,25 @@
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
               </div>
 
-              <div class="field">
-                <label for="category">ประเภท</label>
-                <input
-                  type="text"
-                  pInputText
-                  [(ngModel)]="newProduct.category"
-                />
-              </div>
+<div class="field">
+  <label for="category">ประเภท</label>
+  <select
+    id="category"
+    class="p-inputtext p-component"
+    [(ngModel)]="newProduct.category"
+    name="category"
+  >
+    <option value="" disabled>-- เลือกประเภท --</option>
 
-              <div class="field">
-                <label for="quantity">จำนวน</label>
-                <input
-                  type="number"
-                  pInputText
-                  [(ngModel)]="newProduct.quantity"
-                  min="0"
-                />
-              </div>
-
+    <option
+      *ngFor="let c of categories"
+      [value]="c.value"
+    >
+      {{ c.label }}
+    </option>
+    
+  </select>
+</div>
               <div class="field">
                 <label for="price">ราคา</label>
                 <input

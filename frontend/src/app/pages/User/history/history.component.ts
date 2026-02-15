@@ -1,26 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CheckboxModule } from 'primeng/checkbox';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
+import { CheckboxModule } from 'primeng/checkbox';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { HistoryService } from '../../../core/services/history.service';
 
+/* ================= INTERFACE ================= */
 export interface Product {
-  id?: number; // 👈 เพิ่ม id สำหรับ backend
+  id?: number;
   code: string;
   name: string;
   category: string;
   quantity: number;
   price: number;
-  date: string;
+  date: string; // ✅ string กัน timezone
 }
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [TableModule, FormsModule, CommonModule, CheckboxModule],
+  imports: [
+    TableModule,
+    MultiSelectModule,
+    FormsModule,
+    CommonModule,
+    CheckboxModule,
+  ],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
@@ -41,55 +49,48 @@ export class HistoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  // ===== SELECTION =====
+  // ===== CHECKBOX =====
   selectedProducts: Product[] = [];
+
+  // ===== CATEGORY OPTIONS =====
+  categories = [
+    { label: 'โคน', value: 'โคน' },
+    { label: 'ถ้วย', value: 'ถ้วย' },
+  ];
 
   constructor(private historyService: HistoryService) {}
 
-  // ================= INIT =================
+  /* ================= INIT ================= */
   ngOnInit(): void {
     this.loadProducts();
   }
 
+  /* ================= LOAD ================= */
   loadProducts() {
-    this.historyService.getAll().subscribe((res: any[]) => {
-      this.products = res.map((p) => ({
-        ...p,
-        date: new Date(p.date),
-      }));
-      this.filteredProducts = [...this.products];
+    this.historyService.getAll().subscribe({
+      next: (res) => {
+        this.products = res;
+        this.filteredProducts = [...res];
+      },
+      error: () => {
+        Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error');
+      },
     });
   }
 
-  // ================= CHECKBOX =================
-  onCheckboxChange(event: any, product: Product) {
-    if (event.target.checked) {
-      this.selectedProducts.push(product);
-    } else {
-      this.selectedProducts = this.selectedProducts.filter(
-        (p) => p.code !== product.code
-      );
-    }
-  }
-
-  onSelectAll(event: any) {
-    this.selectedProducts = event.target.checked
-      ? [...this.filteredProducts]
-      : [];
-  }
-
-  // ================= FILTER =================
+  /* ================= FILTER ================= */
   filterProducts() {
     if (this.selectedCategories.length === 0) {
       this.filteredProducts = [...this.products];
       return;
     }
+
     this.filteredProducts = this.products.filter((p) =>
       this.selectedCategories.includes(p.category)
     );
   }
 
-  // ================= CREATE =================
+  /* ================= CREATE ================= */
   onCreate() {
     if (this.editIndex !== null) return;
     this.showCreateForm = true;
@@ -115,24 +116,21 @@ export class HistoryComponent implements OnInit {
     this.historyService.create(payload).subscribe({
       next: () => {
         this.loadProducts();
-        this.onCreateCancel(); // reset form
+        this.onCreateCancel();
         Swal.fire({
           title: 'สำเร็จ',
           text: 'สร้างรายการเรียบร้อย',
           icon: 'success',
-          timer: 1500, // เวลาแสดง (ms)
+          timer: 1500,
           showConfirmButton: false,
           timerProgressBar: true,
         });
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         Swal.fire({
           title: 'ผิดพลาด',
-          text: 'ไม่สามารถบันทึกข้อมูลได้',
+          text: 'ไม่สามารถสร้างรายการได้',
           icon: 'error',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'ตกลง',
         });
       },
     });
@@ -140,6 +138,7 @@ export class HistoryComponent implements OnInit {
 
   onCreateCancel() {
     this.isClosing = true;
+
     setTimeout(() => {
       this.showCreateForm = false;
       this.isClosing = false;
@@ -147,35 +146,63 @@ export class HistoryComponent implements OnInit {
     }, 250);
   }
 
-  // ================= EDIT =================
+  /* ================= EDIT ================= */
   onEdit(index: number) {
     if (this.showCreateForm) return;
+
+    const p = this.filteredProducts[index];
     this.editIndex = index;
-    this.editProduct = { ...this.filteredProducts[index] };
+    this.editProduct = {
+      ...p,
+      date: this.formatDate(p.date),
+    };
+  }
+
+  private formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   onSave(index: number) {
-    if (!this.editProduct) return;
+    if (!this.editProduct || !this.editProduct.id) return;
 
-    const product = this.filteredProducts[index];
     const payload = {
       ...this.editProduct,
-      date: String(this.editProduct.date),
+      date: this.editProduct.date,
     };
 
-    this.historyService.update(product.id!, payload).subscribe(() => {
-      this.loadProducts();
-      this.editIndex = null;
-      this.editProduct = null;
-      Swal.fire({
-        title: 'สำเร็จ',
-        text: 'แก้ไขข้อมูลเรียบร้อย',
-        icon: 'success',
-        timer: 1500, // เวลาแสดง (ms)
-        showConfirmButton: false,
-        timerProgressBar: true,
+    this.historyService
+      .update(this.editProduct.id, payload)
+      .subscribe({
+        next: () => {
+          // ✅ update local array เหมือน inventory
+          this.filteredProducts[index] = { ...payload };
+
+          const originalIndex = this.products.findIndex(
+            (p) => p.id === this.editProduct!.id
+          );
+          if (originalIndex !== -1)
+            this.products[originalIndex] = { ...payload };
+
+          this.editIndex = null;
+          this.editProduct = null;
+
+          Swal.fire({
+            title: 'สำเร็จ',
+            text: 'บันทึกข้อมูลเรียบร้อย',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            timerProgressBar: true,
+          });
+        },
+        error: () => {
+          Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error');
+        },
       });
-    });
   }
 
   onCancel() {
@@ -183,9 +210,14 @@ export class HistoryComponent implements OnInit {
     this.editProduct = null;
   }
 
-  // ================= DELETE =================
+  /* ================= DELETE ================= */
   onDelete(index: number) {
     const product = this.filteredProducts[index];
+
+    if (!product.id) {
+      Swal.fire('ผิดพลาด', 'ไม่พบ ID ของสินค้า', 'error');
+      return;
+    }
 
     Swal.fire({
       title: 'ยืนยันที่จะลบ?',
@@ -197,35 +229,51 @@ export class HistoryComponent implements OnInit {
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.historyService.delete(product.id!).subscribe(() => {
-          this.loadProducts();
-          Swal.fire({
-            title: 'สำเร็จ',
-            text: 'รายการถูกลบแล้ว',
-            icon: 'success',
-            timer: 1500, // เวลาแสดง (ms)
-            showConfirmButton: false,
-            timerProgressBar: true,
-          });
+        this.historyService.delete(product.id!).subscribe({
+          next: () => {
+            this.loadProducts();
+            Swal.fire({
+              title: 'สำเร็จ',
+              text: 'ลบรายการสำเร็จ',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false,
+              timerProgressBar: true,
+            });
+          },
+          error: () => {
+            Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error');
+          },
         });
       }
     });
   }
 
-  // ================= EXPORT EXCEL =================
+  /* ================= CHECKBOX ================= */
+  onCheckboxChange(event: any, product: Product) {
+    if (event.target.checked) {
+      this.selectedProducts.push(product);
+    } else {
+      this.selectedProducts = this.selectedProducts.filter(
+        (p) => p.code !== product.code
+      );
+    }
+  }
+
+  onSelectAll(event: any) {
+    this.selectedProducts = event.target.checked
+      ? [...this.filteredProducts]
+      : [];
+  }
+
+  /* ================= EXPORT ================= */
   exportToExcel() {
     if (this.selectedProducts.length === 0) {
-      Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+      Swal.fire('ผิดพลาด', 'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ', 'error');
       return;
     }
 
-    const worksheetData = this.selectedProducts.map((p) => ({
+    const data = this.selectedProducts.map((p) => ({
       วันที่: new Date(p.date).toLocaleDateString('th-TH'),
       ชื่อสินค้า: p.name,
       หมวดหมู่: p.category,
@@ -233,13 +281,13 @@ export class HistoryComponent implements OnInit {
       ราคา: p.price,
     }));
 
-    const ws = XLSX.utils.json_to_sheet(worksheetData);
+    const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'History');
     XLSX.writeFile(wb, 'History.xlsx');
   }
 
-  // ================= UTILS =================
+  /* ================= UTILS ================= */
   private getEmptyProduct(): Product {
     return {
       code: '',
@@ -247,8 +295,12 @@ export class HistoryComponent implements OnInit {
       category: '',
       quantity: 0,
       price: 0,
-      date: new Date().toISOString().split('T')[0],
+      date: this.todayString(),
     };
+  }
+
+  private todayString(): string {
+    return new Date().toISOString().split('T')[0];
   }
 
   private isValidProduct(p: Product): boolean {
