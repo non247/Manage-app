@@ -106,7 +106,7 @@ export const routes: Routes = [
 
 
   {
-    path: 'forecast ',
+    path: 'forecast',
     component: ModelComponent,
     canActivate: [AuthGuard],
     data: { role: 'user' } 
