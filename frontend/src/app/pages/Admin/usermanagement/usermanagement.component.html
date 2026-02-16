@@ -1,1 +1,200 @@
-<p>usermanagement works!</p>
+<div class="layout">
+  <div class="main-area">
+    <div class="main-content">
+
+      <!-- TOP NAV -->
+      <header class="top-navbar">
+        <h1>จัดการผู้ใช้งาน</h1>
+      </header>
+
+      <div class="table-box">
+
+        <!-- HEADER -->
+        <div
+          class="header-row"
+          style="
+            display: flex;
+            align-items: center;
+            width: 100%;
+            position: relative;
+          "
+        >
+          <!-- ADD -->
+          <button
+            class="btn-add"
+            style="margin-left: auto"
+            (click)="showCreateForm = !showCreateForm"
+          >
+            <i class="bi bi-plus-circle-fill"></i>
+            เพิ่มผู้ใช้
+          </button>
+        </div>
+
+        <!-- BACKDROP -->
+        <div
+          *ngIf="showCreateForm"
+          class="create-backdrop"
+          [class.closing]="isClosing"
+          (click)="onCreateCancel()"
+        ></div>
+
+        <!-- ===== CREATE CARD ===== -->
+        <div
+          *ngIf="showCreateForm"
+          class="create-card"
+          [class.closing]="isClosing"
+        >
+          <div class="create-card-header">
+            <h2>เพิ่มผู้ใช้</h2>
+          </div>
+
+          <div class="create-card-body">
+            <div class="create-grid">
+
+              <div class="field">
+                <label>Username</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newUser.Username"
+                />
+              </div>
+
+              <div class="field">
+                <label>Password</label>
+                <input
+                  type="password"
+                  [(ngModel)]="newUser.Password"
+                />
+              </div>
+
+              <div class="field full">
+                <label>Role</label>
+                <select [(ngModel)]="newUser.Role">
+                  <option value="" disabled>-- เลือก Role --</option>
+                  <option value="Admin">Admin</option>
+                  <option value="User">User</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="create-card-footer">
+            <button class="btn-save" (click)="onCreateSave()">
+              <i class="pi pi-check-square"></i> บันทึก
+            </button>
+
+            <button class="btn-cancel" (click)="onCreateCancel()">
+              <i class="bi bi-x-square"></i> ยกเลิก
+            </button>
+          </div>
+        </div>
+
+<p-table
+  [value]="users"
+  [rows]="10"
+  [scrollable]="true"
+  scrollHeight="500px"
+  styleClass="user-table"
+>
+  <!-- HEADER -->
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width:10%">Id</th>
+      <th style="width:25%">ชื่อผู้ใช้</th>
+      <th style="width:25%">รหัสผ่าน</th>
+      <th style="width:20%">ระดับผู้ใช้</th>
+      <th style="width:20%"></th>
+    </tr>
+  </ng-template>
+
+  <!-- BODY -->
+  <ng-template pTemplate="body" let-user let-i="rowIndex">
+    <tr>
+
+      <!-- ID -->
+      <td>{{ user.Id }}</td>
+
+      <!-- USERNAME -->
+      <td>
+        <ng-container *ngIf="editIndex !== i; else editUsername">
+          {{ user.Username }}
+        </ng-container>
+        <ng-template #editUsername>
+          <input [(ngModel)]="editUser!.Username" />
+        </ng-template>
+      </td>
+
+      <!-- PASSWORD -->
+      <td>
+        <ng-container *ngIf="editIndex !== i; else editPassword">
+          {{ user.Password }}
+        </ng-container>
+        <ng-template #editPassword>
+          <input type="password" [(ngModel)]="editUser!.Password" />
+        </ng-template>
+      </td>
+
+      <!-- ROLE -->
+      <td>
+        <ng-container *ngIf="editIndex !== i; else editRole">
+          <span
+            class="role-badge"
+            [ngClass]="{
+              'admin': user.Role === 'Admin',
+              'user': user.Role === 'User'
+            }"
+          >
+            {{ user.Role }}
+          </span>
+        </ng-container>
+
+        <ng-template #editRole>
+          <select [(ngModel)]="editUser!.Role">
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+          </select>
+        </ng-template>
+      </td>
+
+      <!-- ACTION -->
+      <td class="action-cell">
+
+        <ng-container *ngIf="editIndex !== i">
+          <button class="btn-edit" (click)="onEdit(i)">
+            <i class="pi pi-pen-to-square"></i>
+          </button>
+
+          <button class="btn-delete" (click)="onDelete(i)">
+            <i class="bi bi-trash3-fill"></i>
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="editIndex === i">
+          <button class="btn-save" (click)="onSave(i)">
+            <i class="pi pi-check-square"></i>
+          </button>
+
+          <button class="btn-cancel" (click)="onCancel()">
+            <i class="bi bi-x-square"></i>
+          </button>
+        </ng-container>
+
+      </td>
+    </tr>
+  </ng-template>
+
+  <!-- EMPTY -->
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" class="empty-message">
+        ไม่พบข้อมูล
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+      </div>
+    </div>
+  </div>
+</div>
