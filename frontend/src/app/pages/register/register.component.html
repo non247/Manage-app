@@ -1,39 +1,86 @@
-<div class="login-page">
-  <div class="login-card">
-    <h1>Register</h1>
+<div class="register-page">
+  <div class="register-card">
+    <h1>สมัครสมาชิก</h1>
 
-    <form #loginForm="ngForm">
-      <label for="userid"></label>
-      <input
-        type="text"
-        name="username"
-        [(ngModel)]="Username"
-        required
-        placeholder="Enter username"
-      />
+    <!-- Error -->
+    <!-- <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div> -->
 
-      <label for="password"></label>
-      <input
-        type="password"
-        id="passwordinput"
-        name="password"
-        [(ngModel)]="Password"
-        required
-        placeholder="Enter password"
-      />
+    <!-- Success -->
+    <p *ngIf="successMessage" class="success">
+      {{ successMessage }}
+    </p>
 
-      <div class="show-password">
+    <form (ngSubmit)="register()">
+
+      <!-- Username -->
+      <div class="password-wrapper">
         <input
-          type="checkbox"
-          id="showpwd"
-          (change)="togglePasswordVisibility()"
+          type="text"
+          name="username"
+          [(ngModel)]="Username"
+          required
+          placeholder="ชื่อผู้ใช้"
         />
-        <label for="showpwd">Show password</label>
       </div>
 
-      <button type="submit" class="btn-singin">Register</button>
+      <!-- Password -->
+      <div class="password-wrapper">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          name="password"
+          [(ngModel)]="Password"
+          required
+          placeholder="ป้อนรหัสผ่าน"
+        />
 
-      <p *ngIf="errorMessage" style="color: red">{{ errorMessage }}</p>
+        <i
+          class="bi"
+          [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+          (click)="togglePassword()"
+        ></i>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="password-wrapper">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          name="confirmPassword"
+          [(ngModel)]="ConfirmPassword"
+          required
+          placeholder="ยืนยันรหัสผ่าน"
+        />
+
+        <i
+          class="bi"
+          [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+          (click)="toggleConfirmPassword()"
+        ></i>
+      </div>
+
+      <!-- Role -->
+      <!-- <div class="password-wrapper">
+        <select [(ngModel)]="role" name="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div> -->
+
+      <p *ngIf="errorMessage" style="color: red">
+        {{ errorMessage }}
+      </p>
+
+      <!-- Button -->
+      <button type="submit" class="btn-singin">
+        ลงทะเบียน
+      </button>
     </form>
+
+    <!-- Link Login -->
+    <div class="login-link">
+      มีบัญชีแล้ว ?
+      <a [routerLink]="['/login']">เข้าสู่ระบบ</a>
+    </div>
   </div>
 </div>

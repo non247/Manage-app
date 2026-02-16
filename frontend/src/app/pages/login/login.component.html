@@ -1,7 +1,7 @@
 <div class="login-page">
   <div class="logout-message" *ngIf="showLogoutMessage">
     <i class="bi bi-check-circle"></i>
-    Logged out Successfully!
+    ออกจากระบบเรียบร้อยแล้ว
   </div>
 
   <div class="login-card">
@@ -37,13 +37,23 @@
           (click)="togglePasswordVisibility()"
         ></i>
       </div>
-
       <p *ngIf="errorMessage" style="color: red">
         {{ errorMessage }}
       </p>
+      
+      <div class="fake-input-space"></div>
+
       <button type="submit" class="btn-singin" style="font-size: 20px">
         เข้าสู่ระบบ
       </button>
+      
+
+          <!-- ===== Register Link ===== -->
+    <div class="register-link">
+      ยังไม่มีบัญชี ?
+      <a [routerLink]="['/register']">สมัครสมาชิก</a>
+    </div>
+
     </form>
   </div>
 </div>

@@ -1,58 +1,119 @@
 $primary-color: #ffbdcb;
-$background-gradient: linear-gradient(to right, #ffbdcb, $primary-color);
+$background-gradient: linear-gradient(
+  to right,
+  #ffbdcb,
+  $primary-color
+);
 $card-bg: #fff;
 $input-border: #ccc;
 
-.login-page {
+/* ===== Page ===== */
+.register-page {
   height: 100vh;
   background: $background-gradient;
-  align-items: center;
   display: flex;
+  align-items: center;
   justify-content: center;
-  font-family: Georgia;
+  font-family: Georgia, sans-serif;
+}
 
-  .login-card {
-    background-color: $card-bg;
-    border-radius: 30px;
-    padding: 40px;
-    width: 480px;
-  }
+/* ===== Card ===== */
+.register-card {
+  background-color: $card-bg;
+  border-radius: 30px;
+  padding: 40px;
+  width: 480px;
+  min-height: 520px;
+  position: relative;   // 🔥 กัน layer ทับ
+  z-index: 2;
+}
 
-  h1 {
-    text-align: center;
-    margin: 30px;
-    font-weight: 100;
-    font-size: 40px;
-  }
+/* ===== Title ===== */
+h1 {
+  text-align: center;
+  margin: 30px;
+  font-weight: 100;
+  font-size: 40px;
+}
 
-  label {
-    display: block;
-  }
+/* ===== Input ===== */
+input[type="text"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid $input-border;
+  margin: 10px 0;
+  font-size: 15px;
+}
 
-  input[type='text'],
-  input[type='password'] {
+/* ===== Password Wrapper ===== */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+
+  input {
     width: 100%;
     padding: 10px;
-    border-radius: 5px;
-    border: 1px solid $input-border;
-    margin: 10px;
+    padding-right: 40px;
   }
 
-  .show-password {
-    font-size: 12px;
-    margin: 15px;
-    display: flex;
+  i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
     color: #878787;
-    gap: 5px;
-  }
+    z-index: 3;   // 🔥 กัน icon ทับ link
 
-  .btn-singin {
-    background-color: #d81b60;
-    margin-top: 50px;
-    width: 100%;
-    padding: 15px;
-    border-radius: 50px;
-    border: 1px solid $input-border;
-    color: #fff;
+    &:hover {
+      color: #555;
+    }
+  }
+}
+
+/* ===== Button ===== */
+.btn-singin {
+  background-color: #dd1d56;
+  margin-top: 50px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 50px;
+  border: 1px solid $input-border;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ===== Messages ===== */
+.error {
+  color: red;
+  text-align: center;
+}
+
+.success {
+  color: green;
+  text-align: center;
+}
+
+/* ===== Login Link ===== */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  position: relative;
+  z-index: 5;   // 🔥 ให้กดได้แน่นอน
+
+  a {
+    color: #dd1d56;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

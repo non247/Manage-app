@@ -164,15 +164,29 @@
                 </ng-template>
               </td>
 
-              <!-- CATEGORY -->
-              <td>
-                <ng-container *ngIf="editIndex !== i; else editCategory">
-                  {{ product.category }}
-                </ng-container>
-                <ng-template #editCategory>
-                  <input type="text" [(ngModel)]="editProduct!.category" />
-                </ng-template>
-              </td>
+<!-- CATEGORY -->
+<td>
+  <ng-container *ngIf="editIndex !== i; else editCategory">
+    {{ product.category }}
+  </ng-container>
+
+  <ng-template #editCategory>
+    <select
+      class="p-inputtext p-component"
+      [(ngModel)]="editProduct!.category"
+      name="editCategory"
+    >
+      <option value="" disabled>-- เลือกประเภท --</option>
+
+      <option
+        *ngFor="let c of categories"
+        [value]="c.value"
+      >
+        {{ c.label }}
+      </option>
+    </select>
+  </ng-template>
+</td>
 
               <!-- QUANTITY -->
               <td>

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ModelService {
-  private apiUrl = 'http://localhost:3000/api/predict';
+  private apiUrl = 'http://localhost:3000/api/forecast ';
 
   constructor(private http: HttpClient) {}
 
