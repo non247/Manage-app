@@ -15,57 +15,39 @@
   <div class="top">
     <ul class="nav-links">
 
-      <!-- Dashboard
+      <!-- Product -->
       <li
-        routerLink="/dashboard"
+        routerLink="/product"
         routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
       >
-        <a (click)="navigateTo('/dashboard')">
-          <i class="bi bi-grid-fill" style="font-size: 30px"></i>
+        <a (click)="navigateTo('/product')">
+          <i class="bi bi-box-seam-fill" style="font-size: 30px"></i>
           <span
             class="text"
             [class.show]="!isCollapsed"
             style="font-size: 20px"
           >
-            ภาพรวม
+            จัดการสินค้า
           </span>
         </a>
-      </li> -->
+      </li>
 
-      <!-- Inventory -->
-      <!-- <li
-        routerLink="/inventory"
+      <!-- Usermanagement -->
+      <li
+        routerLink="/usermanagement"
         routerLinkActive="active"
       >
-        <a (click)="navigateTo('/inventory')">
-          <i class="pi pi-warehouse" style="font-size: 30px"></i>
+        <a (click)="navigateTo('/usermanagement')">
+          <i class="bi bi-people-fill" style="font-size: 30px"></i>
           <span
             class="text"
             [class.show]="!isCollapsed"
             style="font-size: 20px"
           >
-            รายการสินค้า
+            จัดการผู้ใช้
           </span>
         </a>
-      </li> -->
-
-      <!-- History -->
-      <!-- <li
-        routerLink="/history"
-        routerLinkActive="active"
-      >
-        <a (click)="navigateTo('/history')">
-          <i class="bi bi-clock-fill" style="font-size: 30px"></i>
-          <span
-            class="text"
-            [class.show]="!isCollapsed"
-            style="font-size: 20px"
-          >
-            ประวัติการขาย
-          </span>
-        </a>
-      </li> -->
+      </li>
 
       <!-- Logout -->
       <li class="logout">
