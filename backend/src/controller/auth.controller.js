@@ -149,7 +149,23 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // 1️⃣ ดึง user
+    // 🔥 ================= MOCK ADMIN =================
+    if (username === 'admin' && password === '1234') {
+      const token = jwt.sign(
+        { sub: 0, username: 'admin', role: 'admin' },
+        JWT_SECRET,
+        { expiresIn: '2h' }
+      );
+
+      return res.json({
+        token,
+        role: 'admin',
+        username: 'admin',
+      });
+    }
+    // 🔥 =============================================
+
+    // 1️⃣ ดึง user จาก DB
     const result = await pool.query(
       `
       SELECT "Id", "Username", "Password", "Role"
