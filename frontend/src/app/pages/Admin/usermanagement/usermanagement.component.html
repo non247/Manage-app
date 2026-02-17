@@ -101,9 +101,8 @@
   <ng-template pTemplate="header">
     <tr>
       <th style="width:10%">Id</th>
-      <th style="width:25%">ชื่อผู้ใช้</th>
-      <th style="width:25%">รหัสผ่าน</th>
-      <th style="width:20%">ระดับผู้ใช้</th>
+      <th style="width:40%">ชื่อผู้ใช้</th>
+      <th style="width:30%">ระดับผู้ใช้</th>
       <th style="width:20%"></th>
     </tr>
   </ng-template>
@@ -111,7 +110,6 @@
   <!-- BODY -->
   <ng-template pTemplate="body" let-user let-i="rowIndex">
     <tr>
-
       <!-- ID -->
       <td>{{ user.Id }}</td>
 
@@ -125,24 +123,14 @@
         </ng-template>
       </td>
 
-      <!-- PASSWORD -->
-      <td>
-        <ng-container *ngIf="editIndex !== i; else editPassword">
-          {{ user.Password }}
-        </ng-container>
-        <ng-template #editPassword>
-          <input type="password" [(ngModel)]="editUser!.Password" />
-        </ng-template>
-      </td>
-
       <!-- ROLE -->
       <td>
         <ng-container *ngIf="editIndex !== i; else editRole">
           <span
             class="role-badge"
             [ngClass]="{
-              'admin': user.Role === 'Admin',
-              'user': user.Role === 'User'
+              'admin': user.Role === 'admin',
+              'user': user.Role === 'user'
             }"
           >
             {{ user.Role }}
@@ -151,15 +139,14 @@
 
         <ng-template #editRole>
           <select [(ngModel)]="editUser!.Role">
-            <option value="Admin">Admin</option>
-            <option value="User">User</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
           </select>
         </ng-template>
       </td>
 
       <!-- ACTION -->
       <td class="action-cell">
-
         <ng-container *ngIf="editIndex !== i">
           <button class="btn-edit" (click)="onEdit(i)">
             <i class="pi pi-pen-to-square"></i>
@@ -179,7 +166,6 @@
             <i class="bi bi-x-square"></i>
           </button>
         </ng-container>
-
       </td>
     </tr>
   </ng-template>
@@ -187,12 +173,13 @@
   <!-- EMPTY -->
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td colspan="5" class="empty-message">
+      <td colspan="4" class="empty-message">
         ไม่พบข้อมูล
       </td>
     </tr>
   </ng-template>
 </p-table>
+
 
       </div>
     </div>

@@ -1,109 +1,72 @@
 // const express = require('express');
 // const cors = require('cors');
 
-// const { PythonShell } = require('python-shell');
-
-// //นำเข้าroutesทุกroutesที่ใช้ในการรับส่งข้อมูล
 // const Dashboard = require('./src/route/Dashboard.route');
 // const history = require('./src/route/history.route');
 // const inventory = require('./src/route/inventory.route');
+// const authRoutes = require('./src/route/auth.route');
+// const userRoutes = require('./src/route/usermanagement.route'); // ✅ เพิ่ม
 
-// // Create Instance and Express application
 // const app = express();
 // const port = 3000;
 
-// /* middleware */
 // app.use(cors());
 // app.use(express.json());
 
-// /* test root */
-// app.get('/', (req, res) => {
-//   res.send('Backend is running on port 3000');
-// });
+// app.get('/', (req, res) => res.send('Backend is running on port 3000'));
 
-// /* test api */
-// app.get('/api/test', (req, res) => {
-//   res.json({
-//     status: 'ok',
-//     message: 'API test success',
-//     port: 3000,
-//   });
-// });
+// // ✅ probe route
+// app.get('/api/probe', (req, res) => res.json({ probe: true }));
 
-// // นำเข้าpathของrouterทุกหน้า
+// app.use('/api/users', userRoutes);
 // app.use('/api', Dashboard);
 // app.use('/api', history);
 // app.use('/api', inventory);
-
-// app.post('/api/predict', (req, res) => {
-//   // ข้อมูลที่รับมาจาก Angular (เช่น [5.1, 3.5, 1.4])
-//   const inputData = req.body.data;
-
-//   let options = {
-//     mode: 'text',
-//     pythonPath: 'python', // หรือ 'python3' ตามที่คุณใช้
-//     pythonOptions: ['-u'], // get print results in real-time
-//   };
-
-//   let shell = new PythonShell('predict.py', options);
-
-//   // ส่งข้อมูลไปยัง Python
-//   shell.send(JSON.stringify(inputData));
-
-//   // รับผลลัพธ์กลับมา
-//   shell.on('message', function (message) {
-//     const result = JSON.parse(message);
-//     res.json({ prediction: result });
-//   });
-
-//   // จัดการ Error
-//   shell.end(function (err) {
-//     if (err) {
-//       console.error(err);
-//       return res.status(500).json({
-//         error: 'Python Error',
-//         details: err.message, // ส่งข้อความ error กลับไปดู
-//       });
-//     }
-//   });
-// });
+// console.log('✅ userRoutes mounted at /api/users');
+// app.use('/api/auth', authRoutes);
 
 // app.listen(port, '0.0.0.0', () => {
 //   console.log(`Server running at http://localhost:${port}`);
 // });
 
+// const express = require('express');
+// const cors = require('cors');
+
+// const userRoutes = require('./src/route/usermanagement.route');
+
+// const app = express();
+// const port = 3000;
+
+// app.use(cors());
+// app.use(express.json());
+
+// app.get('/api/probe', (req, res) => res.json({ probe: true }));
+
+// app.use('/api/users', userRoutes);
+
+// app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+
 const express = require('express');
 const cors = require('cors');
-const { PythonShell } = require('python-shell');
 
+const userRoutes = require('./src/route/usermanagement.route');
 const Dashboard = require('./src/route/Dashboard.route');
 const history = require('./src/route/history.route');
 const inventory = require('./src/route/inventory.route');
-
-const authRoutes = require('./src/route/auth.route'); // ✅ เพิ่ม
+const authRoutes = require('./src/route/auth.route');
 
 const app = express();
-const port = 3000;
-
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => res.send('Backend is running on port 3000'));
+app.get('/api/probe', (req,res)=>res.json({probe:true}));
 
-app.get('/api/test', (req, res) => {
-  res.json({ status: 'ok', message: 'API test success', port: 3000 });
-});
+app.use('/api/users', userRoutes); // ✅ ตัวนี้คุณรู้ว่าใช้ได้
 
-app.use('/api', Dashboard);
-app.use('/api', history);
-app.use('/api', inventory);
+// ✅ เปิดทีละอัน
+try { app.use('/api/auth', authRoutes); console.log('✅ auth mounted'); } catch(e){ console.error('❌ auth mount fail', e); }
+try { app.use('/api', Dashboard);       console.log('✅ dashboard mounted'); } catch(e){ console.error('❌ dashboard mount fail', e); }
+try { app.use('/api', history);         console.log('✅ history mounted'); } catch(e){ console.error('❌ history mount fail', e); }
+try { app.use('/api', inventory);       console.log('✅ inventory mounted'); } catch(e){ console.error('❌ inventory mount fail', e); }
 
-app.use('/api/auth', authRoutes);
-
-
-// predict ของเดิม...
-app.post('/api/predict', (req, res) => { /* ... */ });
-
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+app.listen(3000, ()=>console.log('server 3000'));

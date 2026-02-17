@@ -82,70 +82,81 @@
 // }
 
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';  
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
 
+import { UserService } from '../../../core/services/usermanagement.service';
+
+// ✅ เพิ่ม type ให้หาย error Role/User
+type Role = 'admin' | 'user';
+
 interface User {
   Id: number;
   Username: string;
+  Role: Role;
+}
+
+interface NewUserForm {
+  Username: string;
   Password: string;
-  Role: 'Admin' | 'User';
+  Role: Role;
 }
 
 @Component({
   selector: 'app-usermanagement',
+  standalone: true,
   imports: [CommonModule, FormsModule, MultiSelectModule, TableModule],
   templateUrl: './usermanagement.component.html',
   styleUrl: './usermanagement.component.scss',
 })
 export class UsermanagementComponent implements OnInit {
-
-  // ================= DATA =================
   users: User[] = [];
 
+  constructor(private userService: UserService) {}
+
   ngOnInit(): void {
-    // ===== Mock Data =====
-    this.users = [
-      { Id: 1, Username: 'admin', Password: '1234', Role: 'Admin' },
-      { Id: 2, Username: 'user1', Password: '1234', Role: 'User' },
-    ];
+    this.loadUsers();
   }
 
-  // =========================================================
-  // ================= CREATE (POPUP CARD) ===================
-  // =========================================================
+  loadUsers() {
+    this.userService.getUsers().subscribe({
+      next: (data: User[]) => (this.users = data),
+      error: () => Swal.fire('Error', 'โหลดผู้ใช้ไม่สำเร็จ', 'error'),
+    });
+  }
 
+  // ================= CREATE =================
   showCreateForm = false;
   isClosing = false;
 
-  newUser: User = {
-    Id: 0,
+  newUser: NewUserForm = {
     Username: '',
     Password: '',
-    Role: 'User',
+    Role: 'user',
   };
 
-  // ===== SAVE CREATE =====
   onCreateSave() {
-    const newId =
-      this.users.length > 0
-        ? Math.max(...this.users.map(u => u.Id)) + 1
-        : 1;
+    if (!this.newUser.Username || !this.newUser.Password) {
+      Swal.fire('Warning', 'กรุณากรอก Username และ Password', 'warning');
+      return;
+    }
 
-    this.users.push({
-      Id: newId,
-      Username: this.newUser.Username,
-      Password: this.newUser.Password,
-      Role: this.newUser.Role,
+    this.userService.createUser(this.newUser).subscribe({
+      next: () => {
+        Swal.fire('Success', 'เพิ่มผู้ใช้สำเร็จ', 'success');
+        this.onCreateCancel();
+        this.loadUsers();
+      },
+      error: (err: any) => {
+        const msg = err?.error?.message || 'เพิ่มผู้ใช้ไม่สำเร็จ';
+        Swal.fire('Error', msg, 'error');
+      },
     });
-
-    this.onCreateCancel();
   }
 
-  // ===== CANCEL CREATE =====
   onCreateCancel() {
     this.isClosing = true;
 
@@ -154,49 +165,72 @@ export class UsermanagementComponent implements OnInit {
       this.isClosing = false;
 
       this.newUser = {
-        Id: 0,
         Username: '',
         Password: '',
-        Role: 'User',
+        Role: 'user',
       };
     }, 200);
   }
 
-  // =========================================================
-  // ================= INLINE EDIT ===========================
-  // =========================================================
-
+  // ================= INLINE EDIT =================
   editIndex: number | null = null;
   editUser: User | null = null;
 
-  // ===== OPEN EDIT =====
   onEdit(index: number) {
     this.editIndex = index;
     this.editUser = { ...this.users[index] };
   }
 
-  // ===== SAVE EDIT =====
   onSave(index: number) {
-    if (this.editUser) {
-      this.users[index] = { ...this.editUser };
-    }
+    if (!this.editUser) return;
 
-    this.editIndex = null;
-    this.editUser = null;
+    const id = this.users[index].Id;
+
+    this.userService
+      .updateUser(id, {
+        Username: this.editUser.Username,
+        Role: this.editUser.Role,
+      })
+      .subscribe({
+        next: (updated: User) => {
+          this.users[index] = updated;
+          this.editIndex = null;
+          this.editUser = null;
+          Swal.fire('Success', 'บันทึกสำเร็จ', 'success');
+        },
+        error: (err: any) => {
+          const msg = err?.error?.message || 'บันทึกไม่สำเร็จ';
+          Swal.fire('Error', msg, 'error');
+        },
+      });
   }
 
-  // ===== CANCEL EDIT =====
   onCancel() {
     this.editIndex = null;
     this.editUser = null;
   }
 
-  // =========================================================
-  // ================= DELETE ================================
-  // =========================================================
-
+  // ================= DELETE =================
   onDelete(index: number) {
-    this.users.splice(index, 1);
-  }
+    const id = this.users[index].Id;
 
+    Swal.fire({
+      title: 'ยืนยันการลบ?',
+      text: `ต้องการลบผู้ใช้ ${this.users[index].Username} ใช่ไหม`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ลบ',
+      cancelButtonText: 'ยกเลิก',
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          Swal.fire('Success', 'ลบสำเร็จ', 'success');
+          this.users.splice(index, 1);
+        },
+        error: () => Swal.fire('Error', 'ลบไม่สำเร็จ', 'error'),
+      });
+    });
+  }
 }
