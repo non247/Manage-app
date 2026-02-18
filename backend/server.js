@@ -83,6 +83,8 @@ const Dashboard = require('./src/route/Dashboard.route');
 const history = require('./src/route/history.route');
 const inventory = require('./src/route/inventory.route');
 const authRoutes = require('./src/route/auth.route');
+const product = require('./src/route/product.route');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -91,13 +93,14 @@ app.use(express.json());
 app.get('/api/probe', (req,res)=>res.json({probe:true}));
 
 app.use('/api/users', userRoutes); // ✅ ตัวนี้คุณรู้ว่าใช้ได้
+app.use('/uploads', express.static('uploads'));
 
 // ✅ เปิดทีละอัน
 try { app.use('/api/auth', authRoutes); console.log('✅ auth mounted'); } catch(e){ console.error('❌ auth mount fail', e); }
 try { app.use('/api/dashboard', Dashboard);       console.log('✅ dashboard mounted'); } catch(e){ console.error('❌ dashboard mount fail', e); }
 try { app.use('/api/history', history);         console.log('✅ history mounted'); } catch(e){ console.error('❌ history mount fail', e); }
 try { app.use('/api/inventory', inventory);       console.log('✅ inventory mounted'); } catch(e){ console.error('❌ inventory mount fail', e); }
-
+try { app.use('/api/products', product); console.log('✅ products mounted'); } catch(e){ console.error('❌ products mount fail', e); }
 const server = app.listen(3000, () => console.log('server 3000'));
 
 server.on('listening', () => console.log('🟢 server listening event fired'));

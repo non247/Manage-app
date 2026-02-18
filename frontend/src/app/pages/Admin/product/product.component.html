@@ -1,1 +1,107 @@
-<p>product works!</p>
+<div class="page">
+  <header class="topbar">
+    <div>
+      <h1>จัดการสินค้า</h1>
+      <p>เมนูไอศกรีมทั้งหมด</p>
+    </div>
+
+    <div class="actions">
+      <input
+        class="search"
+        type="text"
+        [(ngModel)]="keyword"
+        placeholder="ค้นหาชื่อสินค้า..."
+        (keyup.enter)="load()"
+      />
+      <button class="btn" (click)="load()">ค้นหา</button>
+      <button class="btn primary" (click)="openCreate()">+ เพิ่มสินค้า</button>
+    </div>
+  </header>
+
+  <div *ngIf="error" class="alert">{{ error }}</div>
+  <div *ngIf="loading" class="hint">กำลังโหลด...</div>
+
+  <div class="table-box">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width: 80px">ID</th>
+          <th>ชื่อสินค้า</th>
+          <th style="width: 140px">ราคา</th>
+          <th style="width: 220px">รูปภาพ</th>
+          <th style="width: 170px">จัดการ</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let p of products; trackBy: trackById">
+          <td>{{ p.id }}</td>
+          <td class="name">{{ p.name }}</td>
+          <td>{{ p.price | number }} ฿</td>
+
+          <td>
+            <div class="img-wrap" *ngIf="p.image; else noimg">
+              <img [src]="toImgUrl(p.image)" alt="product" />
+            </div>
+            <ng-template #noimg>
+              <span class="muted">-</span>
+            </ng-template>
+          </td>
+
+          <td class="row-actions">
+            <button class="btn" (click)="openEdit(p)">แก้ไข</button>
+            <button class="btn danger" (click)="remove(p)">ลบ</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && products.length === 0">
+          <td colspan="5" class="empty">ยังไม่มีสินค้า</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BACKDROP -->
+  <div class="backdrop" *ngIf="showForm" (click)="closeForm()"></div>
+
+  <!-- MODAL -->
+  <div class="modal" *ngIf="showForm">
+    <h2>{{ isEdit ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่' }}</h2>
+
+    <div class="grid">
+      <div class="field">
+        <label>ชื่อสินค้า</label>
+        <input [(ngModel)]="form.name" placeholder="เช่น Vanilla" />
+      </div>
+
+      <div class="field">
+        <label>ราคา (บาท)</label>
+        <input type="number" [(ngModel)]="form.price" />
+      </div>
+
+      <div class="field full">
+  <label>รูปภาพ (png/jpg ไม่บังคับ)</label>
+
+  <input
+    type="file"
+    accept="image/png, image/jpeg"
+    (change)="onFileSelected($event)"
+  />
+
+  <small class="muted" *ngIf="selectedFile">
+    เลือกแล้ว: {{ selectedFile.name }}
+  </small>
+</div>
+
+<div class="preview" *ngIf="previewUrl">
+  <img [src]="previewUrl" alt="preview" />
+</div>
+
+    <div class="modal-actions">
+      <button class="btn" (click)="closeForm()">ยกเลิก</button>
+      <button class="btn primary" (click)="save()">
+        {{ isEdit ? 'บันทึก' : 'เพิ่มสินค้า' }}
+      </button>
+    </div>
+  </div>
+</div>
