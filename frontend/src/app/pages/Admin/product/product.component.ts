@@ -1,12 +1,15 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
 import { Product, ProductService } from '../../../core/services/product.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIf, NgFor],
+  imports: [CommonModule, FormsModule, NgIf, NgFor, MultiSelectModule, TableModule],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })

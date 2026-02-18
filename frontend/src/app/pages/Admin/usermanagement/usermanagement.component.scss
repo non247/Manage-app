@@ -121,10 +121,9 @@ app-sidebar-user {
   text-align: left;
 }
 
-.search-wrapper input::placeholder {
-  color: #b9b9b9;
+.search-wrapper input.p-inputtext {
+  padding: 0.5rem 2.5rem 0.5rem 2rem !important;
 }
-
 // .search-wrapper input:focus {
 //   border-color: #d81b60;
 //   box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.12);
