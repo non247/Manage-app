@@ -42,13 +42,12 @@ export class InventoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-categories = [
-  { label: 'โคน', value: 'โคน' },
-  { label: 'ถ้วย', value: 'ถ้วย' }
-];
+  categories = [
+    { label: 'โคน', value: 'โคน' },
+    { label: 'ถ้วย', value: 'ถ้วย' },
+  ];
 
-
-  constructor(private inventoryService: InventoryService) {}
+  constructor(private readonly inventoryService: InventoryService) {}
 
   /* ================= INIT ================= */
   ngOnInit(): void {
@@ -159,9 +158,8 @@ categories = [
   }
 
   onSave(index: number) {
-    if (!this.editProduct || !this.editProduct.id) return;
+    if (!this.editProduct?.id) return;
 
-    const original = this.filteredProducts[index];
     const payload = {
       ...this.editProduct,
       date: this.editProduct.date,

@@ -3,13 +3,22 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
-import { Product, ProductService } from '../../../core/services/product.service';
-import Swal from 'sweetalert2';
+import {
+  Product,
+  ProductService,
+} from '../../../core/services/product.service';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIf, NgFor, MultiSelectModule, TableModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgIf,
+    NgFor,
+    MultiSelectModule,
+    TableModule,
+  ],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
@@ -36,7 +45,7 @@ export class ProductComponent implements OnInit {
     image: null as File | null, // (optional) เผื่อใช้ แต่หลักๆ ใช้ selectedFile
   };
 
-  constructor(private productService: ProductService) {}
+  constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
     this.load();

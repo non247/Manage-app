@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface Product {
@@ -11,9 +11,9 @@ export interface Product {
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private baseUrl = 'http://localhost:3000/api/products'; // ปรับให้ตรง backend ของคุณ
+  private readonly baseUrl = 'http://localhost:3000/api/products'; // ปรับให้ตรง backend ของคุณ
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getAll(keyword = ''): Observable<Product[]> {
     let params = new HttpParams();

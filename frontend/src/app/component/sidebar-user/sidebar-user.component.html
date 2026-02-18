@@ -14,7 +14,6 @@
 >
   <div class="top">
     <ul class="nav-links">
-
       <!-- Dashboard -->
       <li
         routerLink="/dashboard"
@@ -34,10 +33,7 @@
       </li>
 
       <!-- Inventory -->
-      <li
-        routerLink="/inventory"
-        routerLinkActive="active"
-      >
+      <li routerLink="/inventory" routerLinkActive="active">
         <a (click)="navigateTo('/inventory')">
           <i class="pi pi-warehouse" style="font-size: 30px"></i>
           <span
@@ -51,10 +47,7 @@
       </li>
 
       <!-- History -->
-      <li
-        routerLink="/history"
-        routerLinkActive="active"
-      >
+      <li routerLink="/history" routerLinkActive="active">
         <a (click)="navigateTo('/history')">
           <i class="bi bi-clock-fill" style="font-size: 30px"></i>
           <span
@@ -69,18 +62,17 @@
 
       <!-- Logout -->
       <li class="logout">
-      <a (click)="logout()">
-        <i class="bi bi-door-open-fill" style="font-size: 30px"></i>
-        <span
-        class="text"
-        [class.show]="!isCollapsed"
-        style="font-size: 20px"
-        >
-        ออกจากระบบ
-        </span>
+        <a (click)="logout()">
+          <i class="bi bi-door-open-fill" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            ออกจากระบบ
+          </span>
         </a>
       </li>
-
     </ul>
   </div>
 </div>

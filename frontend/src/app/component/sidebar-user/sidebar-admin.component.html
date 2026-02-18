@@ -14,12 +14,8 @@
 >
   <div class="top">
     <ul class="nav-links">
-
       <!-- Product -->
-      <li
-        routerLink="/product"
-        routerLinkActive="active"
-      >
+      <li routerLink="/product" routerLinkActive="active">
         <a (click)="navigateTo('/product')">
           <i class="bi bi-box-seam-fill" style="font-size: 30px"></i>
           <span
@@ -33,10 +29,7 @@
       </li>
 
       <!-- Usermanagement -->
-      <li
-        routerLink="/usermanagement"
-        routerLinkActive="active"
-      >
+      <li routerLink="/usermanagement" routerLinkActive="active">
         <a (click)="navigateTo('/usermanagement')">
           <i class="bi bi-people-fill" style="font-size: 30px"></i>
           <span
@@ -51,18 +44,17 @@
 
       <!-- Logout -->
       <li class="logout">
-      <a (click)="logout()">
-        <i class="bi bi-door-open-fill" style="font-size: 30px"></i>
-        <span
-        class="text"
-        [class.show]="!isCollapsed"
-        style="font-size: 20px"
-        >
-        ออกจากระบบ
-        </span>
+        <a (click)="logout()">
+          <i class="bi bi-door-open-fill" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            ออกจากระบบ
+          </span>
         </a>
       </li>
-
     </ul>
   </div>
 </div>
