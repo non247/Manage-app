@@ -79,6 +79,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -113,44 +114,59 @@ export class RegisterComponent {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  register() {
-    this.errorMessage = '';
-    this.successMessage = '';
+register() {
+  this.errorMessage = '';
+  this.successMessage = '';
 
-    // 1️⃣ validate
-    if (!this.Username || !this.Password || !this.ConfirmPassword) {
-      this.errorMessage = 'กรุณากรอกข้อมูลให้ครบ';
-      return;
-    }
-
-    if (this.Password !== this.ConfirmPassword) {
-      this.errorMessage = 'รหัสผ่านไม่ตรงกัน';
-      return;
-    }
-
-    // 2️⃣ call API (role = user อัตโนมัติ)
-    this.isLoading = true;
-
-    this.auth.register(this.Username, this.Password).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.successMessage = 'สมัครสมาชิกสำเร็จ';
-
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 1200);
-      },
-      error: (err) => {
-        this.isLoading = false;
-
-        // backend คุณส่ง 409 = Username exists
-        if (err?.status === 409) {
-          this.errorMessage = 'Username นี้ถูกใช้แล้ว';
-          return;
-        }
-
-        this.errorMessage = err?.error?.message || 'สมัครสมาชิกไม่สำเร็จ';
-      },
-    });
+  // validate
+  if (!this.Username || !this.Password || !this.ConfirmPassword) {
+    this.errorMessage = 'กรุณากรอกข้อมูลให้ครบ';
+    return;
   }
+
+  if (this.Password !== this.ConfirmPassword) {
+    this.errorMessage = 'รหัสผ่านไม่ตรงกัน';
+    return;
+  }
+
+  this.isLoading = true;
+
+  this.auth.register(this.Username, this.Password).subscribe({
+    next: () => {
+      this.isLoading = false;
+
+      Swal.fire({
+        icon: 'success',
+        title: 'สมัครสมาชิกสำเร็จ',
+        text: 'กำลังพาไปหน้าเข้าสู่ระบบ',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+      });
+
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 1500);
+    },
+
+    error: (err) => {
+      this.isLoading = false;
+
+      if (err?.status === 409) {
+        Swal.fire({
+          icon: 'error',
+          title: 'สมัครไม่สำเร็จ',
+          text: 'Username นี้ถูกใช้แล้ว',
+        });
+        return;
+      }
+
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: err?.error?.message || 'สมัครสมาชิกไม่สำเร็จ',
+      });
+    },
+  });
+}
 }

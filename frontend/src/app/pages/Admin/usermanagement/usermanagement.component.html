@@ -10,16 +10,7 @@
       <div class="table-box">
 
         <!-- HEADER -->
-        <div
-          class="header-row"
-          style="
-            display: flex;
-            align-items: center;
-            width: 100%;
-            position: relative;
-          "
-        >
-          <!-- ADD -->
+        <div class="header-row">
           <button
             class="btn-add"
             style="margin-left: auto"
@@ -52,23 +43,17 @@
             <div class="create-grid">
 
               <div class="field">
-                <label>Username</label>
-                <input
-                  type="text"
-                  [(ngModel)]="newUser.Username"
-                />
+                <label>ชื่อผู้ใช้</label>
+                <input type="text" [(ngModel)]="newUser.Username" />
               </div>
 
               <div class="field">
-                <label>Password</label>
-                <input
-                  type="password"
-                  [(ngModel)]="newUser.Password"
-                />
+                <label>รหัสผ่าน</label>
+                <input type="password" [(ngModel)]="newUser.Password" />
               </div>
 
-              <div class="field full">
-                <label>Role</label>
+              <div class="field">
+                <label>ระดับผู้ใช้</label>
                 <select [(ngModel)]="newUser.Role">
                   <option value="" disabled>-- เลือก Role --</option>
                   <option value="Admin">Admin</option>
@@ -80,106 +65,97 @@
           </div>
 
           <div class="create-card-footer">
-            <button class="btn-save" (click)="onCreateSave()">
-              <i class="pi pi-check-square"></i> บันทึก
-            </button>
+            <button class="btn-save btn-form" (click)="onCreateSave()">
+  <i class="pi pi-check-square"></i> บันทึก
+</button>
 
-            <button class="btn-cancel" (click)="onCreateCancel()">
-              <i class="bi bi-x-square"></i> ยกเลิก
-            </button>
+<button class="btn-cancel btn-form" (click)="onCreateCancel()">
+  <i class="bi bi-x-square"></i> ยกเลิก
+</button>
           </div>
         </div>
 
-<p-table
-  [value]="users"
-  [rows]="10"
-  [scrollable]="true"
-  scrollHeight="500px"
-  styleClass="user-table"
->
-  <!-- HEADER -->
-  <ng-template pTemplate="header">
-    <tr>
-      <th style="width:10%">Id</th>
-      <th style="width:40%">ชื่อผู้ใช้</th>
-      <th style="width:30%">ระดับผู้ใช้</th>
-      <th style="width:20%"></th>
-    </tr>
-  </ng-template>
+        <p-table
+          [value]="users"
+          [rows]="10"
+          [scrollable]="true"
+          scrollHeight="500px"
+          stripedRows
+          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 10%">รหัส</th>
+              <th style="width: 40%">ชื่อผู้ใช้</th>
+              <th style="width: 30%">ระดับผู้ใช้</th>
+              <th style="width: 20%"></th>
+            </tr>
+          </ng-template>
 
-  <!-- BODY -->
-  <ng-template pTemplate="body" let-user let-i="rowIndex">
-    <tr>
-      <!-- ID -->
-      <td>{{ user.Id }}</td>
+          <ng-template pTemplate="body" let-user let-i="rowIndex">
+            <tr>
+              <td>{{ user.Id }}</td>
 
-      <!-- USERNAME -->
-      <td>
-        <ng-container *ngIf="editIndex !== i; else editUsername">
-          {{ user.Username }}
-        </ng-container>
-        <ng-template #editUsername>
-          <input [(ngModel)]="editUser!.Username" />
-        </ng-template>
-      </td>
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editUsername">
+                  {{ user.Username }}
+                </ng-container>
+                <ng-template #editUsername>
+                  <input type="text" [(ngModel)]="editUser!.Username" />
+                </ng-template>
+              </td>
 
-      <!-- ROLE -->
-      <td>
-        <ng-container *ngIf="editIndex !== i; else editRole">
-          <span
-            class="role-badge"
-            [ngClass]="{
-              'admin': user.Role === 'admin',
-              'user': user.Role === 'user'
-            }"
-          >
-            {{ user.Role }}
-          </span>
-        </ng-container>
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editRole">
+                  <span
+                    class="role-badge"
+                    [ngClass]="{
+                      admin: user.Role === 'admin' || user.Role === 'Admin',
+                      user: user.Role === 'user' || user.Role === 'User'
+                    }"
+                  >
+                    {{ user.Role }}
+                  </span>
+                </ng-container>
 
-        <ng-template #editRole>
-          <select [(ngModel)]="editUser!.Role">
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-          </select>
-        </ng-template>
-      </td>
+                <ng-template #editRole>
+                  <select [(ngModel)]="editUser!.Role">
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                  </select>
+                </ng-template>
+              </td>
 
-      <!-- ACTION -->
-      <td class="action-cell">
-        <ng-container *ngIf="editIndex !== i">
-          <button class="btn-edit" (click)="onEdit(i)">
-            <i class="pi pi-pen-to-square"></i>
-          </button>
+              <td class="action-cell">
+                <ng-container *ngIf="editIndex !== i">
+                  <button class="btn-edit" (click)="onEdit(i)">
+                    <i class="pi pi-pen-to-square"></i>
+                  </button>
 
-          <button class="btn-delete" (click)="onDelete(i)">
-            <i class="bi bi-trash3-fill"></i>
-          </button>
-        </ng-container>
+                  <button class="btn-delete" (click)="onDelete(i)">
+                    <i class="bi bi-trash3-fill"></i>
+                  </button>
+                </ng-container>
 
-        <ng-container *ngIf="editIndex === i">
-          <button class="btn-save" (click)="onSave(i)">
-            <i class="pi pi-check-square"></i>
-          </button>
+                <ng-container *ngIf="editIndex === i">
+                  <button class="btn-save" (click)="onSave(i)">
+                    <i class="pi pi-check-square"></i>
+                  </button>
 
-          <button class="btn-cancel" (click)="onCancel()">
-            <i class="bi bi-x-square"></i>
-          </button>
-        </ng-container>
-      </td>
-    </tr>
-  </ng-template>
+                  <button class="btn-cancel" (click)="onCancel()">
+                    <i class="bi bi-x-square"></i>
+                  </button>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
 
-  <!-- EMPTY -->
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <td colspan="4" class="empty-message">
-        ไม่พบข้อมูล
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
-
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="empty-message">ไม่พบข้อมูล</td>
+            </tr>
+          </ng-template>
+        </p-table>
 
       </div>
     </div>
