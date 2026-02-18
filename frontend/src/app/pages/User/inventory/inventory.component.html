@@ -7,41 +7,26 @@
 
       <div class="table-box">
         <!-- HEADER -->
-        <div
-          class="header-row"
-          style="
+        <div class="header-row" style="
             display: flex;
             align-items: center;
             width: 100%;
             position: relative;
-          "
-        >
+          ">
           <!-- <h1 style="color: #d81b60; margin: 0">List of Products</h1> -->
 
           <!-- CREATE -->
-          <button
-            class="btn-add"
-            style="margin-left: auto"
-            (click)="showCreateForm = !showCreateForm"
-          >
+          <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
         </div>
 
         <!-- BACKDROP -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-backdrop"
-          [class.closing]="isClosing"
-          (click)="onCreateCancel()"
-        ></div>
+        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
+        </div>
 
         <!-- ✅ CREATE FORM : CARD -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-card"
-          [class.closing]="isClosing"
-        >
+        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
           <div class="create-card-header">
             <h2>เพิ่มสินค้า</h2>
           </div>
@@ -53,45 +38,27 @@
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
               </div>
 
-<div class="field">
-  <label for="category">ประเภท</label>
-  <select
-    id="category"
-    class="p-inputtext p-component"
-    [(ngModel)]="newProduct.category"
-    name="category"
-  >
-    <option value="" disabled>-- เลือกประเภท --</option>
+              <div class="field">
+                <label for="category">ประเภท</label>
+                <select id="category" class="p-inputtext p-component" [(ngModel)]="newProduct.category" name="category">
+                  <option value="" disabled>-- เลือกประเภท --</option>
 
-    <option
-      *ngFor="let c of categories"
-      [value]="c.value"
-    >
-      {{ c.label }}
-    </option>
-    
-  </select>
-</div>
+                  <option *ngFor="let c of categories" [value]="c.value">
+                    {{ c.label }}
+                  </option>
+
+                </select>
+              </div>
 
 
               <div class="field">
                 <label for="quantity">จำนวน</label>
-                <input
-                  type="number"
-                  pInputText
-                  [(ngModel)]="newProduct.quantity"
-                  min="0"
-                />
+                <input type="number" pInputText [(ngModel)]="newProduct.quantity" min="0" />
               </div>
 
               <div class="field">
                 <label for="price">ราคา</label>
-                <input
-                  type="number"
-                  pInputText
-                  [(ngModel)]="newProduct.price"
-                  min="0"
-                />
+                <input type="number" pInputText [(ngModel)]="newProduct.price" min="0" />
               </div>
 
               <div class="field">
@@ -113,30 +80,35 @@
         </div>
 
         <!-- TABLE -->
-        <p-table
-          #dt
-          stripedRows
-          [value]="filteredProducts"
-          [rows]="10"
-          [globalFilterFields]="[
+        <p-table #dt stripedRows [value]="filteredProducts" [rows]="10" [globalFilterFields]="[
             'name',
             'category',
             'quantity',
             'price',
             'date',
-          ]"
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
-          [scrollable]="true"
-          scrollHeight="500px"
-        >
+          ]" [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }" [scrollable]="true" scrollHeight="500px">
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">วันที่</th>
-              <th scope="col">ชื่อสินค้า</th>
-              <th scope="col">ประเภท</th>
-              <th scope="col">จำนวน</th>
-              <th scope="col">ราคา</th>
+              <th pSortableColumn="date" scope="col">
+                วันที่ <p-sortIcon field="date"></p-sortIcon>
+              </th>
+
+              <th pSortableColumn="name" scope="col">
+                ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
+              </th>
+
+              <th pSortableColumn="category" scope="col">
+                ประเภท <p-sortIcon field="category"></p-sortIcon>
+              </th>
+
+              <th pSortableColumn="quantity" scope="col">
+                จำนวน <p-sortIcon field="quantity"></p-sortIcon>
+              </th>
+
+              <th pSortableColumn="price" scope="col">
+                ราคา <p-sortIcon field="price"></p-sortIcon>
+              </th>
 
               <th style="width: 12%" scope="col"></th>
             </tr>
@@ -164,29 +136,22 @@
                 </ng-template>
               </td>
 
-<!-- CATEGORY -->
-<td>
-  <ng-container *ngIf="editIndex !== i; else editCategory">
-    {{ product.category }}
-  </ng-container>
+              <!-- CATEGORY -->
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editCategory">
+                  {{ product.category }}
+                </ng-container>
 
-  <ng-template #editCategory>
-    <select
-      class="p-inputtext p-component"
-      [(ngModel)]="editProduct!.category"
-      name="editCategory"
-    >
-      <option value="" disabled>-- เลือกประเภท --</option>
+                <ng-template #editCategory>
+                  <select class="p-inputtext p-component" [(ngModel)]="editProduct!.category" name="editCategory">
+                    <option value="" disabled>-- เลือกประเภท --</option>
 
-      <option
-        *ngFor="let c of categories"
-        [value]="c.value"
-      >
-        {{ c.label }}
-      </option>
-    </select>
-  </ng-template>
-</td>
+                    <option *ngFor="let c of categories" [value]="c.value">
+                      {{ c.label }}
+                    </option>
+                  </select>
+                </ng-template>
+              </td>
 
               <!-- QUANTITY -->
               <td>
@@ -194,14 +159,9 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input
-                    type="number"
-                    min="0"
-                    [ngModel]="editProduct!.quantity"
-                    (ngModelChange)="
+                  <input type="number" min="0" [ngModel]="editProduct!.quantity" (ngModelChange)="
                       editProduct!.quantity = +$event < 0 ? 0 : +$event
-                    "
-                  />
+                    " />
                 </ng-template>
               </td>
 
@@ -211,45 +171,24 @@
                   {{ product.price }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input
-                    type="number"
-                    min="0"
-                    [ngModel]="editProduct!.price"
-                    (ngModelChange)="
+                  <input type="number" min="0" [ngModel]="editProduct!.price" (ngModelChange)="
                       editProduct!.price = +$event < 0 ? 0 : +$event
-                    "
-                  />
+                    " />
                 </ng-template>
               </td>
 
               <!-- ACTION -->
               <td style="display: flex; gap: 8px">
-                <button
-                  *ngIf="editIndex !== i"
-                  class="btn-edit"
-                  (click)="onEdit(i)"
-                >
+                <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
                   <i class="pi pi-pen-to-square"></i>
                 </button>
-                <button
-                  *ngIf="editIndex !== i"
-                  class="btn-delete"
-                  (click)="onDelete(i)"
-                >
+                <button *ngIf="editIndex !== i" class="btn-delete" (click)="onDelete(i)">
                   <i class="bi bi-trash3-fill"></i>
                 </button>
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-save"
-                  (click)="onSave(i)"
-                >
+                <button *ngIf="editIndex === i" class="btn-save" (click)="onSave(i)">
                   <i class="pi pi-check-square"></i>
                 </button>
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-cancel"
-                  (click)="onCancel()"
-                >
+                <button *ngIf="editIndex === i" class="btn-cancel" (click)="onCancel()">
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>

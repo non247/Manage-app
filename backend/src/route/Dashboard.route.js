@@ -3,6 +3,6 @@ const router = express.Router();
 const dashboardController = require('../controller/Dashboard.controller');
 console.log('🔥 DASHBOARD ROUTE LOADED');
 
-router.get('/dashboard', dashboardController.getDashboard);
+router.get('/', dashboardController.getDashboard);
 
 module.exports = router;
