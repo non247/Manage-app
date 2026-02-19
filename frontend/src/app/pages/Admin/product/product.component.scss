@@ -87,7 +87,6 @@ app-sidebar-user {
   position: relative;
   margin-top: 6px;
   margin-bottom: 20px;
-  gap: 12px;
 }
 
 .title {
@@ -95,7 +94,8 @@ app-sidebar-user {
   margin: 0;
 }
 
-/* ===== SEARCH (ใช้ชุดเดียวให้เหมือนกันทุกหน้า) ===== */
+/* ===== SEARCH ONLY ===== */
+
 .search-wrapper {
   position: relative;
   width: 360px;
@@ -106,35 +106,41 @@ app-sidebar-user {
   /* ✅ ปรับขึ้น/ลงเล็กน้อย (ลอง 0..4px) */
 }
 
-.search-wrapper .pi-search {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-  pointer-events: none;
-  font-size: 18px;
+
+.search-wrapper input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px 0 38px;
+  /* เผื่อ icon ซ้าย */
+  border: 1px solid #f3a9bf;
+  border-radius: 12px;
+  font-size: 16px;
+  background: #fff;
+  outline: none;
+  transition: 0.2s ease;
+  text-align: left;
 }
 
-/* ✅ บังคับ pInputText ของ PrimeNG ไม่ให้ theme มาทับ */
-.search-wrapper input,
 .search-wrapper input.p-inputtext {
-  width: 300px !important;
-  height: 42px !important;
-  padding: 5px;
-  border: 1px solid #ccc !important;
-  border-radius: 8px !important;
-  /* ✅ เหมือนหน้า user */
-  background: #fff !important;
-  font-size: 16px !important;
-  line-height: 42px !important;
-  outline: none !important;
-  box-shadow: none !important;
-  text-align: center !important;
-  /* ✅ หน้า user เป็นตัวหนังสือกลาง */
+  padding: 0.5rem 2.5rem 0.5rem 2rem !important;
 }
+// .search-wrapper input:focus {
+//   border-color: #d81b60;
+//   box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.12);
+// }
 
-/* มือถือ */
+// .search-wrapper .pi-search {
+//   position: absolute;
+//   left: 12px;
+//   top: 50%;
+//   transform: translateY(-50%);
+//   color: #d81b60;
+//   opacity: 0.6;
+//   font-size: 16px;
+//   pointer-events: none;
+// }
+
+/* มือถือ: ให้เต็มบรรทัด */
 @media (max-width: 768px) {
   .search-wrapper {
     width: 100%;
@@ -163,6 +169,7 @@ app-sidebar-user {
   white-space: nowrap;
   cursor: pointer;
   font-size: 20px;
+
 
   display: flex;
   align-items: center;
@@ -201,6 +208,30 @@ app-sidebar-user {
   line-height: 1;
 }
 
+/* ===== ปุ่มใน popup: ให้เท่ากัน (มีข้อความ) ===== */
+.create-card-footer .btn-save,
+.create-card-footer .btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 130px;
+  /* ✅ เท่ากัน */
+  height: 43px;
+  /* ✅ เท่ากัน */
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #fff;
+
+  font-size: 24px;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+
 .btn-edit {
   background: #1e3a8a;
 }
@@ -219,11 +250,15 @@ app-sidebar-user {
 
 /* ================= ACTION CELL ================= */
 .action-cell {
+  display: table-cell !important;
+}
+
+.action-wrap {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
-  white-space: nowrap;
+  height: 100%;
 }
 
 .action-cell button {
@@ -243,12 +278,43 @@ app-sidebar-user {
   text-align: center;
 }
 
+
+
 /* เน้นแถวที่กำลังแก้ไข */
 tr.editing {
   background-color: #fff3cd;
 }
 
-/* ================= CREATE CARD (POPUP) ================= */
+/* ================= SEARCH ================= */
+.search-wrapper {
+  position: relative;
+  width: 300px;
+  margin-right: auto;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 2rem;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: none;
+  transition: border-color 0.3s ease;
+  text-align: center;
+}
+
+.search-wrapper .pi-search {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+  font-size: 1.2rem;
+}
+
+/* ================= CREATE CARD ================= */
 .create-card {
   position: fixed;
   top: 50%;
@@ -277,7 +343,7 @@ tr.editing {
 
 .create-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 15px;
 }
 
@@ -293,7 +359,7 @@ tr.editing {
 }
 
 .field.full {
-  grid-column: span 2;
+  .field.full { grid-column: 1 / -1; }
 }
 
 /* ✅ ฟอร์มใน popup เท่านั้น (ไม่ชนกับตาราง) */
@@ -339,27 +405,6 @@ tr.editing {
   justify-content: flex-end;
   gap: 12px;
   border-top: 1px solid #eee;
-}
-
-/* ===== ปุ่มใน popup: ให้เท่ากัน (มีข้อความ) ===== */
-.create-card-footer .btn-save,
-.create-card-footer .btn-cancel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 130px;
-  height: 43px;
-  padding: 0 16px;
-
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  color: #fff;
-
-  font-size: 24px;
-  gap: 10px;
-  white-space: nowrap;
 }
 
 /* ================= BACKDROP ================= */
@@ -420,6 +465,7 @@ tr.editing {
   }
 }
 
+
 @keyframes fadeOut {
   from {
     opacity: 1;
@@ -429,3 +475,24 @@ tr.editing {
     opacity: 0;
   }
 }
+
+/* คอลัมน์รูป */
+.img-wrap {
+  width: 120px;      /* ปรับขนาดได้ตามต้องการ */
+  height: 90px;
+  margin: 0 auto;    /* ให้อยู่กลาง */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ตัวรูป */
+.img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* เต็มกรอบ (ตัดส่วนเกิน) */
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+

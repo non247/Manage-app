@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { Product, ProductService } from '../../../core/services/product.service';
+
 import Swal from 'sweetalert2';
 
 @Component({
@@ -20,20 +21,23 @@ export class ProductComponent implements OnInit {
   loading = false;
   error = '';
 
-  showForm = false;
+  // ✅ ให้ตรงกับ HTML แบบ usermanagement
+  showCreateForm = false;
+  isClosing = false;
+
   isEdit = false;
   editingId: number | null = null;
 
   selectedFile: File | null = null;
   previewUrl = '';
 
-  // ✅ ปรับตรงนี้ตาม backend ของคุณ
+  // ✅ ปรับตาม backend
   apiUrl = 'http://localhost:3000';
 
   form = {
     name: '',
     price: 59 as number | null,
-    image: null as File | null, // (optional) เผื่อใช้ แต่หลักๆ ใช้ selectedFile
+    image: null as File | null,
   };
 
   constructor(private productService: ProductService) {}
@@ -42,15 +46,11 @@ export class ProductComponent implements OnInit {
     this.load();
   }
 
-  // ✅ แปลง path ใน DB ให้เป็น URL ที่เปิดได้จริง
   toImgUrl(img: string | null | undefined) {
     if (!img) return '';
     if (img.startsWith('http')) return img;
-
-    // ถ้า DB เก็บเป็นชื่อไฟล์ล้วน เช่น 123.jpg
     if (!img.startsWith('/')) img = '/uploads/' + img;
-
-    return this.apiUrl + img; // => http://localhost:3000/uploads/xxx.jpg
+    return this.apiUrl + img;
   }
 
   load() {
@@ -69,7 +69,18 @@ export class ProductComponent implements OnInit {
     });
   }
 
+  /** ✅ เปิดฟอร์มเพิ่มสินค้า (เหมือน usermanagement: toggle) */
+  toggleCreate() {
+    if (this.showCreateForm) {
+      this.onCreateCancel();
+    } else {
+      this.openCreate();
+    }
+  }
+
   openCreate() {
+    this.isClosing = false;
+
     this.isEdit = false;
     this.editingId = null;
 
@@ -77,41 +88,59 @@ export class ProductComponent implements OnInit {
     this.selectedFile = null;
     this.previewUrl = '';
 
-    this.showForm = true;
+    this.showCreateForm = true;
   }
 
   openEdit(p: Product) {
+    this.isClosing = false;
+
     this.isEdit = true;
     this.editingId = p.id;
 
     this.form = {
       name: p.name,
       price: Number(p.price),
-      image: null, // ✅ ยังไม่เลือกไฟล์ใหม่
+      image: null,
     };
 
     this.selectedFile = null;
-
-    // ✅ preview รูปเดิมจาก DB (ต้องแปลงเป็น URL เต็ม)
     this.previewUrl = p.image ? this.toImgUrl(p.image) : '';
 
-    this.showForm = true;
+    this.showCreateForm = true;
   }
 
-  closeForm() {
-    this.showForm = false;
+  /** ✅ ปิดฟอร์ม (เหมือน usermanagement: closing animation + reset) */
+  onCreateCancel() {
+    if (!this.showCreateForm || this.isClosing) return;
+
+    this.isClosing = true;
+
+    setTimeout(() => {
+      this.showCreateForm = false;
+      this.isClosing = false;
+
+      this.isEdit = false;
+      this.editingId = null;
+
+      this.form = { name: '', price: 59, image: null };
+      this.selectedFile = null;
+      this.previewUrl = '';
+    }, 250); // ให้ตรงกับ CSS animation 0.25s
   }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
 
-    // ถ้าไม่ได้เลือกไฟล์ ก็ไม่ทำอะไร (คง preview เดิมตอน edit)
     if (!file) return;
 
     const ok = file.type === 'image/png' || file.type === 'image/jpeg';
     if (!ok) {
-      alert('กรุณาอัปโหลดไฟล์ .png หรือ .jpg เท่านั้น');
+      Swal.fire({
+        icon: 'warning',
+        title: 'ไฟล์ไม่ถูกต้อง',
+        text: 'กรุณาอัปโหลดไฟล์ .png หรือ .jpg เท่านั้น',
+      });
       input.value = '';
       return;
     }
@@ -119,25 +148,27 @@ export class ProductComponent implements OnInit {
     this.form.image = file;
     this.selectedFile = file;
 
-    // ✅ preview ไฟล์ใหม่เป็น base64
     const reader = new FileReader();
     reader.onload = () => (this.previewUrl = reader.result as string);
     reader.readAsDataURL(file);
   }
 
-  save() {
-    if (!this.form.name.trim()) return alert('กรุณากรอกชื่อสินค้า');
-    if (this.form.price === null || Number(this.form.price) <= 0)
-      return alert('ราคาต้องมากกว่า 0');
+  async save() {
+    if (!this.form.name.trim()) {
+      await Swal.fire({ icon: 'warning', title: 'กรุณากรอกชื่อสินค้า' });
+      return;
+    }
+    if (this.form.price === null || Number(this.form.price) <= 0) {
+      await Swal.fire({ icon: 'warning', title: 'ราคาต้องมากกว่า 0' });
+      return;
+    }
 
-    // ✅ ต้องส่งเป็น multipart/form-data
     const fd = new FormData();
     fd.append('name', this.form.name.trim());
     fd.append('price', String(Number(this.form.price)));
 
-    // ✅ แนบไฟล์เฉพาะตอนมีการเลือกไฟล์
     if (this.selectedFile) {
-      fd.append('image', this.selectedFile); // key ต้องตรงกับ backend (upload.single('image'))
+      fd.append('image', this.selectedFile);
     }
 
     this.loading = true;
@@ -145,8 +176,15 @@ export class ProductComponent implements OnInit {
 
     if (this.isEdit && this.editingId !== null) {
       this.productService.update(this.editingId, fd).subscribe({
-        next: () => {
-          this.showForm = false;
+        next: async () => {
+          this.loading = false;
+          await Swal.fire({
+            icon: 'success',
+            title: 'บันทึกสำเร็จ',
+            timer: 900,
+            showConfirmButton: false,
+          });
+          this.onCreateCancel();
           this.load();
         },
         error: (err) => {
@@ -157,8 +195,15 @@ export class ProductComponent implements OnInit {
       });
     } else {
       this.productService.create(fd).subscribe({
-        next: () => {
-          this.showForm = false;
+        next: async () => {
+          this.loading = false;
+          await Swal.fire({
+            icon: 'success',
+            title: 'เพิ่มสินค้าสำเร็จ',
+            timer: 900,
+            showConfirmButton: false,
+          });
+          this.onCreateCancel();
           this.load();
         },
         error: (err) => {
@@ -170,14 +215,31 @@ export class ProductComponent implements OnInit {
     }
   }
 
-  remove(p: Product) {
-    const ok = confirm(`ลบสินค้า: ${p.name} ?`);
-    if (!ok) return;
+  async remove(p: Product) {
+    const res = await Swal.fire({
+      icon: 'warning',
+      title: 'ยืนยันการลบ?',
+      text: `ลบสินค้า: ${p.name}`,
+      showCancelButton: true,
+      confirmButtonText: 'ลบ',
+      cancelButtonText: 'ยกเลิก',
+    });
+
+    if (!res.isConfirmed) return;
 
     this.loading = true;
     this.error = '';
     this.productService.delete(p.id).subscribe({
-      next: () => this.load(),
+      next: async () => {
+        this.loading = false;
+        await Swal.fire({
+          icon: 'success',
+          title: 'ลบสำเร็จ',
+          timer: 800,
+          showConfirmButton: false,
+        });
+        this.load();
+      },
       error: (err) => {
         console.error(err);
         this.error = 'ลบสินค้าไม่สำเร็จ';
