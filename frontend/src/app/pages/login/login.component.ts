@@ -3,6 +3,7 @@ import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -15,9 +16,7 @@ export class LoginComponent implements OnInit {
   Username: string = '';
   Password: string = '';
   errorMessage: string = '';
-
   showPassword: boolean = false;
-  showLogoutMessage: boolean = false;
 
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -28,25 +27,29 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // ✅ SSR guard: อย่ารัน logic ที่แตะ localStorage บน server
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // ===== แสดงข้อความหลัง logout =====
+    // ✅ toast หลัง logout
     this.route.queryParams.subscribe((params) => {
       if (params['logoutSuccess'] === 'true') {
-        this.showLogoutMessage = true;
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'ออกจากระบบเรียบร้อยแล้ว',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
 
-        setTimeout(() => {
-          this.showLogoutMessage = false;
-        }, 5000);
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { logoutSuccess: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
       }
     });
-
-    // // ===== ถ้า login แล้ว → เด้งตาม role =====
-    // if (this.auth.isLoggedIn()) {
-    //   const role = this.auth.getRole();
-    //   this.router.navigate([role === 'admin' ? '/product' : '/dashboard']);
-    // }
   }
 
   togglePasswordVisibility() {
@@ -58,9 +61,15 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(this.Username, this.Password).subscribe({
       next: (res) => {
-        // res.role มาจาก backend
         const role = res.role;
-        this.router.navigate([role === 'admin' ? '/product' : '/dashboard']);
+
+        // ✅ ส่ง state ไป dashboard เพื่อใช้แสดง welcome toast
+        this.router.navigate(
+          [role === 'admin' ? '/product' : '/dashboard'],
+          {
+            state: { loginSuccess: true },
+          }
+        );
       },
       error: () => {
         this.errorMessage = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
