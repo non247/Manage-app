@@ -11,46 +11,76 @@ $input-border: #ccc;
   align-items: center;
   justify-content: center;
   font-family: Georgia, sans-serif;
+  padding: 20px;
 }
 
-/* ===== Card ===== */
-.login-card {
-  background-color: $card-bg;
+/* ===== Card (Split: image + form) ===== */
+.login-card.card-split {
+  width: min(1100px, 95vw);
+  height: min(620px, 90vh);
+  display: flex;
+  overflow: hidden; /* 🔥 ทำให้รูปอยู่ในกรอบโค้ง */
   border-radius: 30px;
-  padding: 40px;
-  width: 480px;
-  min-height: 520px;
-  position: relative; // 🔥 กัน layer ทับ
+  background-color: $card-bg;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  position: relative;
   z-index: 2;
 }
 
+/* ===== Left Image ===== */
+.card-image {
+  flex: 1;
+  min-width: 45%;
+  background: #000;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* ===== Right Form ===== */
+.card-form {
+  flex: 1;
+  padding: 48px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 /* ===== Title ===== */
-h1 {
+.card-form h1 {
   text-align: center;
-  margin: 30px;
-  font-weight: 100;
+  margin: 0 0 25px;
+  font-weight: 600;
   font-size: 40px;
 }
 
 /* ===== Input ===== */
-input[type='text'],
-input[type='password'] {
+.card-form input[type='text'],
+.card-form input[type='password'] {
   width: 100%;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 12px;
+  border-radius: 10px;
   border: 1px solid $input-border;
   margin: 10px 0;
   font-size: 15px;
+  outline: none;
+
+  &:focus {
+    border-color: #dd1d56;
+  }
 }
 
+/* ✅ fake input space (เหมือนของเดิม) */
 .fake-input-space {
   width: 100%;
-  padding: 10px;
   height: 40px;
   margin: 10px 0;
-  border-radius: 5px;
+  border-radius: 10px;
   border: 1px solid #ffffff;
-  font-size: 15px;
   background-color: transparent;
 }
 
@@ -60,9 +90,7 @@ input[type='password'] {
   width: 100%;
 
   input {
-    width: 100%;
-    padding: 10px;
-    padding-right: 40px; // เว้นที่ icon
+    padding-right: 45px; // เว้นที่ icon
   }
 
   i {
@@ -73,7 +101,7 @@ input[type='password'] {
     cursor: pointer;
     font-size: 20px;
     color: #878787;
-    z-index: 3; // 🔥 กัน icon ทับ link
+    z-index: 3;
 
     &:hover {
       color: #555;
@@ -84,20 +112,25 @@ input[type='password'] {
 /* ===== Button ===== */
 .btn-singin {
   background-color: #dd1d56;
-  margin-top: 50px;
+  margin-top: 18px; /* เดิม 50px แต่ตอนนี้มี fake space แล้ว */
   width: 100%;
   padding: 15px;
   border-radius: 50px;
-  border: 1px solid $input-border;
+  border: none;
   color: #fff;
   font-size: 20px;
   cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
 }
 
 /* ===== Error ===== */
-.error {
+.error-text {
   color: red;
   text-align: center;
+  margin-top: 6px;
 }
 
 /* ===== Register Link ===== */
@@ -105,7 +138,7 @@ input[type='password'] {
   text-align: center;
   margin-top: 20px;
   position: relative;
-  z-index: 5; // 🔥 ให้กดได้แน่นอน
+  z-index: 5;
 
   a {
     color: #dd1d56;
@@ -133,6 +166,7 @@ input[type='password'] {
   font-size: 20px;
   white-space: nowrap;
   animation: fadeInOut 3s forwards;
+  z-index: 9999;
 }
 
 /* ===== Animation ===== */
@@ -141,19 +175,47 @@ input[type='password'] {
     opacity: 0;
     top: 0;
   }
-
   30% {
     opacity: 1;
     top: 20px;
   }
-
   80% {
     opacity: 1;
     top: 20px;
   }
-
   100% {
     opacity: 0;
     top: 0;
   }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .card-image {
+    display: none;
+  }
+
+  .login-card.card-split {
+    width: min(520px, 95vw);
+    height: auto;
+  }
+
+  .card-form {
+    padding: 40px 28px;
+  }
+}
+
+/* ✅ จองที่ไว้ให้ error ตลอดเวลา => ไม่ดันปุ่ม/ลิงก์ */
+.error-slot {
+  min-height: 18px;   /* ถ้าข้อความยาวอาจใช้ 36px */
+  margin-top: 6px;
+}
+
+/* ✅ ตัด margin ของ <p> ออก (สำคัญมาก) */
+.error-text {
+  margin: 0;          /* override browser default */
+  color: red;
+  text-align: center;
+  font-size: 14px;
+  line-height: 18px;
 }

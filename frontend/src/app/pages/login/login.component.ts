@@ -42,11 +42,11 @@ export class LoginComponent implements OnInit {
       }
     });
 
-    // ===== ถ้า login แล้ว → เด้งตาม role =====
-    if (this.auth.isLoggedIn()) {
-      const role = this.auth.getRole();
-      this.router.navigate([role === 'admin' ? '/product' : '/dashboard']);
-    }
+    // // ===== ถ้า login แล้ว → เด้งตาม role =====
+    // if (this.auth.isLoggedIn()) {
+    //   const role = this.auth.getRole();
+    //   this.router.navigate([role === 'admin' ? '/product' : '/dashboard']);
+    // }
   }
 
   togglePasswordVisibility() {

@@ -4,54 +4,47 @@
     ออกจากระบบเรียบร้อยแล้ว
   </div>
 
-  <div class="login-card">
-    <h1>เข้าสู่ระบบ</h1>
+  <div class="login-card card-split">
+    <!-- LEFT : IMAGE (อยู่ในกรอบเดียวกับ form) -->
+    <div class="card-image">
+      <img src="assets/login.jpg" alt="login" />
+    </div>
 
-    <!-- เรียก login() ตอนกดปุ่ม -->
-    <form #loginForm="ngForm" (ngSubmit)="login()">
-      <div class="password-wrapper">
-        <label for="userid"></label>
-        <input
-          style="font-size: 15px"
-          type="text"
-          name="username"
-          [(ngModel)]="Username"
-          required
-          placeholder="ชื่อผู้ใช้"
-        />
-      </div>
+    <!-- RIGHT : FORM -->
+    <div class="card-form">
+      <h1>เข้าสู่ระบบ</h1>
 
-      <div class="password-wrapper">
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="passwordinput"
-          name="password"
-          [(ngModel)]="Password"
-          required
-          placeholder="ป้อนรหัสผ่าน"
-        />
+      <form #loginForm="ngForm" (ngSubmit)="login()">
+        <div class="password-wrapper">
+          <input style="font-size: 15px" type="text" name="username" [(ngModel)]="Username" required
+            placeholder="ชื่อผู้ใช้" />
+        </div>
 
-        <i
-          class="bi"
-          [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
-          (click)="togglePasswordVisibility()"
-        ></i>
-      </div>
-      <p *ngIf="errorMessage" style="color: red">
-        {{ errorMessage }}
-      </p>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" id="passwordinput" name="password" [(ngModel)]="Password"
+            required placeholder="ป้อนรหัสผ่าน" />
 
-      <div class="fake-input-space"></div>
+          <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePasswordVisibility()"></i>
+        </div>
 
-      <button type="submit" class="btn-singin" style="font-size: 20px">
-        เข้าสู่ระบบ
-      </button>
+        <div class="error-slot">
+          <p *ngIf="errorMessage" class="error-text">
+            {{ errorMessage }}
+          </p>
+        </div>
 
-      <!-- ===== Register Link ===== -->
-      <div class="register-link">
-        ยังไม่มีบัญชี ?
-        <a [routerLink]="['/register']">สมัครสมาชิก</a>
-      </div>
-    </form>
+        <!-- ✅ fake input space (เหมือนเดิม) -->
+        <div class="fake-input-space"></div>
+
+        <button type="submit" class="btn-singin" style="font-size: 20px">
+          เข้าสู่ระบบ
+        </button>
+
+        <div class="register-link">
+          ยังไม่มีบัญชี ?
+          <a [routerLink]="['/register']">สมัครสมาชิก</a>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

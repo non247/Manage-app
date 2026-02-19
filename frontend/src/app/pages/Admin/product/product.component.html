@@ -101,6 +101,8 @@
                 รหัส <p-sortIcon field="id"></p-sortIcon>
               </th>
 
+              <th style="width: 220px" scope="col">รูปภาพ</th>
+              
               <th pSortableColumn="name" scope="col" style="width: 40%">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
@@ -109,7 +111,6 @@
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
-              <th style="width: 220px" scope="col">รูปภาพ</th>
               <th style="width: 170px" scope="col"></th>
             </tr>
           </ng-template>
@@ -117,9 +118,6 @@
           <ng-template pTemplate="body" let-p>
             <tr>
               <td>{{ p.id }}</td>
-              <td class="name">{{ p.name }}</td>
-              <td>{{ p.price | number }}</td>
-
               <td>
                 <div class="img-wrap" *ngIf="p.image; else noimg">
                   <img [src]="toImgUrl(p.image)" alt="product" />
@@ -128,6 +126,9 @@
                   <span class="muted">-</span>
                 </ng-template>
               </td>
+              <td class="name">{{ p.name }}</td>
+              <td>{{ p.price | number }}</td>
+
 
               <td class="action-cell">
                 <div class="action-wrap">

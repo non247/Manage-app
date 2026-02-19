@@ -13,8 +13,6 @@ import Swal from 'sweetalert2';
   imports: [
     CommonModule,
     FormsModule,
-    NgIf,
-    NgFor,
     MultiSelectModule,
     TableModule,
   ],
