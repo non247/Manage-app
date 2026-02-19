@@ -42,20 +42,19 @@ export class InventoryComponent implements OnInit {
   filteredProducts: Product[] = [];
 
   names = [
-  { label: 'ชาเขียว', value: 'ชาเขียว' },
-  { label: 'วนิลา', value: 'วนิลา' },
-  { label: 'นมสด', value: 'นมสด' },
-  { label: 'ยาคูล-ปีโป้', value: 'ยาคูล-ปีโป้' },
-  { label: 'ชาไทย', value: 'ชาไทย' },
-  { label: 'มิ้นต์ช็อกโกแลตชิพ', value: 'มิ้นต์ช็อกโกแลตชิพ' },
-  { label: 'กาแฟ', value: 'กาแฟ' },
-  { label: 'กะทิ', value: 'กะทิ' },
-  { label: 'โอริโอ้', value: 'โอริโอ้' },
-  { label: 'โกโก้', value: 'โกโก้' },
-  { label: 'บลูเบอร์รี่นมสด', value: 'บลูเบอร์รี่นมสด' },
-  { label: 'มะนาวน้ำผึ้ง', value: 'มะนาวน้ำผึ้ง' },
-];
-
+    { label: 'ชาเขียว', value: 'ชาเขียว' },
+    { label: 'วนิลา', value: 'วนิลา' },
+    { label: 'นมสด', value: 'นมสด' },
+    { label: 'ยาคูล-ปีโป้', value: 'ยาคูล-ปีโป้' },
+    { label: 'ชาไทย', value: 'ชาไทย' },
+    { label: 'มิ้นต์ช็อกโกแลตชิพ', value: 'มิ้นต์ช็อกโกแลตชิพ' },
+    { label: 'กาแฟ', value: 'กาแฟ' },
+    { label: 'กะทิ', value: 'กะทิ' },
+    { label: 'โอริโอ้', value: 'โอริโอ้' },
+    { label: 'โกโก้', value: 'โกโก้' },
+    { label: 'บลูเบอร์รี่นมสด', value: 'บลูเบอร์รี่นมสด' },
+    { label: 'มะนาวน้ำผึ้ง', value: 'มะนาวน้ำผึ้ง' },
+  ];
 
   categories = [
     { label: 'โคน', value: 'โคน' },
