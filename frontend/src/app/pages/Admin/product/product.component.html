@@ -12,13 +12,8 @@
           <!-- SEARCH -->
           <div class="search-wrapper">
             <i class="pi pi-search"></i>
-            <input
-              #searchInput
-              pInputText
-              type="text"
-              placeholder="ค้นหา..."
-              (input)="dt.filterGlobal(searchInput.value, 'contains')"
-            />
+            <input #searchInput pInputText type="text" placeholder="ค้นหา..."
+              (input)="dt.filterGlobal(searchInput.value, 'contains')" />
           </div>
 
           <!-- ACTION -->
@@ -98,7 +93,7 @@
 
         <!-- TABLE -->
         <p-table #dt [value]="products" [rows]="10" sortMode="single" [scrollable]="true" scrollHeight="500px"
-          stripedRows [loading]="loading" [globalFilterFields]="['id','name','price']"
+          stripedRows [rowHover]="true" [loading]="loading" [globalFilterFields]="['id','name','price']"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
           <ng-template pTemplate="header">
             <tr>

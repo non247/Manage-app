@@ -12,39 +12,22 @@
           <!-- SEARCH -->
           <div class="search-wrapper">
             <i class="pi pi-search"></i>
-            <input
-              #searchInput
-              pInputText
-              type="text"
-              placeholder="ค้นหา..."
-              (input)="dt.filterGlobal(searchInput.value, 'contains')"
-            />
+            <input #searchInput pInputText type="text" placeholder="ค้นหา..."
+              (input)="dt.filterGlobal(searchInput.value, 'contains')" />
           </div>
 
-          <button
-            class="btn-add"
-            style="margin-left: auto"
-            (click)="showCreateForm = !showCreateForm"
-          >
+          <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
             <i class="bi bi-plus-circle-fill"></i>
             เพิ่มผู้ใช้
           </button>
         </div>
 
         <!-- BACKDROP -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-backdrop"
-          [class.closing]="isClosing"
-          (click)="onCreateCancel()"
-        ></div>
+        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
+        </div>
 
         <!-- ===== CREATE CARD ===== -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-card"
-          [class.closing]="isClosing"
-        >
+        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
           <div class="create-card-header">
             <h2>เพิ่มผู้ใช้</h2>
           </div>
@@ -83,17 +66,9 @@
           </div>
         </div>
 
-        <p-table
-          #dt
-          [value]="users"
-          [rows]="10"
-          sortMode="single"
-          [scrollable]="true"
-          scrollHeight="500px"
-          stripedRows
-          [globalFilterFields]="['Id', 'Username', 'Role']"
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
-        >
+        <p-table #dt [value]="users" [rows]="10" sortMode="single" [scrollable]="true" scrollHeight="500px" stripedRows
+          [rowHover]="true" [globalFilterFields]="['Id', 'Username', 'Role']"
+          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="Id" scope="col">
@@ -126,13 +101,10 @@
 
               <td>
                 <ng-container *ngIf="editIndex !== i; else editRole">
-                  <span
-                    class="role-badge"
-                    [ngClass]="{
+                  <span class="role-badge" [ngClass]="{
                       admin: user.Role === 'admin' || user.Role === 'Admin',
                       user: user.Role === 'user' || user.Role === 'User',
-                    }"
-                  >
+                    }">
                     {{ user.Role }}
                   </span>
                 </ng-container>

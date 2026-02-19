@@ -110,19 +110,22 @@
         <!-- TABLE -->
         <p-table
           #dt
-          stripedRows
           [value]="filteredProducts"
+          dataKey="code"
+          selectionMode="multiple"
+          [metaKeySelection]="false"
           [rows]="10"
           [globalFilterFields]="[
-            'name',
-            'category',
-            'quantity',
-            'price',
-            'date',
+          'name',
+          'category',
+          'quantity',
+          'price',
+          'date',
           ]"
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
           [scrollable]="true"
+          stripedRows
           scrollHeight="500px"
+          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
           <!-- header -->
           <ng-template pTemplate="header">
