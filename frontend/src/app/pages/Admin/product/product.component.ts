@@ -186,10 +186,12 @@ export class ProductComponent implements OnInit {
         next: async () => {
           this.loading = false;
           await Swal.fire({
-            icon: 'success',
-            title: 'บันทึกสำเร็จ',
-            timer: 900,
-            showConfirmButton: false,
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลเรียบร้อย',
+          icon: 'success',
+          timer: 1500, // เวลาแสดง (ms)
+          showConfirmButton: false,
+          timerProgressBar: true,
           });
           this.onCreateCancel();
           this.load();
@@ -224,11 +226,12 @@ export class ProductComponent implements OnInit {
 
   async remove(p: Product) {
     const res = await Swal.fire({
+      title: 'ยืนยันที่จะลบ?',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
-      title: 'ยืนยันการลบ?',
-      text: `ลบสินค้า: ${p.name}`,
       showCancelButton: true,
-      confirmButtonText: 'ลบ',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     });
 
@@ -240,10 +243,12 @@ export class ProductComponent implements OnInit {
       next: async () => {
         this.loading = false;
         await Swal.fire({
-          icon: 'success',
-          title: 'ลบสำเร็จ',
-          timer: 800,
-          showConfirmButton: false,
+              title: 'สำเร็จ',
+              text: 'ลบรายการสำเร็จ',
+              icon: 'success',
+              timer: 1500, // เวลาแสดง (ms)
+              showConfirmButton: false,
+              timerProgressBar: true,
         });
         this.load();
       },

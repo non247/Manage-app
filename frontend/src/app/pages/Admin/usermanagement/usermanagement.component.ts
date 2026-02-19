@@ -113,7 +113,13 @@ export class UsermanagementComponent implements OnInit {
           this.users[index] = updated;
           this.editIndex = null;
           this.editUser = null;
-          Swal.fire('Success', 'บันทึกสำเร็จ', 'success');
+          Swal.fire({
+            title: 'สำเร็จ',
+            text: 'บันทึกข้อมูลเรียบร้อย',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+          });
         },
         error: (err: any) => {
           const msg = err?.error?.message || 'บันทึกไม่สำเร็จ';
@@ -132,18 +138,26 @@ export class UsermanagementComponent implements OnInit {
     const id = this.users[index].Id;
 
     Swal.fire({
-      title: 'ยืนยันการลบ?',
-      text: `ต้องการลบผู้ใช้ ${this.users[index].Username} ใช่ไหม`,
+      title: 'ยืนยันที่จะลบ?',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'ลบ',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
+
     }).then((result) => {
       if (!result.isConfirmed) return;
 
       this.userService.deleteUser(id).subscribe({
         next: () => {
-          Swal.fire('Success', 'ลบสำเร็จ', 'success');
+          Swal.fire({
+              title: 'สำเร็จ',
+              text: 'ลบรายการสำเร็จ',
+              icon: 'success',
+              timer: 1500, // เวลาแสดง (ms)
+              showConfirmButton: false,
+              timerProgressBar: true,});
           this.users.splice(index, 1);
         },
         error: () => Swal.fire('Error', 'ลบไม่สำเร็จ', 'error'),
