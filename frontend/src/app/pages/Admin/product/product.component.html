@@ -1,21 +1,24 @@
 <div class="layout">
   <div class="main-area">
     <div class="main-content">
-
       <!-- TOP NAV -->
       <header class="top-navbar">
         <h1 class="title">จัดการสินค้า</h1>
       </header>
 
       <div class="table-box">
-
         <!-- HEADER -->
         <div class="header-row">
           <!-- SEARCH -->
           <div class="search-wrapper">
             <i class="pi pi-search"></i>
-            <input #searchInput pInputText type="text" placeholder="ค้นหา..."
-              (input)="dt.filterGlobal(searchInput.value, 'contains')" />
+            <input
+              #searchInput
+              pInputText
+              type="text"
+              placeholder="ค้นหา..."
+              (input)="dt.filterGlobal(searchInput.value, 'contains')"
+            />
           </div>
 
           <!-- ACTION -->
@@ -151,7 +154,6 @@
             </tr>
           </ng-template>
         </p-table>
-
       </div>
     </div>
   </div>

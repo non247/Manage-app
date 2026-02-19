@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CheckboxModule } from 'primeng/checkbox';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
-import { CheckboxModule } from 'primeng/checkbox';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { HistoryService } from '../../../core/services/history.service';
@@ -58,7 +58,7 @@ export class HistoryComponent implements OnInit {
     { label: 'ถ้วย', value: 'ถ้วย' },
   ];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private readonly historyService: HistoryService) {}
 
   /* ================= INIT ================= */
   ngOnInit(): void {
@@ -167,42 +167,39 @@ export class HistoryComponent implements OnInit {
   }
 
   onSave(index: number) {
-    if (!this.editProduct || !this.editProduct.id) return;
+    if (!this.editProduct?.id) return;
 
     const payload = {
       ...this.editProduct,
       date: this.editProduct.date,
     };
 
-    this.historyService
-      .update(this.editProduct.id, payload)
-      .subscribe({
-        next: () => {
-          // ✅ update local array เหมือน inventory
-          this.filteredProducts[index] = { ...payload };
+    this.historyService.update(this.editProduct.id, payload).subscribe({
+      next: () => {
+        // ✅ update local array เหมือน inventory
+        this.filteredProducts[index] = { ...payload };
 
-          const originalIndex = this.products.findIndex(
-            (p) => p.id === this.editProduct!.id
-          );
-          if (originalIndex !== -1)
-            this.products[originalIndex] = { ...payload };
+        const originalIndex = this.products.findIndex(
+          (p) => p.id === this.editProduct!.id
+        );
+        if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
 
-          this.editIndex = null;
-          this.editProduct = null;
+        this.editIndex = null;
+        this.editProduct = null;
 
-          Swal.fire({
-            title: 'สำเร็จ',
-            text: 'บันทึกข้อมูลเรียบร้อย',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false,
-            timerProgressBar: true,
-          });
-        },
-        error: () => {
-          Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error');
-        },
-      });
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลเรียบร้อย',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
+      },
+      error: () => {
+        Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error');
+      },
+    });
   }
 
   onCancel() {

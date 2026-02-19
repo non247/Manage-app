@@ -10,7 +10,14 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIf, NgFor, MultiSelectModule, TableModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgIf,
+    NgFor,
+    MultiSelectModule,
+    TableModule,
+  ],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
@@ -40,7 +47,7 @@ export class ProductComponent implements OnInit {
     image: null as File | null,
   };
 
-  constructor(private productService: ProductService) {}
+  constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
     this.load();

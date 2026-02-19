@@ -2,18 +2,12 @@
   <div class="register-card">
     <h1>สมัครสมาชิก</h1>
 
-    <!-- Error -->
-    <!-- <div *ngIf="errorMessage" class="error">
-      {{ errorMessage }}
-    </div> -->
-
     <!-- Success -->
     <p *ngIf="successMessage" class="success">
       {{ successMessage }}
     </p>
 
     <form (ngSubmit)="register()">
-
       <!-- Username -->
       <div class="password-wrapper">
         <input
@@ -59,22 +53,12 @@
         ></i>
       </div>
 
-      <!-- Role -->
-      <!-- <div class="password-wrapper">
-        <select [(ngModel)]="role" name="role">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div> -->
-
       <p *ngIf="errorMessage" style="color: red">
         {{ errorMessage }}
       </p>
 
       <!-- Button -->
-      <button type="submit" class="btn-singin">
-        ลงทะเบียน
-      </button>
+      <button type="submit" class="btn-singin">ลงทะเบียน</button>
     </form>
 
     <!-- Link Login -->

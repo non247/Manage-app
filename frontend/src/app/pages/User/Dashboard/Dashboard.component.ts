@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   private dashboardData?: DashboardResponse;
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private readonly dashboardService: DashboardService) {}
 
   ngOnInit(): void {
     this.loadDashboard();

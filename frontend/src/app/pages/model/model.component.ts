@@ -25,7 +25,6 @@ export class ModelComponent implements OnInit {
     this.onSubmit();
   }
 
-
   predictForm: FormGroup;
   result: any = null;
 

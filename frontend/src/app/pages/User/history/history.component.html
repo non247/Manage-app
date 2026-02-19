@@ -21,7 +21,7 @@
           <button
             type="button"
             class="btn-excel"
-            style="margin-left: auto; visibility: hidden;"
+            style="margin-left: auto; visibility: hidden"
             (click)="exportToExcel()"
           >
             <i class="bi bi-filetype-xlsx"></i>
@@ -61,25 +61,21 @@
                 <input type="text" pInputText [(ngModel)]="newProduct.name" />
               </div>
 
-<div class="field">
-  <label for="category">ประเภท</label>
-  <select
-    id="category"
-    class="p-inputtext p-component"
-    [(ngModel)]="newProduct.category"
-    name="category"
-  >
-    <option value="" disabled>-- เลือกประเภท --</option>
+              <div class="field">
+                <label for="category">ประเภท</label>
+                <select
+                  id="category"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="newProduct.category"
+                  name="category"
+                >
+                  <option value="" disabled>-- เลือกประเภท --</option>
 
-    <option
-      *ngFor="let c of categories"
-      [value]="c.value"
-    >
-      {{ c.label }}
-    </option>
-    
-  </select>
-</div>
+                  <option *ngFor="let c of categories" [value]="c.value">
+                    {{ c.label }}
+                  </option>
+                </select>
+              </div>
               <div class="field">
                 <label for="price">ราคา</label>
                 <input

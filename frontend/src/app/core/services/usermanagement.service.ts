@@ -23,9 +23,9 @@ export interface UpdateUserDto {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private baseUrl = 'http://localhost:3000/api/users';
+  private readonly baseUrl = 'http://localhost:3000/api/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl);
