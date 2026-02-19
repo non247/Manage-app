@@ -50,7 +50,18 @@
             <div class="create-grid">
               <div class="field">
                 <label for="name">ชื่อสินค้า</label>
-                <input type="text" pInputText [(ngModel)]="newProduct.name" />
+                                <select
+                  id="category"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="newProduct.category"
+                  name="category"
+                >
+                  <option value="" disabled>-- เลือกชื่อสินค้า --</option>
+
+                  <option *ngFor="let c of names" [value]="c.value">
+                    {{ c.label }}
+                  </option>
+                </select>
               </div>
 
               <div class="field">
@@ -172,7 +183,17 @@
                   {{ product.name }}
                 </ng-container>
                 <ng-template #editName>
-                  <input type="text" [(ngModel)]="editProduct!.name" />
+                  <select
+                    class="p-inputtext p-component"
+                    [(ngModel)]="editProduct!.name"
+                    name="editName"
+                  >
+                    <option value="" disabled>-- เลือกชื่อสินค้า --</option>
+
+                    <option *ngFor="let c of names" [value]="c.value">
+                      {{ c.label }}
+                    </option>
+                  </select>
                 </ng-template>
               </td>
 

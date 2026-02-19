@@ -39,7 +39,7 @@ export class ProductComponent implements OnInit {
 
   form = {
     name: '',
-    price: 59 as number | null,
+    price: 0 as number | null,
     image: null as File | null,
   };
 
@@ -87,7 +87,7 @@ export class ProductComponent implements OnInit {
     this.isEdit = false;
     this.editingId = null;
 
-    this.form = { name: '', price: 59, image: null };
+    this.form = { name: '', price: 0, image: null };
     this.selectedFile = null;
     this.previewUrl = '';
 
@@ -125,7 +125,7 @@ export class ProductComponent implements OnInit {
       this.isEdit = false;
       this.editingId = null;
 
-      this.form = { name: '', price: 59, image: null };
+      this.form = { name: '', price: 0, image: null };
       this.selectedFile = null;
       this.previewUrl = '';
     }, 250); // ให้ตรงกับ CSS animation 0.25s
