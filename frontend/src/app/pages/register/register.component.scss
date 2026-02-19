@@ -74,7 +74,6 @@ $input-border: #ccc;
   }
 }
 
-
 /* ===== Password Wrapper ===== */
 .password-wrapper {
   position: relative;
@@ -161,10 +160,22 @@ $input-border: #ccc;
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; top: 0; }
-  30% { opacity: 1; top: 20px; }
-  80% { opacity: 1; top: 20px; }
-  100% { opacity: 0; top: 0; }
+  0% {
+    opacity: 0;
+    top: 0;
+  }
+  30% {
+    opacity: 1;
+    top: 20px;
+  }
+  80% {
+    opacity: 1;
+    top: 20px;
+  }
+  100% {
+    opacity: 0;
+    top: 0;
+  }
 }
 
 /* ===== Responsive ===== */
@@ -173,7 +184,8 @@ $input-border: #ccc;
     display: none;
   }
 
-  .register-card.card-split { /* ✅ แก้จาก login-card */
+  .register-card.card-split {
+    /* ✅ แก้จาก login-card */
     width: min(520px, 95vw);
     height: auto;
   }
@@ -208,13 +220,13 @@ $input-border: #ccc;
 
 /* ✅ จองที่ไว้ให้ error ตลอดเวลา => ไม่ดันปุ่ม/ลิงก์ */
 .error-slot {
-  min-height: 18px;   /* ถ้าข้อความยาวอาจใช้ 36px */
+  min-height: 18px; /* ถ้าข้อความยาวอาจใช้ 36px */
   margin-top: 6px;
 }
 
 /* ✅ ตัด margin ของ <p> ออก (สำคัญมาก) */
 .error-text {
-  margin: 0;          /* override browser default */
+  margin: 0; /* override browser default */
   color: red;
   text-align: center;
   font-size: 14px;

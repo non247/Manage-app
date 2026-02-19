@@ -28,7 +28,9 @@ exports.getAllProducts = async (req, res) => {
     return res.json(result.rows);
   } catch (err) {
     console.error('getAllProducts error:', err);
-    return res.status(500).json({ message: 'Server error', error: String(err.message || err) });
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: String(err.message || err) });
   }
 };
 
@@ -36,7 +38,8 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if (!Number.isInteger(id)) return res.status(400).json({ message: 'Invalid id' });
+    if (!Number.isInteger(id))
+      return res.status(400).json({ message: 'Invalid id' });
 
     const result = await pool.query(
       `
@@ -51,11 +54,14 @@ exports.getProductById = async (req, res) => {
       [id]
     );
 
-    if (result.rowCount === 0) return res.status(404).json({ message: 'Product not found' });
+    if (result.rowCount === 0)
+      return res.status(404).json({ message: 'Product not found' });
     return res.json(result.rows[0]);
   } catch (err) {
     console.error('getProductById error:', err);
-    return res.status(500).json({ message: 'Server error', error: String(err.message || err) });
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: String(err.message || err) });
   }
 };
 
@@ -86,7 +92,9 @@ exports.createProduct = async (req, res) => {
     return res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('createProduct error:', err);
-    return res.status(500).json({ message: 'Server error', error: String(err.message || err) });
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: String(err.message || err) });
   }
 };
 
@@ -94,20 +102,26 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if (!Number.isInteger(id)) return res.status(400).json({ message: 'Invalid id' });
+    if (!Number.isInteger(id))
+      return res.status(400).json({ message: 'Invalid id' });
 
     const { name, price } = req.body;
 
     const sets = [];
     const params = [];
-    const add = (col, val) => { params.push(val); sets.push(`${col} = $${params.length}`); };
+    const add = (col, val) => {
+      params.push(val);
+      sets.push(`${col} = $${params.length}`);
+    };
 
     if (name !== undefined) {
-      if (!String(name).trim()) return res.status(400).json({ message: 'name is invalid' });
+      if (!String(name).trim())
+        return res.status(400).json({ message: 'name is invalid' });
       add(`"name"`, String(name).trim());
     }
     if (price !== undefined) {
-      if (Number(price) <= 0 || Number.isNaN(Number(price))) return res.status(400).json({ message: 'price must be > 0' });
+      if (Number(price) <= 0 || Number.isNaN(Number(price)))
+        return res.status(400).json({ message: 'price must be > 0' });
       add(`"price"`, Number(price));
     }
 
@@ -116,7 +130,8 @@ exports.updateProduct = async (req, res) => {
       add(`"image"`, `/uploads/${req.file.filename}`);
     }
 
-    if (sets.length === 0) return res.status(400).json({ message: 'No fields to update' });
+    if (sets.length === 0)
+      return res.status(400).json({ message: 'No fields to update' });
 
     params.push(id);
 
@@ -128,12 +143,15 @@ exports.updateProduct = async (req, res) => {
     `;
 
     const result = await pool.query(sql, params);
-    if (result.rowCount === 0) return res.status(404).json({ message: 'Product not found' });
+    if (result.rowCount === 0)
+      return res.status(404).json({ message: 'Product not found' });
 
     return res.json(result.rows[0]);
   } catch (err) {
     console.error('updateProduct error:', err);
-    return res.status(500).json({ message: 'Server error', error: String(err.message || err) });
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: String(err.message || err) });
   }
 };
 
@@ -141,17 +159,21 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if (!Number.isInteger(id)) return res.status(400).json({ message: 'Invalid id' });
+    if (!Number.isInteger(id))
+      return res.status(400).json({ message: 'Invalid id' });
 
     const result = await pool.query(
       `DELETE FROM public."Product" WHERE "Id" = $1 RETURNING "Id" AS id`,
       [id]
     );
 
-    if (result.rowCount === 0) return res.status(404).json({ message: 'Product not found' });
+    if (result.rowCount === 0)
+      return res.status(404).json({ message: 'Product not found' });
     return res.json({ message: 'Deleted', id: result.rows[0].id });
   } catch (err) {
     console.error('deleteProduct error:', err);
-    return res.status(500).json({ message: 'Server error', error: String(err.message || err) });
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: String(err.message || err) });
   }
 };

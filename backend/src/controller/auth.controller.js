@@ -35,7 +35,6 @@ exports.register = async (req, res) => {
       ok: true,
       user: result.rows[0],
     });
-
   } catch (error) {
     console.error('❌ Register API Error:', error.message);
     res.status(500).json({ error: error.message });
@@ -97,7 +96,6 @@ exports.login = async (req, res) => {
       role: user.Role,
       username: user.Username,
     });
-
   } catch (error) {
     console.error('❌ Login API Error:', error.message);
     res.status(500).json({ error: error.message });

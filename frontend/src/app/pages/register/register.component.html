@@ -17,22 +17,45 @@
       <form (ngSubmit)="register()" #registerForm="ngForm">
         <!-- Username -->
         <div class="password-wrapper">
-          <input type="text" name="username" [(ngModel)]="Username" required placeholder="ชื่อผู้ใช้" />
+          <input
+            type="text"
+            name="username"
+            [(ngModel)]="Username"
+            required
+            placeholder="ชื่อผู้ใช้"
+          />
         </div>
 
         <!-- Password -->
         <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="Password" required
-            placeholder="ป้อนรหัสผ่าน" />
-          <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePassword()"></i>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="Password"
+            required
+            placeholder="ป้อนรหัสผ่าน"
+          />
+          <i
+            class="bi"
+            [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+            (click)="togglePassword()"
+          ></i>
         </div>
 
         <!-- Confirm Password -->
         <div class="password-wrapper">
-          <input [type]="showConfirmPassword ? 'text' : 'password'" name="confirmPassword" [(ngModel)]="ConfirmPassword"
-            required placeholder="ยืนยันรหัสผ่าน" />
-          <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
-            (click)="toggleConfirmPassword()"></i>
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            name="confirmPassword"
+            [(ngModel)]="ConfirmPassword"
+            required
+            placeholder="ยืนยันรหัสผ่าน"
+          />
+          <i
+            class="bi"
+            [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+            (click)="toggleConfirmPassword()"
+          ></i>
         </div>
 
         <div class="error-slot">
@@ -40,7 +63,6 @@
             {{ errorMessage }}
           </p>
         </div>
-
 
         <!-- Button -->
         <button type="submit" class="btn-singin">ลงทะเบียน</button>
