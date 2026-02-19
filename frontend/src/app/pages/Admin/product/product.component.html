@@ -12,12 +12,22 @@
           <!-- SEARCH -->
           <div class="search-wrapper">
             <i class="pi pi-search"></i>
-            <input #searchInput pInputText type="text" placeholder="ค้นหา..."
-              (input)="dt.filterGlobal(searchInput.value, 'contains')" />
+            <input
+              #searchInput
+              pInputText
+              type="text"
+              placeholder="ค้นหา..."
+              (input)="dt.filterGlobal(searchInput.value, 'contains')"
+            />
           </div>
 
           <!-- ACTION -->
-          <button class="btn-add" style="margin-left: auto" type="button" (click)="toggleCreate()">
+          <button
+            class="btn-add"
+            style="margin-left: auto"
+            type="button"
+            (click)="toggleCreate()"
+          >
             <i class="bi bi-plus-circle-fill"></i>
             เพิ่มสินค้า
           </button>
@@ -28,21 +38,33 @@
         <div *ngIf="loading" class="hint">กำลังโหลด...</div>
 
         <!-- BACKDROP -->
-        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
-        </div>
+        <div
+          *ngIf="showCreateForm"
+          class="create-backdrop"
+          [class.closing]="isClosing"
+          (click)="onCreateCancel()"
+        ></div>
 
         <!-- ===== CREATE CARD (เหมือน usermanagement) ===== -->
-        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
+        <div
+          *ngIf="showCreateForm"
+          class="create-card"
+          [class.closing]="isClosing"
+        >
           <div class="create-card-header">
             <h2>{{ isEdit ? 'แก้ไขสินค้า' : 'เพิ่มสินค้า' }}</h2>
           </div>
 
           <div class="create-card-body">
             <div class="create-grid">
-
               <div class="field full">
                 <label>ชื่อสินค้า</label>
-                <input pInputText type="text" [(ngModel)]="form.name" placeholder="เช่น Vanilla" />
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="form.name"
+                  placeholder="เช่น Vanilla"
+                />
               </div>
 
               <div class="field">
@@ -53,8 +75,12 @@
               <div class="field">
                 <label>รูปภาพ (ไม่บังคับ)</label>
                 <div class="file-box">
-                  <input class="file-input" type="file" accept="image/png, image/jpeg"
-                    (change)="onFileSelected($event)" />
+                  <input
+                    class="file-input"
+                    type="file"
+                    accept="image/png, image/jpeg"
+                    (change)="onFileSelected($event)"
+                  />
                   <small class="help" *ngIf="selectedFile">
                     เลือกแล้ว: {{ selectedFile.name }}
                   </small>
@@ -69,12 +95,15 @@
                 <div class="preview">
                   <img [src]="previewUrl" alt="preview" />
                   <div class="meta">
-                    <div class="name">{{ form.name || 'ยังไม่ได้ใส่ชื่อสินค้า' }}</div>
-                    <div class="muted">ราคา: {{ (form.price ?? 0) | number }} บาท</div>
+                    <div class="name">
+                      {{ form.name || 'ยังไม่ได้ใส่ชื่อสินค้า' }}
+                    </div>
+                    <div class="muted">
+                      ราคา: {{ form.price ?? 0 | number }} บาท
+                    </div>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -84,7 +113,11 @@
               {{ isEdit ? 'บันทึก' : 'บันทึก' }}
             </button>
 
-            <button class="btn-cancel btn-form" type="button" (click)="onCreateCancel()">
+            <button
+              class="btn-cancel btn-form"
+              type="button"
+              (click)="onCreateCancel()"
+            >
               <i class="bi bi-x-square"></i>
               ยกเลิก
             </button>
@@ -92,9 +125,19 @@
         </div>
 
         <!-- TABLE -->
-        <p-table #dt [value]="products" [rows]="10" sortMode="single" [scrollable]="true" scrollHeight="500px"
-          stripedRows [rowHover]="true" [loading]="loading" [globalFilterFields]="['id','name','price']"
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
+        <p-table
+          #dt
+          [value]="products"
+          [rows]="10"
+          sortMode="single"
+          [scrollable]="true"
+          scrollHeight="500px"
+          stripedRows
+          [rowHover]="true"
+          [loading]="loading"
+          [globalFilterFields]="['id', 'name', 'price']"
+          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="id" scope="col" style="width: 20%">
@@ -102,7 +145,7 @@
               </th>
 
               <th style="width: 220px" scope="col">รูปภาพ</th>
-              
+
               <th pSortableColumn="name" scope="col" style="width: 40%">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
@@ -128,7 +171,6 @@
               </td>
               <td class="name">{{ p.name }}</td>
               <td>{{ p.price | number }}</td>
-
 
               <td class="action-cell">
                 <div class="action-wrap">

@@ -16,15 +16,31 @@
 
       <form #loginForm="ngForm" (ngSubmit)="login()">
         <div class="password-wrapper">
-          <input style="font-size: 15px" type="text" name="username" [(ngModel)]="Username" required
-            placeholder="ชื่อผู้ใช้" />
+          <input
+            style="font-size: 15px"
+            type="text"
+            name="username"
+            [(ngModel)]="Username"
+            required
+            placeholder="ชื่อผู้ใช้"
+          />
         </div>
 
         <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" id="passwordinput" name="password" [(ngModel)]="Password"
-            required placeholder="ป้อนรหัสผ่าน" />
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="passwordinput"
+            name="password"
+            [(ngModel)]="Password"
+            required
+            placeholder="ป้อนรหัสผ่าน"
+          />
 
-          <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePasswordVisibility()"></i>
+          <i
+            class="bi"
+            [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+            (click)="togglePasswordVisibility()"
+          ></i>
         </div>
 
         <div class="error-slot">

@@ -1,21 +1,19 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
-import { Product, ProductService } from '../../../core/services/product.service';
+import {
+  Product,
+  ProductService,
+} from '../../../core/services/product.service';
 
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MultiSelectModule,
-    TableModule,
-  ],
+  imports: [CommonModule, FormsModule, MultiSelectModule, TableModule],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
@@ -184,12 +182,12 @@ export class ProductComponent implements OnInit {
         next: async () => {
           this.loading = false;
           await Swal.fire({
-          title: 'สำเร็จ',
-          text: 'บันทึกข้อมูลเรียบร้อย',
-          icon: 'success',
-          timer: 1500, // เวลาแสดง (ms)
-          showConfirmButton: false,
-          timerProgressBar: true,
+            title: 'สำเร็จ',
+            text: 'บันทึกข้อมูลเรียบร้อย',
+            icon: 'success',
+            timer: 1500, // เวลาแสดง (ms)
+            showConfirmButton: false,
+            timerProgressBar: true,
           });
           this.onCreateCancel();
           this.load();
@@ -241,12 +239,12 @@ export class ProductComponent implements OnInit {
       next: async () => {
         this.loading = false;
         await Swal.fire({
-              title: 'สำเร็จ',
-              text: 'ลบรายการสำเร็จ',
-              icon: 'success',
-              timer: 1500, // เวลาแสดง (ms)
-              showConfirmButton: false,
-              timerProgressBar: true,
+          title: 'สำเร็จ',
+          text: 'ลบรายการสำเร็จ',
+          icon: 'success',
+          timer: 1500, // เวลาแสดง (ms)
+          showConfirmButton: false,
+          timerProgressBar: true,
         });
         this.load();
       },

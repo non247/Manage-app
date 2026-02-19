@@ -128,9 +128,11 @@ $input-border: #ccc;
 
 /* ===== Error ===== */
 .error-text {
+  margin: 0; /* override browser default */
   color: red;
   text-align: center;
-  margin-top: 6px;
+  font-size: 14px;
+  line-height: 18px;
 }
 
 /* ===== Register Link ===== */
@@ -207,15 +209,6 @@ $input-border: #ccc;
 
 /* ✅ จองที่ไว้ให้ error ตลอดเวลา => ไม่ดันปุ่ม/ลิงก์ */
 .error-slot {
-  min-height: 18px;   /* ถ้าข้อความยาวอาจใช้ 36px */
+  min-height: 18px; /* ถ้าข้อความยาวอาจใช้ 36px */
   margin-top: 6px;
-}
-
-/* ✅ ตัด margin ของ <p> ออก (สำคัญมาก) */
-.error-text {
-  margin: 0;          /* override browser default */
-  color: red;
-  text-align: center;
-  font-size: 14px;
-  line-height: 18px;
 }

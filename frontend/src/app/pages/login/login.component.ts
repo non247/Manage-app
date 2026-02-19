@@ -2,8 +2,8 @@ import { CommonModule, NgIf, isPlatformBrowser } from '@angular/common';
 import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -64,12 +64,9 @@ export class LoginComponent implements OnInit {
         const role = res.role;
 
         // ✅ ส่ง state ไป dashboard เพื่อใช้แสดง welcome toast
-        this.router.navigate(
-          [role === 'admin' ? '/product' : '/dashboard'],
-          {
-            state: { loginSuccess: true },
-          }
-        );
+        this.router.navigate([role === 'admin' ? '/product' : '/dashboard'], {
+          state: { loginSuccess: true },
+        });
       },
       error: () => {
         this.errorMessage = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';

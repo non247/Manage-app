@@ -145,19 +145,19 @@ export class UsermanagementComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
-
     }).then((result) => {
       if (!result.isConfirmed) return;
 
       this.userService.deleteUser(id).subscribe({
         next: () => {
           Swal.fire({
-              title: 'สำเร็จ',
-              text: 'ลบรายการสำเร็จ',
-              icon: 'success',
-              timer: 1500, // เวลาแสดง (ms)
-              showConfirmButton: false,
-              timerProgressBar: true,});
+            title: 'สำเร็จ',
+            text: 'ลบรายการสำเร็จ',
+            icon: 'success',
+            timer: 1500, // เวลาแสดง (ms)
+            showConfirmButton: false,
+            timerProgressBar: true,
+          });
           this.users.splice(index, 1);
         },
         error: () => Swal.fire('Error', 'ลบไม่สำเร็จ', 'error'),
