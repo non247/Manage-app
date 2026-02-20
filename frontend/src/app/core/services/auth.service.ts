@@ -58,7 +58,8 @@ export class AuthService {
 
           if (res?.token) localStorage.setItem(this.TOKEN_KEY, res.token);
           if (res?.role) localStorage.setItem(this.ROLE_KEY, res.role);
-          if (res?.username) localStorage.setItem(this.USERNAME_KEY, res.username);
+          if (res?.username)
+            localStorage.setItem(this.USERNAME_KEY, res.username);
 
           this._isLoggedIn$.next(!!res?.token);
         })
