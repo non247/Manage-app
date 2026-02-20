@@ -1,152 +1,7 @@
+/* ================= LAYOUT ================= */
 .layout {
   display: flex;
   height: 100vh;
-  // overflow: hidden;
-}
-
-app-sidebar-user {
-  width: 200px;
-  flex-shrink: 0;
-}
-
-.main-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #dcdcdc;
-  overflow-y: auto;
-}
-
-.main-content {
-  padding: 20px;
-  margin-left: 90px;
-}
-
-.main-content p-table {
-  margin-top: 30px;
-}
-
-.main-content p-table th,
-.main-content p-table td {
-  text-align: center;
-  padding: 11px;
-  /* เพิ่มระยะห่างระหว่างข้อความ */
-  // border-bottom: #e2e2e2;
-  // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
-}
-
-.main-content p-table th {
-  // background-color: #ffd6e0;
-  /* สีพื้นหลังของหัวตาราง */
-  font-size: 30px;
-  font-weight: bold;
-  // color: #d81b60;
-}
-
-.main-content p-table td {
-  font-size: 23px;
-}
-
-::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  // background-color: #d81b60 !important;
-  /* สีแถวที่ 1,3,5... */
-  // color: white;
-}
-
-::ng-deep .p-datatable tbody tr:nth-child(even) td {
-  // background-color: #ffd6e0 !important;
-  /* สีแถวที่ 2,4,6... */
-}
-
-/* ปรับแต่ง border และ padding เหมือนเดิม */
-::ng-deep .p-datatable tbody td {
-  text-align: center;
-  padding: 12px;
-  // border-bottom: #e2e2e2;
-}
-
-.table-box {
-  padding: 20px;
-  background: #ffd6e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-top: 20px;
-  height: 620px;
-}
-
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 6px;
-  margin-bottom: 20px;
-}
-
-.title {
-  color: #d81b60;
-  margin: 0;
-}
-
-::ng-deep .p-multiselect-panel {
-  position: fixed !important;
-  z-index: 99999 !important;
-
-  /* ป้องกันเต็มหน้าจอ */
-  width: max-content !important;
-  max-width: 300px !important;
-  left: auto !important;
-}
-
-.btn-edit,
-.btn-save,
-.btn-cancel {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 130px;
-  font-size: 23px;
-  padding: 7px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  color: #fff;
-  border: 2px solid white;
-  gap: 10px;
-}
-
-/* สีเฉพาะของแต่ละปุ่ม */
-.btn-edit {
-  background: #1e3a8a;
-}
-
-.btn-save {
-  background: #1e8a39;
-}
-.btn-cancel {
-  background: #d21515;
-}
-
-/* input type number และ text */
-input[type='text'],
-input[type='number'],
-input[type='date'] {
-  width: 90%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 23px;
-  text-align: center; /* ตัวเลขตรงกลาง */
-}
-
-/* เน้นแถวที่กำลังแก้ไข */
-tr.editing {
-  background-color: #fff3cd;
-}
-
-.layout {
-  display: flex;
-  height: 100vh;
-  // overflow: hidden;
 }
 
 app-sidebar-user {
@@ -162,8 +17,13 @@ app-sidebar-user {
   overflow-y: auto;
 }
 
+.main-content {
+  padding: 20px;
+  margin-left: 90px;
+}
+
+/* ================= TOP NAV ================= */
 .top-navbar {
-  // background-color: #D81B60;
   padding: 15px 20px;
   border-radius: 15px;
   color: #d81b60;
@@ -171,53 +31,27 @@ app-sidebar-user {
   font-weight: bold;
 }
 
-.main-content {
+/* ================= TABLE BOX ================= */
+.table-box {
   padding: 20px;
-  margin-left: 90px;
+  background: #ffd6e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+  height: 620px;
+
+  /* ✅ ล็อกพื้นที่ในกล่อง เพื่อให้ paginator ไม่ขยับ */
+  display: flex;
+  flex-direction: column;
 }
 
-.main-content p-table {
-  margin-top: 30px;
-}
-
-.main-content p-table th,
-.main-content p-table td {
-  text-align: center;
-  padding: 11px;
-  /* เพิ่มระยะห่างระหว่างข้อความ */
-  // border-bottom: #e2e2e2;
-  // border-bottom: 2px solid #e2e2e2; /* Change the color of the bottom border */
-}
-
-.main-content p-table th {
-  // background-color: #d81b60;
-  /* สีพื้นหลังของหัวตาราง */
-  font-size: 30px;
-  font-weight: bold;
-  // color: #ffffff;
-}
-
-.main-content p-table td {
-  font-size: 23px;
-  // border-bottom: 3px solid #d81b60;
-}
-
-::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  // background-color: #ffd6e0 !important;
-  /* สีแถวที่ 1,3,5... */
-  // color: rgb(0, 0, 0);
-}
-
-::ng-deep .p-datatable tbody tr:nth-child(even) td {
-  // background-color: #ffd6e0 !important;
-  /* สีแถวที่ 2,4,6... */
-}
-
-/* ปรับแต่ง border และ padding เหมือนเดิม */
-::ng-deep .p-datatable tbody td {
-  text-align: center;
-  padding: 12px;
-  // border-bottom: #e2e2e2;
+/* ================= HEADER ROW ================= */
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 20px;
 }
 
 .title {
@@ -225,14 +59,101 @@ app-sidebar-user {
   margin: 0;
 }
 
-::ng-deep .p-multiselect-panel {
+/* ================= TABLE (PrimeNG) ================= */
+.main-content p-table {
+  margin-top: 30px;
+
+  /* ✅ ให้ p-table กินพื้นที่ที่เหลือใน table-box */
+  flex: 1;
+  min-height: 0;
+}
+
+/* ✅ ทำให้ datatable เป็น flex column แล้วดัน paginator ติดล่าง */
+:host ::ng-deep .p-datatable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  /* ✅ พื้นหลังตารางเป็นขาวทั้งก้อน */
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ✅ พื้นที่ rows (รวมพื้นที่ว่าง) เป็นขาว และไม่ scroll */
+:host ::ng-deep .p-datatable .p-datatable-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* ✅ paginator ติดล่างเสมอ */
+:host ::ng-deep .p-datatable .p-paginator {
+  margin-top: auto;
+}
+
+/* ===== Header / Body cell ===== */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: center;
+  padding: 11px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+  padding: 11px;
+  font-size: 23px;
+}
+
+/* สำรอง: ถ้ามี rule อื่นมาทับ */
+:host ::ng-deep .p-datatable tbody td {
+  text-align: center;
+  padding: 12px;
+}
+
+/* (ถ้าจะทำ zebra ให้เอา comment ออก) */
+/*
+:host ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
+  background: #fff;
+}
+:host ::ng-deep .p-datatable tbody tr:nth-child(even) td {
+  background: #fff7fa;
+}
+*/
+
+/* ================= MULTISELECT PANEL ================= */
+:host ::ng-deep .p-multiselect-panel {
   position: fixed !important;
   z-index: 99999 !important;
-
-  /* ป้องกันเต็มหน้าจอ */
   width: max-content !important;
   max-width: 300px !important;
   left: auto !important;
+}
+
+/* ================= BUTTONS ================= */
+.btn-add {
+  background-color: #d81b60;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  width: 150px;
+  height: 40px;
+  gap: 5px;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0.1rem 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add:hover {
+  background-color: #e85c94;
 }
 
 .btn-edit,
@@ -249,19 +170,15 @@ app-sidebar-user {
   border: none;
   cursor: pointer;
   color: #fff;
-  // border: 2px solid white;
   gap: 10px;
 }
 
-/* สีเฉพาะของแต่ละปุ่ม */
 .btn-edit {
   background: #1e3a8a;
 }
-
 .btn-delete {
   background: #d21515;
 }
-
 .btn-save {
   background: #1e8a39;
 }
@@ -269,41 +186,36 @@ app-sidebar-user {
   background: #d21515;
 }
 
-/* input type number และ text */
-input[type='text'] {
+/* ================= INPUTS ================= */
+input[type='text'],
+input[type='number'],
+input[type='date'] {
   width: 90%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 7px;
   font-size: 23px;
-  text-align: center; /* ตัวเลขตรงกลาง */
+  text-align: center;
+  box-sizing: border-box;
 }
 
-input[type='number'] {
-  width: 90%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 23px;
-  text-align: center; /* ตัวเลขตรงกลาง */
-}
-
-/* เน้นแถวที่กำลังแก้ไข */
+/* ================= EDIT ROW ================= */
 tr.editing {
   background-color: #fff3cd;
 }
 
+/* ================= SEARCH ================= */
 .search-wrapper {
   position: relative;
-  width: 300px; /* กำหนดความกว้างตามต้องการ */
-  margin-right: auto; /* เลื่อนช่องค้นหาไปด้านขวา */
+  width: 300px;
+  margin-right: auto;
 }
 
 .search-wrapper input {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 2rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
-  border: 1px solid #ccc; /* เส้นขอบบาง ๆ สีเทา */
-  border-radius: 7px; /* มุมโค้งมน */
+  padding: 0.5rem 2.5rem 0.5rem 2rem;
+  border: 1px solid #ccc;
+  border-radius: 7px;
   font-size: 1rem;
   outline: none;
   box-shadow: none;
@@ -317,45 +229,11 @@ tr.editing {
   top: 50%;
   transform: translateY(-50%);
   color: #aaa;
-  pointer-events: none; /* ให้คลิกผ่าน icon ได้ */
+  pointer-events: none;
   font-size: 1.2rem;
 }
 
-.btn-add {
-  background-color: #d81b60;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  width: 150px;
-  height: 40px;
-  gap: 5px;
-  font-weight: bold;
-  white-space: nowrap;
-  cursor: pointer;
-  font-size: 20px;
-  padding: 0.1rem 1rem 0.1rem 1rem; /* เผื่อพื้นที่ icon ด้านซ้าย */
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-add:hover {
-  background-color: #e85c94;
-}
-
-input[type='date'] {
-  width: 90%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 23px;
-  text-align: center;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-
-/* Card */
+/* ================= CREATE CARD ================= */
 .create-card {
   position: fixed;
   top: 50%;
@@ -417,7 +295,6 @@ input[type='date'] {
   cursor: pointer;
   outline: none;
 
-  /* ลูกศร dropdown */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -428,12 +305,10 @@ input[type='date'] {
   background-size: 18px;
 }
 
-/* focus */
 .field select:focus {
   border-color: #000000;
 }
 
-/* option disabled */
 .field select option:disabled {
   color: #aaa;
 }
@@ -446,7 +321,7 @@ input[type='date'] {
   border-top: 1px solid #eee;
 }
 
-/* Backdrop */
+/* ================= BACKDROP ================= */
 .create-backdrop {
   position: fixed;
   inset: 0;
@@ -455,11 +330,12 @@ input[type='date'] {
   animation: fadeIn 0.25s ease;
 }
 
-::ng-deep .swal2-container {
+/* ================= SWEETALERT ================= */
+:host ::ng-deep .swal2-container {
   z-index: 3000 !important;
 }
 
-/* Animations */
+/* ================= ANIMATION ================= */
 @keyframes scaleFadeIn {
   from {
     opacity: 0;
@@ -489,7 +365,6 @@ input[type='date'] {
   animation: fadeOut 0.25s ease forwards;
 }
 
-/* ===== KEYFRAMES (CLOSE) ===== */
 @keyframes scaleFadeOut {
   from {
     opacity: 1;

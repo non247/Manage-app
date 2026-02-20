@@ -95,7 +95,9 @@
 
         <!-- TABLE -->
         <p-table #dt [value]="filteredProducts" dataKey="code" selectionMode="multiple" [metaKeySelection]="false"
-          [rows]="10" [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true"
+          [rows]="10" [paginator]="true" [showCurrentPageReport]="true"
+          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ"
+          [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true"
           scrollHeight="500px" stripedRows [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
           <!-- header -->
           <ng-template pTemplate="header">
@@ -161,7 +163,7 @@
 
               <!-- NAME -->
               <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-        
+
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
                 </ng-container>
@@ -239,11 +241,11 @@
                 </button> -->
 
                 <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
-                  <i class="pi pi-pen-to-square"></i>
+                  <i class="bi bi-pen"></i>
                 </button>
 
                 <button *ngIf="editIndex !== i" class="btn-delete" (click)="onDelete(i)">
-                  <i class="bi bi-trash3-fill"></i>
+                  <i class="bi bi-trash"></i>
                 </button>
 
                 <button *ngIf="editIndex === i" class="btn-save" (click)="onSave(i)">

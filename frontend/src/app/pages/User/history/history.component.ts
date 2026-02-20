@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // ✅ เพิ่ม
+import { Router } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
@@ -23,13 +23,7 @@ export interface Product {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [
-    TableModule,
-    MultiSelectModule,
-    FormsModule,
-    CommonModule,
-    CheckboxModule,
-  ],
+  imports: [TableModule, MultiSelectModule, FormsModule, CommonModule, CheckboxModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
@@ -61,25 +55,23 @@ export class HistoryComponent implements OnInit {
 
   constructor(
     private readonly historyService: HistoryService,
-    private readonly router: Router // ✅ เพิ่ม
+    private readonly router: Router
   ) {}
 
   /* ================= INIT ================= */
   ngOnInit(): void {
-    // ✅ รับค่าที่ส่งมาจากหน้าอื่นด้วย Router state
-    // ตัวอย่างฝั่งส่ง: this.router.navigate(['/history'], { state: { items: list }})
     const items = history.state?.items as Product[] | undefined;
 
     if (Array.isArray(items) && items.length > 0) {
-      // ✅ ใช้ข้อมูลที่ส่งมา (แสดงทันที)
+      // ✅ ใช้ข้อมูลที่ส่งมา (แสดงทันที) + normalize date
       this.products = items.map((x) => ({
         ...x,
         quantity: Number((x as any).quantity ?? 0),
         price: Number((x as any).price ?? 0),
+        date: this.normalizeYmd((x as any).date), // ✅ กันวันที่เพี้ยน
       }));
       this.filteredProducts = [...this.products];
     } else {
-      // ✅ ถ้าไม่ได้ส่งมาก็โหลดจาก DB เหมือนเดิม
       this.loadProducts();
     }
   }
@@ -88,17 +80,22 @@ export class HistoryComponent implements OnInit {
   loadProducts() {
     this.historyService.getAll().subscribe({
       next: (res) => {
-        this.products = res;
-        this.filteredProducts = [...res];
+        // ✅ normalize date ทุกแถว กัน timezone เลื่อนวัน
+        this.products = (res || []).map((x) => ({
+          ...x,
+          quantity: Number((x as any).quantity ?? 0),
+          price: Number((x as any).price ?? 0),
+          date: this.normalizeYmd((x as any).date),
+        }));
+
+        this.filteredProducts = [...this.products];
 
         // ✅ กัน selected ค้างผิด (เช่น ลบจาก DB แล้ว)
         this.selectedProducts = this.selectedProducts.filter((s) =>
           this.filteredProducts.some((p) => this.sameRow(p, s))
         );
       },
-      error: () => {
-        Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error');
-      },
+      error: () => Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error'),
     });
   }
 
@@ -112,7 +109,7 @@ export class HistoryComponent implements OnInit {
       );
     }
 
-    // ✅ สำคัญ: เวลาฟิลเตอร์เปลี่ยน ให้คง selected เฉพาะตัวที่ยังอยู่ใน filtered
+    // ✅ เวลาฟิลเตอร์เปลี่ยน ให้คง selected เฉพาะตัวที่ยังอยู่ใน filtered
     this.selectedProducts = this.selectedProducts.filter((s) =>
       this.filteredProducts.some((p) => this.sameRow(p, s))
     );
@@ -125,6 +122,9 @@ export class HistoryComponent implements OnInit {
   }
 
   onCreateSave() {
+    // ✅ normalize date ก่อนส่ง
+    this.newProduct.date = this.normalizeYmd(this.newProduct.date);
+
     if (!this.isValidProduct(this.newProduct)) {
       Swal.fire({
         title: 'ผิดพลาด',
@@ -154,19 +154,17 @@ export class HistoryComponent implements OnInit {
           timerProgressBar: true,
         });
       },
-      error: () => {
+      error: () =>
         Swal.fire({
           title: 'ผิดพลาด',
           text: 'ไม่สามารถสร้างรายการได้',
           icon: 'error',
-        });
-      },
+        }),
     });
   }
 
   onCreateCancel() {
     this.isClosing = true;
-
     setTimeout(() => {
       this.showCreateForm = false;
       this.isClosing = false;
@@ -180,18 +178,12 @@ export class HistoryComponent implements OnInit {
 
     const p = this.filteredProducts[index];
     this.editIndex = index;
+
     this.editProduct = {
       ...p,
-      date: this.formatDate(p.date),
+      // ✅ ให้ input type="date" ได้ค่า YYYY-MM-DD แบบไม่เพี้ยน
+      date: this.normalizeYmd(p.date),
     };
-  }
-
-  private formatDate(date: string | Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 
   onSave(index: number) {
@@ -199,12 +191,12 @@ export class HistoryComponent implements OnInit {
 
     const payload: Product = {
       ...this.editProduct,
-      date: this.editProduct.date,
+      date: this.normalizeYmd(this.editProduct.date), // ✅ normalize ก่อนส่ง
     };
 
     this.historyService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        // ✅ update local array เหมือน inventory
+        // ✅ update local arrays
         this.filteredProducts[index] = { ...payload };
 
         const originalIndex = this.products.findIndex((p) =>
@@ -212,7 +204,7 @@ export class HistoryComponent implements OnInit {
         );
         if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
 
-        // ✅ ถ้า item นี้ถูกเลือกอยู่ ให้ sync ด้วย
+        // ✅ sync selected ถ้าถูกเลือกอยู่
         const selIndex = this.selectedProducts.findIndex((p) =>
           this.sameRow(p, payload)
         );
@@ -230,9 +222,7 @@ export class HistoryComponent implements OnInit {
           timerProgressBar: true,
         });
       },
-      error: () => {
-        Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error');
-      },
+      error: () => Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error'),
     });
   }
 
@@ -259,33 +249,31 @@ export class HistoryComponent implements OnInit {
       confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
-      if (result.isConfirmed) {
-        this.historyService.delete(product.id!).subscribe({
-          next: () => {
-            // ✅ ถ้าถูกเลือกอยู่ ให้เอาออกด้วย
-            this.selectedProducts = this.selectedProducts.filter(
-              (p) => !this.sameRow(p, product)
-            );
+      if (!result.isConfirmed) return;
 
-            this.loadProducts();
-            Swal.fire({
-              title: 'สำเร็จ',
-              text: 'ลบรายการสำเร็จ',
-              icon: 'success',
-              timer: 1500,
-              showConfirmButton: false,
-              timerProgressBar: true,
-            });
-          },
-          error: () => {
-            Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error');
-          },
-        });
-      }
+      this.historyService.delete(product.id!).subscribe({
+        next: () => {
+          // ✅ ถ้าถูกเลือกอยู่ ให้เอาออกด้วย
+          this.selectedProducts = this.selectedProducts.filter(
+            (p) => !this.sameRow(p, product)
+          );
+
+          this.loadProducts();
+          Swal.fire({
+            title: 'สำเร็จ',
+            text: 'ลบรายการสำเร็จ',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            timerProgressBar: true,
+          });
+        },
+        error: () => Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error'),
+      });
     });
   }
 
-  /* ================= CHECKBOX (ปรับใหม่ทั้งหมด) ================= */
+  /* ================= CHECKBOX ================= */
 
   /** เทียบว่าเป็นแถวเดียวกัน (ใช้ id ก่อน ถ้าไม่มีค่อย fallback code) */
   private sameRow(a: Product, b: Product): boolean {
@@ -312,12 +300,7 @@ export class HistoryComponent implements OnInit {
   /** กด checkbox เลือกทั้งหมด (แค่ใน filteredProducts) */
   toggleSelectAll(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-
-    if (checked) {
-      this.selectedProducts = [...this.filteredProducts];
-    } else {
-      this.selectedProducts = [];
-    }
+    this.selectedProducts = checked ? [...this.filteredProducts] : [];
   }
 
   /** ใช้ bind กับ [checked] ของ checkbox หัวตาราง */
@@ -344,7 +327,7 @@ export class HistoryComponent implements OnInit {
     }
 
     const data = this.selectedProducts.map((p) => ({
-      วันที่: new Date(p.date).toLocaleDateString('th-TH'),
+      วันที่: this.formatThDate(p.date), // ✅ ใช้ตัวนี้กันเลื่อนวัน
       ชื่อสินค้า: p.name,
       หมวดหมู่: p.category,
       จำนวน: p.quantity,
@@ -355,6 +338,40 @@ export class HistoryComponent implements OnInit {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'History');
     XLSX.writeFile(wb, 'History.xlsx');
+  }
+
+  /* ================= DATE HELPERS (FIX TIMEZONE) ================= */
+
+  /**
+   * คืนค่า YYYY-MM-DD แบบ "ไม่เลื่อนวัน" (ยึด Asia/Bangkok)
+   * - ถ้าเป็น YYYY-MM-DD อยู่แล้วจะคืนเดิม
+   * - ถ้าเป็น 20/02/2026 หรือ Date จะ normalize ให้ถูก
+   */
+  private normalizeYmd(date: string | Date): string {
+    if (!date) return this.todayString();
+
+    if (typeof date === 'string') {
+      // already ymd
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+
+      // dd/mm/yyyy -> ymd
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+        const [dd, mm, yyyy] = date.split('/');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    }
+
+    const d = new Date(date);
+    // en-CA = YYYY-MM-DD
+    return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+  }
+
+  /** แสดงวันที่ไทยแบบไม่เลื่อนวัน */
+  private formatThDate(date: string | Date): string {
+    const ymd = this.normalizeYmd(date);
+    // ทำให้เป็น Date ที่ไม่โดน timezone shift: ใส่ T00:00:00
+    const d = new Date(`${ymd}T00:00:00`);
+    return d.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' });
   }
 
   /* ================= UTILS ================= */
@@ -370,7 +387,8 @@ export class HistoryComponent implements OnInit {
   }
 
   private todayString(): string {
-    return new Date().toISOString().split('T')[0];
+    // ✅ ให้เป็น YYYY-MM-DD แบบไทยด้วย (กันเลื่อนวัน)
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 
   private isValidProduct(p: Product): boolean {

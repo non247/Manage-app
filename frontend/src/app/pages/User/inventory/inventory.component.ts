@@ -174,9 +174,6 @@ export class InventoryComponent implements OnInit {
     // ✅ ตัวเลือก A: เคลียร์ selection เมื่อ filter เปลี่ยน (กันงง)
     this.selectedIds.clear();
     this.selectedProducts = [];
-
-    // ✅ ตัวเลือก B: ถ้าอยาก "ไม่เคลียร์" ให้คอมเมนต์ 2 บรรทัดข้างบน
-    // แล้วเรียก this.syncSelectedProducts(); เพื่อให้ selectedProducts ยังตรงกับ selectedIds
   }
 
   /* ================= CHECKBOX (CUSTOM) ================= */
@@ -270,6 +267,7 @@ export class InventoryComponent implements OnInit {
   }
 
   /* ================= SELL (MODE A) ================= */
+  // ✅ เปลี่ยนจาก "ตัด 1 ชิ้น" -> "ตัดทั้งรายการ (quantity -> 0)"
   sellOne(p: Product) {
     if (!p.id) {
       Swal.fire('ผิดพลาด', 'ไม่พบ ID ของสินค้า', 'error');
@@ -282,19 +280,25 @@ export class InventoryComponent implements OnInit {
       return;
     }
 
-    const historyPayload = this.safeHistoryPayload(p);
+    // ✅ บันทึก history เป็นจำนวนคงเหลือทั้งรายการ
+    const historyPayload = this.safeHistoryPayload(p, currentQty);
 
     this.historyService.create(historyPayload as any).subscribe({
       next: () => {
-        const updated: Product = { ...p, quantity: currentQty - 1 };
+        // ✅ ตัดสต๊อกทั้งรายการ -> 0
+        const updated: Product = { ...p, quantity: 0 };
 
         this.inventoryService.update(p.id!, updated).subscribe({
           next: () => {
             this.loadProducts();
-            Swal.fire('สำเร็จ', 'บันทึกการขายแล้ว', 'success');
+            Swal.fire('สำเร็จ', 'บันทึกการขายแล้ว (ตัดทั้งรายการ)', 'success');
           },
           error: () =>
-            Swal.fire('ผิดพลาด', 'บันทึก history ได้ แต่ตัดสต๊อกไม่สำเร็จ', 'error'),
+            Swal.fire(
+              'ผิดพลาด',
+              'บันทึก history ได้ แต่ตัดสต๊อกไม่สำเร็จ',
+              'error'
+            ),
         });
       },
       error: () => Swal.fire('ผิดพลาด', 'บันทึกประวัติการขายไม่สำเร็จ', 'error'),
@@ -302,6 +306,7 @@ export class InventoryComponent implements OnInit {
   }
 
   /* ================= SEND SELECTED TO HISTORY (BULK) ================= */
+  // ✅ เปลี่ยนจาก "ขาย 1 ชิ้น/รายการ" -> "ตัดทั้งรายการ"
   sendSelectedToHistory() {
     const selected = [...(this.selectedProducts || [])];
 
@@ -312,7 +317,11 @@ export class InventoryComponent implements OnInit {
 
     const noId = selected.filter((p) => !p.id);
     if (noId.length) {
-      Swal.fire('ผิดพลาด', 'มีบางรายการไม่มี ID (แก้ที่ข้อมูลในฐานข้อมูล)', 'error');
+      Swal.fire(
+        'ผิดพลาด',
+        'มีบางรายการไม่มี ID (แก้ที่ข้อมูลในฐานข้อมูล)',
+        'error'
+      );
       return;
     }
 
@@ -327,13 +336,14 @@ export class InventoryComponent implements OnInit {
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไปหน้าประวัติ 
+      title: `ยืนยันส่งไปหน้าประวัติ
       ${selected.length} รายการ?`,
       html:
-        '<span>ระบบจะขาย <b style="color:#d81b60;">1 ชิ้น</b> ต่อ 1 รายการที่เลือก และตัดสต๊อก</span>',
+        '<span>ระบบจะ <b style="color:#d81b60;">ตัดรายการ</b> ต่อ 1 สินค้าที่เลือก และบันทึกลงประวัติการขาย</span>',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'ยืนยัน',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (!result.isConfirmed) return;
@@ -341,12 +351,15 @@ export class InventoryComponent implements OnInit {
       this.loading = true;
 
       const jobs = selected.map((p) => {
-        const historyPayload = this.safeHistoryPayload(p);
+        const currentQty = this.toInt(p.quantity, 0);
+
+        // ✅ history เป็นจำนวนทั้งรายการ
+        const historyPayload = this.safeHistoryPayload(p, currentQty);
 
         return this.historyService.create(historyPayload as any).pipe(
           switchMap(() => {
-            const currentQty = this.toInt(p.quantity, 0);
-            const updated: Product = { ...p, quantity: currentQty - 1 };
+            // ✅ ตัดสต๊อกทั้งรายการ -> 0
+            const updated: Product = { ...p, quantity: 0 };
             return this.inventoryService.update(p.id!, updated);
           }),
           map(() => ({ ok: true as const, code: p.code, name: p.name })),
@@ -369,7 +382,14 @@ export class InventoryComponent implements OnInit {
           this.loadProducts();
 
           if (failList.length === 0) {
-            Swal.fire('สำเร็จ', `ส่งไป history แล้ว ${successCount} รายการ`, 'success');
+            Swal.fire({
+              title: 'สำเร็จ',
+              text: `ส่งไปประวัติการขาย แล้ว ${successCount} รายการ`,
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false,
+              timerProgressBar: true,
+            });
           } else {
             const failText = failList
               .slice(0, 8)
@@ -394,14 +414,18 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  private safeHistoryPayload(p: Product) {
+  // ✅ ปรับให้รับ qty และใช้ qty เป็นจำนวนที่บันทึกลง history
+  private safeHistoryPayload(p: Product, qty: number) {
     return {
       code: 'H' + Date.now() + '-' + Math.floor(Math.random() * 1000),
       name: p.name,
       category: p.category,
-      quantity: 1,
+      quantity: qty, // ✅ จากเดิม 1 -> เป็นจำนวนทั้งรายการ
       price: this.toInt(p.price, 0),
-      date: new Date().toISOString().split('T')[0],
+
+      // ✅ ใช้วันที่ของรายการนั้นๆ แทนวันที่ปัจจุบัน
+      // กันพลาด: ถ้า p.date ว่าง/undefined จะ fallback เป็นวันนี้
+      date: p.date ? this.formatDate(p.date) : this.todayString(),
     };
   }
 
@@ -436,12 +460,21 @@ export class InventoryComponent implements OnInit {
       next: () => {
         this.filteredProducts[index] = { ...payload };
 
-        const originalIndex = this.products.findIndex((p) => p.id === this.editProduct!.id);
+        const originalIndex = this.products.findIndex(
+          (p) => p.id === this.editProduct!.id
+        );
         if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
 
         this.editIndex = null;
         this.editProduct = null;
-        Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'อัปเดตข้อมูลเรียบร้อย',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
       },
       error: () => Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error'),
     });
@@ -463,9 +496,11 @@ export class InventoryComponent implements OnInit {
 
     Swal.fire({
       title: 'ยืนยันที่จะลบ?',
-      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
+      html:
+        '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#3085d6',
       confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
@@ -473,7 +508,14 @@ export class InventoryComponent implements OnInit {
         this.inventoryService.delete(product.id!).subscribe({
           next: () => {
             this.loadProducts();
-            Swal.fire('สำเร็จ', 'ลบรายการสำเร็จ', 'success');
+            Swal.fire({
+              title: 'สำเร็จ',
+              text: 'ลบรายการสำเร็จ',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false,
+              timerProgressBar: true,
+            });
           },
           error: () => Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error'),
         });

@@ -82,7 +82,8 @@
         </div>
 
         <p-table #dt [value]="filteredProducts" dataKey="code" selectionMode="multiple" [metaKeySelection]="false"
-          [rows]="10" [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true"
+          [rows]="10"[paginator]="true" [showCurrentPageReport]="true"
+          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ" [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true"
           scrollHeight="500px" stripedRows [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
           <ng-template pTemplate="header">
             <tr>

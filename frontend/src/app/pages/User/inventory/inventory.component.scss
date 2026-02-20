@@ -39,14 +39,41 @@ app-sidebar-user {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
   height: 620px;
+
+  display: flex;
+  flex-direction: column;
 }
 
 /* ================= TABLE ================= */
 .main-content p-table {
   margin-top: 30px;
+  flex: 1;
+  min-height: 0;
 }
 
-/* ✅ PrimeNG table style (ปลอดภัยกว่า) */
+/* ✅ ล็อกความสูงภายใน datatable และดัน paginator ติดล่าง */
+:host ::ng-deep .p-datatable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden; /* ไม่อยากให้มี scroll ในตาราง */
+  background: #fff;
+}
+
+:host ::ng-deep .p-datatable .p-paginator {
+  margin-top: auto;
+}
+
+/* ✅ PrimeNG table style */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   padding: 11px;
@@ -60,7 +87,6 @@ app-sidebar-user {
   font-size: 23px;
 }
 
-/* PrimeNG override (ถ้าจะใช้ ให้ใช้แบบเฉพาะเจาะจง) */
 :host ::ng-deep .p-datatable tbody td {
   text-align: center;
   padding: 12px;
@@ -102,44 +128,13 @@ app-sidebar-user {
   background-color: #e85c94;
 }
 
-.btn-edit,
-.btn-delete,
-.btn-save,
-.btn-cancel {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 130px;
-  font-size: 23px;
-  padding: 7px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  color: #fff;
-  gap: 10px;
-}
-
-.btn-edit {
-  background: #1e3a8a;
-}
-
-.btn-delete {
-  background: #d21515;
-}
-
-.btn-save {
-  background: #1e8a39;
-}
-
-.btn-cancel {
-  background: #d21515;
-}
-
-/* ✅ ปรับขนาดปุ่ม history ให้เล็กลง/สวยขึ้น */
+/* ✅ ปุ่ม history: คงเดิม ไม่ไปแตะ */
 .btn-history {
-  width: 180px;      /* ปรับได้: 150/170/180 */
-  height: 40px;      /* เท่าปุ่มเพิ่มข้อมูล */
-  font-size: 18px;   /* ลดจาก 23px */
+  background-color: #231aa7;
+  color: #fff;
+  width: 180px;
+  height: 40px;
+  font-size: 18px;
   padding: 0 12px;
   border-radius: 20px;
 
@@ -166,14 +161,74 @@ app-sidebar-user {
   min-width: 18px;
   text-align: center;
 
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-/* ถ้าต้องการตอน disabled ให้ดูจางลง */
 .btn-history:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ✅ NEW: ปุ่ม icon-only เฉพาะในตาราง (ไม่กระทบปุ่มอื่น เช่น ประวัติ) */
+:host ::ng-deep .p-datatable .btn-edit,
+:host ::ng-deep .p-datatable .btn-delete,
+:host ::ng-deep .p-datatable .btn-save,
+:host ::ng-deep .p-datatable .btn-cancel {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+
+  background: transparent !important;
+  box-shadow: none !important;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+
+  cursor: pointer;
+}
+
+/* สีของ icon (เฉพาะในตาราง) */
+:host ::ng-deep .p-datatable .btn-edit   { color: #1e3a8a !important; }
+:host ::ng-deep .p-datatable .btn-delete { color: #d21515 !important; }
+:host ::ng-deep .p-datatable .btn-save   { color: #1e8a39 !important; }
+:host ::ng-deep .p-datatable .btn-cancel { color: #d21515 !important; }
+
+/* ขนาด icon */
+:host ::ng-deep .p-datatable .btn-edit i,
+:host ::ng-deep .p-datatable .btn-delete i,
+:host ::ng-deep .p-datatable .btn-save i,
+:host ::ng-deep .p-datatable .btn-cancel i {
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* hover เฉพาะในตาราง */
+:host ::ng-deep .p-datatable .btn-edit:hover,
+:host ::ng-deep .p-datatable .btn-delete:hover,
+:host ::ng-deep .p-datatable .btn-save:hover,
+:host ::ng-deep .p-datatable .btn-cancel:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* focus เฉพาะในตาราง */
+:host ::ng-deep .p-datatable .btn-edit:focus,
+:host ::ng-deep .p-datatable .btn-delete:focus,
+:host ::ng-deep .p-datatable .btn-save:focus,
+:host ::ng-deep .p-datatable .btn-cancel:focus {
+  outline: none;
+}
+:host ::ng-deep .p-datatable .btn-edit:focus-visible,
+:host ::ng-deep .p-datatable .btn-delete:focus-visible,
+:host ::ng-deep .p-datatable .btn-save:focus-visible,
+:host ::ng-deep .p-datatable .btn-cancel:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.25);
+  outline-offset: 2px;
+}
+
+
 
 /* ================= INPUT ================= */
 input[type='text'],
@@ -326,12 +381,8 @@ tr.editing {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ===== CLOSE ===== */
@@ -355,10 +406,6 @@ tr.editing {
 }
 
 @keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
