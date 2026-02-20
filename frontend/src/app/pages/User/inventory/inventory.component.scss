@@ -109,7 +109,7 @@ app-sidebar-user {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 130px;
+  width: 120px;
   font-size: 23px;
   padding: 7px;
   border-radius: 10px;
@@ -146,7 +146,27 @@ app-sidebar-user {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   gap: 6px;
+}
+
+.bubble {
+  position: absolute;
+  top: -8px;
+  right: -5px;
+
+  background: #ff3b5c;
+  color: #fff;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  padding: 2px 6px;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 /* ถ้าต้องการตอน disabled ให้ดูจางลง */
@@ -341,64 +361,4 @@ tr.editing {
   to {
     opacity: 0;
   }
-}
-
-// /* ✅ คอลัมน์ checkbox */
-// :host ::ng-deep .p-datatable .checkbox-col {
-//   padding: 0 !important;
-//   text-align: center;
-//   vertical-align: middle;
-// }
-
-// /* ✅ checkbox ธรรมดา ให้รับคลิกชัวร์ */
-// :host ::ng-deep input.native-checkbox {
-//   pointer-events: auto !important;
-//   position: relative;
-//   z-index: 9999;
-//   width: 20px;
-//   height: 20px;
-//   cursor: pointer;
-//   accent-color: #d81b60;
-// }
-/* กันหัวตารางโปร่ง */
-:host ::ng-deep .inventory-table .p-datatable-scrollable-header,
-:host ::ng-deep .inventory-table .p-datatable-thead > tr > th {
-  background: #ffd6e0;
-}
-
-/* sticky header */
-:host ::ng-deep .inventory-table .p-datatable-thead > tr > th {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-
-/* ✅ ขยายความกว้างคอลัมน์ checkbox (ทั้งหัวและแถว) */
-:host ::ng-deep .inventory-table .checkbox-col {
-  width: 70px;
-  min-width: 70px;
-  max-width: 70px;
-  text-align: center;
-}
-
-/* body cell ให้ตรงกับ header */
-:host ::ng-deep .inventory-table .p-datatable-tbody > tr > td.checkbox-col {
-  text-align: center;
-}
-
-/* ให้ header checkbox อยู่เหนือสุด */
-:host
-  ::ng-deep
-  .inventory-table
-  .p-datatable-thead
-  > tr
-  > th.checkbox-col {
-  z-index: 4;
-}
-
-/* ✅ ขยายขนาด checkbox */
-:host ::ng-deep .inventory-table .native-checkbox {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
 }

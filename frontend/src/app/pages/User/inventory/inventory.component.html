@@ -7,38 +7,26 @@
 
       <div class="table-box">
         <!-- HEADER -->
-        <div
-          class="header-row"
-          style="display: flex; align-items: center; width: 100%; position: relative"
-        >
+        <div class="header-row" style="display: flex; align-items: center; width: 100%; gap:12px; position: relative">
           <!-- CREATE -->
-          <button
-            class="btn-add"
-            style="margin-left: auto"
-            (click)="showCreateForm = !showCreateForm"
-          >
+          <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
+<!-- 
+          <button class="btn-save btn-history" type="button" (click)="sendSelectedToHistory()"
+            [disabled]="selectedProducts.length === 0">
+            <i class="bi bi-send-fill"></i>
+            ประวัติการขาย
 
-          <!-- ✅ ส่งไป history ทีเดียว -->
-          <button
-  class="btn-save btn-history"
-  type="button"
-  (click)="sendSelectedToHistory()"
-  [disabled]="selectedProducts.length === 0"
->
-  <i class="pi pi-send"></i>
-  ส่งไป history ({{ selectedProducts.length }})
-</button>
+            <span class="bubble" *ngIf="selectedProducts.length > 0">
+              {{ selectedProducts.length }}
+            </span>
+          </button> -->
         </div>
 
         <!-- BACKDROP -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-backdrop"
-          [class.closing]="isClosing"
-          (click)="onCreateCancel()"
-        ></div>
+        <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
+        </div>
 
         <!-- ✅ CREATE FORM : CARD -->
         <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
@@ -51,13 +39,8 @@
               <!-- NAME -->
               <div class="field">
                 <label for="productName">ชื่อสินค้า</label>
-                <select
-                  id="productName"
-                  class="p-inputtext p-component"
-                  [(ngModel)]="newProduct.name"
-                  name="productName"
-                  (change)="onCreateNameChange(newProduct.name)"
-                >
+                <select id="productName" class="p-inputtext p-component" [(ngModel)]="newProduct.name"
+                  name="productName" (change)="onCreateNameChange(newProduct.name)">
                   <option value="" disabled>-- เลือกชื่อสินค้า --</option>
                   <option *ngFor="let n of names" [value]="n.value">
                     {{ n.label }}
@@ -68,12 +51,8 @@
               <!-- CATEGORY -->
               <div class="field">
                 <label for="productCategory">ประเภท</label>
-                <select
-                  id="productCategory"
-                  class="p-inputtext p-component"
-                  [(ngModel)]="newProduct.category"
-                  name="productCategory"
-                >
+                <select id="productCategory" class="p-inputtext p-component" [(ngModel)]="newProduct.category"
+                  name="productCategory">
                   <option value="" disabled>-- เลือกประเภท --</option>
                   <option *ngFor="let c of categories" [value]="c.value">
                     {{ c.label }}
@@ -84,42 +63,21 @@
               <!-- QTY -->
               <div class="field">
                 <label for="quantity">จำนวน</label>
-                <input
-                  id="quantity"
-                  type="number"
-                  pInputText
-                  min="1"
-                  step="1"
-                  [ngModel]="newProduct.quantity"
-                  name="productQty"
-                  (ngModelChange)="newProduct.quantity = toInt($event, 1)"
-                />
+                <input id="quantity" type="number" pInputText min="1" step="1" [ngModel]="newProduct.quantity"
+                  name="productQty" (ngModelChange)="newProduct.quantity = toInt($event, 1)" />
               </div>
 
               <!-- PRICE -->
               <div class="field">
                 <label for="price">ราคา</label>
-                <input
-                  id="price"
-                  type="number"
-                  pInputText
-                  min="0"
-                  step="1"
-                  [ngModel]="newProduct.price"
-                  name="productPrice"
-                  (ngModelChange)="newProduct.price = toInt($event, 0)"
-                />
+                <input id="price" type="number" pInputText min="0" step="1" [ngModel]="newProduct.price"
+                  name="productPrice" (ngModelChange)="newProduct.price = toInt($event, 0)" />
               </div>
 
               <!-- DATE -->
               <div class="field">
                 <label for="date">วันที่</label>
-                <input
-                  id="date"
-                  type="date"
-                  [(ngModel)]="newProduct.date"
-                  name="productDate"
-                />
+                <input id="date" type="date" [(ngModel)]="newProduct.date" name="productDate" />
               </div>
             </div>
           </div>
@@ -136,32 +94,20 @@
         </div>
 
         <!-- TABLE -->
-        <p-table
-          #dt
-          [value]="filteredProducts"
-          dataKey="id"
-          [rows]="10"
-          [globalFilterFields]="['name','category','quantity','price','date','total']"
-          [scrollable]="true"
-          stripedRows
-          scrollHeight="500px"
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
-        >
+        <p-table class="inventory-table" #dt [value]="filteredProducts" dataKey="id" [rows]="10"
+          [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true" stripedRows
+          scrollHeight="500px" [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
               <!-- ✅ checkbox header (ธรรมดา) -->
-              <th class="checkbox-col">
-  <input
-    class="native-checkbox"
-    type="checkbox"
-    [checked]="isAllSelected()"
-    [indeterminate]="isIndeterminate()"
-    (click)="$event.stopPropagation()"
-    (change)="toggleSelectAll($event)"
-    aria-label="เลือกทั้งหมด"
-  />
-</th>
+              <th class="checkbox-col" style="width: 10%;" scope="col">
+                <label class="checkbox-hit">
+                  <input class="native-checkbox" type="checkbox" [checked]="isAllSelected()"
+                    [indeterminate]="isIndeterminate()" (change)="toggleSelectAll($event)"
+                    style="width:18px; height:18px; transform: scale(1.3); cursor:pointer;" />
+                </label>
+              </th>
 
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
@@ -187,7 +133,7 @@
                 ราคารวม <p-sortIcon field="total"></p-sortIcon>
               </th>
 
-              <th style="width: 18%" scope="col"></th>
+              <th style="width: 10%" scope="col"></th>
             </tr>
           </ng-template>
 
@@ -195,16 +141,12 @@
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <!-- ✅ checkbox row (ธรรมดา) -->
-              <td class="checkbox-col" style="width: 48px">
-                <input
-                  class="native-checkbox"
-                  type="checkbox"
-                  [checked]="isSelected(product)"
-                  (click)="$event.stopPropagation()"
-                  (change)="$event.stopPropagation(); toggleRow(product, $event)"
-                  aria-label="เลือกแถว"
-                  style="pointer-events:auto"
-                />
+              <td class="checkbox-col">
+                <label class="checkbox-hit">
+                  <input class="native-checkbox" type="checkbox" [checked]="isSelected(product)"
+                    (change)="toggleRow(product, $event)"
+                    style="width:18px; height:18px; transform: scale(1.3); cursor:pointer;" />
+                </label>
               </td>
 
               <!-- DATE -->
@@ -218,17 +160,14 @@
               </td>
 
               <!-- NAME -->
-              <td>
+              <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
                 </ng-container>
                 <ng-template #editName>
-                  <select
-                    class="p-inputtext p-component"
-                    [(ngModel)]="editProduct!.name"
-                    name="editName"
-                    (change)="onEditNameChange(editProduct!.name)"
-                  >
+                  <select class="p-inputtext p-component" [(ngModel)]="editProduct!.name" name="editName"
+                    (change)="onEditNameChange(editProduct!.name)">
                     <option value="" disabled>-- เลือกชื่อสินค้า --</option>
                     <option *ngFor="let n of names" [value]="n.value">
                       {{ n.label }}
@@ -244,11 +183,7 @@
                 </ng-container>
 
                 <ng-template #editCategory>
-                  <select
-                    class="p-inputtext p-component"
-                    [(ngModel)]="editProduct!.category"
-                    name="editCategory"
-                  >
+                  <select class="p-inputtext p-component" [(ngModel)]="editProduct!.category" name="editCategory">
                     <option value="" disabled>-- เลือกประเภท --</option>
                     <option *ngFor="let c of categories" [value]="c.value">
                       {{ c.label }}
@@ -263,14 +198,8 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    [ngModel]="editProduct!.quantity"
-                    name="editQty"
-                    (ngModelChange)="editProduct!.quantity = toInt($event, 1)"
-                  />
+                  <input type="number" min="1" step="1" [ngModel]="editProduct!.quantity" name="editQty"
+                    (ngModelChange)="editProduct!.quantity = toInt($event, 1)" />
                 </ng-template>
               </td>
 
@@ -280,14 +209,8 @@
                   {{ product.price | number : '1.0-0' }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    [ngModel]="editProduct!.price"
-                    name="editPrice"
-                    (ngModelChange)="editProduct!.price = toInt($event, 0)"
-                  />
+                  <input type="number" min="0" step="1" [ngModel]="editProduct!.price" name="editPrice"
+                    (ngModelChange)="editProduct!.price = toInt($event, 0)" />
                 </ng-template>
               </td>
 
@@ -304,7 +227,7 @@
 
               <!-- ACTION -->
               <td style="display: flex; gap: 8px; justify-content: flex-end">
-                <button
+                <!-- <button
                   *ngIf="editIndex !== i"
                   class="btn-save"
                   type="button"
@@ -313,7 +236,7 @@
                   title="ขาย 1 ชิ้น (บันทึกเข้า history)"
                 >
                   <i class="pi pi-shopping-cart"></i>
-                </button>
+                </button> -->
 
                 <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
                   <i class="pi pi-pen-to-square"></i>

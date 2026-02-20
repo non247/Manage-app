@@ -327,7 +327,8 @@ export class InventoryComponent implements OnInit {
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไป history ${selected.length} รายการ?`,
+      title: `ยืนยันส่งไปหน้าประวัติ 
+      ${selected.length} รายการ?`,
       html:
         '<span>ระบบจะขาย <b style="color:#d81b60;">1 ชิ้น</b> ต่อ 1 รายการที่เลือก และตัดสต๊อก</span>',
       icon: 'question',
