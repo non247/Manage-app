@@ -12,7 +12,7 @@
           <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
-<!-- 
+
           <button class="btn-save btn-history" type="button" (click)="sendSelectedToHistory()"
             [disabled]="selectedProducts.length === 0">
             <i class="bi bi-send-fill"></i>
@@ -21,7 +21,7 @@
             <span class="bubble" *ngIf="selectedProducts.length > 0">
               {{ selectedProducts.length }}
             </span>
-          </button> -->
+          </button>
         </div>
 
         <!-- BACKDROP -->
@@ -94,9 +94,9 @@
         </div>
 
         <!-- TABLE -->
-        <p-table class="inventory-table" #dt [value]="filteredProducts" dataKey="id" [rows]="10"
-          [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true" stripedRows
-          scrollHeight="500px" [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
+        <p-table #dt [value]="filteredProducts" dataKey="code" selectionMode="multiple" [metaKeySelection]="false"
+          [rows]="10" [globalFilterFields]="['name','category','quantity','price','date','total']" [scrollable]="true"
+          scrollHeight="500px" stripedRows [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }">
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
