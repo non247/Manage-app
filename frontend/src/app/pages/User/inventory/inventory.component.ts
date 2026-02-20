@@ -4,7 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
-import { InventoryService } from '../../../core/services/Inventory.service';
+import {
+  InventoryService,
+  ProductMaster,
+} from '../../../core/services/Inventory.service';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -16,6 +19,9 @@ export interface Product {
   price: number;
   date: string; // ✅ ใช้ string ป้องกัน timezone
 }
+
+// ✅ type สำหรับ option ของ dropdown/multiselect
+type Option = { label: string; value: string };
 
 @Component({
   selector: 'app-inventory',
@@ -41,20 +47,8 @@ export class InventoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  names = [
-    { label: 'ชาเขียว', value: 'ชาเขียว' },
-    { label: 'วนิลา', value: 'วนิลา' },
-    { label: 'นมสด', value: 'นมสด' },
-    { label: 'ยาคูล-ปีโป้', value: 'ยาคูล-ปีโป้' },
-    { label: 'ชาไทย', value: 'ชาไทย' },
-    { label: 'มิ้นต์ช็อกโกแลตชิพ', value: 'มิ้นต์ช็อกโกแลตชิพ' },
-    { label: 'กาแฟ', value: 'กาแฟ' },
-    { label: 'กะทิ', value: 'กะทิ' },
-    { label: 'โอริโอ้', value: 'โอริโอ้' },
-    { label: 'โกโก้', value: 'โกโก้' },
-    { label: 'บลูเบอร์รี่นมสด', value: 'บลูเบอร์รี่นมสด' },
-    { label: 'มะนาวน้ำผึ้ง', value: 'มะนาวน้ำผึ้ง' },
-  ];
+  // ✅ เปลี่ยนจาก hardcode เป็นดึงจาก database
+  names: Option[] = [];
 
   categories = [
     { label: 'โคน', value: 'โคน' },
@@ -66,6 +60,7 @@ export class InventoryComponent implements OnInit {
   /* ================= INIT ================= */
   ngOnInit(): void {
     this.loadProducts();
+    this.loadProductNames(); // ✅ เพิ่ม: โหลดรายชื่อสินค้าจากหน้า product
   }
 
   /* ================= LOAD ================= */
@@ -77,6 +72,25 @@ export class InventoryComponent implements OnInit {
       },
       error: () => {
         Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error');
+      },
+    });
+  }
+
+  // ✅ เพิ่ม: โหลดชื่อสินค้าจากฐานข้อมูลหน้า product
+  loadProductNames() {
+    this.inventoryService.getProductMaster().subscribe({
+      next: (list: ProductMaster[]) => {
+        // กันชื่อซ้ำ + เรียง
+        const uniqueNames = Array.from(new Set(list.map((x) => x.name))).sort();
+
+        // map ให้เข้ารูปแบบ primeng options
+        this.names = uniqueNames.map((name) => ({
+          label: name,
+          value: name,
+        }));
+      },
+      error: () => {
+        Swal.fire('ผิดพลาด', 'โหลดชื่อสินค้าจากหน้า product ไม่สำเร็จ', 'error');
       },
     });
   }
@@ -122,9 +136,9 @@ export class InventoryComponent implements OnInit {
         this.onCreateCancel();
         Swal.fire({
           title: 'สำเร็จ',
-          text: 'รายการถูกลบแล้ว',
+          text: 'สร้างรายการสำเร็จ', // ✅ แก้ข้อความให้ตรง (เดิมเป็น "รายการถูกลบแล้ว")
           icon: 'success',
-          timer: 1500, // เวลาแสดง (ms)
+          timer: 1500,
           showConfirmButton: false,
           timerProgressBar: true,
         });
@@ -159,7 +173,7 @@ export class InventoryComponent implements OnInit {
     this.editIndex = index;
     this.editProduct = {
       ...p,
-      date: this.formatDate(p.date), // แปลงเป็น yyyy-MM-dd เสมอ
+      date: this.formatDate(p.date),
     };
   }
 
@@ -181,7 +195,6 @@ export class InventoryComponent implements OnInit {
 
     this.inventoryService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        // อัปเดต local array เลยโดยไม่ต้องโหลดซ้ำทั้งหมด
         this.filteredProducts[index] = { ...payload };
         const originalIndex = this.products.findIndex(
           (p) => p.id === this.editProduct!.id
@@ -194,7 +207,7 @@ export class InventoryComponent implements OnInit {
           title: 'สำเร็จ',
           text: 'บันทึกข้อมูลเรียบร้อย',
           icon: 'success',
-          timer: 1500, // เวลาแสดง (ms)
+          timer: 1500,
           showConfirmButton: false,
           timerProgressBar: true,
         });
@@ -236,7 +249,7 @@ export class InventoryComponent implements OnInit {
               title: 'สำเร็จ',
               text: 'ลบรายการสำเร็จ',
               icon: 'success',
-              timer: 1500, // เวลาแสดง (ms)
+              timer: 1500,
               showConfirmButton: false,
               timerProgressBar: true,
             });
@@ -246,7 +259,7 @@ export class InventoryComponent implements OnInit {
               title: 'ผิดพลาด',
               text: 'ลบรายการไม่สำเร็จ',
               icon: 'error',
-              timer: 1500, // เวลาแสดง (ms)
+              timer: 1500,
               showConfirmButton: false,
               timerProgressBar: true,
             });
@@ -269,7 +282,7 @@ export class InventoryComponent implements OnInit {
   }
 
   private todayString(): string {
-    return new Date().toISOString().split('T')[0]; // yyyy-MM-dd
+    return new Date().toISOString().split('T')[0];
   }
 
   private isValidProduct(p: Product): boolean {
