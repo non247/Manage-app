@@ -9,15 +9,8 @@
         <!-- HEADER -->
         <div
           class="header-row"
-          style="
-            display: flex;
-            align-items: center;
-            width: 100%;
-            position: relative;
-          "
+          style="display: flex; align-items: center; width: 100%; position: relative"
         >
-          <!-- <h1 style="color: #d81b60; margin: 0">List of Products</h1> -->
-
           <!-- CREATE -->
           <button
             class="btn-add"
@@ -26,6 +19,17 @@
           >
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
+
+          <!-- ✅ ส่งไป history ทีเดียว -->
+          <button
+  class="btn-save btn-history"
+  type="button"
+  (click)="sendSelectedToHistory()"
+  [disabled]="selectedProducts.length === 0"
+>
+  <i class="pi pi-send"></i>
+  ส่งไป history ({{ selectedProducts.length }})
+</button>
         </div>
 
         <!-- BACKDROP -->
@@ -37,72 +41,85 @@
         ></div>
 
         <!-- ✅ CREATE FORM : CARD -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-card"
-          [class.closing]="isClosing"
-        >
+        <div *ngIf="showCreateForm" class="create-card" [class.closing]="isClosing">
           <div class="create-card-header">
             <h2>เพิ่มสินค้า</h2>
           </div>
 
           <div class="create-card-body">
             <div class="create-grid">
+              <!-- NAME -->
               <div class="field">
-                <label for="name">ชื่อสินค้า</label>
+                <label for="productName">ชื่อสินค้า</label>
                 <select
-                  id="category"
+                  id="productName"
                   class="p-inputtext p-component"
-                  [(ngModel)]="newProduct.category"
-                  name="category"
+                  [(ngModel)]="newProduct.name"
+                  name="productName"
+                  (change)="onCreateNameChange(newProduct.name)"
                 >
                   <option value="" disabled>-- เลือกชื่อสินค้า --</option>
-
-                  <option *ngFor="let c of names" [value]="c.value">
-                    {{ c.label }}
+                  <option *ngFor="let n of names" [value]="n.value">
+                    {{ n.label }}
                   </option>
                 </select>
               </div>
 
+              <!-- CATEGORY -->
               <div class="field">
-                <label for="category">ประเภท</label>
+                <label for="productCategory">ประเภท</label>
                 <select
-                  id="category"
+                  id="productCategory"
                   class="p-inputtext p-component"
                   [(ngModel)]="newProduct.category"
-                  name="category"
+                  name="productCategory"
                 >
                   <option value="" disabled>-- เลือกประเภท --</option>
-
                   <option *ngFor="let c of categories" [value]="c.value">
                     {{ c.label }}
                   </option>
                 </select>
               </div>
 
+              <!-- QTY -->
               <div class="field">
                 <label for="quantity">จำนวน</label>
                 <input
+                  id="quantity"
                   type="number"
                   pInputText
-                  [(ngModel)]="newProduct.quantity"
-                  min="0"
+                  min="1"
+                  step="1"
+                  [ngModel]="newProduct.quantity"
+                  name="productQty"
+                  (ngModelChange)="newProduct.quantity = toInt($event, 1)"
                 />
               </div>
 
+              <!-- PRICE -->
               <div class="field">
                 <label for="price">ราคา</label>
                 <input
+                  id="price"
                   type="number"
                   pInputText
-                  [(ngModel)]="newProduct.price"
                   min="0"
+                  step="1"
+                  [ngModel]="newProduct.price"
+                  name="productPrice"
+                  (ngModelChange)="newProduct.price = toInt($event, 0)"
                 />
               </div>
 
+              <!-- DATE -->
               <div class="field">
                 <label for="date">วันที่</label>
-                <input type="date" [(ngModel)]="newProduct.date" />
+                <input
+                  id="date"
+                  type="date"
+                  [(ngModel)]="newProduct.date"
+                  name="productDate"
+                />
               </div>
             </div>
           </div>
@@ -122,17 +139,9 @@
         <p-table
           #dt
           [value]="filteredProducts"
-          dataKey="code"
-          selectionMode="multiple"
-          [metaKeySelection]="false"
+          dataKey="id"
           [rows]="10"
-          [globalFilterFields]="[
-            'name',
-            'category',
-            'quantity',
-            'price',
-            'date',
-          ]"
+          [globalFilterFields]="['name','category','quantity','price','date','total']"
           [scrollable]="true"
           stripedRows
           scrollHeight="500px"
@@ -141,6 +150,19 @@
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
+              <!-- ✅ checkbox header (ธรรมดา) -->
+              <th class="checkbox-col">
+  <input
+    class="native-checkbox"
+    type="checkbox"
+    [checked]="isAllSelected()"
+    [indeterminate]="isIndeterminate()"
+    (click)="$event.stopPropagation()"
+    (change)="toggleSelectAll($event)"
+    aria-label="เลือกทั้งหมด"
+  />
+</th>
+
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
@@ -161,22 +183,40 @@
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
-              <th style="width: 12%" scope="col"></th>
+              <th pSortableColumn="total" scope="col">
+                ราคารวม <p-sortIcon field="total"></p-sortIcon>
+              </th>
+
+              <th style="width: 18%" scope="col"></th>
             </tr>
           </ng-template>
 
           <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
+              <!-- ✅ checkbox row (ธรรมดา) -->
+              <td class="checkbox-col" style="width: 48px">
+                <input
+                  class="native-checkbox"
+                  type="checkbox"
+                  [checked]="isSelected(product)"
+                  (click)="$event.stopPropagation()"
+                  (change)="$event.stopPropagation(); toggleRow(product, $event)"
+                  aria-label="เลือกแถว"
+                  style="pointer-events:auto"
+                />
+              </td>
+
               <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date: 'dd/MM/yyyy' }}
+                  {{ product.date | date : 'dd/MM/yyyy' }}
                 </ng-container>
                 <ng-template #editDate>
-                  <input type="date" [(ngModel)]="editProduct!.date" />
+                  <input type="date" [(ngModel)]="editProduct!.date" name="editDate" />
                 </ng-template>
               </td>
+
               <!-- NAME -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editName">
@@ -187,11 +227,11 @@
                     class="p-inputtext p-component"
                     [(ngModel)]="editProduct!.name"
                     name="editName"
+                    (change)="onEditNameChange(editProduct!.name)"
                   >
                     <option value="" disabled>-- เลือกชื่อสินค้า --</option>
-
-                    <option *ngFor="let c of names" [value]="c.value">
-                      {{ c.label }}
+                    <option *ngFor="let n of names" [value]="n.value">
+                      {{ n.label }}
                     </option>
                   </select>
                 </ng-template>
@@ -210,7 +250,6 @@
                     name="editCategory"
                   >
                     <option value="" disabled>-- เลือกประเภท --</option>
-
                     <option *ngFor="let c of categories" [value]="c.value">
                       {{ c.label }}
                     </option>
@@ -226,11 +265,11 @@
                 <ng-template #editQty>
                   <input
                     type="number"
-                    min="0"
+                    min="1"
+                    step="1"
                     [ngModel]="editProduct!.quantity"
-                    (ngModelChange)="
-                      editProduct!.quantity = +$event < 0 ? 0 : +$event
-                    "
+                    name="editQty"
+                    (ngModelChange)="editProduct!.quantity = toInt($event, 1)"
                   />
                 </ng-template>
               </td>
@@ -238,48 +277,57 @@
               <!-- PRICE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editPrice">
-                  {{ product.price }}
+                  {{ product.price | number : '1.0-0' }}
                 </ng-container>
                 <ng-template #editPrice>
                   <input
                     type="number"
                     min="0"
+                    step="1"
                     [ngModel]="editProduct!.price"
-                    (ngModelChange)="
-                      editProduct!.price = +$event < 0 ? 0 : +$event
-                    "
+                    name="editPrice"
+                    (ngModelChange)="editProduct!.price = toInt($event, 0)"
                   />
                 </ng-template>
               </td>
 
+              <!-- TOTAL -->
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editTotal">
+                  {{ (product.quantity * product.price) | number : '1.0-0' }}
+                </ng-container>
+
+                <ng-template #editTotal>
+                  {{ (editProduct!.quantity * editProduct!.price) | number : '1.0-0' }}
+                </ng-template>
+              </td>
+
               <!-- ACTION -->
-              <td style="display: flex; gap: 8px">
+              <td style="display: flex; gap: 8px; justify-content: flex-end">
                 <button
                   *ngIf="editIndex !== i"
-                  class="btn-edit"
-                  (click)="onEdit(i)"
+                  class="btn-save"
+                  type="button"
+                  (click)="sellOne(product)"
+                  [disabled]="product.quantity <= 0"
+                  title="ขาย 1 ชิ้น (บันทึกเข้า history)"
                 >
+                  <i class="pi pi-shopping-cart"></i>
+                </button>
+
+                <button *ngIf="editIndex !== i" class="btn-edit" (click)="onEdit(i)">
                   <i class="pi pi-pen-to-square"></i>
                 </button>
-                <button
-                  *ngIf="editIndex !== i"
-                  class="btn-delete"
-                  (click)="onDelete(i)"
-                >
+
+                <button *ngIf="editIndex !== i" class="btn-delete" (click)="onDelete(i)">
                   <i class="bi bi-trash3-fill"></i>
                 </button>
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-save"
-                  (click)="onSave(i)"
-                >
+
+                <button *ngIf="editIndex === i" class="btn-save" (click)="onSave(i)">
                   <i class="pi pi-check-square"></i>
                 </button>
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-cancel"
-                  (click)="onCancel()"
-                >
+
+                <button *ngIf="editIndex === i" class="btn-cancel" (click)="onCancel()">
                   <i class="bi bi-x-square"></i>
                 </button>
               </td>
@@ -288,7 +336,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6">ไม่พบข้อมูล</td>
+              <td colspan="8">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>

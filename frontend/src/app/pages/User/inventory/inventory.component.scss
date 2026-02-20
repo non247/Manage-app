@@ -46,23 +46,22 @@ app-sidebar-user {
   margin-top: 30px;
 }
 
-.main-content p-table th,
-.main-content p-table td {
+/* ✅ PrimeNG table style (ปลอดภัยกว่า) */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   padding: 11px;
-}
-
-.main-content p-table th {
   font-size: 30px;
   font-weight: bold;
 }
 
-.main-content p-table td {
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+  padding: 11px;
   font-size: 23px;
 }
 
-/* PrimeNG override */
-::ng-deep .p-datatable tbody td {
+/* PrimeNG override (ถ้าจะใช้ ให้ใช้แบบเฉพาะเจาะจง) */
+:host ::ng-deep .p-datatable tbody td {
   text-align: center;
   padding: 12px;
 }
@@ -134,6 +133,26 @@ app-sidebar-user {
 
 .btn-cancel {
   background: #d21515;
+}
+
+/* ✅ ปรับขนาดปุ่ม history ให้เล็กลง/สวยขึ้น */
+.btn-history {
+  width: 180px;      /* ปรับได้: 150/170/180 */
+  height: 40px;      /* เท่าปุ่มเพิ่มข้อมูล */
+  font-size: 18px;   /* ลดจาก 23px */
+  padding: 0 12px;
+  border-radius: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ถ้าต้องการตอน disabled ให้ดูจางลง */
+.btn-history:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ================= INPUT ================= */
@@ -322,4 +341,64 @@ tr.editing {
   to {
     opacity: 0;
   }
+}
+
+// /* ✅ คอลัมน์ checkbox */
+// :host ::ng-deep .p-datatable .checkbox-col {
+//   padding: 0 !important;
+//   text-align: center;
+//   vertical-align: middle;
+// }
+
+// /* ✅ checkbox ธรรมดา ให้รับคลิกชัวร์ */
+// :host ::ng-deep input.native-checkbox {
+//   pointer-events: auto !important;
+//   position: relative;
+//   z-index: 9999;
+//   width: 20px;
+//   height: 20px;
+//   cursor: pointer;
+//   accent-color: #d81b60;
+// }
+/* กันหัวตารางโปร่ง */
+:host ::ng-deep .inventory-table .p-datatable-scrollable-header,
+:host ::ng-deep .inventory-table .p-datatable-thead > tr > th {
+  background: #ffd6e0;
+}
+
+/* sticky header */
+:host ::ng-deep .inventory-table .p-datatable-thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+/* ✅ ขยายความกว้างคอลัมน์ checkbox (ทั้งหัวและแถว) */
+:host ::ng-deep .inventory-table .checkbox-col {
+  width: 70px;
+  min-width: 70px;
+  max-width: 70px;
+  text-align: center;
+}
+
+/* body cell ให้ตรงกับ header */
+:host ::ng-deep .inventory-table .p-datatable-tbody > tr > td.checkbox-col {
+  text-align: center;
+}
+
+/* ให้ header checkbox อยู่เหนือสุด */
+:host
+  ::ng-deep
+  .inventory-table
+  .p-datatable-thead
+  > tr
+  > th.checkbox-col {
+  z-index: 4;
+}
+
+/* ✅ ขยายขนาด checkbox */
+:host ::ng-deep .inventory-table .native-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }

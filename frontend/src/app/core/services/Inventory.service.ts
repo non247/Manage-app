@@ -10,12 +10,14 @@ export interface Product {
   quantity: number;
   price: number;
   date: string; // yyyy-MM-dd
+  total?: number;
 }
 
 /** ✅ สินค้า master จากหน้า product (ถ้าฟิลด์เหมือนกัน ใช้ตัว Product เดิมก็ได้) */
 export interface ProductMaster {
   id: number;
   name: string;
+  price: number;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -26,14 +26,6 @@
           >
             <i class="bi bi-filetype-xlsx"></i>
           </button>
-          <!-- CREATE -->
-          <button
-            class="btn-add"
-            style="margin-left: 10px"
-            (click)="showCreateForm = !showCreateForm"
-          >
-            <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
-          </button>
         </div>
 
         <!-- BACKDROP -->
@@ -44,7 +36,7 @@
           (click)="onCreateCancel()"
         ></div>
 
-        <!-- ✅ CREATE FORM : CARD -->
+        <!-- ✅ CREATE FORM : CARD (ถ้ายังใช้ manual ก็ปล่อยไว้ได้) -->
         <div
           *ngIf="showCreateForm"
           class="create-card"
@@ -76,6 +68,18 @@
                   </option>
                 </select>
               </div>
+
+              <div class="field">
+                <label for="quantity">จำนวน</label>
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newProduct.quantity"
+                  min="1"
+                  step="1"
+                />
+              </div>
+
               <div class="field">
                 <label for="price">ราคา</label>
                 <input
@@ -83,6 +87,7 @@
                   pInputText
                   [(ngModel)]="newProduct.price"
                   min="0"
+                  step="1"
                 />
               </div>
 
@@ -111,13 +116,7 @@
           selectionMode="multiple"
           [metaKeySelection]="false"
           [rows]="10"
-          [globalFilterFields]="[
-            'name',
-            'category',
-            'quantity',
-            'price',
-            'date',
-          ]"
+          [globalFilterFields]="['name','category','quantity','price','date','total']"
           [scrollable]="true"
           scrollHeight="500px"
           stripedRows
@@ -125,66 +124,35 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <!-- <th style="text-align: center; width: 10%">
-                <input
-                  type="checkbox"
-                  [checked]="
-                    selectedProducts.length === filteredProducts.length
-                  "
-                  (change)="onSelectAll($event)"
-                  [disabled]="editIndex !== null"
-                  style="width: 30px; height: 26px"
-                />
-              </th> -->
-
               <th pSortableColumn="date" scope="col">
-                <div class="flex items-center gap-2">
-                  วันที่
-                  <p-sortIcon field="date"></p-sortIcon>
-                </div>
+                วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
 
               <th pSortableColumn="name" scope="col">
-                <div class="flex items-center gap-2">
-                  ชื่อสินค้า
-                  <p-sortIcon field="name"></p-sortIcon>
-                </div>
+                ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
 
               <th pSortableColumn="category" scope="col">
-                <div class="flex items-center gap-2">
-                  ประเภท
-                  <p-sortIcon field="category"></p-sortIcon>
-                </div>
+                ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
 
               <th pSortableColumn="quantity" scope="col">
-                <div class="flex items-center gap-2">
-                  จำนวน
-                  <p-sortIcon field="quantity"></p-sortIcon>
-                </div>
+                จำนวน <p-sortIcon field="quantity"></p-sortIcon>
               </th>
 
               <th pSortableColumn="price" scope="col">
-                <div class="flex items-center gap-2">
-                  ราคา
-                  <p-sortIcon field="price"></p-sortIcon>
-                </div>
+                ราคา <p-sortIcon field="price"></p-sortIcon>
+              </th>
+
+              <!-- ✅ เพิ่ม: ราคารวม -->
+              <th pSortableColumn="total" scope="col">
+                ราคารวม <p-sortIcon field="total"></p-sortIcon>
               </th>
             </tr>
           </ng-template>
+
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
-              <!-- <td style="text-align: center">
-                <input
-                  type="checkbox"
-                  [checked]="selectedProducts.includes(product)"
-                  (change)="onCheckboxChange($event, product)"
-                  [disabled]="editIndex !== null"
-                  style="width: 24px; height: 24px"
-                />
-              </td> -->
-
               <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
@@ -194,6 +162,7 @@
                   <input type="date" [(ngModel)]="editProduct!.date" />
                 </ng-template>
               </td>
+
               <!-- NAME -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editName">
@@ -220,17 +189,27 @@
                   {{ product.quantity }}
                 </ng-container>
                 <ng-template #editQty>
-                  <input type="number" [(ngModel)]="editProduct!.quantity" />
+                  <input type="number" min="1" step="1" [(ngModel)]="editProduct!.quantity" />
                 </ng-template>
               </td>
 
-              <!-- PRICE -->
+              <!-- PRICE (format เป็น int เหมือน inventory) -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editPrice">
-                  {{ product.price }}
+                  {{ product.price | number:'1.0-0' }}
                 </ng-container>
                 <ng-template #editPrice>
-                  <input type="number" [(ngModel)]="editProduct!.price" />
+                  <input type="number" min="0" step="1" [(ngModel)]="editProduct!.price" />
+                </ng-template>
+              </td>
+
+              <!-- ✅ TOTAL -->
+              <td>
+                <ng-container *ngIf="editIndex !== i; else editTotal">
+                  {{ (product.quantity * product.price) | number:'1.0-0' }}
+                </ng-container>
+                <ng-template #editTotal>
+                  {{ (editProduct!.quantity * editProduct!.price) | number:'1.0-0' }}
                 </ng-template>
               </td>
             </tr>
@@ -238,6 +217,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
+              <!-- ✅ เดิม colspan="6" แต่ตอนนี้มี 6 คอลัมน์พอดี -->
               <td colspan="6">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>

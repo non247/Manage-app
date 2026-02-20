@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // ✅ เพิ่ม
 import { CheckboxModule } from 'primeng/checkbox';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
@@ -58,11 +59,29 @@ export class HistoryComponent implements OnInit {
     { label: 'ถ้วย', value: 'ถ้วย' },
   ];
 
-  constructor(private readonly historyService: HistoryService) {}
+  constructor(
+    private readonly historyService: HistoryService,
+    private readonly router: Router // ✅ เพิ่ม
+  ) {}
 
   /* ================= INIT ================= */
   ngOnInit(): void {
-    this.loadProducts();
+    // ✅ รับค่าที่ส่งมาจากหน้าอื่นด้วย Router state
+    // ตัวอย่างฝั่งส่ง: this.router.navigate(['/history'], { state: { items: list }})
+    const items = history.state?.items as Product[] | undefined;
+
+    if (Array.isArray(items) && items.length > 0) {
+      // ✅ ใช้ข้อมูลที่ส่งมา (แสดงทันที)
+      this.products = items.map((x) => ({
+        ...x,
+        quantity: Number((x as any).quantity ?? 0),
+        price: Number((x as any).price ?? 0),
+      }));
+      this.filteredProducts = [...this.products];
+    } else {
+      // ✅ ถ้าไม่ได้ส่งมาก็โหลดจาก DB เหมือนเดิม
+      this.loadProducts();
+    }
   }
 
   /* ================= LOAD ================= */
@@ -71,6 +90,11 @@ export class HistoryComponent implements OnInit {
       next: (res) => {
         this.products = res;
         this.filteredProducts = [...res];
+
+        // ✅ กัน selected ค้างผิด (เช่น ลบจาก DB แล้ว)
+        this.selectedProducts = this.selectedProducts.filter((s) =>
+          this.filteredProducts.some((p) => this.sameRow(p, s))
+        );
       },
       error: () => {
         Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error');
@@ -82,11 +106,15 @@ export class HistoryComponent implements OnInit {
   filterProducts() {
     if (this.selectedCategories.length === 0) {
       this.filteredProducts = [...this.products];
-      return;
+    } else {
+      this.filteredProducts = this.products.filter((p) =>
+        this.selectedCategories.includes(p.category)
+      );
     }
 
-    this.filteredProducts = this.products.filter((p) =>
-      this.selectedCategories.includes(p.category)
+    // ✅ สำคัญ: เวลาฟิลเตอร์เปลี่ยน ให้คง selected เฉพาะตัวที่ยังอยู่ใน filtered
+    this.selectedProducts = this.selectedProducts.filter((s) =>
+      this.filteredProducts.some((p) => this.sameRow(p, s))
     );
   }
 
@@ -169,7 +197,7 @@ export class HistoryComponent implements OnInit {
   onSave(index: number) {
     if (!this.editProduct?.id) return;
 
-    const payload = {
+    const payload: Product = {
       ...this.editProduct,
       date: this.editProduct.date,
     };
@@ -179,10 +207,16 @@ export class HistoryComponent implements OnInit {
         // ✅ update local array เหมือน inventory
         this.filteredProducts[index] = { ...payload };
 
-        const originalIndex = this.products.findIndex(
-          (p) => p.id === this.editProduct!.id
+        const originalIndex = this.products.findIndex((p) =>
+          this.sameRow(p, this.editProduct!)
         );
         if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
+
+        // ✅ ถ้า item นี้ถูกเลือกอยู่ ให้ sync ด้วย
+        const selIndex = this.selectedProducts.findIndex((p) =>
+          this.sameRow(p, payload)
+        );
+        if (selIndex !== -1) this.selectedProducts[selIndex] = { ...payload };
 
         this.editIndex = null;
         this.editProduct = null;
@@ -228,6 +262,11 @@ export class HistoryComponent implements OnInit {
       if (result.isConfirmed) {
         this.historyService.delete(product.id!).subscribe({
           next: () => {
+            // ✅ ถ้าถูกเลือกอยู่ ให้เอาออกด้วย
+            this.selectedProducts = this.selectedProducts.filter(
+              (p) => !this.sameRow(p, product)
+            );
+
             this.loadProducts();
             Swal.fire({
               title: 'สำเร็จ',
@@ -246,21 +285,55 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  /* ================= CHECKBOX ================= */
-  onCheckboxChange(event: any, product: Product) {
-    if (event.target.checked) {
-      this.selectedProducts.push(product);
+  /* ================= CHECKBOX (ปรับใหม่ทั้งหมด) ================= */
+
+  /** เทียบว่าเป็นแถวเดียวกัน (ใช้ id ก่อน ถ้าไม่มีค่อย fallback code) */
+  private sameRow(a: Product, b: Product): boolean {
+    if (a?.id != null && b?.id != null) return a.id === b.id;
+    return a.code === b.code;
+  }
+
+  /** เช็คว่าแถวนี้ถูกเลือกอยู่ไหม */
+  isSelected(p: Product): boolean {
+    return this.selectedProducts.some((x) => this.sameRow(x, p));
+  }
+
+  /** กด checkbox รายแถว */
+  toggleRow(p: Product, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked) {
+      if (!this.isSelected(p)) this.selectedProducts = [...this.selectedProducts, p];
     } else {
-      this.selectedProducts = this.selectedProducts.filter(
-        (p) => p.code !== product.code
-      );
+      this.selectedProducts = this.selectedProducts.filter((x) => !this.sameRow(x, p));
     }
   }
 
-  onSelectAll(event: any) {
-    this.selectedProducts = event.target.checked
-      ? [...this.filteredProducts]
-      : [];
+  /** กด checkbox เลือกทั้งหมด (แค่ใน filteredProducts) */
+  toggleSelectAll(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked) {
+      this.selectedProducts = [...this.filteredProducts];
+    } else {
+      this.selectedProducts = [];
+    }
+  }
+
+  /** ใช้ bind กับ [checked] ของ checkbox หัวตาราง */
+  isAllSelected(): boolean {
+    return (
+      this.filteredProducts.length > 0 &&
+      this.selectedProducts.length === this.filteredProducts.length
+    );
+  }
+
+  /** ใช้ bind กับ [indeterminate] ของ checkbox หัวตาราง */
+  isIndeterminate(): boolean {
+    return (
+      this.selectedProducts.length > 0 &&
+      this.selectedProducts.length < this.filteredProducts.length
+    );
   }
 
   /* ================= EXPORT ================= */
@@ -301,12 +374,6 @@ export class HistoryComponent implements OnInit {
   }
 
   private isValidProduct(p: Product): boolean {
-    return !!(
-      p.name &&
-      p.category &&
-      p.quantity >= 0 &&
-      p.price >= 0 &&
-      p.date
-    );
+    return !!(p.name && p.category && p.quantity >= 0 && p.price >= 0 && p.date);
   }
 }
