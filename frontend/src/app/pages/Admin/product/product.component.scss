@@ -116,10 +116,12 @@ app-sidebar-user {
 .header-row {
   display: flex;
   align-items: center;
-  width: 100%;
-  position: relative;
+  width: 100%;              /* ✅ จาก 40% -> 100% */
+  gap: 14px;
   margin-top: 6px;
   margin-bottom: 20px;
+
+  justify-content: space-between;  /* ✅ ดันปุ่มไปขวา */
 }
 
 .title {
@@ -127,66 +129,47 @@ app-sidebar-user {
   margin: 0;
 }
 
-/* ================= SEARCH (เก็บไว้ทั้ง 2) ================= */
-/* Search B (เดิม): ใช้ class="search-wrapper" */
+/* ================= SEARCH (UPDATED) ================= */
 .search-wrapper {
   position: relative;
-  width: 300px;
-  margin-right: auto;
+
+  flex: 1;              /* ✅ ยืดกินพื้นที่ที่เหลือทั้งหมด */
+  min-width: 280px;     /* กันหดเล็กเกิน */
+  max-width: 30%;
+  width: auto;          /* ✅ ไม่ล็อก 300px แล้ว */
+  margin-right: 0;      /* ✅ เอา auto ออก */
 }
 
 .search-wrapper input {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 2rem;
+  height: 46px;
+
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem; /* เผื่อไอคอน */
   border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 1rem;
-  outline: none;
-  box-shadow: none;
-  transition: border-color 0.3s ease;
+  border-radius: 10px;
+
   text-align: center;
+  font-size: 20px;
+  box-sizing: border-box;
 }
 
 .search-wrapper .pi-search {
   position: absolute;
-  left: 10px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: #aaa;
+  font-size: 20px;
   pointer-events: none;
-  font-size: 1.2rem;
 }
 
-/* Search A (สวย): ใช้ class="search-wrapper search-wrapper--pretty" */
-.search-wrapper--pretty {
-  width: 360px;
-  margin: 0;
-  transform: translateY(2px);
-}
-
-.search-wrapper--pretty input {
-  height: 42px;
-  padding: 0 14px 0 38px;
-  border: 1px solid #f3a9bf;
-  border-radius: 12px;
-  font-size: 16px;
-  background: #fff;
-  transition: 0.2s ease;
-  text-align: left;
-}
-
-.search-wrapper--pretty input.p-inputtext {
-  padding: 0 14px 0 38px !important;
-}
-
-/* มือถือ: ให้เต็มบรรทัด */
+/* ✅ จอเล็ก: search เต็มบรรทัด */
 @media (max-width: 768px) {
-  .search-wrapper,
-  .search-wrapper--pretty {
-    width: 100%;
+  .search-wrapper {
+    flex: 1 1 100%;
+    min-width: 100%;
   }
 }
-
 /* ================= MULTISELECT PANEL FIX ================= */
 ::ng-deep .p-multiselect-panel {
   position: fixed !important;
@@ -282,7 +265,6 @@ app-sidebar-user {
 .action-cell {
   display: table-cell !important;
 }
-
 .action-wrap {
   display: flex;
   justify-content: center;
@@ -290,7 +272,6 @@ app-sidebar-user {
   gap: 12px;
   height: 100%;
 }
-
 .action-cell button {
   margin: 0;
 }
@@ -398,40 +379,49 @@ tr.editing {
   color: #aaa;
 }
 
-/* ================= FORM BUTTONS (เหมือนเดิม มีพื้นหลัง) ================= */
-/* ✅ ทำให้ปุ่มในฟอร์มกลับเหมือนเดิม ไม่โดน icon-only */
+/* ================= FORM FOOTER + FORM BUTTONS ================= */
+.create-card-footer {
+  display: flex;
+  justify-content: flex-end; /* 👉 ดันไปขวา */
+  gap: 12px;                /* 👉 ระยะห่างระหว่างปุ่ม */
+  padding: 16px 24px 22px;
+  border-top: 1px solid #eee;
+}
+
+/* ✅ ทำให้ปุ่มในฟอร์ม “มีสีพื้นหลัง” และไม่โดน icon-only */
 .create-card-footer .btn-save,
 .create-card-footer .btn-cancel {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  width: 130px;
-  height: 43px;              /* ✅ กลับเป็นปกติ */
-  padding: 0 16px;
+  width: 150px;         /* ✅ ปรับขนาดให้เหมือนภาพ */
+  height: 44px;         /* ✅ สูงกำลังสวย */
+  padding: 0 18px;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  color: #fff;
 
-  font-size: 24px;
+  font-size: 20px;      /* ✅ ลดให้ไม่แน่น */
+  font-weight: 700;
   gap: 10px;
   white-space: nowrap;
 
-  background: initial;        /* กันโดน transparent */
-  box-shadow: initial;
+  background: initial;  /* กันโดน transparent */
+  box-shadow: none;
 }
 
-/* ✅ ใส่สีปุ่มฟอร์ม */
-.create-card-footer .btn-save   { background: #1e8a39; }
-.create-card-footer .btn-cancel { background: #d21515; }
+/* สีปุ่มฟอร์ม */
+.create-card-footer .btn-save   { background: #1e8a39 !important; color: #fff !important; }
+.create-card-footer .btn-cancel { background: #d21515 !important; color: #fff !important; }
 
-/* ✅ icon ในปุ่มฟอร์มให้สีขาวและขนาดกำลังดี */
+/* icon ในปุ่มฟอร์ม */
 .create-card-footer .btn-save i,
 .create-card-footer .btn-cancel i {
+  color: #fff !important;
   font-size: 22px;
-  color: #fff;
+  line-height: 1;
 }
 
 /* ================= BACKDROP ================= */
@@ -567,7 +557,7 @@ tr.editing {
   color: #666;
 }
 
-/* ================= PREVIEW IMAGE (ไม่ให้ล้นฟอร์ม) ================= */
+/* ================= PREVIEW IMAGE ================= */
 .create-card .preview {
   width: 100%;
   max-width: 100%;
@@ -583,33 +573,4 @@ tr.editing {
   max-width: 100%;
   height: 220px;
   object-fit: cover;
-}
-
-
-/* footer ของฟอร์ม */
-.create-card-footer {
-  display: flex;
-  justify-content: flex-end;   /* 👉 ดันไปขวา */
-  gap: 8px;                   /* 👉 ระยะห่างระหว่างปุ่ม */
-  padding: 16px 24px 22px;
-  // margin-top: 20px;            /* 👉 เว้นระยะจาก input ด้านบน */
-  // padding-top: 10px;           /* (optional) */
-}
-
-/* 🎯 ปุ่มในฟอร์มเท่านั้นที่มีพื้นหลังสี */
-.create-card-footer .btn-save {
-  background: #1e8a39 !important;
-  color: #fff !important;
-}
-
-.create-card-footer .btn-cancel {
-  background: #d21515 !important;
-  color: #fff !important;
-}
-
-/* icon ในปุ่มฟอร์มเป็นสีขาว */
-.create-card-footer .btn-save i,
-.create-card-footer .btn-cancel i {
-  color: #fff !important;
-  font-size: 20px; /* ปรับได้ */
 }

@@ -41,7 +41,11 @@ export class UsermanagementComponent implements OnInit {
   loadUsers() {
     this.userService.getUsers().subscribe({
       next: (data: User[]) => (this.users = data),
-      error: () => Swal.fire('Error', 'โหลดผู้ใช้ไม่สำเร็จ', 'error'),
+      error: () => Swal.fire({
+        title: 'Error',
+        text: 'โหลดผู้ใช้ไม่สำเร็จ',
+        icon: 'error',
+      }),
     });
   }
 
@@ -57,13 +61,25 @@ export class UsermanagementComponent implements OnInit {
 
   onCreateSave() {
     if (!this.newUser.Username || !this.newUser.Password) {
-      Swal.fire('Warning', 'กรุณากรอก Username และ Password', 'warning');
+      Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอก Username และ Password',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
     this.userService.createUser(this.newUser).subscribe({
       next: () => {
-        Swal.fire('Success', 'เพิ่มผู้ใช้สำเร็จ', 'success');
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'เพิ่มผู้ใช้สำเร็จ',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         this.onCreateCancel();
         this.loadUsers();
       },

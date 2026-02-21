@@ -158,11 +158,23 @@ export class ProductComponent implements OnInit {
 
   async save() {
     if (!this.form.name.trim()) {
-      await Swal.fire({ icon: 'warning', title: 'กรุณากรอกชื่อสินค้า', confirmButtonColor: '#3085d6', confirmButtonText: 'ตกลง' });
+      await Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, ราคา)',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
     if (this.form.price === null || Number(this.form.price) <= 0) {
-      await Swal.fire({ icon: 'warning', title: 'ราคาต้องมากกว่า 0', confirmButtonColor: '#3085d6', confirmButtonText: 'ตกลง' });
+      await Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'ราคาต้องมากกว่า 0',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 

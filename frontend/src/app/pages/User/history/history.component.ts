@@ -133,9 +133,9 @@ export class HistoryComponent implements OnInit {
 
     if (!this.isValidProduct(this.newProduct)) {
       Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'กรุณากรอกข้อมูลให้ครบ',
-        icon: 'error',
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, หมวดหมู่, จำนวน, ราคา)',
+        icon: 'warning',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
       });
