@@ -87,7 +87,9 @@ export class RegisterComponent {
 
         Swal.fire({
           icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
+          title: 'ผิดพลาด',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
           text: err?.error?.message || 'สมัครสมาชิกไม่สำเร็จ',
         });
       },

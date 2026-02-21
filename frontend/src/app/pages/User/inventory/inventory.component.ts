@@ -14,6 +14,7 @@ import { HistoryService } from '../../../core/services/history.service';
 // ✅ เพิ่ม RXJS สำหรับยิงหลายรายการทีเดียว
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
+import { text } from 'express';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -120,7 +121,13 @@ export class InventoryComponent implements OnInit {
         this.selectedIds.clear();
         this.selectedProducts = [];
       },
-      error: () => Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error'),
+      error: () => Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'โหลดข้อมูลไม่สำเร็จ',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      }),
     });
   }
 
@@ -132,7 +139,13 @@ export class InventoryComponent implements OnInit {
         this.names = uniqueNames.map((name) => ({ label: name, value: name }));
       },
       error: () =>
-        Swal.fire('ผิดพลาด', 'โหลดชื่อสินค้าจากหน้า product ไม่สำเร็จ', 'error'),
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'โหลดชื่อสินค้าจากหน้า product ไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
@@ -238,7 +251,13 @@ export class InventoryComponent implements OnInit {
     this.newProduct.total = this.newProduct.quantity * this.newProduct.price;
 
     if (!this.isValidProduct(this.newProduct)) {
-      Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ', 'error');
+      Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, หมวดหมู่, จำนวน, ราคา)',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
@@ -251,9 +270,21 @@ export class InventoryComponent implements OnInit {
       next: () => {
         this.loadProducts();
         this.onCreateCancel();
-        Swal.fire('สำเร็จ', 'สร้างรายการสำเร็จ', 'success');
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'สร้างรายการสำเร็จ',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        });
       },
-      error: () => Swal.fire('ผิดพลาด', 'ไม่สามารถสร้างรายการได้', 'error'),
+      error: () => Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่สามารถสร้างรายการได้',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      }),
     });
   }
 
@@ -270,13 +301,25 @@ export class InventoryComponent implements OnInit {
   // ✅ เปลี่ยนจาก "ตัด 1 ชิ้น" -> "ตัดทั้งรายการ (quantity -> 0)"
   sellOne(p: Product) {
     if (!p.id) {
-      Swal.fire('ผิดพลาด', 'ไม่พบ ID ของสินค้า', 'error');
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่พบ ID ของสินค้า',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
     const currentQty = this.toInt(p.quantity, 0);
     if (currentQty <= 0) {
-      Swal.fire('สินค้าหมด', 'ไม่สามารถขายได้', 'warning');
+      Swal.fire({
+        title: 'สินค้าหมด',
+        text: 'ไม่สามารถขายได้',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
@@ -294,14 +337,21 @@ export class InventoryComponent implements OnInit {
             Swal.fire('สำเร็จ', 'บันทึกการขายแล้ว (ตัดทั้งรายการ)', 'success');
           },
           error: () =>
-            Swal.fire(
-              'ผิดพลาด',
-              'บันทึก history ได้ แต่ตัดสต๊อกไม่สำเร็จ',
-              'error'
-            ),
+            Swal.fire({
+              title: 'ผิดพลาด',
+              text: 'อัปเดตสต๊อกไม่สำเร็จ',
+              icon: 'error',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'ตกลง',})
         });
       },
-      error: () => Swal.fire('ผิดพลาด', 'บันทึกประวัติการขายไม่สำเร็จ', 'error'),
+      error: () => Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'บันทึกประวัติการขายไม่สำเร็จ',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      }),
     });
   }
 
@@ -311,27 +361,37 @@ export class InventoryComponent implements OnInit {
     const selected = [...(this.selectedProducts || [])];
 
     if (!selected.length) {
-      Swal.fire('แจ้งเตือน', 'กรุณาเลือกสินค้าก่อน', 'info');
+      Swal.fire({
+        title: 'แจ้งเตือน',
+        text: 'กรุณาเลือกสินค้าก่อน',
+        icon: 'info',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
     const noId = selected.filter((p) => !p.id);
     if (noId.length) {
-      Swal.fire(
-        'ผิดพลาด',
-        'มีบางรายการไม่มี ID (แก้ที่ข้อมูลในฐานข้อมูล)',
-        'error'
-      );
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'มีบางรายการไม่มี ID (แก้ที่ข้อมูลในฐานข้อมูล)',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
     const outOfStock = selected.filter((p) => this.toInt(p.quantity, 0) <= 0);
     if (outOfStock.length) {
-      Swal.fire(
-        'สินค้าหมด',
-        `มี ${outOfStock.length} รายการที่จำนวนเป็น 0 (ยกเลิกการเลือกก่อน)`,
-        'warning'
-      );
+      Swal.fire({
+        title: 'สินค้าหมด',
+        text: `มี ${outOfStock.length} รายการที่จำนวนเป็น 0 (ยกเลิกการเลือกก่อน)`,
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
@@ -476,7 +536,7 @@ export class InventoryComponent implements OnInit {
           timerProgressBar: true,
         });
       },
-      error: () => Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error'),
+      error: () => Swal.fire({ title: 'ผิดพลาด', text: 'อัปเดตข้อมูลไม่สำเร็จ', icon: 'error', confirmButtonColor: '#3085d6', confirmButtonText: 'ตกลง' }),
     });
   }
 
@@ -490,7 +550,13 @@ export class InventoryComponent implements OnInit {
     const product = this.filteredProducts[index];
 
     if (!product.id) {
-      Swal.fire('ผิดพลาด', 'ไม่พบ ID ของสินค้า', 'error');
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่พบ ID ของสินค้า',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
@@ -517,7 +583,13 @@ export class InventoryComponent implements OnInit {
               timerProgressBar: true,
             });
           },
-          error: () => Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error'),
+          error: () => Swal.fire({ 
+            title: 'ผิดพลาด', 
+            text: 'ลบรายการไม่สำเร็จ', 
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'ตกลง',
+          }),
         });
       }
     });

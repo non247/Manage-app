@@ -41,13 +41,47 @@ app-sidebar-user {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
   height: 620px;
+
+  /* ✅ ล็อกความสูง + paginator ไม่ขยับ */
+  display: flex;
+  flex-direction: column;
 }
 
 /* ================= TABLE (PrimeNG) ================= */
 .main-content p-table {
   margin-top: 30px;
+
+  /* ✅ ให้ตารางกินพื้นที่ที่เหลือในกล่อง */
+  flex: 1;
+  min-height: 0;
 }
 
+/* ✅ ล็อกความสูงใน datatable + พื้นขาวเต็ม + paginator ติดล่าง */
+:host ::ng-deep .p-datatable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ✅ body ของตารางกินพื้นที่ที่เหลือ (พื้นขาวเต็ม) */
+:host ::ng-deep .p-datatable .p-datatable-wrapper {
+  flex: 1;
+  min-height: 0;
+
+  overflow: hidden; /* ไม่อยากให้ตารางมี scroll */
+  background: #fff;
+}
+
+/* ✅ paginator ติดล่างตลอด ไม่ขยับแม้รายการไม่ครบ */
+:host ::ng-deep .p-datatable .p-paginator {
+  margin-top: auto;
+}
+
+/* style table */
 .main-content p-table th,
 .main-content p-table td {
   text-align: center;
@@ -74,7 +108,6 @@ app-sidebar-user {
   // background-color: #ffd6e0 !important;
   // color: rgb(0, 0, 0);
 }
-
 ::ng-deep .p-datatable tbody tr:nth-child(even) td {
   // background-color: #ffd6e0 !important;
 }
@@ -94,190 +127,8 @@ app-sidebar-user {
   margin: 0;
 }
 
-/* ===== SEARCH ONLY ===== */
-
-.search-wrapper {
-  position: relative;
-  width: 360px;
-  /* ✅ ความกว้าง search */
-  margin: 0;
-  /* ✅ ไม่ให้ดันลง */
-  transform: translateY(2px);
-  /* ✅ ปรับขึ้น/ลงเล็กน้อย (ลอง 0..4px) */
-}
-
-.search-wrapper input {
-  width: 100%;
-  height: 42px;
-  padding: 0 14px 0 38px;
-  /* เผื่อ icon ซ้าย */
-  border: 1px solid #f3a9bf;
-  border-radius: 12px;
-  font-size: 16px;
-  background: #fff;
-  outline: none;
-  transition: 0.2s ease;
-  text-align: left;
-}
-
-.search-wrapper input.p-inputtext {
-  padding: 0.5rem 2.5rem 0.5rem 2rem !important;
-}
-// .search-wrapper input:focus {
-//   border-color: #d81b60;
-//   box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.12);
-// }
-
-// .search-wrapper .pi-search {
-//   position: absolute;
-//   left: 12px;
-//   top: 50%;
-//   transform: translateY(-50%);
-//   color: #d81b60;
-//   opacity: 0.6;
-//   font-size: 16px;
-//   pointer-events: none;
-// }
-
-/* มือถือ: ให้เต็มบรรทัด */
-@media (max-width: 768px) {
-  .search-wrapper {
-    width: 100%;
-  }
-}
-
-/* ================= MULTISELECT PANEL FIX ================= */
-::ng-deep .p-multiselect-panel {
-  position: fixed !important;
-  z-index: 99999 !important;
-  width: max-content !important;
-  max-width: 300px !important;
-  left: auto !important;
-}
-
-/* ================= BUTTONS ================= */
-.btn-add {
-  background-color: #d81b60;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  width: 150px;
-  height: 40px;
-  gap: 5px;
-  font-weight: bold;
-  white-space: nowrap;
-  cursor: pointer;
-  font-size: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-add:hover {
-  background-color: #e85c94;
-}
-
-/* ปุ่มในตาราง */
-.btn-edit,
-.btn-delete,
-.btn-save,
-.btn-cancel {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 55px;
-  height: 40px;
-  font-size: 23px;
-  padding: 7px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  color: #fff;
-  gap: 10px;
-}
-
-/* ไอคอนในปุ่มตาราง */
-.action-cell button i {
-  font-size: 20px;
-  line-height: 1;
-}
-
-/* ===== ปุ่มใน popup: ให้เท่ากัน (มีข้อความ) ===== */
-.create-card-footer .btn-save,
-.create-card-footer .btn-cancel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 130px;
-  /* ✅ เท่ากัน */
-  height: 43px;
-  /* ✅ เท่ากัน */
-  padding: 0 16px;
-
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  color: #fff;
-
-  font-size: 24px;
-  gap: 10px;
-  white-space: nowrap;
-}
-
-.btn-edit {
-  background: #1e3a8a;
-}
-
-.btn-delete {
-  background: #d21515;
-}
-
-.btn-save {
-  background: #1e8a39;
-}
-
-.btn-cancel {
-  background: #d21515;
-}
-
-/* ================= ACTION CELL ================= */
-.action-cell {
-  display: table-cell !important;
-}
-
-.action-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-}
-
-.action-cell button {
-  margin: 0;
-}
-
-/* ================= EDIT INPUT IN TABLE (สำคัญ) ================= */
-::ng-deep .p-datatable .p-datatable-tbody td input,
-::ng-deep .p-datatable .p-datatable-tbody td select {
-  width: 100% !important;
-  height: 34px;
-  padding: 0 10px;
-  font-size: 18px;
-  border: 1px solid #cfcfcf;
-  border-radius: 8px;
-  box-sizing: border-box;
-  text-align: center;
-}
-
-/* เน้นแถวที่กำลังแก้ไข */
-tr.editing {
-  background-color: #fff3cd;
-}
-
-/* ================= SEARCH ================= */
+/* ================= SEARCH (เก็บไว้ทั้ง 2) ================= */
+/* Search B (เดิม): ใช้ class="search-wrapper" */
 .search-wrapper {
   position: relative;
   width: 300px;
@@ -304,6 +155,162 @@ tr.editing {
   color: #aaa;
   pointer-events: none;
   font-size: 1.2rem;
+}
+
+/* Search A (สวย): ใช้ class="search-wrapper search-wrapper--pretty" */
+.search-wrapper--pretty {
+  width: 360px;
+  margin: 0;
+  transform: translateY(2px);
+}
+
+.search-wrapper--pretty input {
+  height: 42px;
+  padding: 0 14px 0 38px;
+  border: 1px solid #f3a9bf;
+  border-radius: 12px;
+  font-size: 16px;
+  background: #fff;
+  transition: 0.2s ease;
+  text-align: left;
+}
+
+.search-wrapper--pretty input.p-inputtext {
+  padding: 0 14px 0 38px !important;
+}
+
+/* มือถือ: ให้เต็มบรรทัด */
+@media (max-width: 768px) {
+  .search-wrapper,
+  .search-wrapper--pretty {
+    width: 100%;
+  }
+}
+
+/* ================= MULTISELECT PANEL FIX ================= */
+::ng-deep .p-multiselect-panel {
+  position: fixed !important;
+  z-index: 99999 !important;
+  width: max-content !important;
+  max-width: 300px !important;
+  left: auto !important;
+}
+
+/* ================= BUTTONS (TOP) ================= */
+.btn-add {
+  background-color: #d81b60;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  width: 150px;
+  height: 40px;
+  gap: 5px;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-add:hover {
+  background-color: #e85c94;
+}
+
+/* ================= TABLE ACTION BUTTONS (ICON ONLY) ================= */
+/* ✅ ปุ่มในตาราง: ไม่มีพื้นหลัง + icon ใหญ่ */
+.btn-edit,
+.btn-delete,
+.btn-save,
+.btn-cancel {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 56px;
+  height: 56px;
+  padding: 0;
+
+  border: none;
+  border-radius: 14px;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  cursor: pointer;
+}
+
+/* ✅ icon ใหญ่ขึ้น */
+.btn-edit i,
+.btn-delete i,
+.btn-save i,
+.btn-cancel i {
+  font-size: 30px;
+  line-height: 1;
+}
+
+/* ✅ สีไอคอน */
+.btn-edit i   { color: #1e3a8a; }
+.btn-delete i { color: #d21515; }
+.btn-save i   { color: #1e8a39; }
+.btn-cancel i { color: #d21515; }
+
+/* hover ให้พื้นจางๆ */
+.btn-edit:hover,
+.btn-delete:hover,
+.btn-save:hover,
+.btn-cancel:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* focus */
+.btn-edit:focus,
+.btn-delete:focus,
+.btn-save:focus,
+.btn-cancel:focus {
+  outline: none;
+}
+.btn-edit:focus-visible,
+.btn-delete:focus-visible,
+.btn-save:focus-visible,
+.btn-cancel:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.25);
+  outline-offset: 2px;
+}
+
+/* ================= ACTION CELL ================= */
+.action-cell {
+  display: table-cell !important;
+}
+
+.action-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.action-cell button {
+  margin: 0;
+}
+
+/* ================= EDIT INPUT IN TABLE ================= */
+::ng-deep .p-datatable .p-datatable-tbody td input,
+::ng-deep .p-datatable .p-datatable-tbody td select {
+  width: 100% !important;
+  height: 34px;
+  padding: 0 10px;
+  font-size: 18px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* เน้นแถวที่กำลังแก้ไข */
+tr.editing {
+  background-color: #fff3cd;
 }
 
 /* ================= CREATE CARD ================= */
@@ -351,12 +358,10 @@ tr.editing {
 }
 
 .field.full {
-  .field.full {
-    grid-column: 1 / -1;
-  }
+  grid-column: 1 / -1;
 }
 
-/* ✅ ฟอร์มใน popup เท่านั้น (ไม่ชนกับตาราง) */
+/* ✅ ฟอร์มใน popup เท่านั้น */
 .create-card .field input,
 .create-card .field select {
   width: 100%;
@@ -393,12 +398,40 @@ tr.editing {
   color: #aaa;
 }
 
-.create-card-footer {
-  padding: 16px 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  border-top: 1px solid #eee;
+/* ================= FORM BUTTONS (เหมือนเดิม มีพื้นหลัง) ================= */
+/* ✅ ทำให้ปุ่มในฟอร์มกลับเหมือนเดิม ไม่โดน icon-only */
+.create-card-footer .btn-save,
+.create-card-footer .btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 130px;
+  height: 43px;              /* ✅ กลับเป็นปกติ */
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #fff;
+
+  font-size: 24px;
+  gap: 10px;
+  white-space: nowrap;
+
+  background: initial;        /* กันโดน transparent */
+  box-shadow: initial;
+}
+
+/* ✅ ใส่สีปุ่มฟอร์ม */
+.create-card-footer .btn-save   { background: #1e8a39; }
+.create-card-footer .btn-cancel { background: #d21515; }
+
+/* ✅ icon ในปุ่มฟอร์มให้สีขาวและขนาดกำลังดี */
+.create-card-footer .btn-save i,
+.create-card-footer .btn-cancel i {
+  font-size: 22px;
+  color: #fff;
 }
 
 /* ================= BACKDROP ================= */
@@ -421,7 +454,6 @@ tr.editing {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.9);
   }
-
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -429,13 +461,8 @@ tr.editing {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ===== CLOSE ANIMATION ===== */
@@ -452,7 +479,6 @@ tr.editing {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
-
   to {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.9);
@@ -460,31 +486,25 @@ tr.editing {
 }
 
 @keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-/* คอลัมน์รูป */
+/* ================= IMAGE COLUMN ================= */
 .img-wrap {
-  width: 120px; /* ปรับขนาดได้ตามต้องการ */
+  width: 120px;
   height: 90px;
-  margin: 0 auto; /* ให้อยู่กลาง */
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 
-/* ตัวรูป */
 .img-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* เต็มกรอบ (ตัดส่วนเกิน) */
+  object-fit: cover;
   border-radius: 10px;
   border: 1px solid #eee;
 }
@@ -496,13 +516,12 @@ tr.editing {
   gap: 12px;
 
   width: 100%;
-  height: 40px; /* ให้สูงเท่า input */
+  height: 40px;
   padding: 0 12px;
 
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
-
   box-sizing: border-box;
 }
 
@@ -562,6 +581,35 @@ tr.editing {
   display: block;
   width: 100%;
   max-width: 100%;
-  height: 220px; /* ปรับได้ เช่น 220-320 */
-  object-fit: cover; /* ไม่ล้น + ครอปให้พอดีกรอบ */
+  height: 220px;
+  object-fit: cover;
+}
+
+
+/* footer ของฟอร์ม */
+.create-card-footer {
+  display: flex;
+  justify-content: flex-end;   /* 👉 ดันไปขวา */
+  gap: 8px;                   /* 👉 ระยะห่างระหว่างปุ่ม */
+  padding: 16px 24px 22px;
+  // margin-top: 20px;            /* 👉 เว้นระยะจาก input ด้านบน */
+  // padding-top: 10px;           /* (optional) */
+}
+
+/* 🎯 ปุ่มในฟอร์มเท่านั้นที่มีพื้นหลังสี */
+.create-card-footer .btn-save {
+  background: #1e8a39 !important;
+  color: #fff !important;
+}
+
+.create-card-footer .btn-cancel {
+  background: #d21515 !important;
+  color: #fff !important;
+}
+
+/* icon ในปุ่มฟอร์มเป็นสีขาว */
+.create-card-footer .btn-save i,
+.create-card-footer .btn-cancel i {
+  color: #fff !important;
+  font-size: 20px; /* ปรับได้ */
 }

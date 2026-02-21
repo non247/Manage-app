@@ -409,3 +409,57 @@ tr.editing {
   from { opacity: 1; }
   to { opacity: 0; }
 }
+
+/* ================= FORM FOOTER (ปุ่มในฟอร์มเท่านั้น) ================= */
+/* ================= FORM FOOTER ================= */
+.create-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;                 /* ระยะห่างระหว่างปุ่ม */
+  padding: 20px 26px 24px;   /* เว้นขอบล่าง/ขวา */
+}
+
+/* ================= FORM BUTTON ================= */
+.create-card-footer .btn-save,
+.create-card-footer .btn-cancel {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+    min-width: 150px;   /* 🔹 ความกว้างปุ่ม */
+  height: 48px;       /* 🔹 ความสูงปุ่ม */
+  gap: 8px;
+   padding: 0 16px;    /* 🔹 ระยะด้านใน */
+   
+
+
+  min-width: 130px;          /* ✅ ความกว้างปุ่ม */
+  height: 45px;              /* ✅ ความสูงปุ่ม */
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  font-size: 20px;           /* ✅ ข้อความใหญ่ */
+  font-weight: 700;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+/* สีปุ่ม */
+.create-card-footer .btn-save {
+  background: #1e8a39;
+}
+
+.create-card-footer .btn-cancel {
+  background: #d21515;
+}
+
+/* icon ในปุ่ม */
+.create-card-footer .btn-save i,
+.create-card-footer .btn-cancel i {
+  font-size: 26px;           /* ✅ icon ใหญ่ */
+  color: #fff;
+}

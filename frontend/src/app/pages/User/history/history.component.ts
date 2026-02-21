@@ -95,7 +95,13 @@ export class HistoryComponent implements OnInit {
           this.filteredProducts.some((p) => this.sameRow(p, s))
         );
       },
-      error: () => Swal.fire('ผิดพลาด', 'โหลดข้อมูลไม่สำเร็จ', 'error'),
+      error: () => Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'โหลดข้อมูลไม่สำเร็จ',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      }),
     });
   }
 
@@ -222,7 +228,13 @@ export class HistoryComponent implements OnInit {
           timerProgressBar: true,
         });
       },
-      error: () => Swal.fire('ผิดพลาด', 'อัปเดตข้อมูลไม่สำเร็จ', 'error'),
+      error: () => Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่สามารถบันทึกข้อมูลได้',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      }),
     });
   }
 
@@ -236,7 +248,13 @@ export class HistoryComponent implements OnInit {
     const product = this.filteredProducts[index];
 
     if (!product.id) {
-      Swal.fire('ผิดพลาด', 'ไม่พบ ID ของสินค้า', 'error');
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่พบ ID ของสินค้า',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
@@ -268,7 +286,13 @@ export class HistoryComponent implements OnInit {
             timerProgressBar: true,
           });
         },
-        error: () => Swal.fire('ผิดพลาด', 'ลบรายการไม่สำเร็จ', 'error'),
+        error: () => Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'ลบรายการไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
       });
     });
   }
@@ -322,7 +346,13 @@ export class HistoryComponent implements OnInit {
   /* ================= EXPORT ================= */
   exportToExcel() {
     if (this.selectedProducts.length === 0) {
-      Swal.fire('ผิดพลาด', 'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ', 'error');
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 
