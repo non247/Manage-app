@@ -95,10 +95,12 @@ app-sidebar-user {
 /* ================= HEADER ================= */
 .header-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  width: 100%;
+  gap: 14px;
   margin-top: 6px;
   margin-bottom: 20px;
+  justify-content: space-between;
 }
 
 .title {
@@ -275,30 +277,52 @@ tr.editing {
   background-color: #fff3cd;
 }
 
-/* ================= SEARCH ================= */
-.search-wrapper {
-  position: relative;
-  width: 300px;
-  margin-right: auto;
-}
-
-.search-wrapper input {
+/* ================= SEARCH (UPDATED) ================= */
+.search-wrap {
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 2rem;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  text-align: center;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+
+  position: relative;
 }
 
-.search-wrapper .pi-search {
+/* ไอคอน search (bootstrap icon) */
+.search-wrap .bi-search {
   position: absolute;
-  left: 10px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: #aaa;
+  font-size: 20px;
+  pointer-events: none;
 }
 
-/* ================= CREATE CARD ================= */
+/* input search */
+.search-input {
+  flex: 1;              /* ✅ ยืดกินที่ว่าง */
+  min-width: 280px;
+  max-width: 30%;
+  height: 46px;
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem; /* เผื่อไอคอนซ้าย */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+/* ✅ จอเล็ก: search เต็มบรรทัด */
+@media (max-width: 768px) {
+  .search-input {
+    flex: 1 1 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+}/* ================= CREATE CARD ================= */
 .create-card {
   position: fixed;
   top: 50%;

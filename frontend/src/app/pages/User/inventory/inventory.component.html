@@ -6,23 +6,28 @@
       </header>
 
       <div class="table-box">
-        <!-- HEADER -->
-        <div class="header-row" style="display: flex; align-items: center; width: 100%; gap:12px; position: relative">
-          <!-- CREATE -->
-          <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
-            <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
-          </button>
+<div class="header-row search-wrap">
+  <i class="bi bi-search"></i>
+  <input
+    #gb
+    type="text"
+    class="search-input"
+    pInputText
+    placeholder="ค้นหา..."
+    (input)="dt.filterGlobal(gb.value, 'contains')"
+  />
 
-          <button class="btn-save btn-history" type="button" (click)="sendSelectedToHistory()"
-            [disabled]="selectedProducts.length === 0">
-            <i class="bi bi-send-fill"></i>
-            ประวัติการขาย
+  <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
+    <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
+  </button>
 
-            <span class="bubble" *ngIf="selectedProducts.length > 0">
-              {{ selectedProducts.length }}
-            </span>
-          </button>
-        </div>
+  <button class="btn-save btn-history" type="button" (click)="sendSelectedToHistory()"
+    [disabled]="selectedProducts.length === 0">
+    <i class="bi bi-send-fill"></i>
+    ประวัติการขาย
+    <span class="bubble" *ngIf="selectedProducts.length > 0">{{ selectedProducts.length }}</span>
+  </button>
+</div>
 
         <!-- BACKDROP -->
         <div *ngIf="showCreateForm" class="create-backdrop" [class.closing]="isClosing" (click)="onCreateCancel()">
