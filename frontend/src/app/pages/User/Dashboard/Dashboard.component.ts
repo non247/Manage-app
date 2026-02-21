@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   PLATFORM_ID,
   ViewChild,
@@ -25,7 +26,7 @@ Chart.register(...registerables);
   templateUrl: './Dashboard.component.html',
   styleUrl: './Dashboard.component.scss',
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('salesCanvas') salesCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('topSellerCanvas') topSellerCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('productChartCanvas')
@@ -36,20 +37,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   productChart?: Chart;
 
   todaySales = 0;
+  todayProducts = 0;
   totalProducts = 0;
   totalSold = 0;
 
   salesView: 'day' | 'month' | 'year' = 'day';
 
   private dashboardData?: DashboardResponse;
+  private viewReady = false;
 
   private readonly platformId = inject(PLATFORM_ID);
+  private get isBrowser() {
+    return isPlatformBrowser(this.platformId);
+  }
 
   constructor(private readonly dashboardService: DashboardService) {}
 
   ngOnInit(): void {
-    // ✅ SweetAlert ยินดีต้อนรับ (เด้งเฉพาะมาจาก login)
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       if (history.state?.loginSuccess) {
         Swal.fire({
           toast: true,
@@ -61,7 +66,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           timerProgressBar: true,
         });
 
-        // กันเด้งซ้ำเวลา back/forward
         history.replaceState({}, '');
       }
     }
@@ -70,22 +74,83 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (this.dashboardData) {
-      this.renderCharts();
-    }
+    this.viewReady = true;
+    if (this.dashboardData) this.renderCharts();
   }
 
+  ngOnDestroy(): void {
+    this.salesChart?.destroy();
+    this.topSellerChart?.destroy();
+    this.productChart?.destroy();
+  }
+
+  // =========================
+  // ✅ Helpers: กัน NaN + รองรับ snake_case
+  // =========================
+  private toNumber(v: any): number {
+    if (typeof v === 'string') v = v.replace(/,/g, '');
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  private pick(res: any, ...keys: string[]) {
+    for (const k of keys) {
+      const val = res?.[k];
+      if (val !== undefined && val !== null) return val;
+    }
+    return 0;
+  }
+
+  // ✅ ทำ key วันที่แบบ local (แก้ปัญหา UTC day shift)
+  private dateKeyLocal(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  // =========================
   // 🔹 โหลดข้อมูลจาก Backend
+  // =========================
   loadDashboard() {
     this.dashboardService.getDashboard().subscribe({
-      next: (res) => {
-        this.todaySales = Number(res.todaySales);
-        this.totalProducts = Number(res.totalProducts);
-        this.totalSold = Number(res.totalSold);
+      next: (res: any) => {
+        // ✅ ดูผลจริงตอน debug
+        // console.log('DASHBOARD RES = ', res);
+
+        // ✅ รองรับชื่อ field หลายแบบ (แก้ยอดขายวันนี้/จำนวนที่ขายได้ไม่ขึ้น)
+        this.todaySales = this.toNumber(
+          this.pick(res, 'todaySales', 'today_sales', 'todaySale', 'today_sale')
+        );
+
+        this.todayProducts = this.toNumber(
+  this.pick(res, 'todayProducts', 'today_products', 'todayOrders', 'today_orders')
+);
+
+        // this.totalProducts = this.toNumber(
+        //   this.pick(
+        //     res,
+        //     'totalProducts',
+        //     'total_products',
+        //     'productsTotal',
+        //     'totalProduct'
+        //   )
+        // );
+
+        this.totalSold = this.toNumber(
+          this.pick(
+            res,
+            'totalSold',
+            'total_sold',
+            'soldTotal',
+            'qtySold',
+            'total_qty_sold'
+          )
+        );
+
         this.dashboardData = res;
 
-        // ถ้า View พร้อมแล้วค่อย render
-        if (this.productChartCanvas) {
+        if (this.isBrowser && this.viewReady) {
           this.renderCharts();
         }
       },
@@ -94,49 +159,41 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   renderCharts() {
+    if (!this.isBrowser) return;
     if (!this.dashboardData) return;
+    if (!this.viewReady) return;
 
-    // this.changeSalesView(this.salesView);
-    // this.createTopSellerChart(this.dashboardData.topSellers);
-    this.createProductChart(this.dashboardData.productChart);
+    this.changeSalesView(this.salesView);
+    this.createTopSellerChart((this.dashboardData as any).topSellers || []);
+    this.createProductChart((this.dashboardData as any).productChart || []);
   }
 
   // =========================
   // 🔁 เปลี่ยนมุมมองยอดขาย
   // =========================
-
   changeSalesView(view: 'day' | 'month' | 'year') {
     this.salesView = view;
     if (!this.dashboardData) return;
 
-    const daily = this.dashboardData.salesChart;
+    const daily = (this.dashboardData as any).salesChart || [];
 
-    if (view === 'day') {
-      this.createSalesChart(this.toDaily(daily), 'day');
-    }
-
-    if (view === 'month') {
-      this.createSalesChart(this.toMonthly(daily), 'month');
-    }
-
-    if (view === 'year') {
-      this.createSalesChart(this.toYearly(daily), 'year');
-    }
+    if (view === 'day') this.createSalesChart(this.toDaily(daily), 'day');
+    if (view === 'month') this.createSalesChart(this.toMonthly(daily), 'month');
+    if (view === 'year') this.createSalesChart(this.toYearly(daily), 'year');
   }
 
+  // ✅ แก้: ไม่ใช้ toISOString (UTC) + รวมยอดวันเดียวกัน
   toDaily(data: any[]) {
     const map = new Map<string, number>();
 
-    // แปลงข้อมูลจาก backend ใส่ map
     data.forEach((d) => {
       const date = new Date(d.date);
-      const key = date.toISOString().split('T')[0]; // yyyy-mm-dd
-      map.set(key, Number(d.total));
+      const key = this.dateKeyLocal(date);
+      map.set(key, (map.get(key) || 0) + this.toNumber(d.total));
     });
 
     const result: { label: string; total: number; color: string }[] = [];
 
-    // สีประจำวัน (จันทร์ - อาทิตย์)
     const colors = [
       '#FCEE9E', // จันทร์
       '#FFBFC5', // อังคาร
@@ -148,24 +205,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     ];
 
     const today = new Date();
-
-    // หาวันจันทร์ของสัปดาห์ปัจจุบัน
-    const day = today.getDay(); // 0 = อาทิตย์
-    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const dayOfWeek = today.getDay(); // 0=อาทิตย์
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
     const monday = new Date(today);
+    monday.setHours(0, 0, 0, 0);
     monday.setDate(today.getDate() + diffToMonday);
 
-    // วน 7 วัน (จันทร์ → อาทิตย์)
     for (let i = 0; i < 7; i++) {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
 
-      const key = date.toISOString().split('T')[0];
+      const key = this.dateKeyLocal(date);
 
       result.push({
         label: date.toLocaleDateString('th-TH', {
-          // weekday: 'short',
           day: 'numeric',
           month: 'long',
         }),
@@ -183,8 +237,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     data.forEach((d) => {
       const date = new Date(d.date);
       const key = date.toLocaleString('th-TH', { month: 'long' });
-
-      map.set(key, (map.get(key) || 0) + Number(d.total));
+      map.set(key, (map.get(key) || 0) + this.toNumber(d.total));
     });
 
     return Array.from(map.entries()).map(([label, total]) => ({
@@ -198,7 +251,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     data.forEach((d) => {
       const year = new Date(d.date).getFullYear();
-      map.set(year, (map.get(year) || 0) + Number(d.total));
+      map.set(year, (map.get(year) || 0) + this.toNumber(d.total));
     });
 
     return Array.from(map.entries()).map(([label, total]) => ({
@@ -207,25 +260,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  // =========================
+  // 📊 กราฟยอดขาย (ปรับไม่ชิดขอบ)
+  // =========================
   createSalesChart(dataSource: any[], view: 'day' | 'month' | 'year') {
     const ctx = this.salesCanvas?.nativeElement?.getContext('2d');
     if (!ctx) return;
 
-    if (this.salesChart) this.salesChart.destroy();
+    this.salesChart?.destroy();
 
-    // =========================
-    // 🎨 กำหนดสี
-    // =========================
-
-    // สีรายวัน (มาจาก toDaily)
     const dayColors = dataSource.map((d) => d.color ?? '#CBD5E1');
 
-    // Gradient รายเดือน
     const monthGradient = ctx.createLinearGradient(0, 0, 0, 300);
     monthGradient.addColorStop(0, '#60A5FA');
     monthGradient.addColorStop(1, '#2563EB');
 
-    // Gradient รายปี
     const yearGradient = ctx.createLinearGradient(0, 0, 0, 300);
     yearGradient.addColorStop(0, '#34D399');
     yearGradient.addColorStop(1, '#059669');
@@ -234,12 +283,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       view === 'day'
         ? dayColors
         : view === 'month'
-          ? monthGradient
-          : yearGradient;
-
-    // =========================
-    // 📊 สร้าง Chart
-    // =========================
+        ? monthGradient
+        : yearGradient;
 
     this.salesChart = new Chart(ctx, {
       type: 'bar',
@@ -248,10 +293,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         datasets: [
           {
             label: 'ยอดขายรวม',
-            data: dataSource.map((d) => d.total),
+            data: dataSource.map((d) => this.toNumber(d.total)),
             backgroundColor,
             borderRadius: 10,
             barPercentage: 0.6,
+            minBarLength: 2,
           },
         ],
       },
@@ -259,10 +305,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
 
+        // ✅ เพิ่มช่องไฟในกราฟ กันชิดขอบ card
         layout: {
           padding: {
-            top: 20,
-            bottom: 20,
+            top: 16,
+            bottom: 12,
+            left: 26,
+            right: 20,
           },
         },
 
@@ -277,18 +326,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             },
           },
         },
-
         scales: {
           x: {
             grid: { display: false },
-            ticks: {
-              maxRotation: 0,
-              autoSkip: true,
-            },
+            ticks: { maxRotation: 0, autoSkip: true, padding: 10 },
           },
           y: {
             beginAtZero: true,
             ticks: {
+              padding: 10,
               callback: (v) => `${Number(v).toLocaleString()}`,
             },
           },
@@ -297,12 +343,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // 🔹 กราฟสินค้าขายดีที่สุด
+  // =========================
+  // 🥧 กราฟสินค้าขายดีที่สุด
+  // =========================
   createTopSellerChart(dataSource: any[]) {
     const ctx = this.topSellerCanvas?.nativeElement?.getContext('2d');
     if (!ctx) return;
 
-    if (this.topSellerChart) this.topSellerChart.destroy();
+    this.topSellerChart?.destroy();
 
     this.topSellerChart = new Chart(ctx, {
       type: 'pie',
@@ -310,29 +358,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         labels: dataSource.map((d) => d.name),
         datasets: [
           {
-            data: dataSource.map((d) => Number(d.sold)),
+            data: dataSource.map((d) => this.toNumber(d.sold)),
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-
-        layout: {
-          padding: {
-            top: 20,
-            bottom: 20,
-            left: 20,
-            right: 40,
-          },
-        },
-
-        elements: {
-          arc: {
-            borderWidth: 2,
-          },
-        },
-
+        layout: { padding: { top: 20, bottom: 20, left: 20, right: 40 } },
+        elements: { arc: { borderWidth: 2 } },
         plugins: {
           legend: {
             position: 'right',
@@ -348,8 +382,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 const index = context.dataIndex;
                 const item = dataSource[index];
 
-                const sold = Number(item.sold);
-                const totalSales = Number(item.total_sales || 0);
+                const sold = this.toNumber(item.sold);
+                const totalSales = this.toNumber(item.total_sales || 0);
 
                 return [
                   `จำนวนขาย: ${sold} ชิ้น`,
@@ -363,15 +397,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // 🔹 กราฟสินค้าทั้งหมด
+  // =========================
+  // 📦 กราฟสินค้าทั้งหมด
+  // =========================
   createProductChart(dataSource: any[]) {
     const ctx = this.productChartCanvas?.nativeElement?.getContext('2d');
     if (!ctx) return;
 
-    if (this.productChart) this.productChart.destroy();
+    this.productChart?.destroy();
 
     const sortedData = [...dataSource].sort(
-      (a, b) => Number(b.sold) - Number(a.sold)
+      (a, b) => this.toNumber(b.sold) - this.toNumber(a.sold)
     );
 
     this.productChart = new Chart(ctx, {
@@ -380,24 +416,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         labels: [''],
         datasets: sortedData.map((d) => ({
           label: d.name,
-          data: [Number(d.sold)],
+          data: [this.toNumber(d.sold)],
           borderRadius: 8,
-          // custom field ใช้ใน tooltip
-          totalSales: Number(d.total_sales),
+          totalSales: this.toNumber(d.total_sales),
         })),
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-
         plugins: {
           legend: {
             display: true,
             position: 'right',
-            labels: {
-              usePointStyle: true,
-              pointStyle: 'circle',
-            },
+            labels: { usePointStyle: true, pointStyle: 'circle' },
           },
           tooltip: {
             callbacks: {
@@ -414,14 +445,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             },
           },
         },
-
         scales: {
           x: { display: false },
           y: {
             title: { display: true, text: 'จำนวนขาย (ชิ้น)' },
-            ticks: {
-              callback: (value) => `${value}`,
-            },
+            ticks: { callback: (value) => `${value}` },
           },
         },
       },

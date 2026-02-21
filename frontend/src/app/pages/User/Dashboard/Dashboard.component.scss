@@ -15,6 +15,7 @@ app-sidebar-user {
   flex-direction: column;
   background-color: #ffffff;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .top-navbar {
@@ -25,176 +26,157 @@ app-sidebar-user {
   font-weight: bold;
 }
 
+/* ✅ กันความกว้างเกินจอจาก margin-left */
 .main-content {
-  padding: 20px;
+  padding: 24px;                // ⭐ เพิ่ม spacing รอบหน้า
   margin-left: 90px;
+  max-width: calc(100vw - 90px);
+  box-sizing: border-box;
 }
 
 /* ===== TOP CARDS ===== */
-// .top-cards {
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   gap: 20px;
-//   margin-bottom: 30px; // ⭐ เว้นระยะห่างระหว่างการ์ดกับกราฟ
-// }
-
-// .card {
-//   background-color: #ffd6e0;
-//   border-radius: 15px;
-//   padding: 20px;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-//   text-align: center;
-
-//   h3 {
-//     margin-bottom: 10px;
-//     color: #d81b60;
-//   }
-
-//   p {
-//     font-size: 18px;
-//     font-weight: bold;
-//   }
-// }
 .top-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 30px; // เว้นระยะห่างกับกราฟ
+  gap: 24px;                   // ⭐ เพิ่มช่องไฟ
+  margin-bottom: 32px;
 }
 
 .card {
   background-color: #ffd6e0;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  padding: 24px;               // ⭐ card ดูโล่งขึ้น
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 
-  /* ⭐ สำคัญ */
   display: flex;
   align-items: center;
-  text-align: center;
   justify-content: center;
+  text-align: center;
 }
 
 .card-icon {
   font-size: 40px;
   color: #d81b60;
-  margin-right: 15px;
+  margin-right: 16px;
 }
 
-.card-content {
-  h3 {
-    margin: 0 0 5px;
-    color: #d81b60;
-  }
-
-  p {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 0;
-  }
-}
-
-/* ===== GRAPHS ===== */
+/* ===== GRAPHS GRID ===== */
 .graphs {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // แถวละ 2 กราฟ
-  gap: 20px;
-  margin-top: 10px; // ⭐ กันชนเพิ่ม (เสริมจาก top-cards)
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 14px;
 }
 
+/* ===== GRAPH BOX ===== */
 .graph-box {
   background-color: #ffffff;
-  border-radius: 15px;
-  height: 350px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  border-radius: 16px;
+  height: 420px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+
+  padding: 24px 28px;        // ⭐ สำคัญ: เว้นจากขอบ card
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-// .chart-wrapper {
-//   flex: 0;              /* 👈 กินพื้นที่ที่เหลือทั้งหมด */
-//   position: relative;
-//   overflow: hidden;     /* กันล้นจริง */
-// }
+/* ✅ กราฟบนสูงกว่า */
+.graph-box--main {
+  height: 560px;
+}
 
+/* ===== HEADER ===== */
 .graph-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.button-group {
-  display: flex;
-  gap: 12px; /* ระยะห่างระหว่างปุ่ม */
-}
-
-.button-group button {
-  padding: 6px 16px;
-  border-radius: 20px;
-  border: 1px solid #d81b60;
-  background-color: #ffffff;
+.graph-header h3 {
+  margin: 0;
   color: #d81b60;
+}
+
+/* ===== SEGMENTED BUTTONS ===== */
+.segmented {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #ffe6ee;
+}
+
+.seg-btn {
+  border: 1px solid #d81b60;
+  background: #ffffff;
+  color: #d81b60;
+  padding: 6px 14px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.button-group button:hover {
-  background-color: #ffd6e0;
-}
-
-.button-group button.active {
-  background-color: #d81b60;
+.seg-btn.active {
+  background: #d81b60;
   color: #ffffff;
 }
 
-/* ===== TABLE ===== */
-.main-content p-table {
-  margin-top: 30px;
+/* ===== CANVAS ===== */
+.graph-box canvas {
+  flex: 1;
+  width: 100% !important;
+  height: 100% !important;
+
+  padding-right: 10px;   // ⭐ กัน legend ชิดขวา
+  padding-left: 6px;     // ⭐ กันแกน Y ชิดซ้าย
 }
 
-.main-content p-table th,
-.main-content p-table td {
-  text-align: center;
-  padding: 11px;
-  border-bottom: #e2e2e2;
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .top-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .graphs {
+    grid-template-columns: 1fr;
+  }
+
+  .main-content {
+    margin-left: 20px;
+    max-width: calc(100vw - 20px);
+  }
+
+  .graph-box--main {
+    height: 520px;
+  }
+
+  .graph-box {
+    height: 400px;
+  }
 }
 
-.main-content p-table th {
-  background-color: #d81b60;
-  font-size: 30px;
-  font-weight: bold;
-  color: #ffffff;
-}
+@media (max-width: 600px) {
+  .top-cards {
+    grid-template-columns: 1fr;
+  }
 
-.main-content p-table td {
-  font-size: 23px;
-  border-bottom: 3px solid #d81b60;
-}
+  .card {
+    justify-content: flex-start;
+    text-align: left;
+  }
 
-/* ===== DATATABLE ROW COLOR ===== */
-::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  background-color: #ffd6e0 !important;
-  color: #000000;
-}
+  .graph-box--main {
+    height: 480px;
+  }
 
-::ng-deep .p-datatable tbody tr:nth-child(even) td {
-  background-color: #ffd6e0 !important;
-}
-
-/* ===== DATATABLE CELL ===== */
-::ng-deep .p-datatable tbody td {
-  text-align: center;
-  padding: 12px;
-  border-bottom: #e2e2e2;
-}
-
-/* ===== TABLE BOX ===== */
-.table-box {
-  padding: 20px;
-  background: #ffd6e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-top: 30px;
-  height: 450px;
+  .graph-box {
+    height: 380px;
+  }
 }

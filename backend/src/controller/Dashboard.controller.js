@@ -56,6 +56,7 @@ exports.getDashboard = async (req, res) => {
 
     res.status(200).json({
       todaySales: Number(todaySalesResult.rows[0].today_sales),
+      todayProducts: Number(totalSoldResult.rows[0].total_sold),
       totalProducts: Number(totalProductsResult.rows[0].total_products),
       totalSold: Number(totalSoldResult.rows[0].total_sold),
       salesChart: salesChartResult.rows,

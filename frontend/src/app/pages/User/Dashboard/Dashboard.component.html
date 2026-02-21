@@ -23,8 +23,8 @@
             <i class="bi bi-box-seam"></i>
           </div>
           <div class="card-content">
-            <h3>ขายไปแล้ว</h3>
-            <p>{{ totalProducts }} รายการ</p>
+            <h3>วันนี้ขายไปแล้ว</h3>
+            <p>{{ todayProducts }} รายการ</p>
           </div>
         </div>
 
@@ -33,26 +33,61 @@
             <i class="bi bi-cart-check"></i>
           </div>
           <div class="card-content">
-            <h3>จำนวนที่ขายได้</h3>
+            <h3>จำนวนที่ขายได้วันนี้</h3>
             <p>{{ totalSold }} ชิ้น</p>
           </div>
         </div>
       </div>
 
+      <!-- ✅ กราฟยอดขาย + ปุ่มสลับมุมมอง -->
       <div class="graph-box">
-        <h3>ภาพรวมยอดขาย</h3>
-        <canvas #productChartCanvas></canvas>
+        <div class="graph-header">
+          <h3>ภาพรวมยอดขาย</h3>
+
+          <div class="segmented">
+            <button
+              type="button"
+              class="seg-btn"
+              [class.active]="salesView === 'day'"
+              (click)="changeSalesView('day')"
+            >
+              รายวัน
+            </button>
+
+            <button
+              type="button"
+              class="seg-btn"
+              [class.active]="salesView === 'month'"
+              (click)="changeSalesView('month')"
+            >
+              รายเดือน
+            </button>
+
+            <button
+              type="button"
+              class="seg-btn"
+              [class.active]="salesView === 'year'"
+              (click)="changeSalesView('year')"
+            >
+              รายปี
+            </button>
+          </div>
+        </div>
+
+        <canvas #salesCanvas></canvas>
       </div>
 
-      <!-- <div class="graphs">
+      <div class="graphs">
         <div class="graph-box">
           <h3>สินค้าทั้งหมด</h3>
+          <canvas #productChartCanvas></canvas>
         </div>
+
         <div class="graph-box">
           <h3>ขายดีที่สุด</h3>
           <canvas #topSellerCanvas></canvas>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </div>
