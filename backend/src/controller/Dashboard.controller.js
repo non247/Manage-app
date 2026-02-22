@@ -9,6 +9,13 @@ exports.getDashboard = async (req, res) => {
       WHERE DATE(date) = CURRENT_DATE
     `);
 
+    // ✅ วันนี้กี่ "รายการ" (จำนวนแถว)
+        const todayItemsResult = await pool.query(`
+      SELECT COUNT(*) AS today_items
+      FROM "History"
+      WHERE DATE(date) = CURRENT_DATE
+    `);
+
     // 2️⃣ จำนวนสินค้าทั้งหมด
     const totalProductsResult = await pool.query(`
       SELECT COUNT(name) AS total_products
@@ -56,7 +63,7 @@ exports.getDashboard = async (req, res) => {
 
     res.status(200).json({
       todaySales: Number(todaySalesResult.rows[0].today_sales),
-      todayProducts: Number(totalSoldResult.rows[0].total_sold),
+      todayProducts: Number(todayItemsResult.rows[0].today_items),
       totalProducts: Number(totalProductsResult.rows[0].total_products),
       totalSold: Number(totalSoldResult.rows[0].total_sold),
       salesChart: salesChartResult.rows,
