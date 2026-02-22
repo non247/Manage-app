@@ -11,10 +11,9 @@ import {
 } from '../../../core/services/Inventory.service';
 import { HistoryService } from '../../../core/services/history.service';
 
-// ✅ เพิ่ม RXJS สำหรับยิงหลายรายการทีเดียว
+// ✅ RXJS
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
-import { text } from 'express';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -34,7 +33,6 @@ type Option = { label: string; value: string };
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  // ❌ ไม่ต้องใช้ CheckboxModule แล้ว (เพราะใช้ checkbox ธรรมดา)
   imports: [TableModule, MultiSelectModule, FormsModule, CommonModule],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss',
@@ -73,7 +71,7 @@ export class InventoryComponent implements OnInit {
     { label: 'ถ้วย', value: 'ถ้วย' },
   ];
 
-  loading = false; // (ถ้าใช้ [loading] ใน p-table)
+  loading = false;
 
   constructor(
     private readonly inventoryService: InventoryService,
@@ -97,7 +95,11 @@ export class InventoryComponent implements OnInit {
   private withTotal(p: Product): Product {
     const qty = this.toInt(p.quantity, 1);
     const price = this.toInt(p.price, 0);
-    return { ...p, quantity: qty, price, total: qty * price };
+
+    // ✅ normalize date ให้เป็น YYYY-MM-DD (Asia/Bangkok)
+    const date = this.normalizeYmd(p.date);
+
+    return { ...p, quantity: qty, price, date, total: qty * price };
   }
 
   private mapWithTotal(list: Product[]): Product[] {
@@ -121,13 +123,14 @@ export class InventoryComponent implements OnInit {
         this.selectedIds.clear();
         this.selectedProducts = [];
       },
-      error: () => Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'โหลดข้อมูลไม่สำเร็จ',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      }),
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'โหลดข้อมูลไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
@@ -184,7 +187,7 @@ export class InventoryComponent implements OnInit {
       );
     }
 
-    // ✅ ตัวเลือก A: เคลียร์ selection เมื่อ filter เปลี่ยน (กันงง)
+    // ✅ เคลียร์ selection เมื่อ filter เปลี่ยน (กันงง)
     this.selectedIds.clear();
     this.selectedProducts = [];
   }
@@ -229,7 +232,6 @@ export class InventoryComponent implements OnInit {
   }
 
   private syncSelectedProducts() {
-    // ใช้ products เป็นแหล่งจริง (กันกรณี filter แล้วหา object ไม่เจอ)
     const mapById = new Map<number, Product>(
       this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
     );
@@ -248,6 +250,10 @@ export class InventoryComponent implements OnInit {
   onCreateSave() {
     this.newProduct.quantity = this.toInt(this.newProduct.quantity, 1);
     this.newProduct.price = this.toInt(this.newProduct.price, 0);
+
+    // ✅ normalize date ก่อนส่ง (Asia/Bangkok)
+    this.newProduct.date = this.normalizeYmd(this.newProduct.date);
+
     this.newProduct.total = this.newProduct.quantity * this.newProduct.price;
 
     if (!this.isValidProduct(this.newProduct)) {
@@ -264,6 +270,7 @@ export class InventoryComponent implements OnInit {
     const payload: Product = this.withTotal({
       ...this.newProduct,
       code: 'P' + Date.now(),
+      date: this.normalizeYmd(this.newProduct.date),
     });
 
     this.inventoryService.create(payload).subscribe({
@@ -278,13 +285,14 @@ export class InventoryComponent implements OnInit {
           confirmButtonText: 'ตกลง',
         });
       },
-      error: () => Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'ไม่สามารถสร้างรายการได้',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      }),
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'ไม่สามารถสร้างรายการได้',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
@@ -298,7 +306,6 @@ export class InventoryComponent implements OnInit {
   }
 
   /* ================= SELL (MODE A) ================= */
-  // ✅ เปลี่ยนจาก "ตัด 1 ชิ้น" -> "ตัดทั้งรายการ (quantity -> 0)"
   sellOne(p: Product) {
     if (!p.id) {
       Swal.fire({
@@ -323,12 +330,10 @@ export class InventoryComponent implements OnInit {
       return;
     }
 
-    // ✅ บันทึก history เป็นจำนวนคงเหลือทั้งรายการ
     const historyPayload = this.safeHistoryPayload(p, currentQty);
 
     this.historyService.create(historyPayload as any).subscribe({
       next: () => {
-        // ✅ ตัดสต๊อกทั้งรายการ -> 0
         const updated: Product = { ...p, quantity: 0 };
 
         this.inventoryService.update(p.id!, updated).subscribe({
@@ -342,21 +347,22 @@ export class InventoryComponent implements OnInit {
               text: 'อัปเดตสต๊อกไม่สำเร็จ',
               icon: 'error',
               confirmButtonColor: '#3085d6',
-              confirmButtonText: 'ตกลง',})
+              confirmButtonText: 'ตกลง',
+            }),
         });
       },
-      error: () => Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'บันทึกประวัติการขายไม่สำเร็จ',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      }),
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'บันทึกประวัติการขายไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
   /* ================= SEND SELECTED TO HISTORY (BULK) ================= */
-  // ✅ เปลี่ยนจาก "ขาย 1 ชิ้น/รายการ" -> "ตัดทั้งรายการ"
   sendSelectedToHistory() {
     const selected = [...(this.selectedProducts || [])];
 
@@ -413,12 +419,11 @@ export class InventoryComponent implements OnInit {
       const jobs = selected.map((p) => {
         const currentQty = this.toInt(p.quantity, 0);
 
-        // ✅ history เป็นจำนวนทั้งรายการ
+        // ✅ history payload: ใช้ date ของรายการ และ normalize ให้ชัวร์
         const historyPayload = this.safeHistoryPayload(p, currentQty);
 
         return this.historyService.create(historyPayload as any).pipe(
           switchMap(() => {
-            // ✅ ตัดสต๊อกทั้งรายการ -> 0
             const updated: Product = { ...p, quantity: 0 };
             return this.inventoryService.update(p.id!, updated);
           }),
@@ -436,7 +441,6 @@ export class InventoryComponent implements OnInit {
           const successCount = results.filter((x) => x.ok).length;
           const failList = results.filter((x) => !x.ok);
 
-          // ✅ เคลียร์ selection ทั้ง Set + array
           this.selectedIds.clear();
           this.selectedProducts = [];
           this.loadProducts();
@@ -474,18 +478,17 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  // ✅ ปรับให้รับ qty และใช้ qty เป็นจำนวนที่บันทึกลง history
+  /* ================= HISTORY PAYLOAD ================= */
   private safeHistoryPayload(p: Product, qty: number) {
     return {
       code: 'H' + Date.now() + '-' + Math.floor(Math.random() * 1000),
       name: p.name,
       category: p.category,
-      quantity: qty, // ✅ จากเดิม 1 -> เป็นจำนวนทั้งรายการ
+      quantity: qty,
       price: this.toInt(p.price, 0),
 
-      // ✅ ใช้วันที่ของรายการนั้นๆ แทนวันที่ปัจจุบัน
-      // กันพลาด: ถ้า p.date ว่าง/undefined จะ fallback เป็นวันนี้
-      date: p.date ? this.formatDate(p.date) : this.todayString(),
+      // ✅ ใช้วันที่ของรายการนั้นๆ และ normalize แบบยึดไทย
+      date: p.date ? this.normalizeYmd(p.date) : this.todayString(),
     };
   }
 
@@ -497,15 +500,9 @@ export class InventoryComponent implements OnInit {
     this.editIndex = index;
 
     const prepared = this.withTotal(p);
-    this.editProduct = { ...prepared, date: this.formatDate(prepared.date) };
-  }
 
-  private formatDate(date: string | Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    // ✅ ใส่ค่าให้ input type="date" (ต้องเป็น YYYY-MM-DD)
+    this.editProduct = { ...prepared, date: this.normalizeYmd(prepared.date) };
   }
 
   onSave(index: number) {
@@ -513,7 +510,7 @@ export class InventoryComponent implements OnInit {
 
     const payload: Product = this.withTotal({
       ...this.editProduct,
-      date: this.editProduct.date,
+      date: this.normalizeYmd(this.editProduct.date),
     });
 
     this.inventoryService.update(this.editProduct.id, payload).subscribe({
@@ -536,7 +533,14 @@ export class InventoryComponent implements OnInit {
           timerProgressBar: true,
         });
       },
-      error: () => Swal.fire({ title: 'ผิดพลาด', text: 'อัปเดตข้อมูลไม่สำเร็จ', icon: 'error', confirmButtonColor: '#3085d6', confirmButtonText: 'ตกลง' }),
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'อัปเดตข้อมูลไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
@@ -583,16 +587,49 @@ export class InventoryComponent implements OnInit {
               timerProgressBar: true,
             });
           },
-          error: () => Swal.fire({ 
-            title: 'ผิดพลาด', 
-            text: 'ลบรายการไม่สำเร็จ', 
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'ตกลง',
-          }),
+          error: () =>
+            Swal.fire({
+              title: 'ผิดพลาด',
+              text: 'ลบรายการไม่สำเร็จ',
+              icon: 'error',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'ตกลง',
+            }),
         });
       }
     });
+  }
+
+  /* ================= DATE HELPERS (FIX TIMEZONE) ================= */
+
+  /**
+   * ✅ คืนค่า YYYY-MM-DD แบบ "ไม่เลื่อนวัน" (ยึด Asia/Bangkok)
+   * - ถ้าเป็น YYYY-MM-DD อยู่แล้วจะคืนเดิม
+   * - ถ้าเป็น dd/mm/yyyy จะ normalize
+   * - ถ้าเป็น ISO/datetime จะตัดวันตามไทย
+   */
+  private normalizeYmd(date: string | Date): string {
+    if (!date) return this.todayString();
+
+    if (typeof date === 'string') {
+      // already ymd
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+
+      // dd/mm/yyyy -> ymd
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+        const [dd, mm, yyyy] = date.split('/');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    }
+
+    const d = new Date(date);
+    // en-CA = YYYY-MM-DD
+    return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+  }
+
+  /** ✅ วันนี้แบบไทย (YYYY-MM-DD) ไม่โดน UTC */
+  private todayString(): string {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 
   /* ================= UTILS ================= */
@@ -603,14 +640,10 @@ export class InventoryComponent implements OnInit {
       category: '',
       quantity: 1,
       price: 0,
-      date: this.todayString(),
+      date: this.todayString(), // ✅ วันนี้ตามไทย
       total: 0,
     };
     return this.withTotal(p);
-  }
-
-  private todayString(): string {
-    return new Date().toISOString().split('T')[0];
   }
 
   private isValidProduct(p: Product): boolean {
