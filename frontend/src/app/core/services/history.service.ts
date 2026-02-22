@@ -10,6 +10,7 @@ export interface Product {
   quantity: number;
   price: number;
   date: string; // yyyy-MM-dd
+  total?: number;
 }
 
 @Injectable({

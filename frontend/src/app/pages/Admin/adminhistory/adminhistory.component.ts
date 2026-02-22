@@ -18,6 +18,7 @@ export interface Product {
   quantity: number;
   price: number;
   date: string; // ✅ string กัน timezone
+  total?: number; // ✅ ต้องมี field จริงเพื่อให้ sort ได้
 }
 
 @Component({
@@ -27,7 +28,7 @@ export interface Product {
   templateUrl: './adminhistory.component.html',
   styleUrl: './adminhistory.component.scss',
 })
-export class AdminhistoryComponent  implements OnInit {
+export class AdminhistoryComponent implements OnInit {
   // ===== TABLE / EDIT =====
   editIndex: number | null = null;
   editProduct: Product | null = null;
@@ -63,31 +64,38 @@ export class AdminhistoryComponent  implements OnInit {
     const items = history.state?.items as Product[] | undefined;
 
     if (Array.isArray(items) && items.length > 0) {
-      // ✅ ใช้ข้อมูลที่ส่งมา (แสดงทันที) + normalize date
-      this.products = items.map((x) => ({
-        ...x,
-        quantity: Number((x as any).quantity ?? 0),
-        price: Number((x as any).price ?? 0),
-        date: this.normalizeYmd((x as any).date), // ✅ กันวันที่เพี้ยน
-      }));
+      // ✅ ใช้ข้อมูลที่ส่งมา + normalize + ใส่ total
+      this.products = this.withTotal(items);
       this.filteredProducts = [...this.products];
     } else {
       this.loadProducts();
     }
   }
 
+  /* ================= TOTAL NORMALIZER ================= */
+  // ✅ รวมทุกอย่างไว้ฟังก์ชันเดียว: normalize quantity/price/date + ใส่ total
+  private withTotal(list: Product[]): Product[] {
+    return (list || []).map((x) => {
+      const quantity = Number((x as any).quantity ?? 0) || 0;
+      const price = Number((x as any).price ?? 0) || 0;
+      const date = this.normalizeYmd((x as any).date);
+
+      return {
+        ...x,
+        quantity,
+        price,
+        date,
+        total: quantity * price, // ✅ field จริงเพื่อ sort
+      };
+    });
+  }
+
   /* ================= LOAD ================= */
   loadProducts() {
     this.historyService.getAll().subscribe({
       next: (res) => {
-        // ✅ normalize date ทุกแถว กัน timezone เลื่อนวัน
-        this.products = (res || []).map((x) => ({
-          ...x,
-          quantity: Number((x as any).quantity ?? 0),
-          price: Number((x as any).price ?? 0),
-          date: this.normalizeYmd((x as any).date),
-        }));
-
+        // ✅ normalize + ใส่ total ทุกแถว
+        this.products = this.withTotal(res || []);
         this.filteredProducts = [...this.products];
 
         // ✅ กัน selected ค้างผิด (เช่น ลบจาก DB แล้ว)
@@ -95,13 +103,14 @@ export class AdminhistoryComponent  implements OnInit {
           this.filteredProducts.some((p) => this.sameRow(p, s))
         );
       },
-      error: () => Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'โหลดข้อมูลไม่สำเร็จ',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      }),
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'โหลดข้อมูลไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
@@ -142,8 +151,14 @@ export class AdminhistoryComponent  implements OnInit {
       return;
     }
 
+    const quantity = Number((this.newProduct as any).quantity ?? 0) || 0;
+    const price = Number((this.newProduct as any).price ?? 0) || 0;
+
     const payload: Product = {
       ...this.newProduct,
+      quantity,
+      price,
+      total: quantity * price, // ✅ ใส่ total ตั้งแต่สร้าง
       code: 'P' + Date.now(),
     };
 
@@ -189,15 +204,23 @@ export class AdminhistoryComponent  implements OnInit {
       ...p,
       // ✅ ให้ input type="date" ได้ค่า YYYY-MM-DD แบบไม่เพี้ยน
       date: this.normalizeYmd(p.date),
+      // ✅ กัน total หาย/ไม่ตรง
+      total: (Number(p.quantity) || 0) * (Number(p.price) || 0),
     };
   }
 
   onSave(index: number) {
     if (!this.editProduct?.id) return;
 
+    const quantity = Number((this.editProduct as any).quantity ?? 0) || 0;
+    const price = Number((this.editProduct as any).price ?? 0) || 0;
+
     const payload: Product = {
       ...this.editProduct,
+      quantity,
+      price,
       date: this.normalizeYmd(this.editProduct.date), // ✅ normalize ก่อนส่ง
+      total: quantity * price, // ✅ สำคัญ: คำนวณก่อนอัปเดต state
     };
 
     this.historyService.update(this.editProduct.id, payload).subscribe({
@@ -228,13 +251,14 @@ export class AdminhistoryComponent  implements OnInit {
           timerProgressBar: true,
         });
       },
-      error: () => Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'ไม่สามารถบันทึกข้อมูลได้',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      }),
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'ไม่สามารถบันทึกข้อมูลได้',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
     });
   }
 
@@ -286,13 +310,14 @@ export class AdminhistoryComponent  implements OnInit {
             timerProgressBar: true,
           });
         },
-        error: () => Swal.fire({
-          title: 'ผิดพลาด',
-          text: 'ลบรายการไม่สำเร็จ',
-          icon: 'error',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'ตกลง',
-        }),
+        error: () =>
+          Swal.fire({
+            title: 'ผิดพลาด',
+            text: 'ลบรายการไม่สำเร็จ',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'ตกลง',
+          }),
       });
     });
   }
@@ -357,11 +382,12 @@ export class AdminhistoryComponent  implements OnInit {
     }
 
     const data = this.selectedProducts.map((p) => ({
-      วันที่: this.formatThDate(p.date), // ✅ ใช้ตัวนี้กันเลื่อนวัน
+      วันที่: this.formatThDate(p.date),
       ชื่อสินค้า: p.name,
       หมวดหมู่: p.category,
       จำนวน: p.quantity,
       ราคา: p.price,
+      ราคารวม: p.total ?? (Number(p.quantity) || 0) * (Number(p.price) || 0), // ✅ เพิ่มใน export ด้วย
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -371,20 +397,12 @@ export class AdminhistoryComponent  implements OnInit {
   }
 
   /* ================= DATE HELPERS (FIX TIMEZONE) ================= */
-
-  /**
-   * คืนค่า YYYY-MM-DD แบบ "ไม่เลื่อนวัน" (ยึด Asia/Bangkok)
-   * - ถ้าเป็น YYYY-MM-DD อยู่แล้วจะคืนเดิม
-   * - ถ้าเป็น 20/02/2026 หรือ Date จะ normalize ให้ถูก
-   */
   private normalizeYmd(date: string | Date): string {
     if (!date) return this.todayString();
 
     if (typeof date === 'string') {
-      // already ymd
       if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
 
-      // dd/mm/yyyy -> ymd
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
         const [dd, mm, yyyy] = date.split('/');
         return `${yyyy}-${mm}-${dd}`;
@@ -392,14 +410,11 @@ export class AdminhistoryComponent  implements OnInit {
     }
 
     const d = new Date(date);
-    // en-CA = YYYY-MM-DD
     return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 
-  /** แสดงวันที่ไทยแบบไม่เลื่อนวัน */
   private formatThDate(date: string | Date): string {
     const ymd = this.normalizeYmd(date);
-    // ทำให้เป็น Date ที่ไม่โดน timezone shift: ใส่ T00:00:00
     const d = new Date(`${ymd}T00:00:00`);
     return d.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' });
   }
@@ -413,11 +428,11 @@ export class AdminhistoryComponent  implements OnInit {
       quantity: 0,
       price: 0,
       date: this.todayString(),
+      total: 0, // ✅ ใส่ไว้ไม่เสียหาย
     };
   }
 
   private todayString(): string {
-    // ✅ ให้เป็น YYYY-MM-DD แบบไทยด้วย (กันเลื่อนวัน)
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 
