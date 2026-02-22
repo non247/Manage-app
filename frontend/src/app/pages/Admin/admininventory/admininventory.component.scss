@@ -1,0 +1,489 @@
+/* ================= LAYOUT ================= */
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+app-sidebar-user {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+.main-content {
+  padding: 20px;
+  margin-left: 90px;
+}
+
+/* ================= TOP NAV ================= */
+.top-navbar {
+  padding: 15px 20px;
+  border-radius: 15px;
+  color: #d81b60;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ================= TABLE BOX ================= */
+.table-box {
+  padding: 20px;
+  background: #ffd6e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+  height: 620px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= TABLE ================= */
+.main-content p-table {
+  margin-top: 30px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ✅ ล็อกความสูงภายใน datatable และดัน paginator ติดล่าง */
+:host ::ng-deep .p-datatable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden; /* ไม่อยากให้มี scroll ในตาราง */
+  background: #fff;
+}
+
+:host ::ng-deep .p-datatable .p-paginator {
+  margin-top: auto;
+}
+
+/* ✅ PrimeNG table style */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: center;
+  padding: 11px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+  padding: 11px;
+  font-size: 23px;
+}
+
+:host ::ng-deep .p-datatable tbody td {
+  text-align: center;
+  padding: 12px;
+}
+
+/* ================= HEADER ================= */
+.header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.title {
+  color: #d81b60;
+  margin: 0;
+}
+
+/* ================= BUTTONS ================= */
+.btn-add {
+  background-color: #d81b60;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  width: 150px;
+  height: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn-add:hover {
+  background-color: #e85c94;
+}
+
+/* ✅ ปุ่ม history: คงเดิม ไม่ไปแตะ */
+.btn-history {
+  background-color: #231aa7;
+  color: #fff;
+  width: 180px;
+  height: 40px;
+  font-size: 18px;
+  padding: 0 12px;
+  border-radius: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 6px;
+}
+
+.bubble {
+  position: absolute;
+  top: -8px;
+  right: -5px;
+
+  background: #ff3b5c;
+  color: #fff;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  padding: 2px 6px;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+
+}
+
+.btn-history:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ✅ NEW: ปุ่ม icon-only เฉพาะในตาราง (ไม่กระทบปุ่มอื่น เช่น ประวัติ) */
+:host ::ng-deep .p-datatable .btn-edit,
+:host ::ng-deep .p-datatable .btn-delete,
+:host ::ng-deep .p-datatable .btn-save,
+:host ::ng-deep .p-datatable .btn-cancel {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+
+  background: transparent !important;
+  box-shadow: none !important;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+
+  cursor: pointer;
+}
+
+/* สีของ icon (เฉพาะในตาราง) */
+:host ::ng-deep .p-datatable .btn-edit   { color: #1e3a8a !important; }
+:host ::ng-deep .p-datatable .btn-delete { color: #d21515 !important; }
+:host ::ng-deep .p-datatable .btn-save   { color: #1e8a39 !important; }
+:host ::ng-deep .p-datatable .btn-cancel { color: #d21515 !important; }
+
+/* ขนาด icon */
+:host ::ng-deep .p-datatable .btn-edit i,
+:host ::ng-deep .p-datatable .btn-delete i,
+:host ::ng-deep .p-datatable .btn-save i,
+:host ::ng-deep .p-datatable .btn-cancel i {
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* hover เฉพาะในตาราง */
+:host ::ng-deep .p-datatable .btn-edit:hover,
+:host ::ng-deep .p-datatable .btn-delete:hover,
+:host ::ng-deep .p-datatable .btn-save:hover,
+:host ::ng-deep .p-datatable .btn-cancel:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* focus เฉพาะในตาราง */
+:host ::ng-deep .p-datatable .btn-edit:focus,
+:host ::ng-deep .p-datatable .btn-delete:focus,
+:host ::ng-deep .p-datatable .btn-save:focus,
+:host ::ng-deep .p-datatable .btn-cancel:focus {
+  outline: none;
+}
+:host ::ng-deep .p-datatable .btn-edit:focus-visible,
+:host ::ng-deep .p-datatable .btn-delete:focus-visible,
+:host ::ng-deep .p-datatable .btn-save:focus-visible,
+:host ::ng-deep .p-datatable .btn-cancel:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.25);
+  outline-offset: 2px;
+}
+
+
+
+/* ================= INPUT ================= */
+input[type='text'],
+input[type='number'],
+input[type='date'],
+select {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 23px;
+  text-align: center;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* ===== DROPDOWN ARROW ===== */
+select {
+  padding-right: 35px;
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: #fff;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23999' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 7l4.5 4.5L14.5 7'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 18px;
+}
+
+select:focus {
+  border-color: #000;
+}
+
+select option:disabled {
+  color: #aaa;
+}
+
+/* ================= EDIT ROW ================= */
+tr.editing {
+  background-color: #fff3cd;
+}
+
+/* ================= SEARCH (UPDATED) ================= */
+.search-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+
+  position: relative;
+}
+
+/* ไอคอน search (bootstrap icon) */
+.search-wrap .bi-search {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+/* input search */
+.search-input {
+  flex: 1;              /* ✅ ยืดกินที่ว่าง */
+  min-width: 280px;
+  max-width: 30%;
+  height: 46px;
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem; /* เผื่อไอคอนซ้าย */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+/* ✅ จอเล็ก: search เต็มบรรทัด */
+@media (max-width: 768px) {
+  .search-input {
+    flex: 1 1 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+}/* ================= CREATE CARD ================= */
+.create-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 520px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 2000;
+
+  opacity: 0;
+  animation: scaleFadeIn 0.3s ease forwards;
+}
+
+.create-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  color: #d81b60;
+}
+
+.create-card-body {
+  padding: 20px;
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.field.full {
+  grid-column: span 2;
+}
+
+.create-card-footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* ================= BACKDROP ================= */
+.create-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+  animation: fadeIn 0.25s ease;
+}
+
+/* ================= SWEETALERT ================= */
+::ng-deep .swal2-container {
+  z-index: 3000 !important;
+}
+
+/* ================= ANIMATION ================= */
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== CLOSE ===== */
+.create-card.closing {
+  animation: scaleFadeOut 0.25s ease forwards;
+}
+
+.create-backdrop.closing {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+@keyframes scaleFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ================= FORM FOOTER (ปุ่มในฟอร์มเท่านั้น) ================= */
+/* ================= FORM FOOTER ================= */
+.create-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;                 /* ระยะห่างระหว่างปุ่ม */
+  padding: 20px 26px 24px;   /* เว้นขอบล่าง/ขวา */
+}
+
+/* ================= FORM BUTTON ================= */
+.create-card-footer .btn-save,
+.create-card-footer .btn-cancel {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+    min-width: 150px;   /* 🔹 ความกว้างปุ่ม */
+  height: 48px;       /* 🔹 ความสูงปุ่ม */
+  gap: 8px;
+   padding: 0 16px;    /* 🔹 ระยะด้านใน */
+   
+
+
+  min-width: 130px;          /* ✅ ความกว้างปุ่ม */
+  height: 45px;              /* ✅ ความสูงปุ่ม */
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  font-size: 20px;           /* ✅ ข้อความใหญ่ */
+  font-weight: 700;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+/* สีปุ่ม */
+.create-card-footer .btn-save {
+  background: #1e8a39;
+}
+
+.create-card-footer .btn-cancel {
+  background: #d21515;
+}
+
+/* icon ในปุ่ม */
+.create-card-footer .btn-save i,
+.create-card-footer .btn-cancel i {
+  font-size: 26px;           /* ✅ icon ใหญ่ */
+  color: #fff;
+}

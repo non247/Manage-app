@@ -7,9 +7,11 @@ import { InventoryComponent } from './pages/User/inventory/inventory.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ModelComponent } from './pages/model/model.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { AdminInventoryComponent } from './pages/Admin/admininventory/admininventory.component';
 
 import { AuthGuard } from './core/Auth/auth.guard';
 import { RoleGuard } from './core/Auth/auth.role';
+import { AdminhistoryComponent } from './pages/Admin/adminhistory/adminhistory.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -49,6 +51,19 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'admin' },
   },
+
+  {
+  path: 'admininventory',
+  component: AdminInventoryComponent,
+  canActivate: [AuthGuard, RoleGuard],
+  data: { role: 'admin' },
+},
+  {
+  path: 'adminhistory',
+  component: AdminhistoryComponent,
+  canActivate: [AuthGuard, RoleGuard],
+  data: { role: 'admin' },
+},
   {
     path: 'usermanagement',
     component: UsermanagementComponent,

@@ -28,6 +28,34 @@
         </a>
       </li>
 
+      <!-- Admin Inventory -->
+      <li routerLink="/admininventory" routerLinkActive="active">
+        <a (click)="navigateTo('/admininventory')">
+          <i class="bi bi-clipboard2-fill" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            รายการสินค้า
+          </span>
+        </a>
+      </li>
+
+      <!-- Admin History -->
+      <li routerLink="/adminhistory" routerLinkActive="active">
+        <a (click)="navigateTo('/adminhistory')">
+          <i class="bi bi-clock-fill" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            ประวัติการใช้งาน
+          </span>
+        </a>
+      </li>
+
       <!-- Usermanagement -->
       <li routerLink="/usermanagement" routerLinkActive="active">
         <a (click)="navigateTo('/usermanagement')">
