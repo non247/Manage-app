@@ -61,10 +61,12 @@ export class AdminhistoryComponent implements OnInit {
 
   /* ================= INIT ================= */
   ngOnInit(): void {
-    const items = history.state?.items as Product[] | undefined;
+    // ✅ SSR-safe: ไม่ใช้ history.state (จะพังว่า history is not defined)
+    const nav = this.router.getCurrentNavigation();
+    const items = (nav?.extras?.state as any)?.items as Product[] | undefined;
 
     if (Array.isArray(items) && items.length > 0) {
-      // ✅ ใช้ข้อมูลที่ส่งมา + normalize + ใส่ total
+      // ✅ ใช้ข้อมูลที่ส่งมา (แสดงทันที) + normalize + total
       this.products = this.withTotal(items);
       this.filteredProducts = [...this.products];
     } else {
@@ -73,7 +75,7 @@ export class AdminhistoryComponent implements OnInit {
   }
 
   /* ================= TOTAL NORMALIZER ================= */
-  // ✅ รวมทุกอย่างไว้ฟังก์ชันเดียว: normalize quantity/price/date + ใส่ total
+  // ✅ normalize quantity/price/date + ใส่ total ให้เป็น field จริง
   private withTotal(list: Product[]): Product[] {
     return (list || []).map((x) => {
       const quantity = Number((x as any).quantity ?? 0) || 0;
@@ -85,7 +87,7 @@ export class AdminhistoryComponent implements OnInit {
         quantity,
         price,
         date,
-        total: quantity * price, // ✅ field จริงเพื่อ sort
+        total: quantity * price, // ✅ สำคัญ: ให้ sort total ได้
       };
     });
   }
@@ -94,7 +96,7 @@ export class AdminhistoryComponent implements OnInit {
   loadProducts() {
     this.historyService.getAll().subscribe({
       next: (res) => {
-        // ✅ normalize + ใส่ total ทุกแถว
+        // ✅ normalize + total ทุกแถว
         this.products = this.withTotal(res || []);
         this.filteredProducts = [...this.products];
 
@@ -156,10 +158,10 @@ export class AdminhistoryComponent implements OnInit {
 
     const payload: Product = {
       ...this.newProduct,
+      code: 'P' + Date.now(),
       quantity,
       price,
       total: quantity * price, // ✅ ใส่ total ตั้งแต่สร้าง
-      code: 'P' + Date.now(),
     };
 
     this.historyService.create(payload).subscribe({
@@ -220,7 +222,7 @@ export class AdminhistoryComponent implements OnInit {
       quantity,
       price,
       date: this.normalizeYmd(this.editProduct.date), // ✅ normalize ก่อนส่ง
-      total: quantity * price, // ✅ สำคัญ: คำนวณก่อนอัปเดต state
+      total: quantity * price, // ✅ สำคัญ: update total ก่อนอัปเดต array
     };
 
     this.historyService.update(this.editProduct.id, payload).subscribe({
@@ -387,7 +389,7 @@ export class AdminhistoryComponent implements OnInit {
       หมวดหมู่: p.category,
       จำนวน: p.quantity,
       ราคา: p.price,
-      ราคารวม: p.total ?? (Number(p.quantity) || 0) * (Number(p.price) || 0), // ✅ เพิ่มใน export ด้วย
+      ราคารวม: p.total ?? (Number(p.quantity) || 0) * (Number(p.price) || 0),
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -428,7 +430,7 @@ export class AdminhistoryComponent implements OnInit {
       quantity: 0,
       price: 0,
       date: this.todayString(),
-      total: 0, // ✅ ใส่ไว้ไม่เสียหาย
+      total: 0,
     };
   }
 
