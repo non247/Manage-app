@@ -28,7 +28,7 @@ app-sidebar-user {
 
 /* ✅ กันความกว้างเกินจอจาก margin-left */
 .main-content {
-  padding: 24px;                // ⭐ เพิ่ม spacing รอบหน้า
+  padding: 24px; // ⭐ เพิ่ม spacing รอบหน้า
   margin-left: 90px;
   max-width: calc(100vw - 90px);
   box-sizing: border-box;
@@ -38,14 +38,14 @@ app-sidebar-user {
 .top-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;                   // ⭐ เพิ่มช่องไฟ
+  gap: 24px; // ⭐ เพิ่มช่องไฟ
   margin-bottom: 32px;
 }
 
 .card {
   background-color: #ffd6e0;
   border-radius: 16px;
-  padding: 24px;               // ⭐ card ดูโล่งขึ้น
+  padding: 24px; // ⭐ card ดูโล่งขึ้น
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 
   display: flex;
@@ -73,9 +73,9 @@ app-sidebar-user {
   background-color: #ffffff;
   border-radius: 16px;
   height: 420px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 
-  padding: 24px 28px;        // ⭐ สำคัญ: เว้นจากขอบ card
+  padding: 24px 28px; // ⭐ สำคัญ: เว้นจากขอบ card
 
   display: flex;
   flex-direction: column;
@@ -134,8 +134,8 @@ app-sidebar-user {
   width: 100% !important;
   height: 100% !important;
 
-  padding-right: 10px;   // ⭐ กัน legend ชิดขวา
-  padding-left: 6px;     // ⭐ กันแกน Y ชิดซ้าย
+  padding-right: 10px; // ⭐ กัน legend ชิดขวา
+  padding-left: 6px; // ⭐ กันแกน Y ชิดซ้าย
 }
 
 /* ===== RESPONSIVE ===== */

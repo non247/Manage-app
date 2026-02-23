@@ -162,7 +162,6 @@ app-sidebar-user {
   border-radius: 20px;
   min-width: 18px;
   text-align: center;
-
 }
 
 .btn-history:disabled {
@@ -193,10 +192,18 @@ app-sidebar-user {
 }
 
 /* สีของ icon (เฉพาะในตาราง) */
-:host ::ng-deep .p-datatable .btn-edit   { color: #1e3a8a !important; }
-:host ::ng-deep .p-datatable .btn-delete { color: #d21515 !important; }
-:host ::ng-deep .p-datatable .btn-save   { color: #1e8a39 !important; }
-:host ::ng-deep .p-datatable .btn-cancel { color: #d21515 !important; }
+:host ::ng-deep .p-datatable .btn-edit {
+  color: #1e3a8a !important;
+}
+:host ::ng-deep .p-datatable .btn-delete {
+  color: #d21515 !important;
+}
+:host ::ng-deep .p-datatable .btn-save {
+  color: #1e8a39 !important;
+}
+:host ::ng-deep .p-datatable .btn-cancel {
+  color: #d21515 !important;
+}
 
 /* ขนาด icon */
 :host ::ng-deep .p-datatable .btn-edit i,
@@ -229,8 +236,6 @@ app-sidebar-user {
   outline: 2px solid rgba(0, 0, 0, 0.25);
   outline-offset: 2px;
 }
-
-
 
 /* ================= INPUT ================= */
 input[type='text'],
@@ -303,7 +308,7 @@ tr.editing {
 
 /* input search */
 .search-input {
-  flex: 1;              /* ✅ ยืดกินที่ว่าง */
+  flex: 1; /* ✅ ยืดกินที่ว่าง */
   min-width: 280px;
   max-width: 30%;
   height: 46px;
@@ -322,7 +327,7 @@ tr.editing {
     min-width: 100%;
     max-width: 100%;
   }
-}/* ================= CREATE CARD ================= */
+} /* ================= CREATE CARD ================= */
 .create-card {
   position: fixed;
   top: 50%;
@@ -405,8 +410,12 @@ tr.editing {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ===== CLOSE ===== */
@@ -430,8 +439,12 @@ tr.editing {
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* ================= FORM FOOTER (ปุ่มในฟอร์มเท่านั้น) ================= */
@@ -440,32 +453,30 @@ tr.editing {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 18px;                 /* ระยะห่างระหว่างปุ่ม */
-  padding: 20px 26px 24px;   /* เว้นขอบล่าง/ขวา */
+  gap: 18px; /* ระยะห่างระหว่างปุ่ม */
+  padding: 20px 26px 24px; /* เว้นขอบล่าง/ขวา */
 }
 
 /* ================= FORM BUTTON ================= */
 .create-card-footer .btn-save,
 .create-card-footer .btn-cancel {
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-    min-width: 150px;   /* 🔹 ความกว้างปุ่ม */
-  height: 48px;       /* 🔹 ความสูงปุ่ม */
+  min-width: 150px; /* 🔹 ความกว้างปุ่ม */
+  height: 48px; /* 🔹 ความสูงปุ่ม */
   gap: 8px;
-   padding: 0 16px;    /* 🔹 ระยะด้านใน */
-   
+  padding: 0 16px; /* 🔹 ระยะด้านใน */
 
-
-  min-width: 130px;          /* ✅ ความกว้างปุ่ม */
-  height: 45px;              /* ✅ ความสูงปุ่ม */
+  min-width: 130px; /* ✅ ความกว้างปุ่ม */
+  height: 45px; /* ✅ ความสูงปุ่ม */
 
   padding: 0 20px;
 
   border: none;
   border-radius: 14px;
 
-  font-size: 20px;           /* ✅ ข้อความใหญ่ */
+  font-size: 20px; /* ✅ ข้อความใหญ่ */
   font-weight: 700;
   color: #fff;
 
@@ -484,6 +495,6 @@ tr.editing {
 /* icon ในปุ่ม */
 .create-card-footer .btn-save i,
 .create-card-footer .btn-cancel i {
-  font-size: 26px;           /* ✅ icon ใหญ่ */
+  font-size: 26px; /* ✅ icon ใหญ่ */
   color: #fff;
 }

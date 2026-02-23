@@ -41,11 +41,12 @@ export class UsermanagementComponent implements OnInit {
   loadUsers() {
     this.userService.getUsers().subscribe({
       next: (data: User[]) => (this.users = data),
-      error: () => Swal.fire({
-        title: 'Error',
-        text: 'โหลดผู้ใช้ไม่สำเร็จ',
-        icon: 'error',
-      }),
+      error: () =>
+        Swal.fire({
+          title: 'Error',
+          text: 'โหลดผู้ใช้ไม่สำเร็จ',
+          icon: 'error',
+        }),
     });
   }
 

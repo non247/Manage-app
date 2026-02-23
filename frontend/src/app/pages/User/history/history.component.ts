@@ -24,7 +24,13 @@ export interface Product {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [TableModule, MultiSelectModule, FormsModule, CommonModule, CheckboxModule],
+  imports: [
+    TableModule,
+    MultiSelectModule,
+    FormsModule,
+    CommonModule,
+    CheckboxModule,
+  ],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
@@ -342,9 +348,12 @@ export class HistoryComponent implements OnInit {
     const checked = (event.target as HTMLInputElement).checked;
 
     if (checked) {
-      if (!this.isSelected(p)) this.selectedProducts = [...this.selectedProducts, p];
+      if (!this.isSelected(p))
+        this.selectedProducts = [...this.selectedProducts, p];
     } else {
-      this.selectedProducts = this.selectedProducts.filter((x) => !this.sameRow(x, p));
+      this.selectedProducts = this.selectedProducts.filter(
+        (x) => !this.sameRow(x, p)
+      );
     }
   }
 
@@ -451,6 +460,12 @@ export class HistoryComponent implements OnInit {
   }
 
   private isValidProduct(p: Product): boolean {
-    return !!(p.name && p.category && p.quantity >= 0 && p.price >= 0 && p.date);
+    return !!(
+      p.name &&
+      p.category &&
+      p.quantity >= 0 &&
+      p.price >= 0 &&
+      p.date
+    );
   }
 }

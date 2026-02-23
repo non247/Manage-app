@@ -185,7 +185,9 @@ export class AdminInventoryComponent implements OnInit {
       this.filteredProducts = [...this.products];
     } else {
       this.filteredProducts = this.mapWithTotal(
-        this.products.filter((p) => this.selectedCategories.includes(p.category))
+        this.products.filter((p) =>
+          this.selectedCategories.includes(p.category)
+        )
       );
     }
 
@@ -406,8 +408,7 @@ export class AdminInventoryComponent implements OnInit {
     Swal.fire({
       title: `ยืนยันส่งไปหน้าประวัติ
       ${selected.length} รายการ?`,
-      html:
-        '<span>ระบบจะ <b style="color:#d81b60;">ตัดรายการ</b> ต่อ 1 สินค้าที่เลือก และบันทึกลงประวัติการขาย</span>',
+      html: '<span>ระบบจะ <b style="color:#d81b60;">ตัดรายการ</b> ต่อ 1 สินค้าที่เลือก และบันทึกลงประวัติการขาย</span>',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -568,8 +569,7 @@ export class AdminInventoryComponent implements OnInit {
 
     Swal.fire({
       title: 'ยืนยันที่จะลบ?',
-      html:
-        '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -649,6 +649,12 @@ export class AdminInventoryComponent implements OnInit {
   }
 
   private isValidProduct(p: Product): boolean {
-    return !!(p.name && p.category && p.quantity >= 1 && p.price >= 0 && p.date);
+    return !!(
+      p.name &&
+      p.category &&
+      p.quantity >= 1 &&
+      p.price >= 0 &&
+      p.date
+    );
   }
 }
