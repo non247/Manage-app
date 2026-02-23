@@ -41,24 +41,24 @@ exports.getDashboard = async (req, res) => {
 
     // 4️⃣ สินค้าขายดีที่สุด
     const topSellerResult = await pool.query(`
-        SELECT 
-    name,
-    SUM(quantity) AS sold,
-    SUM(price * quantity) AS total_sales
-  FROM "History"
-  GROUP BY name
-  ORDER BY total_sales DESC
-  LIMIT 5
+      SELECT 
+        name,
+        SUM(quantity) AS sold,
+        SUM(price * quantity) AS total_sales
+      FROM "History"
+      GROUP BY name
+      ORDER BY total_sales DESC
+      LIMIT 5
     `);
 
     const productChartResult = await pool.query(`
-         SELECT 
-    name,
-    SUM(quantity) AS sold,
-    SUM(price * quantity) AS total_sales
-  FROM "History"
-  GROUP BY name
-  ORDER BY total_sales DESC
+      SELECT 
+        name,
+        SUM(quantity) AS sold,
+        SUM(price * quantity) AS total_sales
+      FROM "History"
+      GROUP BY name
+      ORDER BY total_sales DESC
 `);
 
     res.status(200).json({

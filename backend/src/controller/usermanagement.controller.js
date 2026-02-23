@@ -22,9 +22,10 @@ exports.getUserById = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT "Id", "Username", "Role"
-       FROM public."User"
-       WHERE "Id" = $1`,
+      `
+      SELECT "Id", "Username", "Role"
+      FROM public."User"
+      WHERE "Id" = $1`,
       [id]
     );
 
@@ -61,8 +62,8 @@ exports.createUser = async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO public."User" ("Username", "Password", "Role")
-       VALUES ($1, $2, $3)
-       RETURNING "Id", "Username", "Role"`,
+      VALUES ($1, $2, $3)
+      RETURNING "Id", "Username", "Role"`,
       [Username, hash, Role || 'user']
     );
 
@@ -85,10 +86,9 @@ exports.updateUser = async (req, res) => {
 
     const result = await pool.query(
       `UPDATE public."User"
-       SET "Username" = $1,
-           "Role" = $2
-       WHERE "Id" = $3
-       RETURNING "Id", "Username", "Role"`,
+      SET "Username" = $1,"Role" = $2
+      WHERE "Id" = $3
+      RETURNING "Id", "Username", "Role"`,
       [Username, Role, id]
     );
 

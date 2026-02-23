@@ -24,8 +24,6 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason) => {
   console.error('🧨 unhandledRejection:', reason);
 });
-// =======================================
-
 
 const express = require('express');
 const cors = require('cors');
@@ -36,7 +34,6 @@ const history = require('./src/route/history.route');
 const inventory = require('./src/route/inventory.route');
 const authRoutes = require('./src/route/auth.route');
 const product = require('./src/route/product.route');
-const path = require('node:path');
 
 const app = express();
 app.use(cors());
@@ -62,9 +59,26 @@ try {
   console.error('❌ dashboard mount fail', e);
 }
 
-try { app.use('/api/history', history); console.log('✅ history mounted'); } catch (e) { console.error('❌ history mount fail', e); }
-try { app.use('/api/inventory', inventory); console.log('✅ inventory mounted'); } catch (e) { console.error('❌ inventory mount fail', e); }
-try { app.use('/api/products', product); console.log('✅ products mounted'); } catch (e) { console.error('❌ products mount fail', e); }
+try {
+  app.use('/api/history', history);
+  console.log('✅ history mounted');
+} catch (e) {
+  console.error('❌ history mount fail', e);
+}
+
+try {
+  app.use('/api/inventory', inventory);
+  console.log('✅ inventory mounted');
+} catch (e) {
+  console.error('❌ inventory mount fail', e);
+}
+
+try {
+  app.use('/api/products', product);
+  console.log('✅ products mounted');
+} catch (e) {
+  console.error('❌ products mount fail', e);
+}
 
 const server = app.listen(3000, () => console.log('server 3000'));
 
