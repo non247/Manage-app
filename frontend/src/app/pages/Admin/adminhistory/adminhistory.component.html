@@ -133,7 +133,7 @@
           [rows]="10"
           [paginator]="true"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ"
+          currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
           [globalFilterFields]="[
             'name',
             'category',
@@ -254,7 +254,6 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <!-- ✅ เดิม colspan="6" แต่ตอนนี้มี 6 คอลัมน์พอดี -->
               <td colspan="6">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>

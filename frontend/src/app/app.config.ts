@@ -1,6 +1,7 @@
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideClientHydration } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { definePreset, palette } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
 
     // ✅ แก้ตรงนี้
     provideHttpClient(withFetch()),
-
+    provideAnimationsAsync(),
     providePrimeNG({
       theme: {
         preset: MyPreset,

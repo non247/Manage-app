@@ -347,13 +347,21 @@ export class InventoryComponent implements OnInit {
   /* ================= SELL ONE (CUT BY QTY) ================= */
   sellOne(p: Product) {
     if (!p.id) {
-      Swal.fire({ title: 'ผิดพลาด', text: 'ไม่พบ ID ของสินค้า', icon: 'error' });
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่พบ ID ของสินค้า',
+        icon: 'error',
+      });
       return;
     }
 
     const currentQty = this.toInt(p.quantity, 0);
     if (currentQty <= 0) {
-      Swal.fire({ title: 'สินค้าหมด', text: 'ไม่สามารถขายได้', icon: 'warning' });
+      Swal.fire({
+        title: 'สินค้าหมด',
+        text: 'ไม่สามารถขายได้',
+        icon: 'warning',
+      });
       return;
     }
 
@@ -363,7 +371,11 @@ export class InventoryComponent implements OnInit {
     const sellQty = Math.min(wantSell, currentQty);
 
     if (sellQty <= 0) {
-      Swal.fire({ title: 'แจ้งเตือน', text: 'จำนวนขายต้องมากกว่า 0', icon: 'info' });
+      Swal.fire({
+        title: 'แจ้งเตือน',
+        text: 'จำนวนขายต้องมากกว่า 0',
+        icon: 'info',
+      });
       return;
     }
 
@@ -378,14 +390,26 @@ export class InventoryComponent implements OnInit {
         this.inventoryService.update(p.id!, updated).subscribe({
           next: () => {
             this.loadProducts();
-            Swal.fire('สำเร็จ', `บันทึกการขายแล้ว (ตัด ${sellQty} ชิ้น)`, 'success');
+            Swal.fire(
+              'สำเร็จ',
+              `บันทึกการขายแล้ว (ตัด ${sellQty} ชิ้น)`,
+              'success'
+            );
           },
           error: () =>
-            Swal.fire({ title: 'ผิดพลาด', text: 'อัปเดตสต๊อกไม่สำเร็จ', icon: 'error' }),
+            Swal.fire({
+              title: 'ผิดพลาด',
+              text: 'อัปเดตสต๊อกไม่สำเร็จ',
+              icon: 'error',
+            }),
         });
       },
       error: () =>
-        Swal.fire({ title: 'ผิดพลาด', text: 'บันทึกประวัติการขายไม่สำเร็จ', icon: 'error' }),
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'บันทึกประวัติการขายไม่สำเร็จ',
+          icon: 'error',
+        }),
     });
   }
 
@@ -394,13 +418,21 @@ export class InventoryComponent implements OnInit {
     const selected = [...(this.selectedProducts || [])];
 
     if (!selected.length) {
-      Swal.fire({ title: 'แจ้งเตือน', text: 'กรุณาเลือกสินค้าก่อน', icon: 'info' });
+      Swal.fire({
+        title: 'แจ้งเตือน',
+        text: 'กรุณาเลือกสินค้าก่อน',
+        icon: 'info',
+      });
       return;
     }
 
     const noId = selected.filter((p) => !p.id);
     if (noId.length) {
-      Swal.fire({ title: 'ผิดพลาด', text: 'มีบางรายการไม่มี ID', icon: 'error' });
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'มีบางรายการไม่มี ID',
+        icon: 'error',
+      });
       return;
     }
 
@@ -440,8 +472,7 @@ export class InventoryComponent implements OnInit {
 
     Swal.fire({
       title: `ยืนยันส่งไปหน้าประวัติ\n${selected.length} รายการ?`,
-      html:
-        '<span>ระบบจะตัดตาม <b style="color:#d81b60;">จำนวนตัด</b> ของแต่ละรายการ และบันทึกลงประวัติการขาย</span>',
+      html: '<span>ระบบจะตัดตาม <b style="color:#d81b60;">จำนวนตัด</b> ของแต่ละรายการ และบันทึกลงประวัติการขาย</span>',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -469,7 +500,10 @@ export class InventoryComponent implements OnInit {
         return this.historyService.create(historyPayload as any).pipe(
           switchMap(() => {
             const remaining = currentQty - sellQty;
-            const updated: Product = this.withTotal({ ...p, quantity: remaining });
+            const updated: Product = this.withTotal({
+              ...p,
+              quantity: remaining,
+            });
             return this.inventoryService.update(p.id!, updated);
           }),
           map(() => ({ ok: true as const, code: p.code, name: p.name })),
@@ -576,7 +610,11 @@ export class InventoryComponent implements OnInit {
         });
       },
       error: () =>
-        Swal.fire({ title: 'ผิดพลาด', text: 'อัปเดตข้อมูลไม่สำเร็จ', icon: 'error' }),
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'อัปเดตข้อมูลไม่สำเร็จ',
+          icon: 'error',
+        }),
     });
   }
 
@@ -590,7 +628,11 @@ export class InventoryComponent implements OnInit {
     const product = this.filteredProducts[index];
 
     if (!product.id) {
-      Swal.fire({ title: 'ผิดพลาด', text: 'ไม่พบ ID ของสินค้า', icon: 'error' });
+      Swal.fire({
+        title: 'ผิดพลาด',
+        text: 'ไม่พบ ID ของสินค้า',
+        icon: 'error',
+      });
       return;
     }
 
@@ -618,7 +660,11 @@ export class InventoryComponent implements OnInit {
           });
         },
         error: () =>
-          Swal.fire({ title: 'ผิดพลาด', text: 'ลบรายการไม่สำเร็จ', icon: 'error' }),
+          Swal.fire({
+            title: 'ผิดพลาด',
+            text: 'ลบรายการไม่สำเร็จ',
+            icon: 'error',
+          }),
       });
     });
   }

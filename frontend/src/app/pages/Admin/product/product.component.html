@@ -68,7 +68,7 @@
               </div>
 
               <div class="field">
-                <label>ราคา (บาท)</label>
+                <label for="price">ราคา (บาท)</label>
                 <input
                   pInputText
                   type="number"
@@ -123,11 +123,6 @@
           </div>
 
           <div class="create-card-footer">
-            <button class="btn-save btn-form" type="button" (click)="save()">
-              <i class="pi pi-check-square"></i>
-              {{ isEdit ? 'บันทึก' : 'บันทึก' }}
-            </button>
-
             <button
               class="btn-cancel btn-form"
               type="button"
@@ -135,6 +130,10 @@
             >
               <i class="bi bi-x-square"></i>
               ยกเลิก
+            </button>
+            <button class="btn-save btn-form" type="button" (click)="save()">
+              <i class="pi pi-check-square"></i>
+              บันทึก
             </button>
           </div>
         </div>
@@ -152,7 +151,7 @@
           [loading]="loading"
           [paginator]="true"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ"
+          currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
           [globalFilterFields]="['id', 'name', 'price']"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
