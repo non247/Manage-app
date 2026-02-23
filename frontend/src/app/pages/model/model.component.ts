@@ -13,11 +13,12 @@ export class ModelComponent implements OnInit {
     private readonly modelService: ModelService,
     private readonly fb: FormBuilder
   ) {
-    // โมเดลรับค่า 3 ตัว (columns=['IsHoliday', 'Duration_Days', 'Flavor_Encoded'])
     this.predictForm = this.fb.group({
-      val1: [0],
-      val2: [7],
-      val3: [11],
+      flavor: 'มิ้นต์ช็อกโกแลตชิพ',
+      is_holiday: 0,
+      duration_days: 7,
+      start_date: '2026-01-26',
+      end_date: '2026-02-01',
     });
   }
 
@@ -29,17 +30,18 @@ export class ModelComponent implements OnInit {
   result: any = null;
 
   onSubmit() {
-    // ดึงค่าจากฟอร์มมาใส่ใน Array ตามลำดับที่ Python ต้องการ
-    const formData = [
-      this.predictForm.value.val1,
-      this.predictForm.value.val2,
-      this.predictForm.value.val3,
-    ];
+    const formData = {
+      flavor: this.predictForm.value.flavor,
+      is_holiday: this.predictForm.value.is_holiday,
+      duration_days: this.predictForm.value.duration_days,
+      start_date: this.predictForm.value.start_date,
+      end_date: this.predictForm.value.end_date,
+    };
 
-    this.modelService.getPrediction(formData).subscribe({
+    this.modelService.getForecastSoldPerDay(formData).subscribe({
       next: (res) => {
         this.result = res.prediction;
-        console.log('Prediction:', res);
+        console.log('Forecast result:', res);
       },
       error: (err) => console.error('Error:', err),
     });
