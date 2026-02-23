@@ -217,7 +217,9 @@ export class InventoryComponent implements OnInit {
       this.filteredProducts = [...this.products];
     } else {
       this.filteredProducts = this.mapWithTotal(
-        this.products.filter((p) => this.selectedCategories.includes(p.category))
+        this.products.filter((p) =>
+          this.selectedCategories.includes(p.category)
+        )
       );
     }
 
@@ -656,6 +658,12 @@ export class InventoryComponent implements OnInit {
   }
 
   private isValidProduct(p: Product): boolean {
-    return !!(p.name && p.category && p.quantity >= 1 && p.price >= 0 && p.date);
+    return !!(
+      p.name &&
+      p.category &&
+      p.quantity >= 1 &&
+      p.price >= 0 &&
+      p.date
+    );
   }
 }

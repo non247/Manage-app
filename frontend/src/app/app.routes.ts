@@ -53,17 +53,17 @@ export const routes: Routes = [
   },
 
   {
-  path: 'admininventory',
-  component: AdminInventoryComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'admin' },
-},
+    path: 'admininventory',
+    component: AdminInventoryComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'admin' },
+  },
   {
-  path: 'adminhistory',
-  component: AdminhistoryComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: { role: 'admin' },
-},
+    path: 'adminhistory',
+    component: AdminhistoryComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'admin' },
+  },
   {
     path: 'usermanagement',
     component: UsermanagementComponent,

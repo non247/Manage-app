@@ -116,12 +116,12 @@ app-sidebar-user {
 .header-row {
   display: flex;
   align-items: center;
-  width: 100%;              /* ✅ จาก 40% -> 100% */
+  width: 100%; /* ✅ จาก 40% -> 100% */
   gap: 14px;
   margin-top: 6px;
   margin-bottom: 20px;
 
-  justify-content: space-between;  /* ✅ ดันปุ่มไปขวา */
+  justify-content: space-between; /* ✅ ดันปุ่มไปขวา */
 }
 
 .title {
@@ -133,11 +133,11 @@ app-sidebar-user {
 .search-wrapper {
   position: relative;
 
-  flex: 1;              /* ✅ ยืดกินพื้นที่ที่เหลือทั้งหมด */
-  min-width: 280px;     /* กันหดเล็กเกิน */
+  flex: 1; /* ✅ ยืดกินพื้นที่ที่เหลือทั้งหมด */
+  min-width: 280px; /* กันหดเล็กเกิน */
   max-width: 30%;
-  width: auto;          /* ✅ ไม่ล็อก 300px แล้ว */
-  margin-right: 0;      /* ✅ เอา auto ออก */
+  width: auto; /* ✅ ไม่ล็อก 300px แล้ว */
+  margin-right: 0; /* ✅ เอา auto ออก */
 }
 
 .search-wrapper input {
@@ -233,10 +233,18 @@ app-sidebar-user {
 }
 
 /* ✅ สีไอคอน */
-.btn-edit i   { color: #1e3a8a; }
-.btn-delete i { color: #d21515; }
-.btn-save i   { color: #1e8a39; }
-.btn-cancel i { color: #d21515; }
+.btn-edit i {
+  color: #1e3a8a;
+}
+.btn-delete i {
+  color: #d21515;
+}
+.btn-save i {
+  color: #1e8a39;
+}
+.btn-cancel i {
+  color: #d21515;
+}
 
 /* hover ให้พื้นจางๆ */
 .btn-edit:hover,
@@ -383,7 +391,7 @@ tr.editing {
 .create-card-footer {
   display: flex;
   justify-content: flex-end; /* 👉 ดันไปขวา */
-  gap: 12px;                /* 👉 ระยะห่างระหว่างปุ่ม */
+  gap: 12px; /* 👉 ระยะห่างระหว่างปุ่ม */
   padding: 16px 24px 22px;
   border-top: 1px solid #eee;
 }
@@ -395,26 +403,32 @@ tr.editing {
   align-items: center;
   justify-content: center;
 
-  width: 150px;         /* ✅ ปรับขนาดให้เหมือนภาพ */
-  height: 44px;         /* ✅ สูงกำลังสวย */
+  width: 150px; /* ✅ ปรับขนาดให้เหมือนภาพ */
+  height: 44px; /* ✅ สูงกำลังสวย */
   padding: 0 18px;
 
   border: none;
   border-radius: 12px;
   cursor: pointer;
 
-  font-size: 20px;      /* ✅ ลดให้ไม่แน่น */
+  font-size: 20px; /* ✅ ลดให้ไม่แน่น */
   font-weight: 700;
   gap: 10px;
   white-space: nowrap;
 
-  background: initial;  /* กันโดน transparent */
+  background: initial; /* กันโดน transparent */
   box-shadow: none;
 }
 
 /* สีปุ่มฟอร์ม */
-.create-card-footer .btn-save   { background: #1e8a39 !important; color: #fff !important; }
-.create-card-footer .btn-cancel { background: #d21515 !important; color: #fff !important; }
+.create-card-footer .btn-save {
+  background: #1e8a39 !important;
+  color: #fff !important;
+}
+.create-card-footer .btn-cancel {
+  background: #d21515 !important;
+  color: #fff !important;
+}
 
 /* icon ในปุ่มฟอร์ม */
 .create-card-footer .btn-save i,
@@ -451,8 +465,12 @@ tr.editing {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ===== CLOSE ANIMATION ===== */
@@ -476,8 +494,12 @@ tr.editing {
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* ================= IMAGE COLUMN ================= */

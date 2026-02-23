@@ -10,7 +10,7 @@ exports.getDashboard = async (req, res) => {
     `);
 
     // ✅ วันนี้กี่ "รายการ" (จำนวนแถว)
-        const todayItemsResult = await pool.query(`
+    const todayItemsResult = await pool.query(`
       SELECT COUNT(*) AS today_items
       FROM "History"
       WHERE DATE(date) = CURRENT_DATE

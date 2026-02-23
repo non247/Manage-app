@@ -312,7 +312,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       map.set(key, (map.get(key) || 0) + this.toNumber(d.total));
     });
 
-    return Array.from(map.entries()).map(([label, total]) => ({ label, total }));
+    return Array.from(map.entries()).map(([label, total]) => ({
+      label,
+      total,
+    }));
   }
 
   toYearly(data: any[]) {
@@ -323,7 +326,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       map.set(year, (map.get(year) || 0) + this.toNumber(d.total));
     });
 
-    return Array.from(map.entries()).map(([label, total]) => ({ label, total }));
+    return Array.from(map.entries()).map(([label, total]) => ({
+      label,
+      total,
+    }));
   }
 
   // =========================
@@ -349,8 +355,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       view === 'day'
         ? dayColors
         : view === 'month'
-        ? monthGradient
-        : yearGradient;
+          ? monthGradient
+          : yearGradient;
 
     this.salesChart = new Chart(ctx, {
       type: 'bar',
