@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.2.18",
+  "version": "0.2.55",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
