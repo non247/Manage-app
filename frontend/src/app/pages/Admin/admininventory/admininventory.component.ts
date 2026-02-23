@@ -27,13 +27,22 @@ export interface Product {
   total?: number; // ✅ ราคารวม
 }
 
-// ✅ type สำหรับ option ของ dropdown/multiselect
 type Option = { label: string; value: string };
+
+type SaleDraftItem = {
+  id: number;
+  code: string;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  sellQty: number;
+  date: string;
+};
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  // ❌ ไม่ต้องใช้ CheckboxModule แล้ว (เพราะใช้ checkbox ธรรมดา)
   imports: [TableModule, MultiSelectModule, FormsModule, CommonModule],
   templateUrl: './admininventory.component.html',
   styleUrl: './admininventory.component.scss',
@@ -55,18 +64,11 @@ export class AdminInventoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  // ✅ selection
-  selectedProducts: Product[] = [];
-  selectedIds = new Set<number>();
-
   // ✅ options ชื่อสินค้า
   names: Option[] = [];
 
   // ✅ master
   productMasters: ProductMaster[] = [];
-
-  // ✅ จำนวนที่จะขาย/ตัด ต่อรายการ (กรอกจากตาราง)
-  sellQtyById: Record<number, number> = {};
 
   categories = [
     { label: 'โคน', value: 'โคน' },
@@ -74,6 +76,22 @@ export class AdminInventoryComponent implements OnInit {
   ];
 
   loading = false;
+
+  // ==========================
+  // ✅ HISTORY FORM (NEW)
+  // ==========================
+  showHistoryForm = false;
+  isClosingHistory = false;
+  isSubmittingHistory = false;
+
+  saleDraftItems: SaleDraftItem[] = [];
+
+  saleForm: { productId: number | null; qty: number } = {
+    productId: null,
+    qty: 1,
+  };
+
+  saleFormInfo = '';
 
   constructor(
     private readonly inventoryService: InventoryService,
@@ -104,41 +122,6 @@ export class AdminInventoryComponent implements OnInit {
     return (list || []).map((p) => this.withTotal(p));
   }
 
-  /* ================= SELL QTY HELPERS ================= */
-  private getSellQty(p: Product): number {
-    if (!p.id) return 0;
-    const raw = this.sellQtyById[p.id] ?? 1;
-    return this.toInt(raw, 1);
-  }
-
-  /** ✅ ตั้งค่า default = 1 ให้ทุกตัว หลังโหลด */
-  private seedSellQtyDefaults(list: Product[]) {
-    for (const p of list) {
-      if (p.id && this.sellQtyById[p.id] == null) {
-        this.sellQtyById[p.id] = 1;
-      }
-    }
-  }
-
-  /** ✅ กันค่าว่างเวลาติ๊กเลือก */
-  ensureSellQty(p: Product) {
-    if (!p.id) return;
-    if (this.sellQtyById[p.id] == null) this.sellQtyById[p.id] = 1;
-  }
-
-  /** ✅ กัน 0/ติดลบ/เกินสต๊อก ตอนกรอก input */
-  onSellQtyInput(p: Product) {
-    if (!p.id) return;
-
-    const max = this.toInt(p.quantity, 0);
-    let v = this.toInt(this.sellQtyById[p.id], 1);
-
-    if (max <= 0) v = 0;
-    if (v > max) v = max;
-
-    this.sellQtyById[p.id] = v;
-  }
-
   /* ================= GO HISTORY PAGE (OPTIONAL) ================= */
   goToHistory() {
     const items = this.mapWithTotal(this.filteredProducts);
@@ -151,13 +134,6 @@ export class AdminInventoryComponent implements OnInit {
       next: (res) => {
         this.products = this.mapWithTotal(res);
         this.filteredProducts = [...this.products];
-
-        // ✅ default จำนวนที่จะตัด = 1
-        this.seedSellQtyDefaults(this.products);
-
-        // ✅ เคลียร์ selection หลัง reload
-        this.selectedIds.clear();
-        this.selectedProducts = [];
       },
       error: () =>
         Swal.fire({
@@ -224,65 +200,6 @@ export class AdminInventoryComponent implements OnInit {
         )
       );
     }
-
-    // ✅ เคลียร์ selection เมื่อ filter เปลี่ยน
-    this.selectedIds.clear();
-    this.selectedProducts = [];
-  }
-
-  /* ================= CHECKBOX (CUSTOM) ================= */
-  isSelected(p: Product): boolean {
-    return !!p.id && this.selectedIds.has(p.id);
-  }
-
-  toggleRow(p: Product, ev: Event) {
-    const checked = (ev.target as HTMLInputElement).checked;
-    if (!p.id) return;
-
-    // ✅ กันค่าว่าง
-    this.ensureSellQty(p);
-
-    if (checked) this.selectedIds.add(p.id);
-    else this.selectedIds.delete(p.id);
-
-    this.syncSelectedProducts();
-  }
-
-  toggleSelectAll(ev: Event) {
-    const checked = (ev.target as HTMLInputElement).checked;
-
-    const rows = this.filteredProducts.filter((p) => !!p.id);
-    const ids = rows.map((p) => p.id!) as number[];
-
-    if (checked) {
-      rows.forEach((p) => this.ensureSellQty(p));
-      ids.forEach((id) => this.selectedIds.add(id));
-    } else {
-      ids.forEach((id) => this.selectedIds.delete(id));
-    }
-
-    this.syncSelectedProducts();
-  }
-
-  isAllSelected(): boolean {
-    const ids = this.filteredProducts.filter((p) => !!p.id).map((p) => p.id!);
-    return ids.length > 0 && ids.every((id) => this.selectedIds.has(id));
-  }
-
-  isIndeterminate(): boolean {
-    const ids = this.filteredProducts.filter((p) => !!p.id).map((p) => p.id!);
-    const selectedCount = ids.filter((id) => this.selectedIds.has(id)).length;
-    return selectedCount > 0 && selectedCount < ids.length;
-  }
-
-  private syncSelectedProducts() {
-    const mapById = new Map<number, Product>(
-      this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
-    );
-
-    this.selectedProducts = Array.from(this.selectedIds)
-      .map((id) => mapById.get(id))
-      .filter((p): p is Product => !!p);
   }
 
   /* ================= CREATE ================= */
@@ -346,8 +263,8 @@ export class AdminInventoryComponent implements OnInit {
     }, 250);
   }
 
-  /* ================= SELL ONE (CUT BY QTY) ================= */
-  sellOne(p: Product) {
+  /* ================= SELL ONE (ยังใช้ได้ ถ้าคุณมีปุ่มขายทีละชิ้นที่อื่น) ================= */
+  sellOne(p: Product, qty = 1) {
     if (!p.id) {
       Swal.fire({
         title: 'ผิดพลาด',
@@ -367,26 +284,13 @@ export class AdminInventoryComponent implements OnInit {
       return;
     }
 
-    this.ensureSellQty(p);
-
-    const wantSell = this.getSellQty(p);
-    const sellQty = Math.min(wantSell, currentQty);
-
-    if (sellQty <= 0) {
-      Swal.fire({
-        title: 'แจ้งเตือน',
-        text: 'จำนวนขายต้องมากกว่า 0',
-        icon: 'info',
-      });
-      return;
-    }
+    const sellQty = Math.min(this.toInt(qty, 1), currentQty);
 
     const historyPayload = this.safeHistoryPayload(p, sellQty);
 
     this.historyService.create(historyPayload as any).subscribe({
       next: () => {
         const remaining = currentQty - sellQty;
-
         const updated: Product = this.withTotal({ ...p, quantity: remaining });
 
         this.inventoryService.update(p.id!, updated).subscribe({
@@ -415,86 +319,201 @@ export class AdminInventoryComponent implements OnInit {
     });
   }
 
-  /* ================= BULK SELL (CUT BY QTY) ================= */
-  sendSelectedToHistory() {
-    const selected = [...(this.selectedProducts || [])];
+  // ==========================================================
+  // ✅ HISTORY FORM : เลือกสินค้า + ใส่จำนวน + เพิ่มรายการ
+  // ==========================================================
 
-    if (!selected.length) {
+  /** dropdown options: เอาเฉพาะรายการที่มี id และ stock > 0 */
+  get saleProductOptions(): Product[] {
+    return (this.products || []).filter(
+      (p) => !!p.id && this.toInt(p.quantity, 0) > 0
+    );
+  }
+
+  /** ✅ dropdown options: เอารายการที่ "ยังไม่ถูกเพิ่มใน draft" */
+  get availableSaleProducts(): Product[] {
+    const selectedIds = new Set(this.saleDraftItems.map((x) => x.id));
+    return this.saleProductOptions.filter((p) => !selectedIds.has(p.id!));
+  }
+
+  /** max ของ qty ในช่อง input */
+  get saleFormMax(): number {
+    const p = this.getProductById(this.saleForm.productId);
+    return p ? this.toInt(p.quantity, 0) : 1;
+  }
+
+  /** ยอดรวมในฟอร์ม */
+  get saleDraftTotal(): number {
+    return this.saleDraftItems.reduce(
+      (sum, it) => sum + it.sellQty * it.price,
+      0
+    );
+  }
+
+  openHistoryForm() {
+    this.showHistoryForm = true;
+    this.saleFormInfo = '';
+    this.saleForm = { productId: null, qty: 1 };
+  }
+
+  closeHistoryForm() {
+    this.isClosingHistory = true;
+    setTimeout(() => {
+      this.showHistoryForm = false;
+      this.isClosingHistory = false;
+    }, 250);
+  }
+
+  onSaleProductChange() {
+    const p = this.getProductById(this.saleForm.productId);
+    if (!p) {
+      this.saleFormInfo = '';
+      return;
+    }
+    this.saleForm.qty = 1;
+    this.saleFormInfo = `คงเหลือ ${this.toInt(p.quantity, 0)} • ราคา ${this.toInt(
+      p.price,
+      0
+    )} บาท`;
+  }
+
+  addSaleItem() {
+    const p = this.getProductById(this.saleForm.productId);
+    if (!p || !p.id) {
       Swal.fire({
         title: 'แจ้งเตือน',
-        text: 'กรุณาเลือกสินค้าก่อน',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+        text: 'กรุณาเลือกสินค้า',
         icon: 'info',
       });
       return;
     }
 
-    const noId = selected.filter((p) => !p.id);
-    if (noId.length) {
-      Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'มีบางรายการไม่มี ID',
-        icon: 'error',
-      });
-      return;
-    }
-
-    const outOfStock = selected.filter((p) => this.toInt(p.quantity, 0) <= 0);
-    if (outOfStock.length) {
+    const stock = this.toInt(p.quantity, 0);
+    if (stock <= 0) {
       Swal.fire({
         title: 'สินค้าหมด',
-        text: `มี ${outOfStock.length} รายการที่จำนวนเป็น 0 (ยกเลิกการเลือกก่อน)`,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+        text: 'รายการนี้สต๊อกเป็น 0',
         icon: 'warning',
       });
       return;
     }
 
-    // ✅ เช็คจำนวนขายห้ามเกินสต๊อก
-    const overSell = selected.filter((p) => {
-      this.ensureSellQty(p);
-      const currentQty = this.toInt(p.quantity, 0);
-      const sellQty = this.getSellQty(p);
-      return sellQty > currentQty;
+    const qty = this.toInt(this.saleForm.qty, 1);
+    if (qty > stock) {
+      Swal.fire({
+        title: 'จำนวนเกินสต๊อก',
+        confirmButtonColor: '#3085d6',
+        text: `คงเหลือ ${stock} ชิ้น`,
+        icon: 'warning',
+      });
+      return;
+    }
+
+    // ✅ กันเพิ่มซ้ำ (เพราะเราต้องการให้หายจาก dropdown)
+    const existing = this.saleDraftItems.find((x) => x.id === p.id);
+    if (existing) {
+      Swal.fire({
+        title: 'เพิ่มแล้ว',
+        text: 'สินค้านี้ถูกเพิ่มในรายการแล้ว (ลบออกก่อน หากต้องการเลือกใหม่)',
+        icon: 'info',
+      });
+      return;
+    }
+
+    this.saleDraftItems.push({
+      id: p.id,
+      code: p.code,
+      name: p.name,
+      category: p.category,
+      price: this.toInt(p.price, 0),
+      stock,
+      sellQty: qty,
+      date: p.date ? this.normalizeYmd(p.date) : this.todayString(),
     });
 
-    if (overSell.length) {
+    // reset ช่องกรอกเพื่อเพิ่มรายการถัดไป
+    this.saleForm = { productId: null, qty: 1 };
+    this.saleFormInfo = '';
+  }
+
+  removeSaleItem(id: number) {
+    this.saleDraftItems = this.saleDraftItems.filter((x) => x.id !== id);
+  }
+
+  updateDraftQty(id: number, value: any) {
+    const it = this.saleDraftItems.find((x) => x.id === id);
+    if (!it) return;
+
+    let v = this.toInt(value, 1);
+    if (v > it.stock) v = it.stock;
+    if (it.stock <= 0) v = 0;
+
+    it.sellQty = v;
+  }
+
+  /** ✅ ยืนยันส่ง: ส่งเข้า history + ตัดสต๊อก */
+  confirmSendToHistory() {
+    const items = [...(this.saleDraftItems || [])];
+
+    if (!items.length) {
       Swal.fire({
-        title: 'จำนวนขายเกินสต๊อก',
-        html: `
-          <div style="text-align:left">
-            มี <b>${overSell.length}</b> รายการที่จำนวนขายมากกว่าสต๊อก<br/>
-            กรุณาปรับจำนวนขายให้ไม่เกินจำนวนคงเหลือ
-          </div>
-        `,
+        title: 'แจ้งเตือน',
+        text: 'ยังไม่มีรายการขายในฟอร์ม',
+        icon: 'info',
+      });
+      return;
+    }
+
+    const mapById = new Map<number, Product>(
+      this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
+    );
+
+    const invalid = items.find((it) => {
+      const p = mapById.get(it.id);
+      const stockNow = p ? this.toInt(p.quantity, 0) : 0;
+      return it.sellQty < 1 || it.sellQty > stockNow;
+    });
+
+    if (invalid) {
+      Swal.fire({
+        title: 'ข้อมูลไม่ถูกต้อง',
+        text: 'มีรายการที่จำนวนขายเกินสต๊อกหรือไม่ถูกต้อง กรุณาตรวจสอบ',
         icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
       });
       return;
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไปหน้าประวัติ\n${selected.length} รายการ?`,
-      html: '<span>ระบบจะตัดตาม <b style="color:#d81b60;">จำนวนตัด</b> ของแต่ละรายการ และบันทึกลงประวัติการขาย</span>',
+      title: `ยืนยันส่งไปประวัติ\n${items.length} รายการ?`,
+      html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
+      <span style="color:#ef4444; font-weight:700;">
+      ตามจำนวนที่ระบุ`,
+      text: 'ข้อมูลจะถูกบันทึกและตัดสต๊อกทันที',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonText: 'ยกเลิก',
       confirmButtonText: 'ตกลง',
+      cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (!result.isConfirmed) return;
 
+      this.isSubmittingHistory = true;
       this.loading = true;
 
-      const jobs = selected.map((p) => {
+      const jobs = items.map((it) => {
+        const p = mapById.get(it.id);
+        if (!p || !p.id)
+          return of({ ok: false as const, name: it.name, code: it.code });
+
         const currentQty = this.toInt(p.quantity, 0);
-
-        this.ensureSellQty(p);
-
-        const wantSell = this.getSellQty(p);
-        const sellQty = Math.min(wantSell, currentQty);
+        const sellQty = Math.min(this.toInt(it.sellQty, 1), currentQty);
 
         if (sellQty <= 0) {
-          return of({ ok: false as const, code: p.code, name: p.name });
+          return of({ ok: false as const, name: it.name, code: it.code });
         }
 
         const historyPayload = this.safeHistoryPayload(p, sellQty);
@@ -508,22 +527,27 @@ export class AdminInventoryComponent implements OnInit {
             });
             return this.inventoryService.update(p.id!, updated);
           }),
-          map(() => ({ ok: true as const, code: p.code, name: p.name })),
+          map(() => ({ ok: true as const, name: it.name, code: it.code })),
           catchError((err) => {
-            console.error('bulk sell fail:', p, err);
-            return of({ ok: false as const, code: p.code, name: p.name });
+            console.error('history form sell fail:', it, err);
+            return of({ ok: false as const, name: it.name, code: it.code });
           })
         );
       });
 
       forkJoin(jobs)
-        .pipe(finalize(() => (this.loading = false)))
+        .pipe(
+          finalize(() => {
+            this.isSubmittingHistory = false;
+            this.loading = false;
+          })
+        )
         .subscribe((results) => {
           const successCount = results.filter((x) => x.ok).length;
           const failList = results.filter((x) => !x.ok);
 
-          this.selectedIds.clear();
-          this.selectedProducts = [];
+          this.saleDraftItems = [];
+          this.closeHistoryForm();
           this.loadProducts();
 
           if (failList.length === 0) {
@@ -557,6 +581,11 @@ export class AdminInventoryComponent implements OnInit {
           }
         });
     });
+  }
+
+  private getProductById(id: number | null): Product | null {
+    if (!id) return null;
+    return this.products.find((p) => p.id === id) ?? null;
   }
 
   /* ================= HISTORY PAYLOAD ================= */

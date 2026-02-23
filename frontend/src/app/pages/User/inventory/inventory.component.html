@@ -6,8 +6,10 @@
       </header>
 
       <div class="table-box">
+        <!-- HEADER ROW -->
         <div class="header-row search-wrap">
           <i class="bi bi-search"></i>
+
           <input
             #gb
             type="text"
@@ -25,29 +27,21 @@
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
 
+          <!-- ✅ เปิดฟอร์มประวัติการขาย -->
           <button
             class="btn-save btn-history"
             type="button"
-            (click)="sendSelectedToHistory()"
-            [disabled]="selectedProducts.length === 0"
+            (click)="openHistoryForm()"
           >
             <i class="bi bi-send-fill"></i>
             ประวัติการขาย
-            <span class="bubble" *ngIf="selectedProducts.length > 0">{{
-              selectedProducts.length
-            }}</span>
+            <span class="bubble" *ngIf="saleDraftItems.length > 0">
+              {{ saleDraftItems.length }}
+            </span>
           </button>
         </div>
 
-        <!-- BACKDROP -->
-        <div
-          *ngIf="showCreateForm"
-          class="create-backdrop"
-          [class.closing]="isClosing"
-          (click)="onCreateCancel()"
-        ></div>
-
-        <!-- BACKDROP -->
+        <!-- ✅ BACKDROP CREATE -->
         <div
           *ngIf="showCreateForm"
           class="create-backdrop"
@@ -145,34 +139,181 @@
           </div>
 
           <div class="create-card-footer">
-            <button class="btn-save" (click)="onCreateSave()">
-              <i class="pi pi-check-square"></i> บันทึก
-            </button>
-
             <button class="btn-cancel" (click)="onCreateCancel()">
               <i class="bi bi-x-square"></i> ยกเลิก
+            </button>
+            <button class="btn-save" (click)="onCreateSave()">
+              <i class="pi pi-check-square"></i> บันทึก
             </button>
           </div>
         </div>
 
+        <div
+          *ngIf="showHistoryForm"
+          class="create-backdrop history-backdrop"
+          [class.closing]="isClosingHistory"
+          (click)="closeHistoryForm()"
+        ></div>
+
+        <!-- ✅ HISTORY FORM CARD -->
+        <div
+          *ngIf="showHistoryForm"
+          class="create-card history-card"
+          [class.closing]="isClosingHistory"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="create-card-header">
+            <h2>ยืนยันส่งประวัติการขาย</h2>
+          </div>
+
+          <div class="create-card-body history-body">
+            <!-- SECTION 1: เพิ่มรายการ -->
+            <div class="section-box">
+              <div class="section-title" style="color: #d81b60">
+                <i class="bi bi-plus-circle"></i>
+                เพิ่มรายการขาย
+              </div>
+
+              <div class="sale-form-row">
+                <div class="field">
+                  <label>ชื่อสินค้า</label>
+                  <select
+                    class="p-inputtext p-component"
+                    [(ngModel)]="saleForm.productId"
+                    name="saleProductId"
+                    (change)="onSaleProductChange()"
+                  >
+                    <option [ngValue]="null" disabled>
+                      -- เลือกชื่อสินค้า --
+                    </option>
+                    <option
+                      *ngFor="let p of saleProductOptions"
+                      [ngValue]="p.id"
+                    >
+                      {{ p.name }} (คงเหลือ {{ p.quantity }})
+                    </option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label>จำนวน</label>
+                  <input
+                    type="number"
+                    class="p-inputtext p-component"
+                    min="1"
+                    [max]="saleFormMax"
+                    [(ngModel)]="saleForm.qty"
+                    name="saleQty"
+                  />
+                </div>
+
+                <div class="field action-field">
+                  <button
+                    class="btn-save"
+                    type="button"
+                    (click)="addSaleItem()"
+                  >
+                    <i class="bi bi-plus-circle-fill"></i> บันทึก
+                  </button>
+                </div>
+              </div>
+
+              <div class="hint" *ngIf="saleFormInfo">{{ saleFormInfo }}</div>
+            </div>
+
+            <!-- SECTION 2: รายการที่เพิ่มแล้ว -->
+            <div class="section-box">
+              <div class="section-title" style="color: #d81b60">
+                <i class="bi bi-list-check"></i>
+                รายการที่เพิ่มแล้ว
+                <span class="count-pill" *ngIf="saleDraftItems.length > 0">
+                  {{ saleDraftItems.length }}
+                </span>
+              </div>
+
+              <div *ngIf="saleDraftItems.length === 0" class="empty-draft">
+                ยังไม่มีรายการขาย
+              </div>
+
+              <div
+                *ngIf="saleDraftItems.length > 0"
+                class="sale-list scroll-area"
+              >
+                <div class="sale-row sale-head">
+                  <div>สินค้า</div>
+                  <div style="text-align: center">จำนวน</div>
+                  <div></div>
+                </div>
+
+                <div
+                  class="sale-row sale-item"
+                  *ngFor="let it of saleDraftItems"
+                >
+                  <div class="sale-name">
+                    <div class="sale-title">{{ it.name }}</div>
+                    <div class="sale-sub">
+                      {{ it.category }} • คงเหลือ {{ it.stock }}
+                    </div>
+                  </div>
+
+                  <div class="sale-qty" style="text-align: center">
+                    <input
+                      type="number"
+                      min="1"
+                      [max]="it.stock"
+                      [ngModel]="it.sellQty"
+                      (ngModelChange)="updateDraftQty(it.id, $event)"
+                      class="draft-qty-input"
+                    />
+                  </div>
+
+                  <div class="sale-del" style="text-align: right">
+                    <button
+                      class="btn-delete"
+                      type="button"
+                      (click)="removeSaleItem(it.id)"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ ปุ่มย้ายไป “ล่างสุดของ modal” -->
+          <div class="create-card-footer history-footer">
+            <button
+              class="btn-cancel"
+              (click)="closeHistoryForm()"
+              [disabled]="isSubmittingHistory"
+            >
+              <i class="bi bi-x-square"></i> ยกเลิก
+            </button>
+            <button
+              class="btn-save"
+              (click)="confirmSendToHistory()"
+              [disabled]="saleDraftItems.length === 0 || isSubmittingHistory"
+            >
+              <i class="pi pi-check-square"></i> ยืนยัน
+            </button>
+          </div>
+        </div>
         <!-- TABLE -->
         <p-table
           #dt
           [value]="filteredProducts"
           dataKey="code"
-          selectionMode="multiple"
-          [metaKeySelection]="false"
           [rows]="10"
           [paginator]="true"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ"
+          currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
           [globalFilterFields]="[
             'name',
             'category',
             'quantity',
             'price',
             'date',
-            'total',
           ]"
           [scrollable]="true"
           scrollHeight="500px"
@@ -182,25 +323,6 @@
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <!-- ✅ checkbox header (ธรรมดา) -->
-              <th class="checkbox-col" style="width: 10%" scope="col">
-                <label class="checkbox-hit">
-                  <input
-                    class="native-checkbox"
-                    type="checkbox"
-                    [checked]="isAllSelected()"
-                    [indeterminate]="isIndeterminate()"
-                    (change)="toggleSelectAll($event)"
-                    style="
-                      width: 18px;
-                      height: 18px;
-                      transform: scale(1.3);
-                      cursor: pointer;
-                    "
-                  />
-                </label>
-              </th>
-
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
@@ -221,15 +343,6 @@
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
-              <!-- <th pSortableColumn="total" scope="col">
-                ราคารวม <p-sortIcon field="total"></p-sortIcon>
-              </th> -->
-
-              <!-- ✅ NEW: จำนวนที่จะตัด -->
-              <th style="width: 12%; text-align: center" scope="col">
-                จำนวนตัด
-              </th>
-
               <th style="width: 10%" scope="col"></th>
             </tr>
           </ng-template>
@@ -237,24 +350,6 @@
           <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
-              <!-- ✅ checkbox row (ธรรมดา) -->
-              <td class="checkbox-col">
-                <label class="checkbox-hit">
-                  <input
-                    class="native-checkbox"
-                    type="checkbox"
-                    [checked]="isSelected(product)"
-                    (change)="toggleRow(product, $event)"
-                    style="
-                      width: 18px;
-                      height: 18px;
-                      transform: scale(1.3);
-                      cursor: pointer;
-                    "
-                  />
-                </label>
-              </td>
-
               <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
@@ -300,7 +395,6 @@
                 <ng-container *ngIf="editIndex !== i; else editCategory">
                   {{ product.category }}
                 </ng-container>
-
                 <ng-template #editCategory>
                   <select
                     class="p-inputtext p-component"
@@ -349,33 +443,6 @@
                 </ng-template>
               </td>
 
-              <!-- TOTAL -->
-              <!-- <td>
-                <ng-container *ngIf="editIndex !== i; else editTotal">
-                  {{ product.quantity * product.price | number: '1.0-0' }}
-                </ng-container>
-
-                <ng-template #editTotal>
-                  {{
-                    editProduct!.quantity * editProduct!.price | number: '1.0-0'
-                  }}
-                </ng-template>
-              </td> -->
-
-              <!-- ✅ NEW: SELL QTY INPUT -->
-              <td style="text-align: center">
-                <input
-                  type="number"
-                  class="sell-qty-input"
-                  min="1"
-                  [max]="product.quantity"
-                  [disabled]="!product.id || product.quantity <= 0"
-                  [(ngModel)]="sellQtyById[product.id!]"
-                  (ngModelChange)="onSellQtyInput(product)"
-                  (click)="$event.stopPropagation()"
-                />
-              </td>
-
               <!-- ACTION -->
               <td style="display: flex; gap: 8px; justify-content: flex-end">
                 <button
@@ -415,8 +482,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <!-- ✅ จากเดิม 8 -> ตอนนี้มี 9 คอลัมน์ -->
-              <td colspan="9">ไม่พบข้อมูล</td>
+              <td colspan="6">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>
