@@ -56,17 +56,18 @@ export class AdminInventoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  // ✅ selection (ใช้กับปุ่มส่ง history เหมือนเดิม)
+  // ✅ selection
   selectedProducts: Product[] = [];
-
-  // ✅ เก็บ id ที่เลือก (checkbox ธรรมดา)
   selectedIds = new Set<number>();
 
-  // ✅ options ชื่อสินค้า (ใช้ใน select)
+  // ✅ options ชื่อสินค้า
   names: Option[] = [];
 
-  // ✅ เก็บ master ทั้งก้อน เพื่อเอา price มาเติมอัตโนมัติ
+  // ✅ master
   productMasters: ProductMaster[] = [];
+
+  // ✅ จำนวนที่จะขาย/ตัด ต่อรายการ (กรอกจากตาราง)
+  sellQtyById: Record<number, number> = {};
 
   categories = [
     { label: 'โคน', value: 'โคน' },
@@ -81,13 +82,12 @@ export class AdminInventoryComponent implements OnInit {
     private readonly router: Router
   ) {}
 
-  /* ================= INIT ================= */
   ngOnInit(): void {
     this.loadProducts();
     this.loadProductMasters();
   }
 
-  /* ================= INT ONLY (REMOVE DECIMALS) ================= */
+  /* ================= INT ONLY ================= */
   toInt(value: any, min = 0): number {
     const n = Math.floor(Number(value) || 0);
     return n < min ? min : n;
@@ -97,15 +97,47 @@ export class AdminInventoryComponent implements OnInit {
   private withTotal(p: Product): Product {
     const qty = this.toInt(p.quantity, 1);
     const price = this.toInt(p.price, 0);
-
-    // ✅ normalize date ให้เป็น YYYY-MM-DD (Asia/Bangkok)
     const date = this.normalizeYmd(p.date);
-
     return { ...p, quantity: qty, price, date, total: qty * price };
   }
 
   private mapWithTotal(list: Product[]): Product[] {
     return (list || []).map((p) => this.withTotal(p));
+  }
+
+  /* ================= SELL QTY HELPERS ================= */
+  private getSellQty(p: Product): number {
+    if (!p.id) return 0;
+    const raw = this.sellQtyById[p.id] ?? 1;
+    return this.toInt(raw, 1);
+  }
+
+  /** ✅ ตั้งค่า default = 1 ให้ทุกตัว หลังโหลด */
+  private seedSellQtyDefaults(list: Product[]) {
+    for (const p of list) {
+      if (p.id && this.sellQtyById[p.id] == null) {
+        this.sellQtyById[p.id] = 1;
+      }
+    }
+  }
+
+  /** ✅ กันค่าว่างเวลาติ๊กเลือก */
+  ensureSellQty(p: Product) {
+    if (!p.id) return;
+    if (this.sellQtyById[p.id] == null) this.sellQtyById[p.id] = 1;
+  }
+
+  /** ✅ กัน 0/ติดลบ/เกินสต๊อก ตอนกรอก input */
+  onSellQtyInput(p: Product) {
+    if (!p.id) return;
+
+    const max = this.toInt(p.quantity, 0);
+    let v = this.toInt(this.sellQtyById[p.id], 1);
+
+    if (max <= 0) v = 0;
+    if (v > max) v = max;
+
+    this.sellQtyById[p.id] = v;
   }
 
   /* ================= GO HISTORY PAGE (OPTIONAL) ================= */
@@ -121,7 +153,10 @@ export class AdminInventoryComponent implements OnInit {
         this.products = this.mapWithTotal(res);
         this.filteredProducts = [...this.products];
 
-        // ✅ กัน selection ค้างหลัง reload
+        // ✅ default จำนวนที่จะตัด = 1
+        this.seedSellQtyDefaults(this.products);
+
+        // ✅ เคลียร์ selection หลัง reload
         this.selectedIds.clear();
         this.selectedProducts = [];
       },
@@ -189,7 +224,7 @@ export class AdminInventoryComponent implements OnInit {
       );
     }
 
-    // ✅ เคลียร์ selection เมื่อ filter เปลี่ยน (กันงง)
+    // ✅ เคลียร์ selection เมื่อ filter เปลี่ยน
     this.selectedIds.clear();
     this.selectedProducts = [];
   }
@@ -203,6 +238,9 @@ export class AdminInventoryComponent implements OnInit {
     const checked = (ev.target as HTMLInputElement).checked;
     if (!p.id) return;
 
+    // ✅ กันค่าว่าง
+    this.ensureSellQty(p);
+
     if (checked) this.selectedIds.add(p.id);
     else this.selectedIds.delete(p.id);
 
@@ -212,12 +250,15 @@ export class AdminInventoryComponent implements OnInit {
   toggleSelectAll(ev: Event) {
     const checked = (ev.target as HTMLInputElement).checked;
 
-    const ids = this.filteredProducts
-      .filter((p) => !!p.id)
-      .map((p) => p.id!) as number[];
+    const rows = this.filteredProducts.filter((p) => !!p.id);
+    const ids = rows.map((p) => p.id!) as number[];
 
-    if (checked) ids.forEach((id) => this.selectedIds.add(id));
-    else ids.forEach((id) => this.selectedIds.delete(id));
+    if (checked) {
+      rows.forEach((p) => this.ensureSellQty(p));
+      ids.forEach((id) => this.selectedIds.add(id));
+    } else {
+      ids.forEach((id) => this.selectedIds.delete(id));
+    }
 
     this.syncSelectedProducts();
   }
@@ -252,10 +293,7 @@ export class AdminInventoryComponent implements OnInit {
   onCreateSave() {
     this.newProduct.quantity = this.toInt(this.newProduct.quantity, 1);
     this.newProduct.price = this.toInt(this.newProduct.price, 0);
-
-    // ✅ normalize date ก่อนส่ง (Asia/Bangkok)
     this.newProduct.date = this.normalizeYmd(this.newProduct.date);
-
     this.newProduct.total = this.newProduct.quantity * this.newProduct.price;
 
     if (!this.isValidProduct(this.newProduct)) {
@@ -307,87 +345,63 @@ export class AdminInventoryComponent implements OnInit {
     }, 250);
   }
 
-  /* ================= SELL (MODE A) ================= */
+  /* ================= SELL ONE (CUT BY QTY) ================= */
   sellOne(p: Product) {
     if (!p.id) {
-      Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'ไม่พบ ID ของสินค้า',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+      Swal.fire({ title: 'ผิดพลาด', text: 'ไม่พบ ID ของสินค้า', icon: 'error' });
       return;
     }
 
     const currentQty = this.toInt(p.quantity, 0);
     if (currentQty <= 0) {
-      Swal.fire({
-        title: 'สินค้าหมด',
-        text: 'ไม่สามารถขายได้',
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+      Swal.fire({ title: 'สินค้าหมด', text: 'ไม่สามารถขายได้', icon: 'warning' });
       return;
     }
 
-    const historyPayload = this.safeHistoryPayload(p, currentQty);
+    this.ensureSellQty(p);
+
+    const wantSell = this.getSellQty(p);
+    const sellQty = Math.min(wantSell, currentQty);
+
+    if (sellQty <= 0) {
+      Swal.fire({ title: 'แจ้งเตือน', text: 'จำนวนขายต้องมากกว่า 0', icon: 'info' });
+      return;
+    }
+
+    const historyPayload = this.safeHistoryPayload(p, sellQty);
 
     this.historyService.create(historyPayload as any).subscribe({
       next: () => {
-        const updated: Product = { ...p, quantity: 0 };
+        const remaining = currentQty - sellQty;
+
+        const updated: Product = this.withTotal({ ...p, quantity: remaining });
 
         this.inventoryService.update(p.id!, updated).subscribe({
           next: () => {
             this.loadProducts();
-            Swal.fire('สำเร็จ', 'บันทึกการขายแล้ว (ตัดทั้งรายการ)', 'success');
+            Swal.fire('สำเร็จ', `บันทึกการขายแล้ว (ตัด ${sellQty} ชิ้น)`, 'success');
           },
           error: () =>
-            Swal.fire({
-              title: 'ผิดพลาด',
-              text: 'อัปเดตสต๊อกไม่สำเร็จ',
-              icon: 'error',
-              confirmButtonColor: '#3085d6',
-              confirmButtonText: 'ตกลง',
-            }),
+            Swal.fire({ title: 'ผิดพลาด', text: 'อัปเดตสต๊อกไม่สำเร็จ', icon: 'error' }),
         });
       },
       error: () =>
-        Swal.fire({
-          title: 'ผิดพลาด',
-          text: 'บันทึกประวัติการขายไม่สำเร็จ',
-          icon: 'error',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'ตกลง',
-        }),
+        Swal.fire({ title: 'ผิดพลาด', text: 'บันทึกประวัติการขายไม่สำเร็จ', icon: 'error' }),
     });
   }
 
-  /* ================= SEND SELECTED TO HISTORY (BULK) ================= */
+  /* ================= BULK SELL (CUT BY QTY) ================= */
   sendSelectedToHistory() {
     const selected = [...(this.selectedProducts || [])];
 
     if (!selected.length) {
-      Swal.fire({
-        title: 'แจ้งเตือน',
-        text: 'กรุณาเลือกสินค้าก่อน',
-        icon: 'info',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+      Swal.fire({ title: 'แจ้งเตือน', text: 'กรุณาเลือกสินค้าก่อน', icon: 'info' });
       return;
     }
 
     const noId = selected.filter((p) => !p.id);
     if (noId.length) {
-      Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'มีบางรายการไม่มี ID (แก้ที่ข้อมูลในฐานข้อมูล)',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+      Swal.fire({ title: 'ผิดพลาด', text: 'มีบางรายการไม่มี ID', icon: 'error' });
       return;
     }
 
@@ -397,6 +411,28 @@ export class AdminInventoryComponent implements OnInit {
         title: 'สินค้าหมด',
         text: `มี ${outOfStock.length} รายการที่จำนวนเป็น 0 (ยกเลิกการเลือกก่อน)`,
         icon: 'warning',
+      });
+      return;
+    }
+
+    // ✅ เช็คจำนวนขายห้ามเกินสต๊อก
+    const overSell = selected.filter((p) => {
+      this.ensureSellQty(p);
+      const currentQty = this.toInt(p.quantity, 0);
+      const sellQty = this.getSellQty(p);
+      return sellQty > currentQty;
+    });
+
+    if (overSell.length) {
+      Swal.fire({
+        title: 'จำนวนขายเกินสต๊อก',
+        html: `
+          <div style="text-align:left">
+            มี <b>${overSell.length}</b> รายการที่จำนวนขายมากกว่าสต๊อก<br/>
+            กรุณาปรับจำนวนขายให้ไม่เกินจำนวนคงเหลือ
+          </div>
+        `,
+        icon: 'warning',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
       });
@@ -404,10 +440,9 @@ export class AdminInventoryComponent implements OnInit {
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไปหน้าประวัติ
-      ${selected.length} รายการ?`,
+      title: `ยืนยันส่งไปหน้าประวัติ\n${selected.length} รายการ?`,
       html:
-        '<span>ระบบจะ <b style="color:#d81b60;">ตัดรายการ</b> ต่อ 1 สินค้าที่เลือก และบันทึกลงประวัติการขาย</span>',
+        '<span>ระบบจะตัดตาม <b style="color:#d81b60;">จำนวนตัด</b> ของแต่ละรายการ และบันทึกลงประวัติการขาย</span>',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -421,12 +456,21 @@ export class AdminInventoryComponent implements OnInit {
       const jobs = selected.map((p) => {
         const currentQty = this.toInt(p.quantity, 0);
 
-        // ✅ history payload: ใช้ date ของรายการ และ normalize ให้ชัวร์
-        const historyPayload = this.safeHistoryPayload(p, currentQty);
+        this.ensureSellQty(p);
+
+        const wantSell = this.getSellQty(p);
+        const sellQty = Math.min(wantSell, currentQty);
+
+        if (sellQty <= 0) {
+          return of({ ok: false as const, code: p.code, name: p.name });
+        }
+
+        const historyPayload = this.safeHistoryPayload(p, sellQty);
 
         return this.historyService.create(historyPayload as any).pipe(
           switchMap(() => {
-            const updated: Product = { ...p, quantity: 0 };
+            const remaining = currentQty - sellQty;
+            const updated: Product = this.withTotal({ ...p, quantity: remaining });
             return this.inventoryService.update(p.id!, updated);
           }),
           map(() => ({ ok: true as const, code: p.code, name: p.name })),
@@ -450,7 +494,7 @@ export class AdminInventoryComponent implements OnInit {
           if (failList.length === 0) {
             Swal.fire({
               title: 'สำเร็จ',
-              text: `ส่งไปประวัติการขาย แล้ว ${successCount} รายการ`,
+              text: `ส่งไปประวัติการขายแล้ว ${successCount} รายการ`,
               icon: 'success',
               timer: 1500,
               showConfirmButton: false,
@@ -488,8 +532,6 @@ export class AdminInventoryComponent implements OnInit {
       category: p.category,
       quantity: qty,
       price: this.toInt(p.price, 0),
-
-      // ✅ ใช้วันที่ของรายการนั้นๆ และ normalize แบบยึดไทย
       date: p.date ? this.normalizeYmd(p.date) : this.todayString(),
     };
   }
@@ -502,8 +544,6 @@ export class AdminInventoryComponent implements OnInit {
     this.editIndex = index;
 
     const prepared = this.withTotal(p);
-
-    // ✅ ใส่ค่าให้ input type="date" (ต้องเป็น YYYY-MM-DD)
     this.editProduct = { ...prepared, date: this.normalizeYmd(prepared.date) };
   }
 
@@ -526,6 +566,7 @@ export class AdminInventoryComponent implements OnInit {
 
         this.editIndex = null;
         this.editProduct = null;
+
         Swal.fire({
           title: 'สำเร็จ',
           text: 'อัปเดตข้อมูลเรียบร้อย',
@@ -536,13 +577,7 @@ export class AdminInventoryComponent implements OnInit {
         });
       },
       error: () =>
-        Swal.fire({
-          title: 'ผิดพลาด',
-          text: 'อัปเดตข้อมูลไม่สำเร็จ',
-          icon: 'error',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'ตกลง',
-        }),
+        Swal.fire({ title: 'ผิดพลาด', text: 'อัปเดตข้อมูลไม่สำเร็จ', icon: 'error' }),
     });
   }
 
@@ -556,68 +591,45 @@ export class AdminInventoryComponent implements OnInit {
     const product = this.filteredProducts[index];
 
     if (!product.id) {
-      Swal.fire({
-        title: 'ผิดพลาด',
-        text: 'ไม่พบ ID ของสินค้า',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+      Swal.fire({ title: 'ผิดพลาด', text: 'ไม่พบ ID ของสินค้า', icon: 'error' });
       return;
     }
 
     Swal.fire({
       title: 'ยืนยันที่จะลบ?',
-      html:
-        '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'ตกลง',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
-      if (result.isConfirmed) {
-        this.inventoryService.delete(product.id!).subscribe({
-          next: () => {
-            this.loadProducts();
-            Swal.fire({
-              title: 'สำเร็จ',
-              text: 'ลบรายการสำเร็จ',
-              icon: 'success',
-              timer: 1500,
-              showConfirmButton: false,
-              timerProgressBar: true,
-            });
-          },
-          error: () =>
-            Swal.fire({
-              title: 'ผิดพลาด',
-              text: 'ลบรายการไม่สำเร็จ',
-              icon: 'error',
-              confirmButtonColor: '#3085d6',
-              confirmButtonText: 'ตกลง',
-            }),
-        });
-      }
+      if (!result.isConfirmed) return;
+
+      this.inventoryService.delete(product.id!).subscribe({
+        next: () => {
+          this.loadProducts();
+          Swal.fire({
+            title: 'สำเร็จ',
+            text: 'ลบรายการสำเร็จ',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            timerProgressBar: true,
+          });
+        },
+        error: () =>
+          Swal.fire({ title: 'ผิดพลาด', text: 'ลบรายการไม่สำเร็จ', icon: 'error' }),
+      });
     });
   }
 
-  /* ================= DATE HELPERS (FIX TIMEZONE) ================= */
-
-  /**
-   * ✅ คืนค่า YYYY-MM-DD แบบ "ไม่เลื่อนวัน" (ยึด Asia/Bangkok)
-   * - ถ้าเป็น YYYY-MM-DD อยู่แล้วจะคืนเดิม
-   * - ถ้าเป็น dd/mm/yyyy จะ normalize
-   * - ถ้าเป็น ISO/datetime จะตัดวันตามไทย
-   */
+  /* ================= DATE HELPERS ================= */
   private normalizeYmd(date: string | Date): string {
     if (!date) return this.todayString();
 
     if (typeof date === 'string') {
-      // already ymd
       if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
-
-      // dd/mm/yyyy -> ymd
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
         const [dd, mm, yyyy] = date.split('/');
         return `${yyyy}-${mm}-${dd}`;
@@ -625,11 +637,9 @@ export class AdminInventoryComponent implements OnInit {
     }
 
     const d = new Date(date);
-    // en-CA = YYYY-MM-DD
     return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 
-  /** ✅ วันนี้แบบไทย (YYYY-MM-DD) ไม่โดน UTC */
   private todayString(): string {
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
@@ -642,7 +652,7 @@ export class AdminInventoryComponent implements OnInit {
       category: '',
       quantity: 1,
       price: 0,
-      date: this.todayString(), // ✅ วันนี้ตามไทย
+      date: this.todayString(),
       total: 0,
     };
     return this.withTotal(p);
