@@ -65,16 +65,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     if (this.isBrowser) {
       if (history.state?.loginSuccess) {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'ยินดีต้อนรับเข้าสู่ระบบ',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
-
+       
         history.replaceState({}, '');
       }
     }

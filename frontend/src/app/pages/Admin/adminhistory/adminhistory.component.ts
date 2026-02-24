@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { HistoryService } from '../../../core/services/history.service';
@@ -30,6 +31,7 @@ export interface Product {
     FormsModule,
     CommonModule,
     CheckboxModule,
+    InputTextModule,
   ],
   templateUrl: './adminhistory.component.html',
   styleUrl: './adminhistory.component.scss',
