@@ -1,1 +1,102 @@
-<p>model works!</p>
+<div class="layout">
+  <div class="main-area">
+    <div class="main-content">
+      <header class="top-navbar">
+        <h1>พยากรณ์การขาย</h1>
+      </header>
+
+      <div class="container-box">
+        <div class="title-row">
+          <!-- <h2 class="title">Ice Cream Sales Prediction</h2> -->
+          <p class="subtitle">เงื่อนไขการพยากรณ์</p>
+        </div>
+
+        <form
+          [formGroup]="predictForm"
+          (ngSubmit)="onSubmit()"
+          class="prediction-form"
+        >
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="flavor">รสชาติ</label>
+              <input
+                id="flavor"
+                type="text"
+                pInputText
+                formControlName="flavor"
+                placeholder="เลือกรสชาติ"
+              />
+            </div>
+
+            <div class="form-group checkbox-group">
+              <div class="checkbox-container">
+                <p-checkbox
+                  formControlName="is_holiday"
+                  [binary]="true"
+                  id="is_holiday"
+                ></p-checkbox>
+                <label for="is_holiday">ผ่านช่วงวันหยุด/เทศกาล</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="start_date">วันที่ตั้งแต่</label>
+              <p-datepicker
+                id="start_date"
+                formControlName="start_date"
+                dateFormat="dd-mm-yy"
+                [showIcon]="true"
+                appendTo="body"
+              ></p-datepicker>
+            </div>
+
+            <div class="form-group">
+              <label for="end_date">ถึงวันที่</label>
+              <p-datepicker
+                id="end_date"
+                formControlName="end_date"
+                dateFormat="dd-mm-yy"
+                [showIcon]="true"
+                appendTo="body"
+              ></p-datepicker>
+            </div>
+
+            <div class="form-group">
+              <label for="duration_days">จำนวนวัน</label>
+              <p-inputNumber
+                id="duration_days"
+                formControlName="duration_days"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                spinnerMode="horizontal"
+                decrementButtonClass="p-button-secondary"
+                incrementButtonClass="p-button-secondary"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                [min]="1"
+                [max]="31"
+              ></p-inputNumber>
+            </div>
+          </div>
+
+          <div class="submit-container">
+            <p-button
+              type="submit"
+              label="Predict Sales"
+              [disabled]="!predictForm.valid"
+              styleClass="p-button-primary custom-submit-btn"
+            ></p-button>
+          </div>
+        </form>
+
+        <div *ngIf="result !== null" class="result-card">
+          <h3>ผลการพยากรณ์</h3>
+          <div class="prediction-value">
+            <span class="number">{{ result | number: '1.0-0' }}</span>
+            <span class="unit">ถ้วย</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

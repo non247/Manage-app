@@ -1,0 +1,191 @@
+/* ================= LAYOUT ================= */
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+.main-content {
+  padding: 20px;
+  margin-left: 90px;
+}
+
+/* ================= TOP NAV ================= */
+.top-navbar {
+  padding: 15px 20px;
+  border-radius: 15px;
+  color: #d81b60;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ================= CONTAINER BOX (Matching table-box) ================= */
+.container-box {
+  padding: 30px;
+  background: #ffd6e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+  min-height: 620px;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-row {
+  margin-bottom: 25px;
+}
+
+.title {
+  color: #d81b60;
+  margin: 0;
+  font-size: 32px;
+}
+
+.subtitle {
+  color: #666;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+/* ================= FORM STYLES ================= */
+.prediction-form {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='date'],
+  ::ng-deep .p-inputtext,
+  ::ng-deep .p-datepicker,
+  ::ng-deep .p-inputnumber {
+    width: 100%;
+  }
+
+  ::ng-deep .p-inputtext,
+  ::ng-deep .p-datepicker .p-inputtext,
+  ::ng-deep .p-inputnumber .p-inputtext {
+    height: 46px;
+    border-radius: 10px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    padding: 0 15px;
+
+    &:focus {
+      outline: none;
+      border-color: #d81b60;
+      box-shadow: 0 0 0 2px rgba(216, 27, 96, 0.1);
+    }
+  }
+
+  ::ng-deep .p-datepicker {
+    display: flex;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+.submit-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+::ng-deep .custom-submit-btn {
+  width: 180px !important;
+  height: 40px !important;
+}
+
+::ng-deep .custom-submit-btn .p-button-label {
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+/* ================= RESULT SECTION ================= */
+.result-card {
+  margin-top: 30px;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  text-align: center;
+  border-left: 8px solid #d81b60;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 22px;
+  }
+}
+
+.prediction-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+
+  .number {
+    font-size: 48px;
+    font-weight: 800;
+    color: #d81b60;
+  }
+
+  .unit {
+    font-size: 24px;
+    color: #666;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
