@@ -97,7 +97,14 @@ export const routes: Routes = [
   },
 
   // ===== SHARED =====
-  { path: 'forecast', component: ModelComponent, canActivate: [AuthGuard] },
+  {
+    path: 'forecast',
+    component: ModelComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'admin',
+    },
+  },
 
   { path: '**', redirectTo: 'login' },
 ];

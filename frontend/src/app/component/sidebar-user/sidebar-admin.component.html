@@ -70,6 +70,20 @@
         </a>
       </li>
 
+      <!-- Usermanagement -->
+      <li routerLink="/forecast" routerLinkActive="active">
+        <a (click)="navigateTo('/forecast')">
+          <i class="pi pi-chart-line" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            พยากรณ์ยอดขาย
+          </span>
+        </a>
+      </li>
+
       <!-- Logout -->
       <li class="logout">
         <a (click)="logout()">

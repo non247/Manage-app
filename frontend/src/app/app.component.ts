@@ -28,8 +28,8 @@ export class AppComponent {
   role: string = ''; // 👈 เพิ่มตัวนี้
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
