@@ -14,7 +14,13 @@ import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, MultiSelectModule, TableModule, InputTextModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MultiSelectModule,
+    TableModule,
+    InputTextModule,
+  ],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
@@ -44,27 +50,27 @@ export class ProductComponent implements OnInit {
     image: null as File | null,
   };
 
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
-  this.load();
+    this.load();
 
-  const key = 'welcome_product_shown';
+    const key = 'welcome_product_shown';
 
-  if (!sessionStorage.getItem(key)) {
-    sessionStorage.setItem(key, '1');
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, '1');
 
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'ยินดีต้อนรับเข้าสู่ระบบ',
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true,
-    });
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'ยินดีต้อนรับเข้าสู่ระบบ',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    }
   }
-}
 
   toImgUrl(img: string | null | undefined) {
     if (!img) return '';

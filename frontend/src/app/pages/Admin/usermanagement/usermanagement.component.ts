@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 
 import { UserService } from '../../../core/services/usermanagement.service';
 
-// ✅ เพิ่ม type ให้หาย error Role/User
 type Role = 'admin' | 'user';
 
 interface User {
@@ -38,6 +37,24 @@ export class UsermanagementComponent implements OnInit {
     this.loadUsers();
   }
 
+  // ================= ROLE DISPLAY =================
+  getRoleLabel(role: Role) {
+    return role === 'admin' ? 'Manager' : 'Employee';
+  }
+
+  getRoleClass(role: Role) {
+    return role === 'admin' ? 'admin' : 'user';
+  }
+
+  roleToBackend(role: string): Role {
+    return role === 'Manager' ? 'admin' : 'user';
+  }
+
+  roleFromBackend(role: Role) {
+    return role === 'admin' ? 'Manager' : 'Employee';
+  }
+
+  // ================= LOAD USERS =================
   loadUsers() {
     this.userService.getUsers().subscribe({
       next: (data: User[]) => (this.users = data),
@@ -81,6 +98,7 @@ export class UsermanagementComponent implements OnInit {
           timer: 1500,
           showConfirmButton: false,
         });
+
         this.onCreateCancel();
         this.loadUsers();
       },
@@ -130,6 +148,7 @@ export class UsermanagementComponent implements OnInit {
           this.users[index] = updated;
           this.editIndex = null;
           this.editUser = null;
+
           Swal.fire({
             title: 'สำเร็จ',
             text: 'บันทึกข้อมูลเรียบร้อย',
@@ -171,10 +190,11 @@ export class UsermanagementComponent implements OnInit {
             title: 'สำเร็จ',
             text: 'ลบรายการสำเร็จ',
             icon: 'success',
-            timer: 1500, // เวลาแสดง (ms)
+            timer: 1500,
             showConfirmButton: false,
             timerProgressBar: true,
           });
+
           this.users.splice(index, 1);
         },
         error: () => Swal.fire('Error', 'ลบไม่สำเร็จ', 'error'),

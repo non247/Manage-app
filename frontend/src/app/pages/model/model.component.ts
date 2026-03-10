@@ -32,14 +32,12 @@ export class ModelComponent implements OnInit {
       flavor: 'มิ้นต์ช็อกโกแลตชิพ',
       is_holiday: false,
       duration_days: 7,
-      start_date: new Date('2026-01-26'),
-      end_date: new Date('2026-02-01'),
+      start_date: null,
+      end_date: null,
     });
   }
 
-  ngOnInit(): void {
-    this.onSubmit();
-  }
+  ngOnInit(): void {}
 
   predictForm: FormGroup;
   result: any = null;
