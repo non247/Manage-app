@@ -65,8 +65,8 @@
                 <label>ระดับผู้ใช้</label>
                 <select [(ngModel)]="newUser.Role">
                   <option value="" disabled>-- เลือก Role --</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Employee">Employee</option>
+                  <option value="admin">Manager</option>
+                  <option value="user">Employee</option>
                 </select>
               </div>
             </div>
@@ -83,7 +83,6 @@
           </div>
         </div>
 
-        <!-- TABLE -->
         <p-table
           #dt
           [value]="users"
@@ -133,18 +132,18 @@
                   <span
                     class="role-badge"
                     [ngClass]="{
-                      admin: user.Role === 'Manager',
-                      user: user.Role === 'Employee',
+                      admin: user.Role === 'admin',
+                      user: user.Role === 'user'
                     }"
                   >
-                    {{ user.Role }}
+                    {{ getRoleLabel(user.Role) }}
                   </span>
                 </ng-container>
 
                 <ng-template #editRole>
                   <select [(ngModel)]="editUser!.Role">
-                    <option value="Manager">Manager</option>
-                    <option value="Employee">Employee</option>
+                    <option value="admin">Manager</option>
+                    <option value="user">Employee</option>
                   </select>
                 </ng-template>
               </td>
