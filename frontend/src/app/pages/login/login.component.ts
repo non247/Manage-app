@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../core/services/auth.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-login',
@@ -11,6 +12,21 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [FormsModule, NgIf, CommonModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  animations: [
+    trigger('slideForm', [
+      transition(':enter', [
+        style({
+          transform: 'translateX(-80px) translateZ(0)',
+        }),
+        animate(
+          '420ms cubic-bezier(0.16, 1, 0.3, 1)',
+          style({
+            transform: 'translateX(0) translateZ(0)',
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class LoginComponent implements OnInit {
   Username: string = '';
@@ -29,7 +45,6 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // ✅ toast หลัง logout
     this.route.queryParams.subscribe((params) => {
       if (params['logoutSuccess'] === 'true') {
         Swal.fire({
@@ -63,7 +78,6 @@ export class LoginComponent implements OnInit {
       next: (res) => {
         const role = res.role;
 
-        // ✅ ส่ง state ไป dashboard เพื่อใช้แสดง welcome toast
         this.router.navigate([role === 'admin' ? '/product' : '/dashboard'], {
           state: { loginSuccess: true },
         });

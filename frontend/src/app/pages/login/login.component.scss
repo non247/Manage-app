@@ -48,6 +48,7 @@ $input-border: #ccc;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  will-change: transform;
 }
 
 /* ===== Title ===== */

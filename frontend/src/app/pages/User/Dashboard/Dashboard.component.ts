@@ -408,7 +408,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'pie',
       data: {
         labels: dataSource.map((d) => d.name),
-        datasets: [{ data: dataSource.map((d) => this.toNumber(d.sold)) }],
+        datasets: [
+          {
+            data: dataSource.map((d) => this.toNumber(d.sold)),
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -420,11 +424,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             position: 'right',
             labels: { usePointStyle: true, pointStyle: 'circle', padding: 20 },
           },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value = Number(context.raw ?? 0);
+                return `${value.toLocaleString()} ชิ้น`;
+              },
+            },
+          },
         },
       },
     });
   }
-
   // =========================
   // 📦 กราฟสินค้าทั้งหมด
   // =========================
@@ -458,12 +469,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             position: 'right',
             labels: { usePointStyle: true, pointStyle: 'circle' },
           },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value = Number(context.raw ?? 0);
+                return `${context.dataset.label}: ${value.toLocaleString()} ชิ้น`;
+              },
+            },
+          },
         },
         scales: {
           x: { display: false },
           y: {
             title: { display: true, text: 'จำนวนขาย (ชิ้น)' },
-            ticks: { callback: (value) => `${value}` },
+            ticks: {
+              callback: (value) => `${value} ชิ้น`,
+            },
           },
         },
       },

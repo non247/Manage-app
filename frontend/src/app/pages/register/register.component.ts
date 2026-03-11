@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../core/services/auth.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-register',
@@ -11,6 +12,21 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [FormsModule, NgIf, CommonModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
+  animations: [
+    trigger('slideForm', [
+      transition(':enter', [
+        style({
+          transform: 'translateX(80px) translateZ(0)',
+        }),
+        animate(
+          '420ms cubic-bezier(0.16, 1, 0.3, 1)',
+          style({
+            transform: 'translateX(0) translateZ(0)',
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class RegisterComponent {
   Username: string = '';
@@ -42,7 +58,6 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // validate
     if (!this.Username || !this.Password || !this.ConfirmPassword) {
       this.errorMessage = 'กรุณากรอกข้อมูลให้ครบ';
       return;
