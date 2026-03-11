@@ -7,7 +7,10 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
-import { HistoryService } from '../../../core/services/history.service';
+import {
+  HistoryService,
+  ProductMaster,
+} from '../../../core/services/history.service';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -19,6 +22,7 @@ export interface Product {
   price: number;
   date: string; // ✅ string กัน timezone
   total?: number; // ✅ ต้องมี field จริงเพื่อให้ sort ได้
+  image?: string; // ✅ เพิ่มรูป
 }
 
 @Component({
@@ -50,6 +54,7 @@ export class HistoryComponent implements OnInit {
   // ===== DATA =====
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  productMasters: ProductMaster[] = [];
 
   // ===== CHECKBOX =====
   selectedProducts: Product[] = [];
@@ -67,19 +72,56 @@ export class HistoryComponent implements OnInit {
 
   /* ================= INIT ================= */
   ngOnInit(): void {
+    this.loadProductMasters();
+
     const items = history.state?.items as Product[] | undefined;
 
     if (Array.isArray(items) && items.length > 0) {
-      // ✅ ใช้ข้อมูลที่ส่งมา + normalize + คำนวณ total
-      this.products = this.withTotal(items);
+      this.products = this.mapProductsWithMasterImage(this.withTotal(items));
       this.filteredProducts = [...this.products];
     } else {
       this.loadProducts();
     }
   }
 
+  /* ================= IMAGE HELPERS ================= */
+  private getMasterByName(name: string): ProductMaster | undefined {
+    return this.productMasters.find((x) => x.name === name);
+  }
+
+  getImageUrl(image?: string): string {
+    if (!image) return '';
+
+    const cleaned = image.trim().replace(/\\/g, '/');
+
+    if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
+      return cleaned;
+    }
+
+    if (cleaned.startsWith('/uploads/')) {
+      return `http://localhost:3000${cleaned}`;
+    }
+
+    if (cleaned.startsWith('uploads/')) {
+      return `http://localhost:3000/${cleaned}`;
+    }
+
+    return `http://localhost:3000/uploads/${cleaned}`;
+  }
+
+  private applyMasterImage(product: Product): Product {
+    const master = this.getMasterByName(product.name);
+    return {
+      ...product,
+      image: this.getImageUrl(master?.image),
+    };
+  }
+
+  private mapProductsWithMasterImage(list: Product[]): Product[] {
+    return (list || []).map((p) => this.applyMasterImage(p));
+  }
+
   /* ================= TOTAL NORMALIZER ================= */
-  // ✅ ฟังก์ชันเดียวจบ: normalize quantity/price/date และใส่ total
   private withTotal(list: Product[]): Product[] {
     return (list || []).map((x) => {
       const quantity = Number((x as any).quantity ?? 0) || 0;
@@ -91,7 +133,7 @@ export class HistoryComponent implements OnInit {
         quantity,
         price,
         date,
-        total: quantity * price, // ✅ field จริง
+        total: quantity * price,
       };
     });
   }
@@ -100,11 +142,11 @@ export class HistoryComponent implements OnInit {
   loadProducts() {
     this.historyService.getAll().subscribe({
       next: (res) => {
-        // ✅ normalize + total ทุกแถว
-        this.products = this.withTotal(res || []);
+        this.products = this.mapProductsWithMasterImage(
+          this.withTotal(res || [])
+        );
         this.filteredProducts = [...this.products];
 
-        // ✅ กัน selected ค้างผิด (เช่น ลบจาก DB แล้ว)
         this.selectedProducts = this.selectedProducts.filter((s) =>
           this.filteredProducts.some((p) => this.sameRow(p, s))
         );
@@ -113,6 +155,27 @@ export class HistoryComponent implements OnInit {
         Swal.fire({
           title: 'ผิดพลาด',
           text: 'โหลดข้อมูลไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
+    });
+  }
+
+  loadProductMasters() {
+    this.historyService.getProductMaster().subscribe({
+      next: (list) => {
+        this.productMasters = list || [];
+
+        if (this.products.length > 0) {
+          this.products = this.mapProductsWithMasterImage(this.products);
+          this.filteredProducts = [...this.products];
+        }
+      },
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'โหลดรูปสินค้าจากหน้า product ไม่สำเร็จ',
           icon: 'error',
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'ตกลง',
@@ -130,7 +193,6 @@ export class HistoryComponent implements OnInit {
       );
     }
 
-    // ✅ เวลาฟิลเตอร์เปลี่ยน ให้คง selected เฉพาะตัวที่ยังอยู่ใน filtered
     this.selectedProducts = this.selectedProducts.filter((s) =>
       this.filteredProducts.some((p) => this.sameRow(p, s))
     );
@@ -143,7 +205,6 @@ export class HistoryComponent implements OnInit {
   }
 
   onCreateSave() {
-    // ✅ normalize date ก่อนส่ง
     this.newProduct.date = this.normalizeYmd(this.newProduct.date);
 
     if (!this.isValidProduct(this.newProduct)) {
@@ -157,7 +218,6 @@ export class HistoryComponent implements OnInit {
       return;
     }
 
-    // ✅ ทำให้เป็น number ชัวร์ + ใส่ total ด้วย
     const quantity = Number((this.newProduct as any).quantity ?? 0) || 0;
     const price = Number((this.newProduct as any).price ?? 0) || 0;
 
@@ -165,7 +225,7 @@ export class HistoryComponent implements OnInit {
       ...this.newProduct,
       quantity,
       price,
-      total: quantity * price, // ✅ ส่งไปด้วยได้ (ถ้า backend ไม่ใช้ก็ไม่เป็นไร)
+      total: quantity * price,
       code: 'P' + Date.now(),
     };
 
@@ -208,10 +268,8 @@ export class HistoryComponent implements OnInit {
     this.editIndex = index;
 
     this.editProduct = {
-      ...p,
-      // ✅ ให้ input type="date" ได้ค่า YYYY-MM-DD แบบไม่เพี้ยน
+      ...this.applyMasterImage(p),
       date: this.normalizeYmd(p.date),
-      // ✅ กันกรณี total หาย
       total: (Number(p.quantity) || 0) * (Number(p.price) || 0),
     };
   }
@@ -219,21 +277,19 @@ export class HistoryComponent implements OnInit {
   onSave(index: number) {
     if (!this.editProduct?.id) return;
 
-    // ✅ normalize + บังคับ number + คำนวณ total ก่อนส่งและก่อนอัปเดต state
     const quantity = Number((this.editProduct as any).quantity ?? 0) || 0;
     const price = Number((this.editProduct as any).price ?? 0) || 0;
 
-    const payload: Product = {
+    const payload: Product = this.applyMasterImage({
       ...this.editProduct,
       quantity,
       price,
       date: this.normalizeYmd(this.editProduct.date),
-      total: quantity * price, // ✅ สำคัญ: field จริงเพื่อ sort
-    };
+      total: quantity * price,
+    });
 
     this.historyService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        // ✅ update local arrays
         this.filteredProducts[index] = { ...payload };
 
         const originalIndex = this.products.findIndex((p) =>
@@ -241,7 +297,6 @@ export class HistoryComponent implements OnInit {
         );
         if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
 
-        // ✅ sync selected ถ้าถูกเลือกอยู่
         const selIndex = this.selectedProducts.findIndex((p) =>
           this.sameRow(p, payload)
         );
@@ -303,7 +358,6 @@ export class HistoryComponent implements OnInit {
 
       this.historyService.delete(product.id!).subscribe({
         next: () => {
-          // ✅ ถ้าถูกเลือกอยู่ ให้เอาออกด้วย
           this.selectedProducts = this.selectedProducts.filter(
             (p) => !this.sameRow(p, product)
           );
@@ -331,25 +385,22 @@ export class HistoryComponent implements OnInit {
   }
 
   /* ================= CHECKBOX ================= */
-
-  /** เทียบว่าเป็นแถวเดียวกัน (ใช้ id ก่อน ถ้าไม่มีค่อย fallback code) */
   private sameRow(a: Product, b: Product): boolean {
     if (a?.id != null && b?.id != null) return a.id === b.id;
     return a.code === b.code;
   }
 
-  /** เช็คว่าแถวนี้ถูกเลือกอยู่ไหม */
   isSelected(p: Product): boolean {
     return this.selectedProducts.some((x) => this.sameRow(x, p));
   }
 
-  /** กด checkbox รายแถว */
   toggleRow(p: Product, event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
 
     if (checked) {
-      if (!this.isSelected(p))
+      if (!this.isSelected(p)) {
         this.selectedProducts = [...this.selectedProducts, p];
+      }
     } else {
       this.selectedProducts = this.selectedProducts.filter(
         (x) => !this.sameRow(x, p)
@@ -357,13 +408,11 @@ export class HistoryComponent implements OnInit {
     }
   }
 
-  /** กด checkbox เลือกทั้งหมด (แค่ใน filteredProducts) */
   toggleSelectAll(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedProducts = checked ? [...this.filteredProducts] : [];
   }
 
-  /** ใช้ bind กับ [checked] ของ checkbox หัวตาราง */
   isAllSelected(): boolean {
     return (
       this.filteredProducts.length > 0 &&
@@ -371,7 +420,6 @@ export class HistoryComponent implements OnInit {
     );
   }
 
-  /** ใช้ bind กับ [indeterminate] ของ checkbox หัวตาราง */
   isIndeterminate(): boolean {
     return (
       this.selectedProducts.length > 0 &&
@@ -393,12 +441,12 @@ export class HistoryComponent implements OnInit {
     }
 
     const data = this.selectedProducts.map((p) => ({
-      วันที่: this.formatThDate(p.date), // ✅ ใช้ตัวนี้กันเลื่อนวัน
+      วันที่: this.formatThDate(p.date),
       ชื่อสินค้า: p.name,
       หมวดหมู่: p.category,
       จำนวน: p.quantity,
       ราคา: p.price,
-      ราคารวม: p.total ?? (Number(p.quantity) || 0) * (Number(p.price) || 0), // ✅ เผื่อไว้
+      ราคารวม: p.total ?? (Number(p.quantity) || 0) * (Number(p.price) || 0),
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -407,21 +455,13 @@ export class HistoryComponent implements OnInit {
     XLSX.writeFile(wb, 'History.xlsx');
   }
 
-  /* ================= DATE HELPERS (FIX TIMEZONE) ================= */
-
-  /**
-   * คืนค่า YYYY-MM-DD แบบ "ไม่เลื่อนวัน" (ยึด Asia/Bangkok)
-   * - ถ้าเป็น YYYY-MM-DD อยู่แล้วจะคืนเดิม
-   * - ถ้าเป็น 20/02/2026 หรือ Date จะ normalize ให้ถูก
-   */
+  /* ================= DATE HELPERS ================= */
   private normalizeYmd(date: string | Date): string {
     if (!date) return this.todayString();
 
     if (typeof date === 'string') {
-      // already ymd
       if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
 
-      // dd/mm/yyyy -> ymd
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
         const [dd, mm, yyyy] = date.split('/');
         return `${yyyy}-${mm}-${dd}`;
@@ -429,14 +469,11 @@ export class HistoryComponent implements OnInit {
     }
 
     const d = new Date(date);
-    // en-CA = YYYY-MM-DD
     return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 
-  /** แสดงวันที่ไทยแบบไม่เลื่อนวัน */
   private formatThDate(date: string | Date): string {
     const ymd = this.normalizeYmd(date);
-    // ทำให้เป็น Date ที่ไม่โดน timezone shift: ใส่ T00:00:00
     const d = new Date(`${ymd}T00:00:00`);
     return d.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' });
   }
@@ -450,12 +487,12 @@ export class HistoryComponent implements OnInit {
       quantity: 0,
       price: 0,
       date: this.todayString(),
-      total: 0, // ✅ ใส่ไว้ไม่เสียหาย
+      total: 0,
+      image: '',
     };
   }
 
   private todayString(): string {
-    // ✅ ให้เป็น YYYY-MM-DD แบบไทยด้วย (กันเลื่อนวัน)
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   }
 

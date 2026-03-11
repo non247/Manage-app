@@ -25,6 +25,7 @@ export interface Product {
   price: number;
   date: string; // ✅ ใช้ string ป้องกัน timezone
   total?: number; // ✅ ราคารวม
+  image?: string; // ✅ เพิ่มรูปภาพ
 }
 
 type Option = { label: string; value: string };
@@ -100,14 +101,66 @@ export class InventoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadProducts();
     this.loadProductMasters();
+    this.loadProducts();
   }
 
   /* ================= INT ONLY ================= */
   toInt(value: any, min = 0): number {
     const n = Math.floor(Number(value) || 0);
     return n < min ? min : n;
+  }
+
+  /* ================= IMAGE HELPERS ================= */
+  getMasterByName(name: string): ProductMaster | undefined {
+    return this.productMasters.find((x) => x.name === name);
+  }
+
+  getImageUrl(image?: string): string {
+    if (!image) return '';
+
+    const cleaned = image.trim().replace(/\\/g, '/');
+
+    // ถ้าเป็น URL เต็มอยู่แล้ว
+    if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
+      return cleaned;
+    }
+
+    // ถ้ามี /uploads/ ติดมาแล้ว
+    if (cleaned.startsWith('/uploads/')) {
+      return `http://localhost:3000${cleaned}`;
+    }
+
+    if (cleaned.startsWith('uploads/')) {
+      return `http://localhost:3000/${cleaned}`;
+    }
+
+    // เหลือกรณีเป็นชื่อไฟล์ล้วน
+    return `http://localhost:3000/uploads/${cleaned}`;
+  }
+
+  getImageUrlByProductName(name: string): string {
+    const master = this.getMasterByName(name);
+    return this.getImageUrl(master?.image);
+  }
+
+  get createProductImage(): string {
+    const master = this.getMasterByName(this.newProduct.name);
+    return this.getImageUrl(master?.image);
+  }
+
+  get editProductImage(): string {
+    if (!this.editProduct) return '';
+    const master = this.getMasterByName(this.editProduct.name);
+    return this.getImageUrl(master?.image);
+  }
+
+  private applyMasterImage(product: Product): Product {
+    const master = this.getMasterByName(product.name);
+    return {
+      ...product,
+      image: this.getImageUrl(master?.image),
+    };
   }
 
   /* ================= TOTAL HELPERS ================= */
@@ -122,9 +175,13 @@ export class InventoryComponent implements OnInit {
     return (list || []).map((p) => this.withTotal(p));
   }
 
+  private mapProductsWithMasterImage(list: Product[]): Product[] {
+    return (list || []).map((p) => this.applyMasterImage(this.withTotal(p)));
+  }
+
   /* ================= GO HISTORY PAGE (OPTIONAL) ================= */
   goToHistory() {
-    const items = this.mapWithTotal(this.filteredProducts);
+    const items = this.mapProductsWithMasterImage(this.filteredProducts);
     this.router.navigate(['/history'], { state: { items } });
   }
 
@@ -132,7 +189,7 @@ export class InventoryComponent implements OnInit {
   loadProducts() {
     this.inventoryService.getAll().subscribe({
       next: (res) => {
-        this.products = this.mapWithTotal(res);
+        this.products = this.mapProductsWithMasterImage(res);
         this.filteredProducts = [...this.products];
       },
       error: () =>
@@ -149,9 +206,17 @@ export class InventoryComponent implements OnInit {
   loadProductMasters() {
     this.inventoryService.getProductMaster().subscribe({
       next: (list: ProductMaster[]) => {
+        console.log('product master list = ', list);
+
         this.productMasters = list;
+
         const uniqueNames = Array.from(new Set(list.map((x) => x.name))).sort();
         this.names = uniqueNames.map((name) => ({ label: name, value: name }));
+
+        if (this.products.length > 0) {
+          this.products = this.mapProductsWithMasterImage(this.products);
+          this.filteredProducts = [...this.products];
+        }
       },
       error: () =>
         Swal.fire({
@@ -164,26 +229,28 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  /* ================= AUTO FILL PRICE ================= */
+  /* ================= AUTO FILL PRICE + IMAGE ================= */
   onCreateNameChange(selectedName: string) {
     if (!selectedName) return;
-    const master = this.productMasters.find((x) => x.name === selectedName);
+
+    const master = this.getMasterByName(selectedName);
     if (!master) return;
 
     this.newProduct.price = this.toInt(master.price, 0);
+    this.newProduct.image = this.getImageUrl(master.image);
     this.newProduct.total =
       this.toInt(this.newProduct.quantity, 1) *
       this.toInt(this.newProduct.price, 0);
   }
 
   onEditNameChange(selectedName: string) {
-    if (!this.editProduct) return;
-    if (!selectedName) return;
+    if (!this.editProduct || !selectedName) return;
 
-    const master = this.productMasters.find((x) => x.name === selectedName);
+    const master = this.getMasterByName(selectedName);
     if (!master) return;
 
     this.editProduct.price = this.toInt(master.price, 0);
+    this.editProduct.image = this.getImageUrl(master.image);
     this.editProduct.total =
       this.toInt(this.editProduct.quantity, 1) *
       this.toInt(this.editProduct.price, 0);
@@ -194,7 +261,7 @@ export class InventoryComponent implements OnInit {
     if (this.selectedCategories.length === 0) {
       this.filteredProducts = [...this.products];
     } else {
-      this.filteredProducts = this.mapWithTotal(
+      this.filteredProducts = this.mapProductsWithMasterImage(
         this.products.filter((p) =>
           this.selectedCategories.includes(p.category)
         )
@@ -291,7 +358,10 @@ export class InventoryComponent implements OnInit {
     this.historyService.create(historyPayload as any).subscribe({
       next: () => {
         const remaining = currentQty - sellQty;
-        const updated: Product = this.withTotal({ ...p, quantity: remaining });
+        const updated: Product = this.withTotal({
+          ...p,
+          quantity: remaining,
+        });
 
         this.inventoryService.update(p.id!, updated).subscribe({
           next: () => {
@@ -370,6 +440,7 @@ export class InventoryComponent implements OnInit {
       this.saleFormInfo = '';
       return;
     }
+
     this.saleForm.qty = 1;
     this.saleFormInfo = `คงเหลือ ${this.toInt(p.quantity, 0)} • ราคา ${this.toInt(
       p.price,
@@ -413,7 +484,7 @@ export class InventoryComponent implements OnInit {
       return;
     }
 
-    // ✅ กันเพิ่มซ้ำ (เพราะเราต้องการให้หายจาก dropdown)
+    // ✅ กันเพิ่มซ้ำ
     const existing = this.saleDraftItems.find((x) => x.id === p.id);
     if (existing) {
       Swal.fire({
@@ -435,7 +506,6 @@ export class InventoryComponent implements OnInit {
       date: p.date ? this.normalizeYmd(p.date) : this.todayString(),
     });
 
-    // reset ช่องกรอกเพื่อเพิ่มรายการถัดไป
     this.saleForm = { productId: null, qty: 1 };
     this.saleFormInfo = '';
   }
@@ -490,8 +560,7 @@ export class InventoryComponent implements OnInit {
     Swal.fire({
       title: `ยืนยันส่งไปประวัติ\n${items.length} รายการ?`,
       html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
-      <span style="color:#ef4444; font-weight:700;">
-      ตามจำนวนที่ระบุ`,
+      <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -505,8 +574,9 @@ export class InventoryComponent implements OnInit {
 
       const jobs = items.map((it) => {
         const p = mapById.get(it.id);
-        if (!p || !p.id)
+        if (!p || !p.id) {
           return of({ ok: false as const, name: it.name, code: it.code });
+        }
 
         const currentQty = this.toInt(p.quantity, 0);
         const sellQty = Math.min(this.toInt(it.sellQty, 1), currentQty);
@@ -606,17 +676,22 @@ export class InventoryComponent implements OnInit {
     const p = this.filteredProducts[index];
     this.editIndex = index;
 
-    const prepared = this.withTotal(p);
-    this.editProduct = { ...prepared, date: this.normalizeYmd(prepared.date) };
+    const prepared = this.applyMasterImage(this.withTotal(p));
+    this.editProduct = {
+      ...prepared,
+      date: this.normalizeYmd(prepared.date),
+    };
   }
 
   onSave(index: number) {
     if (!this.editProduct?.id) return;
 
-    const payload: Product = this.withTotal({
-      ...this.editProduct,
-      date: this.normalizeYmd(this.editProduct.date),
-    });
+    const payload: Product = this.applyMasterImage(
+      this.withTotal({
+        ...this.editProduct,
+        date: this.normalizeYmd(this.editProduct.date),
+      })
+    );
 
     this.inventoryService.update(this.editProduct.id, payload).subscribe({
       next: () => {
@@ -625,7 +700,9 @@ export class InventoryComponent implements OnInit {
         const originalIndex = this.products.findIndex(
           (p) => p.id === this.editProduct!.id
         );
-        if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
+        if (originalIndex !== -1) {
+          this.products[originalIndex] = { ...payload };
+        }
 
         this.editIndex = null;
         this.editProduct = null;
@@ -729,6 +806,7 @@ export class InventoryComponent implements OnInit {
       price: 0,
       date: this.todayString(),
       total: 0,
+      image: '',
     };
     return this.withTotal(p);
   }

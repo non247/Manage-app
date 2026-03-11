@@ -281,7 +281,6 @@
             </div>
           </div>
 
-          <!-- ✅ ปุ่มย้ายไป “ล่างสุดของ modal” -->
           <div class="create-card-footer history-footer">
             <button
               class="btn-cancel"
@@ -299,6 +298,7 @@
             </button>
           </div>
         </div>
+
         <!-- TABLE -->
         <p-table
           #dt
@@ -323,6 +323,8 @@
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
+              <th style="width: 110px" scope="col"></th>
+
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
@@ -350,6 +352,33 @@
           <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
+              <!-- IMAGE -->
+              <td class="image-cell">
+                <ng-container *ngIf="editIndex !== i; else editImage">
+                  <ng-container *ngIf="product.image; else noImage">
+                    <img
+                      [src]="product.image"
+                      [alt]="product.name"
+                      class="product-table-image"
+                    />
+                  </ng-container>
+                </ng-container>
+
+                <ng-template #editImage>
+                  <ng-container *ngIf="editProduct?.image; else noImage">
+                    <img
+                      [src]="editProduct!.image"
+                      [alt]="editProduct!.name"
+                      class="product-table-image"
+                    />
+                  </ng-container>
+                </ng-template>
+
+                <ng-template #noImage>
+                  <div class="no-image">ไม่มีรูป</div>
+                </ng-template>
+              </td>
+
               <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
@@ -387,6 +416,10 @@
                       {{ n.label }}
                     </option>
                   </select>
+
+                  <div class="inline-image-preview" *ngIf="editProductImage">
+                    <img [src]="editProductImage" [alt]="editProduct!.name" />
+                  </div>
                 </ng-template>
               </td>
 
@@ -482,7 +515,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6">ไม่พบข้อมูล</td>
+              <td colspan="7">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>

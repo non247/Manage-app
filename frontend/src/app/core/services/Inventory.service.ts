@@ -18,6 +18,7 @@ export interface ProductMaster {
   id: number;
   name: string;
   price: number;
+  image?: string; // ถ้าคุณมีฟิลด์รูป
 }
 
 @Injectable({ providedIn: 'root' })

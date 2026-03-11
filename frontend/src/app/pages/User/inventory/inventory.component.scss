@@ -709,3 +709,36 @@ tr.editing {
     max-width: 100%;
   }
 }
+
+.image-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.product-table-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  box-shadow: none;
+}
+
+.no-image {
+  font-size: 11px;
+  color: #999;
+}
+
+.inline-image-preview {
+  margin-top: 6px;
+}
+
+.inline-image-preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
