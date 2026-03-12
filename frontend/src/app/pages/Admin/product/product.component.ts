@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
@@ -31,7 +31,6 @@ export class ProductComponent implements OnInit {
   loading = false;
   error = '';
 
-  // ✅ ให้ตรงกับ HTML แบบ usermanagement
   showCreateForm = false;
   isClosing = false;
 
@@ -41,8 +40,9 @@ export class ProductComponent implements OnInit {
   selectedFile: File | null = null;
   previewUrl = '';
 
-  // ✅ ปรับตาม backend
   apiUrl = 'http://localhost:3000';
+
+  private platformId = inject(PLATFORM_ID);
 
   form = {
     name: '',
@@ -57,18 +57,20 @@ export class ProductComponent implements OnInit {
 
     const key = 'welcome_product_shown';
 
-    if (!sessionStorage.getItem(key)) {
-      sessionStorage.setItem(key, '1');
+    if (isPlatformBrowser(this.platformId)) {
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, '1');
 
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'ยินดีต้อนรับเข้าสู่ระบบ',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'ยินดีต้อนรับเข้าสู่ระบบ',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
     }
   }
 
@@ -82,20 +84,20 @@ export class ProductComponent implements OnInit {
   load() {
     this.loading = true;
     this.error = '';
+
     this.productService.getAll(this.keyword).subscribe({
       next: (rows) => {
         this.products = rows;
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
+        console.error('load products error =', err);
         this.error = 'โหลดข้อมูลไม่สำเร็จ';
         this.loading = false;
       },
     });
   }
 
-  /** ✅ เปิดฟอร์มเพิ่มสินค้า (เหมือน usermanagement: toggle) */
   toggleCreate() {
     if (this.showCreateForm) {
       this.onCreateCancel();
@@ -135,7 +137,6 @@ export class ProductComponent implements OnInit {
     this.showCreateForm = true;
   }
 
-  /** ✅ ปิดฟอร์ม (เหมือน usermanagement: closing animation + reset) */
   onCreateCancel() {
     if (!this.showCreateForm || this.isClosing) return;
 
@@ -151,7 +152,7 @@ export class ProductComponent implements OnInit {
       this.form = { name: '', price: 0, image: null };
       this.selectedFile = null;
       this.previewUrl = '';
-    }, 250); // ให้ตรงกับ CSS animation 0.25s
+    }, 250);
   }
 
   onFileSelected(event: Event) {
@@ -190,6 +191,7 @@ export class ProductComponent implements OnInit {
       });
       return;
     }
+
     if (this.form.price === null || Number(this.form.price) <= 0) {
       await Swal.fire({
         title: 'ข้อมูลไม่ครบ',
@@ -220,7 +222,7 @@ export class ProductComponent implements OnInit {
             title: 'สำเร็จ',
             text: 'บันทึกข้อมูลเรียบร้อย',
             icon: 'success',
-            timer: 1500, // เวลาแสดง (ms)
+            timer: 1500,
             showConfirmButton: false,
             timerProgressBar: true,
           });
@@ -277,7 +279,7 @@ export class ProductComponent implements OnInit {
           title: 'สำเร็จ',
           text: 'ลบรายการสำเร็จ',
           icon: 'success',
-          timer: 1500, // เวลาแสดง (ms)
+          timer: 1500,
           showConfirmButton: false,
           timerProgressBar: true,
         });
