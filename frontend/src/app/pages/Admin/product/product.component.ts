@@ -40,6 +40,10 @@ export class ProductComponent implements OnInit {
   selectedFile: File | null = null;
   previewUrl = '';
 
+  // ✅ เพิ่มสำหรับ modal ดูรูปเต็ม
+  showImagePreview = false;
+  fullImageUrl = '';
+
   apiUrl = 'http://localhost:3000';
 
   private platformId = inject(PLATFORM_ID);
@@ -152,6 +156,10 @@ export class ProductComponent implements OnInit {
       this.form = { name: '', price: 0, image: null };
       this.selectedFile = null;
       this.previewUrl = '';
+
+      // ✅ ปิดรูปเต็มด้วย
+      this.showImagePreview = false;
+      this.fullImageUrl = '';
     }, 250);
   }
 
@@ -178,6 +186,26 @@ export class ProductComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => (this.previewUrl = reader.result as string);
     reader.readAsDataURL(file);
+  }
+
+  // ✅ เปิดรูปเต็มจาก preview ในฟอร์ม
+  openImagePreview() {
+    if (!this.previewUrl) return;
+    this.fullImageUrl = this.previewUrl;
+    this.showImagePreview = true;
+  }
+
+  // ✅ เปิดรูปเต็มจากรูปในตาราง
+  openTableImage(url: string) {
+    if (!url) return;
+    this.fullImageUrl = url;
+    this.showImagePreview = true;
+  }
+
+  // ✅ ปิด modal รูปเต็ม
+  closeImagePreview() {
+    this.showImagePreview = false;
+    this.fullImageUrl = '';
   }
 
   async save() {

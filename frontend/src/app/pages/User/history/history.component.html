@@ -133,7 +133,7 @@
             'quantity',
             'price',
             'date',
-            'total',
+            'total'
           ]"
           [scrollable]="true"
           scrollHeight="500px"
@@ -142,7 +142,7 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 70px" scope="col"></th>
+              <th style="width: 110px" scope="col"></th>
 
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
@@ -178,7 +178,8 @@
                   <img
                     [src]="product.image"
                     [alt]="product.name"
-                    class="product-table-image"
+                    class="product-table-image clickable-image"
+                    (click)="openImagePreview(product.image)"
                     (error)="product.image = ''"
                   />
                 </ng-container>
@@ -270,5 +271,28 @@
         </p-table>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- IMAGE PREVIEW MODAL -->
+<div
+  *ngIf="showImagePreview"
+  class="image-preview-backdrop"
+  (click)="closeImagePreview()"
+>
+  <div class="image-preview-modal" (click)="$event.stopPropagation()">
+    <button
+      type="button"
+      class="image-close-btn"
+      (click)="closeImagePreview()"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <img
+      [src]="previewImageUrl"
+      alt="preview"
+      class="image-preview-full"
+    />
   </div>
 </div>

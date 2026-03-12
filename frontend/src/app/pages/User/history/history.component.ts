@@ -36,7 +36,7 @@ export interface Product {
     CheckboxModule,
   ],
   templateUrl: './history.component.html',
-  styleUrl: './history.component.scss',
+  styleUrls: ['./history.component.scss'],
 })
 export class HistoryComponent implements OnInit {
   // ===== TABLE / EDIT =====
@@ -58,6 +58,10 @@ export class HistoryComponent implements OnInit {
 
   // ===== CHECKBOX =====
   selectedProducts: Product[] = [];
+
+  // ===== IMAGE PREVIEW =====
+  showImagePreview = false;
+  previewImageUrl = '';
 
   // ===== CATEGORY OPTIONS =====
   categories = [
@@ -119,6 +123,17 @@ export class HistoryComponent implements OnInit {
 
   private mapProductsWithMasterImage(list: Product[]): Product[] {
     return (list || []).map((p) => this.applyMasterImage(p));
+  }
+
+  openImagePreview(url?: string) {
+    if (!url) return;
+    this.previewImageUrl = url;
+    this.showImagePreview = true;
+  }
+
+  closeImagePreview() {
+    this.showImagePreview = false;
+    this.previewImageUrl = '';
   }
 
   /* ================= TOTAL NORMALIZER ================= */

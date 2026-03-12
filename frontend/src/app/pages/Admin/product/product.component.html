@@ -108,7 +108,12 @@
               <div class="field full" *ngIf="previewUrl">
                 <label>ตัวอย่างรูป</label>
                 <div class="preview">
-                  <img [src]="previewUrl" alt="preview" />
+                  <img
+                    [src]="previewUrl"
+                    alt="preview"
+                    class="preview-thumb"
+                    (click)="openImagePreview()"
+                  />
                   <div class="meta">
                     <div class="name">
                       {{ form.name || 'ยังไม่ได้ใส่ชื่อสินค้า' }}
@@ -180,7 +185,12 @@
               <td>{{ p.code }}</td>
               <td>
                 <div class="img-wrap" *ngIf="p.image; else noimg">
-                  <img [src]="toImgUrl(p.image)" alt="product" />
+                  <img
+                    [src]="toImgUrl(p.image)"
+                    alt="product"
+                    class="table-preview-img"
+                    (click)="openTableImage(toImgUrl(p.image))"
+                  />
                 </div>
                 <ng-template #noimg>
                   <span class="muted">-</span>
@@ -211,5 +221,28 @@
         </p-table>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ===== IMAGE PREVIEW MODAL ===== -->
+<div
+  *ngIf="showImagePreview"
+  class="image-preview-backdrop"
+  (click)="closeImagePreview()"
+>
+  <div class="image-preview-modal" (click)="$event.stopPropagation()">
+    <button
+      type="button"
+      class="image-close-btn"
+      (click)="closeImagePreview()"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <img
+      [src]="fullImageUrl"
+      alt="full preview"
+      class="image-preview-full"
+    />
   </div>
 </div>

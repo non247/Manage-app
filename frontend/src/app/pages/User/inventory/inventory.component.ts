@@ -94,6 +94,12 @@ export class InventoryComponent implements OnInit {
 
   saleFormInfo = '';
 
+  // ==========================
+  // ✅ IMAGE PREVIEW MODAL
+  // ==========================
+  showImagePreview = false;
+  previewImageUrl = '';
+
   constructor(
     private readonly inventoryService: InventoryService,
     private readonly historyService: HistoryService,
@@ -161,6 +167,19 @@ export class InventoryComponent implements OnInit {
       ...product,
       image: this.getImageUrl(master?.image),
     };
+  }
+
+  // ✅ เปิด modal ดูรูปเต็ม
+  openImagePreview(url?: string) {
+    if (!url) return;
+    this.previewImageUrl = url;
+    this.showImagePreview = true;
+  }
+
+  // ✅ ปิด modal ดูรูปเต็ม
+  closeImagePreview() {
+    this.showImagePreview = false;
+    this.previewImageUrl = '';
   }
 
   /* ================= TOTAL HELPERS ================= */
