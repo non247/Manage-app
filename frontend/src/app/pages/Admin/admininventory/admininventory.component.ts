@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
 import { Router } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
@@ -44,7 +49,7 @@ type SaleDraftItem = {
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [TableModule, MultiSelectModule, FormsModule, CommonModule],
+  imports: [TableModule, MultiSelectModule, ReactiveFormsModule, FormsModule, CommonModule ,ButtonModule, InputTextModule, DatePickerModule, InputNumberModule, CheckboxModule],
   templateUrl: './admininventory.component.html',
   styleUrl: './admininventory.component.scss',
 })

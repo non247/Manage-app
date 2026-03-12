@@ -20,17 +20,17 @@
           />
 
           <button
+            type="button"
             class="btn-add"
             style="margin-left: auto"
-            (click)="showCreateForm = !showCreateForm"
+            (click)="onCreate()"
           >
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
 
-          <!-- ✅ เปิดฟอร์มประวัติการขาย -->
           <button
-            class="btn-save btn-history"
             type="button"
+            class="btn-save btn-history"
             (click)="openHistoryForm()"
           >
             <i class="bi bi-send-fill"></i>
@@ -41,7 +41,7 @@
           </button>
         </div>
 
-        <!-- ✅ BACKDROP CREATE -->
+        <!-- BACKDROP CREATE -->
         <div
           *ngIf="showCreateForm"
           class="create-backdrop"
@@ -49,11 +49,12 @@
           (click)="onCreateCancel()"
         ></div>
 
-        <!-- ✅ CREATE FORM : CARD -->
+        <!-- CREATE CARD -->
         <div
           *ngIf="showCreateForm"
           class="create-card"
           [class.closing]="isClosing"
+          (click)="$event.stopPropagation()"
         >
           <div class="create-card-header">
             <h2>เพิ่มสินค้า</h2>
@@ -94,11 +95,11 @@
                 </select>
               </div>
 
-              <!-- QTY -->
+              <!-- QUANTITY -->
               <div class="field">
-                <label for="quantity">จำนวน</label>
+                <label for="productQty">จำนวน</label>
                 <input
-                  id="quantity"
+                  id="productQty"
                   type="number"
                   pInputText
                   min="1"
@@ -111,9 +112,9 @@
 
               <!-- PRICE -->
               <div class="field">
-                <label for="price">ราคา</label>
+                <label for="productPrice">ราคา</label>
                 <input
-                  id="price"
+                  id="productPrice"
                   type="number"
                   pInputText
                   min="0"
@@ -126,9 +127,9 @@
 
               <!-- DATE -->
               <div class="field">
-                <label for="date">วันที่</label>
+                <label for="productDate">วันที่</label>
                 <input
-                  id="date"
+                  id="productDate"
                   type="date"
                   [(ngModel)]="newProduct.date"
                   name="productDate"
@@ -139,15 +140,17 @@
           </div>
 
           <div class="create-card-footer">
-            <button class="btn-cancel" (click)="onCreateCancel()">
+            <button type="button" class="btn-cancel" (click)="onCreateCancel()">
               <i class="bi bi-x-square"></i> ยกเลิก
             </button>
-            <button class="btn-save" (click)="onCreateSave()">
+
+            <button type="button" class="btn-save" (click)="onCreateSave()">
               <i class="pi pi-check-square"></i> บันทึก
             </button>
           </div>
         </div>
 
+        <!-- BACKDROP HISTORY -->
         <div
           *ngIf="showHistoryForm"
           class="create-backdrop history-backdrop"
@@ -155,7 +158,7 @@
           (click)="closeHistoryForm()"
         ></div>
 
-        <!-- ✅ HISTORY FORM CARD -->
+        <!-- HISTORY CARD -->
         <div
           *ngIf="showHistoryForm"
           class="create-card history-card"
@@ -167,7 +170,7 @@
           </div>
 
           <div class="create-card-body history-body">
-            <!-- SECTION 1: เพิ่มรายการ -->
+            <!-- SECTION ADD -->
             <div class="section-box">
               <div class="section-title" style="color: #d81b60">
                 <i class="bi bi-plus-circle"></i>
@@ -176,8 +179,9 @@
 
               <div class="sale-form-row">
                 <div class="field">
-                  <label>ชื่อสินค้า</label>
+                  <label for="saleProductId">ชื่อสินค้า</label>
                   <select
+                    id="saleProductId"
                     class="p-inputtext p-component"
                     [(ngModel)]="saleForm.productId"
                     name="saleProductId"
@@ -187,7 +191,7 @@
                       -- เลือกชื่อสินค้า --
                     </option>
                     <option
-                      *ngFor="let p of saleProductOptions"
+                      *ngFor="let p of availableSaleProducts"
                       [ngValue]="p.id"
                     >
                       {{ p.name }} (คงเหลือ {{ p.quantity }})
@@ -196,32 +200,35 @@
                 </div>
 
                 <div class="field">
-                  <label>จำนวน</label>
+                  <label for="saleQty">จำนวน</label>
                   <input
+                    id="saleQty"
                     type="number"
-                    class="p-inputtext p-component"
                     min="1"
                     [max]="saleFormMax"
                     [(ngModel)]="saleForm.qty"
                     name="saleQty"
+                    class="p-inputtext p-component"
                   />
                 </div>
 
                 <div class="field action-field">
                   <button
-                    class="btn-save"
                     type="button"
+                    class="btn-save"
                     (click)="addSaleItem()"
                   >
-                    <i class="bi bi-plus-circle-fill"></i> บันทึก
+                    <i class="bi bi-plus-circle-fill"></i> เพิ่ม
                   </button>
                 </div>
               </div>
 
-              <div class="hint" *ngIf="saleFormInfo">{{ saleFormInfo }}</div>
+              <div class="hint" *ngIf="saleFormInfo">
+                {{ saleFormInfo }}
+              </div>
             </div>
 
-            <!-- SECTION 2: รายการที่เพิ่มแล้ว -->
+            <!-- SECTION LIST -->
             <div class="section-box">
               <div class="section-title" style="color: #d81b60">
                 <i class="bi bi-list-check"></i>
@@ -262,6 +269,7 @@
                       min="1"
                       [max]="it.stock"
                       [ngModel]="it.sellQty"
+                      name="draftQty{{ it.id }}"
                       (ngModelChange)="updateDraftQty(it.id, $event)"
                       class="draft-qty-input"
                     />
@@ -269,8 +277,8 @@
 
                   <div class="sale-del" style="text-align: right">
                     <button
-                      class="btn-delete"
                       type="button"
+                      class="btn-delete"
                       (click)="removeSaleItem(it.id)"
                     >
                       <i class="bi bi-trash"></i>
@@ -281,9 +289,10 @@
             </div>
           </div>
 
-          <!-- ✅ ปุ่มย้ายไป “ล่างสุดของ modal” -->
+          <!-- FOOTER -->
           <div class="create-card-footer history-footer">
             <button
+              type="button"
               class="btn-cancel"
               (click)="closeHistoryForm()"
               [disabled]="isSubmittingHistory"
@@ -292,6 +301,7 @@
             </button>
 
             <button
+              type="button"
               class="btn-save"
               (click)="confirmSendToHistory()"
               [disabled]="saleDraftItems.length === 0 || isSubmittingHistory"
@@ -300,6 +310,7 @@
             </button>
           </div>
         </div>
+
         <!-- TABLE -->
         <p-table
           #dt
@@ -309,46 +320,33 @@
           [paginator]="true"
           [showCurrentPageReport]="true"
           currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
-          [globalFilterFields]="[
-            'name',
-            'category',
-            'quantity',
-            'price',
-            'date',
-          ]"
+          [globalFilterFields]="['name', 'category', 'quantity', 'price', 'date']"
           [scrollable]="true"
           scrollHeight="500px"
           stripedRows
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
-          <!-- header -->
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
-
               <th pSortableColumn="name" scope="col">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
-
               <th pSortableColumn="category" scope="col">
                 ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
-
               <th pSortableColumn="quantity" scope="col">
                 จำนวน <p-sortIcon field="quantity"></p-sortIcon>
               </th>
-
               <th pSortableColumn="price" scope="col">
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
-
               <th style="width: 10%" scope="col"></th>
             </tr>
           </ng-template>
 
-          <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <!-- DATE -->
@@ -356,6 +354,7 @@
                 <ng-container *ngIf="editIndex !== i; else editDate">
                   {{ product.date | date: 'dd/MM/yyyy' }}
                 </ng-container>
+
                 <ng-template #editDate>
                   <input
                     type="date"
@@ -366,16 +365,11 @@
               </td>
 
               <!-- NAME -->
-              <td
-                style="
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-              >
+              <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
                 </ng-container>
+
                 <ng-template #editName>
                   <select
                     class="p-inputtext p-component"
@@ -396,6 +390,7 @@
                 <ng-container *ngIf="editIndex !== i; else editCategory">
                   {{ product.category }}
                 </ng-container>
+
                 <ng-template #editCategory>
                   <select
                     class="p-inputtext p-component"
@@ -415,6 +410,7 @@
                 <ng-container *ngIf="editIndex !== i; else editQty">
                   {{ product.quantity }}
                 </ng-container>
+
                 <ng-template #editQty>
                   <input
                     type="number"
@@ -432,6 +428,7 @@
                 <ng-container *ngIf="editIndex !== i; else editPrice">
                   {{ product.price | number: '1.0-0' }}
                 </ng-container>
+
                 <ng-template #editPrice>
                   <input
                     type="number"
@@ -447,6 +444,7 @@
               <!-- ACTION -->
               <td style="display: flex; gap: 8px; justify-content: flex-end">
                 <button
+                  type="button"
                   *ngIf="editIndex !== i"
                   class="btn-edit"
                   (click)="onEdit(i)"
@@ -455,6 +453,7 @@
                 </button>
 
                 <button
+                  type="button"
                   *ngIf="editIndex !== i"
                   class="btn-delete"
                   (click)="onDelete(i)"
@@ -463,6 +462,7 @@
                 </button>
 
                 <button
+                  type="button"
                   *ngIf="editIndex === i"
                   class="btn-save"
                   (click)="onSave(i)"
@@ -471,6 +471,7 @@
                 </button>
 
                 <button
+                  type="button"
                   *ngIf="editIndex === i"
                   class="btn-cancel"
                   (click)="onCancel()"

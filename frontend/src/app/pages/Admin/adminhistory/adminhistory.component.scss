@@ -197,6 +197,15 @@ input[type='date'] {
   font-size: 23px;
   text-align: center;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ✅ focus กรอบชมพู */
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='date']:focus {
+  outline: none;
+  border: 2px solid #ec4899;
 }
 
 /* ================= EDIT ROW ================= */
@@ -230,7 +239,13 @@ tr.editing {
   border-radius: 10px;
   text-align: center;
   font-size: 23px;
-  // box-sizing: border-box;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-wrap .search-input:focus {
+  outline: none;
+  border: 2px solid #ec4899;
 }
 
 @media (max-width: 768px) {
@@ -240,6 +255,7 @@ tr.editing {
     max-width: 100%;
   }
 }
+
 /* ================= CREATE CARD ================= */
 .create-card {
   position: fixed;
@@ -292,15 +308,15 @@ tr.editing {
 .field select {
   width: 90%;
   padding: 5px 35px 5px 8px;
-
   border: 1px solid #ccc;
   border-radius: 7px;
   font-size: 23px;
   font-family: inherit;
-
   background-color: #fff;
   cursor: pointer;
   outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   appearance: none;
   -webkit-appearance: none;
@@ -313,7 +329,7 @@ tr.editing {
 }
 
 .field select:focus {
-  border-color: #000000;
+  border: 2px solid #ec4899;
 }
 
 .field select option:disabled {

@@ -238,10 +238,13 @@ app-sidebar-user {
 }
 
 /* ================= INPUT ================= */
+/* ================= INPUT ================= */
 input[type='text'],
 input[type='number'],
 input[type='date'],
-select {
+select,
+.search-input,
+.draft-qty-input {
   width: 100%;
   padding: 5px;
   border: 1px solid #ccc;
@@ -250,6 +253,18 @@ select {
   text-align: center;
   font-family: inherit;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ================= FOCUS กรอบชมพู ================= */
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='date']:focus,
+select:focus,
+.search-input:focus,
+.draft-qty-input:focus {
+  outline: none;
+  border: 2px solid #ec4899;
 }
 
 /* ===== DROPDOWN ARROW ===== */
@@ -270,7 +285,7 @@ select {
 }
 
 select:focus {
-  border-color: #000;
+  border-color: #e85c94;
 }
 
 select option:disabled {
