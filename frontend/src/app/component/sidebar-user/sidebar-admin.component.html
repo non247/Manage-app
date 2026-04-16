@@ -28,6 +28,20 @@
         </a>
       </li>
 
+      <!-- Admin Purchase -->
+      <li routerLink="/adminpurchase" routerLinkActive="active">
+        <a (click)="navigateTo('/adminpurchase')">
+          <i class="bi bi-receipt" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            รายการสั่งซื้อ
+          </span>
+        </a>
+      </li>
+
       <!-- Admin Inventory -->
       <li routerLink="/admininventory" routerLinkActive="active">
         <a (click)="navigateTo('/admininventory')">
@@ -38,6 +52,20 @@
             style="font-size: 20px"
           >
             รายการสินค้า
+          </span>
+        </a>
+      </li>
+
+      <!-- Admin HistoryPurchase -->
+      <li routerLink="/adminhistorypurchase" routerLinkActive="active">
+        <a (click)="navigateTo('/adminhistorypurchase')">
+          <i class="bi bi-upc-scan" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            ประวัติการสั่งซื้อ
           </span>
         </a>
       </li>

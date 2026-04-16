@@ -34,6 +34,7 @@ const history = require('./src/route/history.route');
 const inventory = require('./src/route/inventory.route');
 const authRoutes = require('./src/route/auth.route');
 const product = require('./src/route/product.route');
+const purchase = require('./src/route/purchase.route'); // ✅ เพิ่มอันนี้
 
 const app = express();
 app.use(cors());
@@ -41,7 +42,7 @@ app.use(express.json());
 
 app.get('/api/probe', (req, res) => res.json({ probe: true }));
 
-app.use('/api/users', userRoutes); // ✅ ตัวนี้คุณรู้ว่าใช้ได้
+app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'));
 
 // ✅ เปิดทีละอัน
@@ -78,6 +79,13 @@ try {
   console.log('✅ products mounted');
 } catch (e) {
   console.error('❌ products mount fail', e);
+}
+
+try {
+  app.use('/api/purchase', purchase); // ✅ เพิ่มอันนี้
+  console.log('✅ purchase mounted');
+} catch (e) {
+  console.error('❌ purchase mount fail', e);
 }
 
 const server = app.listen(3000, () => console.log('server 3000'));

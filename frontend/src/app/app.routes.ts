@@ -10,6 +10,10 @@ import { HistoryComponent } from './pages/User/history/history.component';
 import { InventoryComponent } from './pages/User/inventory/inventory.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ModelComponent } from './pages/model/model.component';
+import { PurchaseComponent } from './pages/User/purchase/purchase.component';
+import { AdminpurchaseComponent } from './pages/Admin/adminpurchase/adminpurchase.component';
+import { AdminhistorypurchaseComponent } from './pages/Admin/adminhistorypurchase/adminhistorypurchase.component';
+import { HistorypurchaseComponent } from './pages/User/historypurchase/historypurchase.component';
 import { RegisterComponent } from './pages/register/register.component';
 
 export const routes: Routes = [
@@ -60,6 +64,23 @@ export const routes: Routes = [
       role: 'user',
     },
   },
+  {
+  path: 'purchase',
+  component: PurchaseComponent,
+  canActivate: [AuthGuard, RoleGuard],
+  data: {
+    role: 'user',
+  },
+},
+  {
+  path: 'historypurchase',
+  component: HistorypurchaseComponent,
+  canActivate: [AuthGuard, RoleGuard],
+  data: {
+    role: 'user',
+  },
+},
+
 
   // ===== ADMIN =====
   {
@@ -95,6 +116,22 @@ export const routes: Routes = [
       role: 'admin',
     },
   },
+  {
+  path: 'adminpurchase',
+  component: AdminpurchaseComponent,
+  canActivate: [AuthGuard, RoleGuard],
+  data: {
+    role: 'admin',
+  },
+},
+  {
+  path: 'adminhistorypurchase',
+  component: AdminhistorypurchaseComponent,
+  canActivate: [AuthGuard, RoleGuard],
+  data: {
+    role: 'admin',
+  },
+},
 
   // ===== SHARED =====
   {

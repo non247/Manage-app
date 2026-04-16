@@ -32,6 +32,20 @@
         </a>
       </li>
 
+      <!-- Purchase -->
+      <li routerLink="/purchase" routerLinkActive="active">
+        <a (click)="navigateTo('/purchase')">
+          <i class="bi bi-receipt" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            รายการสั่งซื้อ
+          </span>
+        </a>
+      </li>
+
       <!-- Inventory -->
       <li routerLink="/inventory" routerLinkActive="active">
         <a (click)="navigateTo('/inventory')">
@@ -42,6 +56,20 @@
             style="font-size: 20px"
           >
             รายการสินค้า
+          </span>
+        </a>
+      </li>
+
+        <!-- History Purchase -->
+      <li routerLink="/historypurchase" routerLinkActive="active">
+        <a (click)="navigateTo('/historypurchase')">
+          <i class="bi bi-upc-scan" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            ประวัติการสั่งซื้อ
           </span>
         </a>
       </li>
