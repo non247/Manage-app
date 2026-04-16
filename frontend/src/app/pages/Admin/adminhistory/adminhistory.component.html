@@ -1,12 +1,10 @@
 <div class="layout">
-  <!-- Main content -->
   <div class="main-area">
     <div class="main-content">
       <header class="top-navbar">
         <h1>ประวัติการขาย</h1>
       </header>
 
-      <!-- ✅ ใส่ table ในกล่อง table-box -->
       <div class="table-box">
         <div
           class="header-row"
@@ -29,10 +27,6 @@
             />
           </div>
 
-          <!-- <button class="btn-add" style="margin-left: auto" (click)="showCreateForm = !showCreateForm">
-            <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
-          </button> -->
-
           <button
             type="button"
             class="btn-excel"
@@ -51,7 +45,7 @@
           (click)="onCreateCancel()"
         ></div>
 
-        <!-- ✅ CREATE FORM : CARD (ถ้ายังใช้ manual ก็ปล่อยไว้ได้) -->
+        <!-- CREATE FORM -->
         <div
           *ngIf="showCreateForm"
           class="create-card"
@@ -77,7 +71,6 @@
                   name="category"
                 >
                   <option value="" disabled>-- เลือกประเภท --</option>
-
                   <option *ngFor="let c of categories" [value]="c.value">
                     {{ c.label }}
                   </option>
@@ -133,14 +126,14 @@
           [rows]="10"
           [paginator]="true"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
+          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ"
           [globalFilterFields]="[
             'name',
             'category',
             'quantity',
             'price',
             'date',
-            'total',
+            'total'
           ]"
           [scrollable]="true"
           scrollHeight="500px"
@@ -149,6 +142,8 @@
         >
           <ng-template pTemplate="header">
             <tr>
+              <th style="width: 110px" scope="col"></th>
+
               <th pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
@@ -169,7 +164,6 @@
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
-              <!-- ✅ เพิ่ม: ราคารวม -->
               <th pSortableColumn="total" scope="col">
                 ราคารวม <p-sortIcon field="total"></p-sortIcon>
               </th>
@@ -178,6 +172,23 @@
 
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
+              <!-- IMAGE -->
+              <td class="image-cell">
+                <ng-container *ngIf="product.image; else noImage">
+                  <img
+                    [src]="product.image"
+                    [alt]="product.name"
+                    class="product-table-image clickable-image"
+                    (click)="openImagePreview(product.image)"
+                    (error)="product.image = ''"
+                  />
+                </ng-container>
+
+                <ng-template #noImage>
+                  <div class="no-image">-</div>
+                </ng-template>
+              </td>
+
               <!-- DATE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editDate">
@@ -223,7 +234,7 @@
                 </ng-template>
               </td>
 
-              <!-- PRICE (format เป็น int เหมือน inventory) -->
+              <!-- PRICE -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editPrice">
                   {{ product.price | number: '1.0-0' }}
@@ -238,7 +249,7 @@
                 </ng-template>
               </td>
 
-              <!-- ✅ TOTAL -->
+              <!-- TOTAL -->
               <td>
                 <ng-container *ngIf="editIndex !== i; else editTotal">
                   {{ product.quantity * product.price | number: '1.0-0' }}
@@ -254,11 +265,34 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6">ไม่พบข้อมูล</td>
+              <td colspan="7">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- IMAGE PREVIEW MODAL -->
+<div
+  *ngIf="showImagePreview"
+  class="image-preview-backdrop"
+  (click)="closeImagePreview()"
+>
+  <div class="image-preview-modal" (click)="$event.stopPropagation()">
+    <button
+      type="button"
+      class="image-close-btn"
+      (click)="closeImagePreview()"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <img
+      [src]="previewImageUrl"
+      alt="preview"
+      class="image-preview-full"
+    />
   </div>
 </div>

@@ -8,7 +8,7 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
-import { HistoryService } from '../../../core/services/history.service';
+import { HistoryService,ProductMaster } from '../../../core/services/history.service';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -20,7 +20,9 @@ export interface Product {
   price: number;
   date: string; // ✅ string กัน timezone
   total?: number; // ✅ ต้องมี field จริงเพื่อให้ sort ได้
+  image?: string; // ✅ เพิ่มรูป
 }
+
 
 @Component({
   selector: 'app-history',
@@ -52,9 +54,14 @@ export class AdminhistoryComponent implements OnInit {
   // ===== DATA =====
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  productMasters: ProductMaster[] = [];
 
   // ===== CHECKBOX =====
   selectedProducts: Product[] = [];
+
+  // ===== IMAGE PREVIEW =====
+  showImagePreview = false;
+  previewImageUrl = '';
 
   // ===== CATEGORY OPTIONS =====
   categories = [
@@ -68,22 +75,68 @@ export class AdminhistoryComponent implements OnInit {
   ) {}
 
   /* ================= INIT ================= */
-  ngOnInit(): void {
-    // ✅ SSR-safe: ไม่ใช้ history.state (จะพังว่า history is not defined)
-    const nav = this.router.getCurrentNavigation();
-    const items = (nav?.extras?.state as any)?.items as Product[] | undefined;
+ngOnInit(): void {
+  this.loadProductMasters();
 
-    if (Array.isArray(items) && items.length > 0) {
-      // ✅ ใช้ข้อมูลที่ส่งมา (แสดงทันที) + normalize + total
-      this.products = this.withTotal(items);
-      this.filteredProducts = [...this.products];
-    } else {
-      this.loadProducts();
+  const nav = this.router.getCurrentNavigation();
+  const items = nav?.extras?.state?.['items'] as Product[] | undefined;
+
+  if (Array.isArray(items) && items.length > 0) {
+    this.products = this.mapProductsWithMasterImage(this.withTotal(items));
+    this.filteredProducts = [...this.products];
+  } else {
+    this.loadProducts();
+  }
+}
+  /* ================= IMAGE HELPERS ================= */
+  private getMasterByName(name: string): ProductMaster | undefined {
+    return this.productMasters.find((x) => x.name === name);
+  }
+
+  getImageUrl(image?: string): string {
+    if (!image) return '';
+
+    const cleaned = image.trim().replace(/\\/g, '/');
+
+    if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
+      return cleaned;
     }
+
+    if (cleaned.startsWith('/uploads/')) {
+      return `http://localhost:3000${cleaned}`;
+    }
+
+    if (cleaned.startsWith('uploads/')) {
+      return `http://localhost:3000/${cleaned}`;
+    }
+
+    return `http://localhost:3000/uploads/${cleaned}`;
+  }
+
+  private applyMasterImage(product: Product): Product {
+    const master = this.getMasterByName(product.name);
+    return {
+      ...product,
+      image: this.getImageUrl(master?.image),
+    };
+  }
+
+  private mapProductsWithMasterImage(list: Product[]): Product[] {
+    return (list || []).map((p) => this.applyMasterImage(p));
+  }
+
+  openImagePreview(url?: string) {
+    if (!url) return;
+    this.previewImageUrl = url;
+    this.showImagePreview = true;
+  }
+
+  closeImagePreview() {
+    this.showImagePreview = false;
+    this.previewImageUrl = '';
   }
 
   /* ================= TOTAL NORMALIZER ================= */
-  // ✅ normalize quantity/price/date + ใส่ total ให้เป็น field จริง
   private withTotal(list: Product[]): Product[] {
     return (list || []).map((x) => {
       const quantity = Number((x as any).quantity ?? 0) || 0;
@@ -95,7 +148,7 @@ export class AdminhistoryComponent implements OnInit {
         quantity,
         price,
         date,
-        total: quantity * price, // ✅ สำคัญ: ให้ sort total ได้
+        total: quantity * price,
       };
     });
   }
@@ -104,11 +157,11 @@ export class AdminhistoryComponent implements OnInit {
   loadProducts() {
     this.historyService.getAll().subscribe({
       next: (res) => {
-        // ✅ normalize + total ทุกแถว
-        this.products = this.withTotal(res || []);
+        this.products = this.mapProductsWithMasterImage(
+          this.withTotal(res || [])
+        );
         this.filteredProducts = [...this.products];
 
-        // ✅ กัน selected ค้างผิด (เช่น ลบจาก DB แล้ว)
         this.selectedProducts = this.selectedProducts.filter((s) =>
           this.filteredProducts.some((p) => this.sameRow(p, s))
         );
@@ -117,6 +170,27 @@ export class AdminhistoryComponent implements OnInit {
         Swal.fire({
           title: 'ผิดพลาด',
           text: 'โหลดข้อมูลไม่สำเร็จ',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'ตกลง',
+        }),
+    });
+  }
+
+  loadProductMasters() {
+    this.historyService.getProductMaster().subscribe({
+      next: (list) => {
+        this.productMasters = list || [];
+
+        if (this.products.length > 0) {
+          this.products = this.mapProductsWithMasterImage(this.products);
+          this.filteredProducts = [...this.products];
+        }
+      },
+      error: () =>
+        Swal.fire({
+          title: 'ผิดพลาด',
+          text: 'โหลดรูปสินค้าจากหน้า product ไม่สำเร็จ',
           icon: 'error',
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'ตกลง',
@@ -134,7 +208,6 @@ export class AdminhistoryComponent implements OnInit {
       );
     }
 
-    // ✅ เวลาฟิลเตอร์เปลี่ยน ให้คง selected เฉพาะตัวที่ยังอยู่ใน filtered
     this.selectedProducts = this.selectedProducts.filter((s) =>
       this.filteredProducts.some((p) => this.sameRow(p, s))
     );
@@ -147,7 +220,6 @@ export class AdminhistoryComponent implements OnInit {
   }
 
   onCreateSave() {
-    // ✅ normalize date ก่อนส่ง
     this.newProduct.date = this.normalizeYmd(this.newProduct.date);
 
     if (!this.isValidProduct(this.newProduct)) {
@@ -166,10 +238,10 @@ export class AdminhistoryComponent implements OnInit {
 
     const payload: Product = {
       ...this.newProduct,
-      code: 'P' + Date.now(),
       quantity,
       price,
-      total: quantity * price, // ✅ ใส่ total ตั้งแต่สร้าง
+      total: quantity * price,
+      code: 'P' + Date.now(),
     };
 
     this.historyService.create(payload).subscribe({
@@ -211,10 +283,8 @@ export class AdminhistoryComponent implements OnInit {
     this.editIndex = index;
 
     this.editProduct = {
-      ...p,
-      // ✅ ให้ input type="date" ได้ค่า YYYY-MM-DD แบบไม่เพี้ยน
+      ...this.applyMasterImage(p),
       date: this.normalizeYmd(p.date),
-      // ✅ กัน total หาย/ไม่ตรง
       total: (Number(p.quantity) || 0) * (Number(p.price) || 0),
     };
   }
@@ -225,17 +295,16 @@ export class AdminhistoryComponent implements OnInit {
     const quantity = Number((this.editProduct as any).quantity ?? 0) || 0;
     const price = Number((this.editProduct as any).price ?? 0) || 0;
 
-    const payload: Product = {
+    const payload: Product = this.applyMasterImage({
       ...this.editProduct,
       quantity,
       price,
-      date: this.normalizeYmd(this.editProduct.date), // ✅ normalize ก่อนส่ง
-      total: quantity * price, // ✅ สำคัญ: update total ก่อนอัปเดต array
-    };
+      date: this.normalizeYmd(this.editProduct.date),
+      total: quantity * price,
+    });
 
     this.historyService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        // ✅ update local arrays
         this.filteredProducts[index] = { ...payload };
 
         const originalIndex = this.products.findIndex((p) =>
@@ -243,7 +312,6 @@ export class AdminhistoryComponent implements OnInit {
         );
         if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
 
-        // ✅ sync selected ถ้าถูกเลือกอยู่
         const selIndex = this.selectedProducts.findIndex((p) =>
           this.sameRow(p, payload)
         );
@@ -305,7 +373,6 @@ export class AdminhistoryComponent implements OnInit {
 
       this.historyService.delete(product.id!).subscribe({
         next: () => {
-          // ✅ ถ้าถูกเลือกอยู่ ให้เอาออกด้วย
           this.selectedProducts = this.selectedProducts.filter(
             (p) => !this.sameRow(p, product)
           );
@@ -333,25 +400,22 @@ export class AdminhistoryComponent implements OnInit {
   }
 
   /* ================= CHECKBOX ================= */
-
-  /** เทียบว่าเป็นแถวเดียวกัน (ใช้ id ก่อน ถ้าไม่มีค่อย fallback code) */
   private sameRow(a: Product, b: Product): boolean {
     if (a?.id != null && b?.id != null) return a.id === b.id;
     return a.code === b.code;
   }
 
-  /** เช็คว่าแถวนี้ถูกเลือกอยู่ไหม */
   isSelected(p: Product): boolean {
     return this.selectedProducts.some((x) => this.sameRow(x, p));
   }
 
-  /** กด checkbox รายแถว */
   toggleRow(p: Product, event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
 
     if (checked) {
-      if (!this.isSelected(p))
+      if (!this.isSelected(p)) {
         this.selectedProducts = [...this.selectedProducts, p];
+      }
     } else {
       this.selectedProducts = this.selectedProducts.filter(
         (x) => !this.sameRow(x, p)
@@ -359,13 +423,11 @@ export class AdminhistoryComponent implements OnInit {
     }
   }
 
-  /** กด checkbox เลือกทั้งหมด (แค่ใน filteredProducts) */
   toggleSelectAll(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedProducts = checked ? [...this.filteredProducts] : [];
   }
 
-  /** ใช้ bind กับ [checked] ของ checkbox หัวตาราง */
   isAllSelected(): boolean {
     return (
       this.filteredProducts.length > 0 &&
@@ -373,7 +435,6 @@ export class AdminhistoryComponent implements OnInit {
     );
   }
 
-  /** ใช้ bind กับ [indeterminate] ของ checkbox หัวตาราง */
   isIndeterminate(): boolean {
     return (
       this.selectedProducts.length > 0 &&
@@ -409,7 +470,7 @@ export class AdminhistoryComponent implements OnInit {
     XLSX.writeFile(wb, 'History.xlsx');
   }
 
-  /* ================= DATE HELPERS (FIX TIMEZONE) ================= */
+  /* ================= DATE HELPERS ================= */
   private normalizeYmd(date: string | Date): string {
     if (!date) return this.todayString();
 
@@ -442,6 +503,7 @@ export class AdminhistoryComponent implements OnInit {
       price: 0,
       date: this.todayString(),
       total: 0,
+      image: '',
     };
   }
 

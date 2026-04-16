@@ -46,6 +46,7 @@ type SaleDraftItem = {
   date: string;
 };
 
+
 @Component({
   selector: 'app-inventory',
   standalone: true,
@@ -98,6 +99,12 @@ export class AdminInventoryComponent implements OnInit {
   };
 
   saleFormInfo = '';
+
+  // ==========================
+  // ✅ IMAGE PREVIEW MODAL
+  // ==========================
+  showImagePreview = false;
+  previewImageUrl = '';
 
   constructor(
     private readonly inventoryService: InventoryService,
@@ -166,6 +173,19 @@ export class AdminInventoryComponent implements OnInit {
       ...product,
       image: this.getImageUrl(master?.image),
     };
+  }
+
+  // ✅ เปิด modal ดูรูปเต็ม
+  openImagePreview(url?: string) {
+    if (!url) return;
+    this.previewImageUrl = url;
+    this.showImagePreview = true;
+  }
+
+  // ✅ ปิด modal ดูรูปเต็ม
+  closeImagePreview() {
+    this.showImagePreview = false;
+    this.previewImageUrl = '';
   }
 
   /* ================= TOTAL HELPERS ================= */

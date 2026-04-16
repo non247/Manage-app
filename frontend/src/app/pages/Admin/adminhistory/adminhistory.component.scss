@@ -40,7 +40,6 @@ app-sidebar-user {
   margin-top: 20px;
   height: 620px;
 
-  /* ✅ ล็อกพื้นที่ในกล่อง เพื่อให้ paginator ไม่ขยับ */
   display: flex;
   flex-direction: column;
 }
@@ -62,25 +61,19 @@ app-sidebar-user {
 /* ================= TABLE (PrimeNG) ================= */
 .main-content p-table {
   margin-top: 30px;
-
-  /* ✅ ให้ p-table กินพื้นที่ที่เหลือใน table-box */
   flex: 1;
   min-height: 0;
 }
 
-/* ✅ ทำให้ datatable เป็น flex column แล้วดัน paginator ติดล่าง */
 :host ::ng-deep .p-datatable {
   height: 100%;
   display: flex;
   flex-direction: column;
-
-  /* ✅ พื้นหลังตารางเป็นขาวทั้งก้อน */
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
 }
 
-/* ✅ พื้นที่ rows (รวมพื้นที่ว่าง) เป็นขาว และไม่ scroll */
 :host ::ng-deep .p-datatable .p-datatable-wrapper {
   flex: 1;
   min-height: 0;
@@ -88,12 +81,10 @@ app-sidebar-user {
   background: #fff;
 }
 
-/* ✅ paginator ติดล่างเสมอ */
 :host ::ng-deep .p-datatable .p-paginator {
   margin-top: auto;
 }
 
-/* ===== Header / Body cell ===== */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   padding: 11px;
@@ -107,21 +98,10 @@ app-sidebar-user {
   font-size: 23px;
 }
 
-/* สำรอง: ถ้ามี rule อื่นมาทับ */
 :host ::ng-deep .p-datatable tbody td {
   text-align: center;
   padding: 12px;
 }
-
-/* (ถ้าจะทำ zebra ให้เอา comment ออก) */
-/*
-:host ::ng-deep .p-datatable tbody tr:nth-child(odd) td {
-  background: #fff;
-}
-:host ::ng-deep .p-datatable tbody tr:nth-child(even) td {
-  background: #fff7fa;
-}
-*/
 
 /* ================= MULTISELECT PANEL ================= */
 :host ::ng-deep .p-multiselect-panel {
@@ -189,7 +169,9 @@ app-sidebar-user {
 /* ================= INPUTS ================= */
 input[type='text'],
 input[type='number'],
-input[type='date'] {
+input[type='date'],
+.search-wrap .search-input,
+.field select {
   width: 90%;
   padding: 5px;
   border: 1px solid #ccc;
@@ -200,10 +182,12 @@ input[type='date'] {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ✅ focus กรอบชมพู */
+/* ================= FOCUS กรอบชมพู ================= */
 input[type='text']:focus,
 input[type='number']:focus,
-input[type='date']:focus {
+input[type='date']:focus,
+.search-wrap .search-input:focus,
+.field select:focus {
   outline: none;
   border: 2px solid #ec4899;
 }
@@ -240,12 +224,6 @@ tr.editing {
   text-align: center;
   font-size: 23px;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search-wrap .search-input:focus {
-  outline: none;
-  border: 2px solid #ec4899;
 }
 
 @media (max-width: 768px) {
@@ -315,8 +293,6 @@ tr.editing {
   background-color: #fff;
   cursor: pointer;
   outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   appearance: none;
   -webkit-appearance: none;
@@ -326,10 +302,6 @@ tr.editing {
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 18px;
-}
-
-.field select:focus {
-  border: 2px solid #ec4899;
 }
 
 .field select option:disabled {
@@ -406,4 +378,83 @@ tr.editing {
   to {
     opacity: 0;
   }
+}
+
+.product-table-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  box-shadow: none;
+}
+
+.no-image {
+  font-size: 11px;
+  color: #999;
+}
+
+.inline-image-preview {
+  margin-top: 6px;
+}
+
+.inline-image-preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.clickable-image {
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-preview-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4000;
+  padding: 24px;
+}
+
+.image-preview-modal {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+}
+
+.image-preview-full {
+  display: block;
+  max-width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.image-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
