@@ -319,34 +319,39 @@
           [scrollable]="true"
           scrollHeight="500px"
           stripedRows
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+          responsiveLayout="scroll"
+          [tableStyle]="{
+            width: '100%',
+            'table-layout': 'fixed',
+            'min-width': '980px'
+          }"
         >
           <!-- header -->
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 110px" scope="col"></th>
+              <th class="col-image" scope="col"></th>
 
-              <th pSortableColumn="date" scope="col">
+              <th class="col-date" pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="name" scope="col">
+              <th class="col-name" pSortableColumn="name" scope="col">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="category" scope="col">
+              <th class="col-category" pSortableColumn="category" scope="col">
                 ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="quantity" scope="col">
+              <th class="col-qty" pSortableColumn="quantity" scope="col">
                 จำนวน <p-sortIcon field="quantity"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="price" scope="col">
+              <th class="col-price" pSortableColumn="price" scope="col">
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
-              <th style="width: 10%" scope="col"></th>
+              <th class="col-action" scope="col"></th>
             </tr>
           </ng-template>
 
@@ -354,7 +359,7 @@
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <!-- IMAGE -->
-              <td class="image-cell">
+              <td class="image-cell col-image">
                 <ng-container *ngIf="editIndex !== i; else editImage">
                   <ng-container *ngIf="product.image; else noImage">
                     <img
@@ -383,7 +388,7 @@
               </td>
 
               <!-- DATE -->
-              <td>
+              <td class="col-date">
                 <ng-container *ngIf="editIndex !== i; else editDate">
                   {{ product.date | date: 'dd/MM/yyyy' }}
                 </ng-container>
@@ -397,13 +402,7 @@
               </td>
 
               <!-- NAME -->
-              <td
-                style="
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-              >
+              <td class="col-name cell-ellipsis">
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
                 </ng-container>
@@ -423,7 +422,7 @@
               </td>
 
               <!-- CATEGORY -->
-              <td>
+              <td class="col-category">
                 <ng-container *ngIf="editIndex !== i; else editCategory">
                   {{ product.category }}
                 </ng-container>
@@ -442,7 +441,7 @@
               </td>
 
               <!-- QUANTITY -->
-              <td>
+              <td class="col-qty">
                 <ng-container *ngIf="editIndex !== i; else editQty">
                   {{ product.quantity }}
                 </ng-container>
@@ -459,7 +458,7 @@
               </td>
 
               <!-- PRICE -->
-              <td>
+              <td class="col-price">
                 <ng-container *ngIf="editIndex !== i; else editPrice">
                   {{ product.price | number: '1.0-0' }}
                 </ng-container>
@@ -476,38 +475,44 @@
               </td>
 
               <!-- ACTION -->
-              <td style="display: flex; gap: 8px; justify-content: flex-end">
-                <button
-                  *ngIf="editIndex !== i"
-                  class="btn-edit"
-                  (click)="onEdit(i)"
-                >
-                  <i class="bi bi-pen"></i>
-                </button>
+              <td class="col-action action-cell">
+                <div class="table-action-wrap">
+                  <button
+                    *ngIf="editIndex !== i"
+                    class="btn-edit"
+                    type="button"
+                    (click)="onEdit(i)"
+                  >
+                    <i class="bi bi-pen"></i>
+                  </button>
 
-                <button
-                  *ngIf="editIndex !== i"
-                  class="btn-delete"
-                  (click)="onDelete(i)"
-                >
-                  <i class="bi bi-trash"></i>
-                </button>
+                  <button
+                    *ngIf="editIndex !== i"
+                    class="btn-delete"
+                    type="button"
+                    (click)="onDelete(i)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
 
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-save"
-                  (click)="onSave(i)"
-                >
-                  <i class="pi pi-check-square"></i>
-                </button>
+                  <button
+                    *ngIf="editIndex === i"
+                    class="btn-save"
+                    type="button"
+                    (click)="onSave(i)"
+                  >
+                    <i class="pi pi-check-square"></i>
+                  </button>
 
-                <button
-                  *ngIf="editIndex === i"
-                  class="btn-cancel"
-                  (click)="onCancel()"
-                >
-                  <i class="bi bi-x-square"></i>
-                </button>
+                  <button
+                    *ngIf="editIndex === i"
+                    class="btn-cancel"
+                    type="button"
+                    (click)="onCancel()"
+                  >
+                    <i class="bi bi-x-square"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           </ng-template>

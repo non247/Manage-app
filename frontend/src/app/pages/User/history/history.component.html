@@ -138,33 +138,38 @@
           [scrollable]="true"
           scrollHeight="500px"
           stripedRows
-          [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+          responsiveLayout="scroll"
+          [tableStyle]="{
+            width: '100%',
+            'table-layout': 'fixed',
+            'min-width': '1120px'
+          }"
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 110px" scope="col"></th>
+              <th class="col-image" scope="col"></th>
 
-              <th pSortableColumn="date" scope="col">
+              <th class="col-date" pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="name" scope="col">
+              <th class="col-name" pSortableColumn="name" scope="col">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="category" scope="col">
+              <th class="col-category" pSortableColumn="category" scope="col">
                 ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="quantity" scope="col">
+              <th class="col-qty" pSortableColumn="quantity" scope="col">
                 จำนวน <p-sortIcon field="quantity"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="price" scope="col">
+              <th class="col-price" pSortableColumn="price" scope="col">
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="total" scope="col">
+              <th class="col-total" pSortableColumn="total" scope="col">
                 ราคารวม <p-sortIcon field="total"></p-sortIcon>
               </th>
             </tr>
@@ -173,7 +178,7 @@
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <!-- IMAGE -->
-              <td class="image-cell">
+              <td class="image-cell col-image">
                 <ng-container *ngIf="product.image; else noImage">
                   <img
                     [src]="product.image"
@@ -190,7 +195,7 @@
               </td>
 
               <!-- DATE -->
-              <td>
+              <td class="col-date">
                 <ng-container *ngIf="editIndex !== i; else editDate">
                   {{ product.date | date: 'dd/MM/yyyy' }}
                 </ng-container>
@@ -200,7 +205,7 @@
               </td>
 
               <!-- NAME -->
-              <td>
+              <td class="col-name cell-ellipsis">
                 <ng-container *ngIf="editIndex !== i; else editName">
                   {{ product.name }}
                 </ng-container>
@@ -210,7 +215,7 @@
               </td>
 
               <!-- CATEGORY -->
-              <td>
+              <td class="col-category">
                 <ng-container *ngIf="editIndex !== i; else editCategory">
                   {{ product.category }}
                 </ng-container>
@@ -220,7 +225,7 @@
               </td>
 
               <!-- QUANTITY -->
-              <td>
+              <td class="col-qty">
                 <ng-container *ngIf="editIndex !== i; else editQty">
                   {{ product.quantity }}
                 </ng-container>
@@ -235,7 +240,7 @@
               </td>
 
               <!-- PRICE -->
-              <td>
+              <td class="col-price">
                 <ng-container *ngIf="editIndex !== i; else editPrice">
                   {{ product.price | number: '1.0-0' }}
                 </ng-container>
@@ -250,7 +255,7 @@
               </td>
 
               <!-- TOTAL -->
-              <td>
+              <td class="col-total">
                 <ng-container *ngIf="editIndex !== i; else editTotal">
                   {{ product.quantity * product.price | number: '1.0-0' }}
                 </ng-container>
