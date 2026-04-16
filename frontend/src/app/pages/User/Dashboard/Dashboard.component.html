@@ -39,8 +39,53 @@
         </div>
       </div>
 
+      <div class="graphs">
+        <div class="graph-box">
+          <h3 style="color: #e91e63">สินค้าทั้งหมด</h3>
+          <canvas #productChartCanvas></canvas>
+        </div>
+
+        <div class="graph-box">
+          <h3 style="color: #e91e63">ขายดีที่สุด</h3>
+          <canvas #topSellerCanvas></canvas>
+        </div>
+      </div>
+
+      <!-- ✅ พยากรณ์รสไอศกรีมที่น่าขายดี -->
+      <div class="forecast-box">
+        <div class="forecast-header">
+          <h3>พยากรณ์รสไอศกรีมที่น่าขายดี</h3>
+          <span>อ้างอิงจากแนวโน้มการขายล่าสุด</span>
+        </div>
+
+        <div
+          *ngIf="predictedFlavors.length > 0; else noForecast"
+          class="forecast-list"
+        >
+          <div
+            class="forecast-item"
+            *ngFor="let item of predictedFlavors; let i = index"
+          >
+            <div class="rank-circle">
+              {{ i + 1 }}
+            </div>
+
+            <div class="forecast-detail">
+              <h4>{{ item.name }}</h4>
+              <p>คาดว่าขายดี จากยอดขาย {{ item.sold | number }} ชิ้น</p>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noForecast>
+          <div class="forecast-empty">
+            ยังไม่มีข้อมูลเพียงพอสำหรับการพยากรณ์
+          </div>
+        </ng-template>
+      </div>
+
       <!-- ✅ กราฟยอดขาย + ปุ่มสลับมุมมอง -->
-      <div class="graph-box">
+      <div class="graph-box graph-box--main">
         <div class="graph-header">
           <h3>ภาพรวมยอดขาย</h3>
 
@@ -75,18 +120,6 @@
         </div>
 
         <canvas #salesCanvas></canvas>
-      </div>
-
-      <div class="graphs">
-        <div class="graph-box">
-          <h3 style="color: #e91e63">สินค้าทั้งหมด</h3>
-          <canvas #productChartCanvas></canvas>
-        </div>
-
-        <div class="graph-box">
-          <h3 style="color: #e91e63">ขายดีที่สุด</h3>
-          <canvas #topSellerCanvas></canvas>
-        </div>
       </div>
     </div>
   </div>
