@@ -1,5 +1,6 @@
 const pool = require('../config/database');
 console.log('🔥 NEW PRODUCT CONTROLLER LOADED');
+
 // helper: สร้าง code จาก running number
 const makeProductCode = (num) => `P${String(num).padStart(3, '0')}`;
 
@@ -13,16 +14,17 @@ exports.getAllProducts = async (req, res) => {
 
     if (search.trim()) {
       params.push(`%${search.trim()}%`);
-      where += ` AND ("name" ILIKE $${params.length} OR "code" ILIKE $${params.length})`;
+      where += ` AND ("name" ILIKE $${params.length} OR "code" ILIKE $${params.length} OR "category" ILIKE $${params.length})`;
     }
 
     const sql = `
       SELECT
-        "Id"    AS id,
-        "code"  AS code,
-        "name"  AS name,
-        "price" AS price,
-        "image" AS image
+        "Id"       AS id,
+        "code"     AS code,
+        "name"     AS name,
+        "category" AS category,
+        "price"    AS price,
+        "image"    AS image
       FROM public."Product"
       ${where}
       ORDER BY "Id" DESC
@@ -52,11 +54,12 @@ exports.getProductById = async (req, res) => {
     const result = await pool.query(
       `
       SELECT
-        "Id"    AS id,
-        "code"  AS code,
-        "name"  AS name,
-        "price" AS price,
-        "image" AS image
+        "Id"       AS id,
+        "code"     AS code,
+        "name"     AS name,
+        "category" AS category,
+        "price"    AS price,
+        "image"    AS image
       FROM public."Product"
       WHERE "Id" = $1
       `,
@@ -81,17 +84,27 @@ exports.createProduct = async (req, res) => {
   const client = await pool.connect();
 
   try {
-    const { name, price } = req.body;
+    const { name, category, price } = req.body;
 
     if (!name || !String(name).trim()) {
       return res.status(400).json({ message: 'name is required' });
     }
 
-    if (price === undefined || price === null || Number(price) <= 0 || Number.isNaN(Number(price))) {
+    if (!category || !String(category).trim()) {
+      return res.status(400).json({ message: 'category is required' });
+    }
+
+    if (
+      price === undefined ||
+      price === null ||
+      Number(price) <= 0 ||
+      Number.isNaN(Number(price))
+    ) {
       return res.status(400).json({ message: 'price must be > 0' });
     }
 
     const cleanName = String(name).trim();
+    const cleanCategory = String(category).trim();
     const cleanPrice = Number(price);
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -111,16 +124,17 @@ exports.createProduct = async (req, res) => {
 
     const result = await client.query(
       `
-      INSERT INTO public."Product" ("code", "name", "price", "image")
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO public."Product" ("code", "name", "category", "price", "image")
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING
-        "Id"    AS id,
-        "code"  AS code,
-        "name"  AS name,
-        "price" AS price,
-        "image" AS image
+        "Id"       AS id,
+        "code"     AS code,
+        "name"     AS name,
+        "category" AS category,
+        "price"    AS price,
+        "image"    AS image
       `,
-      [code, cleanName, cleanPrice, image]
+      [code, cleanName, cleanCategory, cleanPrice, image]
     );
 
     await client.query('COMMIT');
@@ -151,7 +165,7 @@ exports.updateProduct = async (req, res) => {
       return res.status(400).json({ message: 'Invalid id' });
     }
 
-    const { name, price } = req.body;
+    const { name, category, price } = req.body;
 
     const sets = [];
     const params = [];
@@ -166,6 +180,13 @@ exports.updateProduct = async (req, res) => {
         return res.status(400).json({ message: 'name is invalid' });
       }
       add(`"name"`, String(name).trim());
+    }
+
+    if (category !== undefined) {
+      if (!String(category).trim()) {
+        return res.status(400).json({ message: 'category is invalid' });
+      }
+      add(`"category"`, String(category).trim());
     }
 
     if (price !== undefined) {
@@ -190,11 +211,12 @@ exports.updateProduct = async (req, res) => {
       SET ${sets.join(', ')}
       WHERE "Id" = $${params.length}
       RETURNING
-        "Id"    AS id,
-        "code"  AS code,
-        "name"  AS name,
-        "price" AS price,
-        "image" AS image
+        "Id"       AS id,
+        "code"     AS code,
+        "name"     AS name,
+        "category" AS category,
+        "price"    AS price,
+        "image"    AS image
     `;
 
     const result = await pool.query(sql, params);

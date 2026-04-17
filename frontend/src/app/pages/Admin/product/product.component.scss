@@ -368,8 +368,11 @@ tr.editing {
 
 /* dropdown arrow เฉพาะใน popup */
 .create-card .field select {
-  padding-right: 35px;
-  cursor: pointer;
+  text-align: center;
+  text-align-last: center;
+
+  // padding-right: 35px;
+  // cursor: pointer;
 
   appearance: none;
   -webkit-appearance: none;

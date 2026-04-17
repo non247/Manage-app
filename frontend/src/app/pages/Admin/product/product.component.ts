@@ -40,7 +40,6 @@ export class ProductComponent implements OnInit {
   selectedFile: File | null = null;
   previewUrl = '';
 
-  // ✅ เพิ่มสำหรับ modal ดูรูปเต็ม
   showImagePreview = false;
   fullImageUrl = '';
 
@@ -48,8 +47,16 @@ export class ProductComponent implements OnInit {
 
   private platformId = inject(PLATFORM_ID);
 
+  // ✅ เพิ่ม options ของ category
+  categories = [
+    { label: 'โคน', value: 'โคน' },
+    { label: 'ถ้วย', value: 'ถ้วย' },
+  ];
+
+  // ✅ เพิ่ม category ใน form
   form = {
     name: '',
+    category: '',
     price: 0 as number | null,
     image: null as File | null,
   };
@@ -116,7 +123,8 @@ export class ProductComponent implements OnInit {
     this.isEdit = false;
     this.editingId = null;
 
-    this.form = { name: '', price: 0, image: null };
+    // ✅ reset form ให้มี category
+    this.form = { name: '', category: '', price: 0, image: null };
     this.selectedFile = null;
     this.previewUrl = '';
 
@@ -129,8 +137,10 @@ export class ProductComponent implements OnInit {
     this.isEdit = true;
     this.editingId = p.id;
 
+    // ✅ ดึง category มาใส่ตอนแก้ไข
     this.form = {
       name: p.name,
+      category: p.category ?? '',
       price: Number(p.price),
       image: null,
     };
@@ -153,11 +163,11 @@ export class ProductComponent implements OnInit {
       this.isEdit = false;
       this.editingId = null;
 
-      this.form = { name: '', price: 0, image: null };
+      // ✅ reset form ให้มี category
+      this.form = { name: '', category: '', price: 0, image: null };
       this.selectedFile = null;
       this.previewUrl = '';
 
-      // ✅ ปิดรูปเต็มด้วย
       this.showImagePreview = false;
       this.fullImageUrl = '';
     }, 250);
@@ -188,21 +198,18 @@ export class ProductComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  // ✅ เปิดรูปเต็มจาก preview ในฟอร์ม
   openImagePreview() {
     if (!this.previewUrl) return;
     this.fullImageUrl = this.previewUrl;
     this.showImagePreview = true;
   }
 
-  // ✅ เปิดรูปเต็มจากรูปในตาราง
   openTableImage(url: string) {
     if (!url) return;
     this.fullImageUrl = url;
     this.showImagePreview = true;
   }
 
-  // ✅ ปิด modal รูปเต็ม
   closeImagePreview() {
     this.showImagePreview = false;
     this.fullImageUrl = '';
@@ -212,7 +219,19 @@ export class ProductComponent implements OnInit {
     if (!this.form.name.trim()) {
       await Swal.fire({
         title: 'ข้อมูลไม่ครบ',
-        text: 'กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, ราคา)',
+        text: 'กรุณากรอกชื่อสินค้า',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
+      return;
+    }
+
+    // ✅ เช็ก category
+    if (!this.form.category.trim()) {
+      await Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณาเลือกประเภทสินค้า',
         icon: 'warning',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
@@ -233,6 +252,7 @@ export class ProductComponent implements OnInit {
 
     const fd = new FormData();
     fd.append('name', this.form.name.trim());
+    fd.append('category', this.form.category.trim()); // ✅ เพิ่ม category
     fd.append('price', String(Number(this.form.price)));
 
     if (this.selectedFile) {
