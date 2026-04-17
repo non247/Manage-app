@@ -34,7 +34,8 @@ const history = require('./src/route/history.route');
 const inventory = require('./src/route/inventory.route');
 const authRoutes = require('./src/route/auth.route');
 const product = require('./src/route/product.route');
-const purchase = require('./src/route/purchase.route'); // ✅ เพิ่มอันนี้
+const purchase = require('./src/route/purchase.route');
+const purchasehistory = require('./src/route/purchasehistory.route');
 
 const app = express();
 app.use(cors());
@@ -82,10 +83,17 @@ try {
 }
 
 try {
-  app.use('/api/purchase', purchase); // ✅ เพิ่มอันนี้
+  app.use('/api/purchase', purchase);
   console.log('✅ purchase mounted');
 } catch (e) {
   console.error('❌ purchase mount fail', e);
+}
+
+try {
+  app.use('/api/purchasehistory', purchasehistory);
+  console.log('✅ purchasehistory mounted');
+} catch (e) {
+  console.error('❌ purchasehistory mount fail', e);
 }
 
 const server = app.listen(3000, () => console.log('server 3000'));
