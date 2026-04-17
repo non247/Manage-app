@@ -83,22 +83,8 @@
           </span>
         </a>
       </li>
-
-      <!-- Usermanagement -->
-      <li routerLink="/usermanagement" routerLinkActive="active">
-        <a (click)="navigateTo('/usermanagement')">
-          <i class="bi bi-people-fill" style="font-size: 30px"></i>
-          <span
-            class="text"
-            [class.show]="!isCollapsed"
-            style="font-size: 20px"
-          >
-            จัดการผู้ใช้
-          </span>
-        </a>
-      </li>
-
-      <!-- Usermanagement -->
+      
+      <!-- Forecast -->
       <li routerLink="/forecast" routerLinkActive="active">
         <a (click)="navigateTo('/forecast')">
           <i class="pi pi-chart-line" style="font-size: 30px"></i>
@@ -111,6 +97,21 @@
           </span>
         </a>
       </li>
+
+      <!-- Usermanagement -->
+      <li routerLink="/usermanagement" routerLinkActive="active">
+        <a (click)="navigateTo('/usermanagement')">
+          <i class="bi bi-people-fill" style="font-size: 30px"></i>
+          <span
+            class="text"
+            [class.show]="!isCollapsed"
+            style="font-size: 20px"
+          >
+            จัดการผู้ใช้งาน
+          </span>
+        </a>
+      </li>
+
 
       <!-- Logout -->
       <li class="logout">

@@ -89,6 +89,7 @@ $input-border: #ccc;
 .password-wrapper {
   position: relative;
   width: 100%;
+  
 
   input {
     padding-right: 45px; // เว้นที่ icon
@@ -212,4 +213,19 @@ $input-border: #ccc;
 .error-slot {
   min-height: 18px; /* ถ้าข้อความยาวอาจใช้ 36px */
   margin-top: 6px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 5px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d81b60; // theme เดียวกับคุณ
+    margin-bottom: 4px;
+    margin-left: 2px;
+  }
 }

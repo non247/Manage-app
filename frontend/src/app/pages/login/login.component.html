@@ -14,53 +14,58 @@
     <div class="card-form" @slideForm>
       <h1>เข้าสู่ระบบ</h1>
 
-      <form #loginForm="ngForm" (ngSubmit)="login()">
-        <div class="password-wrapper">
-          <input
-            style="font-size: 15px"
-            type="text"
-            name="username"
-            [(ngModel)]="Username"
-            required
-            placeholder="ชื่อผู้ใช้"
-          />
-        </div>
+<form #loginForm="ngForm" (ngSubmit)="login()">
+  <!-- USERNAME -->
+  <div class="form-group">
+    <label>ชื่อผู้ใช้</label>
+    <div class="password-wrapper">
+      <input
+        type="text"
+        name="username"
+        [(ngModel)]="Username"
+        required
+        placeholder="ชื่อผู้ใช้"
+      />
+    </div>
+  </div>
 
-        <div class="password-wrapper">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            id="passwordinput"
-            name="password"
-            [(ngModel)]="Password"
-            required
-            placeholder="ป้อนรหัสผ่าน"
-          />
+  <!-- PASSWORD -->
+  <div class="form-group">
+    <label>รหัสผ่าน</label>
+    <div class="password-wrapper">
+      <input
+        [type]="showPassword ? 'text' : 'password'"
+        name="password"
+        [(ngModel)]="Password"
+        required
+        placeholder="ป้อนรหัสผ่าน"
+      />
 
-          <i
-            class="bi"
-            [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
-            (click)="togglePasswordVisibility()"
-          ></i>
-        </div>
+      <i
+        class="bi"
+        [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+        (click)="togglePasswordVisibility()"
+      ></i>
+    </div>
+  </div>
 
-        <div class="error-slot">
-          <p *ngIf="errorMessage" class="error-text">
-            {{ errorMessage }}
-          </p>
-        </div>
+  <div class="error-slot">
+    <p *ngIf="errorMessage" class="error-text">
+      {{ errorMessage }}
+    </p>
+  </div>
 
-        <!-- ✅ fake input space (เหมือนเดิม) -->
-        <div class="fake-input-space"></div>
+  <div class="fake-input-space"></div>
 
-        <button type="submit" class="btn-singin" style="font-size: 20px">
-          เข้าสู่ระบบ
-        </button>
+  <button type="submit" class="btn-singin">
+    เข้าสู่ระบบ
+  </button>
 
-        <div class="register-link">
-          ยังไม่มีบัญชี ?
-          <a [routerLink]="['/register']">สมัครสมาชิก</a>
-        </div>
-      </form>
+  <div class="register-link">
+    ยังไม่มีบัญชี ?
+    <a [routerLink]="['/register']">สมัครสมาชิก</a>
+  </div>
+</form>
     </div>
   </div>
 </div>

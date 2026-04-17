@@ -233,3 +233,18 @@ $input-border: #ccc;
   font-size: 14px;
   line-height: 18px;
 }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 5px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d81b60; // theme เดียวกับคุณ
+    margin-bottom: 4px;
+    margin-left: 2px;
+  }
+}
