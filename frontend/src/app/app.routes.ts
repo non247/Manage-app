@@ -15,6 +15,7 @@ import { AdminpurchaseComponent } from './pages/Admin/adminpurchase/adminpurchas
 import { AdminhistorypurchaseComponent } from './pages/Admin/adminhistorypurchase/adminhistorypurchase.component';
 import { HistorypurchaseComponent } from './pages/User/historypurchase/historypurchase.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { ForgetComponent } from './pages/forget/forget.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,13 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+    data: {
+      hideSidebar: true,
+    },
+  },
+  {
+    path: 'forgot-password',
+    component: ForgetComponent,
     data: {
       hideSidebar: true,
     },
@@ -65,22 +73,21 @@ export const routes: Routes = [
     },
   },
   {
-  path: 'purchase',
-  component: PurchaseComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: {
-    role: 'user',
+    path: 'purchase',
+    component: PurchaseComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'user',
+    },
   },
-},
   {
-  path: 'historypurchase',
-  component: HistorypurchaseComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: {
-    role: 'user',
+    path: 'historypurchase',
+    component: HistorypurchaseComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'user',
+    },
   },
-},
-
 
   // ===== ADMIN =====
   {
@@ -91,7 +98,6 @@ export const routes: Routes = [
       role: 'admin',
     },
   },
-
   {
     path: 'admininventory',
     component: AdminInventoryComponent,
@@ -117,21 +123,21 @@ export const routes: Routes = [
     },
   },
   {
-  path: 'adminpurchase',
-  component: AdminpurchaseComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: {
-    role: 'admin',
+    path: 'adminpurchase',
+    component: AdminpurchaseComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'admin',
+    },
   },
-},
   {
-  path: 'adminhistorypurchase',
-  component: AdminhistorypurchaseComponent,
-  canActivate: [AuthGuard, RoleGuard],
-  data: {
-    role: 'admin',
+    path: 'adminhistorypurchase',
+    component: AdminhistorypurchaseComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'admin',
+    },
   },
-},
 
   // ===== SHARED =====
   {

@@ -7,12 +7,18 @@ type LoginResponse = {
   token: string;
   role: string;
   username?: string;
+  email?: string;
   userId?: number;
 };
 
 type RegisterResponse = {
   ok?: boolean;
-  user?: { Id?: number; Username?: string; Role?: string };
+  user?: {
+    Id?: number;
+    Username?: string;
+    Role?: string;
+    Email?: string;
+  };
   message?: string;
 };
 
@@ -21,6 +27,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'token';
   private readonly ROLE_KEY = 'role';
   private readonly USERNAME_KEY = 'username';
+  private readonly EMAIL_KEY = 'email';
   private readonly api = 'http://localhost:3000/api/auth';
 
   private readonly platformId = inject(PLATFORM_ID);
@@ -41,14 +48,19 @@ export class AuthService {
   }
 
   // ✅ Register
-  register(username: string, password: string): Observable<RegisterResponse> {
+  register(
+    username: string,
+    password: string,
+    email: string
+  ): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.api}/register`, {
       username,
       password,
+      email,
     });
   }
 
-  // ✅ Login
+  // ✅ Login (กรอก username หรือ email ก็ได้)
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(`${this.api}/login`, { username, password })
@@ -58,8 +70,12 @@ export class AuthService {
 
           if (res?.token) localStorage.setItem(this.TOKEN_KEY, res.token);
           if (res?.role) localStorage.setItem(this.ROLE_KEY, res.role);
-          if (res?.username)
+          if (res?.username) {
             localStorage.setItem(this.USERNAME_KEY, res.username);
+          }
+          if (res?.email) {
+            localStorage.setItem(this.EMAIL_KEY, res.email);
+          }
 
           this._isLoggedIn$.next(!!res?.token);
         })
@@ -76,16 +92,19 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // ✅ ใช้ใน RoleGuard
   getRole(): string | null {
     if (!this.isBrowser) return null;
     return localStorage.getItem(this.ROLE_KEY);
   }
 
-  // ✅ เผื่อใช้โชว์ชื่อ
   getUsername(): string | null {
     if (!this.isBrowser) return null;
     return localStorage.getItem(this.USERNAME_KEY);
+  }
+
+  getEmail(): string | null {
+    if (!this.isBrowser) return null;
+    return localStorage.getItem(this.EMAIL_KEY);
   }
 
   logout() {
@@ -93,6 +112,7 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
     localStorage.removeItem(this.USERNAME_KEY);
+    localStorage.removeItem(this.EMAIL_KEY);
     this._isLoggedIn$.next(false);
   }
 }

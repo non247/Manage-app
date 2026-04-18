@@ -29,6 +29,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   ],
 })
 export class RegisterComponent {
+  Email: string = '';
   Username: string = '';
   Password: string = '';
   ConfirmPassword: string = '';
@@ -58,11 +59,20 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    if (!this.Username || !this.Password || !this.ConfirmPassword) {
+    // ✅ ตรวจสอบกรอกครบ (รวม Email)
+    if (!this.Username || !this.Email || !this.Password || !this.ConfirmPassword) {
       this.errorMessage = 'กรุณากรอกข้อมูลให้ครบ';
       return;
     }
 
+    // ✅ ตรวจสอบรูปแบบ Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.Email)) {
+      this.errorMessage = 'กรุณากรอกอีเมลให้ถูกต้อง';
+      return;
+    }
+
+    // ✅ ตรวจสอบรหัสผ่านตรงกัน
     if (this.Password !== this.ConfirmPassword) {
       this.errorMessage = 'รหัสผ่านไม่ตรงกัน';
       return;
@@ -70,7 +80,8 @@ export class RegisterComponent {
 
     this.isLoading = true;
 
-    this.auth.register(this.Username, this.Password).subscribe({
+    // ✅ ส่ง email ไป backend
+    this.auth.register(this.Username, this.Password, this.Email).subscribe({
       next: () => {
         this.isLoading = false;
 

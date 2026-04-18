@@ -1,0 +1,81 @@
+<div class="login-page"> <!-- ✅ เปลี่ยน -->
+  <div class="login-card card-split"> <!-- ✅ เปลี่ยน -->
+    
+    <!-- LEFT : IMAGE -->
+    <div class="card-image">
+      <img src="assets/login.jpg" alt="forgot-password" />
+    </div>
+
+    <!-- RIGHT : FORM -->
+    <div class="card-form" @slideForm>
+      <h1>ลืมรหัสผ่าน</h1>
+
+      <p class="subtitle">
+        กรอกอีเมลของคุณเพื่อรับลิงก์รีเซ็ตรหัสผ่าน
+      </p>
+
+      <!-- SUCCESS -->
+      <p *ngIf="successMessage" class="success-text">
+        {{ successMessage }}
+      </p>
+
+      <!-- FORM -->
+<form (ngSubmit)="sendReset()" #forgotForm="ngForm">
+        
+  <div class="form-group">
+    <label>อีเมล</label>
+    <input
+      type="email"
+      name="email"
+      [(ngModel)]="email"
+      #emailModel="ngModel"   
+      required
+      email               
+      placeholder="example@email.com"
+    />
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-slot">
+
+    <!-- ❌ error จาก input -->
+    <p *ngIf="emailModel.invalid && emailModel.touched" class="error-text">
+
+      <!-- ไม่กรอก -->
+      <span *ngIf="emailModel.errors?.['required']">
+        กรุณากรอกอีเมล
+      </span>
+
+      <!-- format ผิด -->
+      <span *ngIf="emailModel.errors?.['email']">
+        กรุณากรอกอีเมลให้ถูกต้อง
+      </span>
+
+    </p>
+
+    <!-- ❌ error จาก backend -->
+    <p *ngIf="errorMessage" class="error-text">
+      {{ errorMessage }}
+    </p>
+
+  </div>
+
+  <div class="fake-input-space"></div>
+
+  <!-- ✅ ปิดปุ่มถ้ายังไม่ valid -->
+  <button 
+    type="submit" 
+    class="btn-singin"
+    [disabled]="forgotForm.invalid"
+  >
+    ส่งลิงก์รีเซ็ต
+  </button>
+
+  <div class="register-link">
+    <a [routerLink]="['/login']">กลับไปเข้าสู่ระบบ</a>
+  </div>
+
+</form>
+    </div>
+  </div>
+</div>

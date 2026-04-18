@@ -25,7 +25,7 @@ export interface Product {
 
 
 @Component({
-  selector: 'app-history',
+  selector: 'app-admin-history',
   standalone: true,
   imports: [
     TableModule,

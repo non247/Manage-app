@@ -1,11 +1,6 @@
 <div class="login-page">
-  <!-- <div class="logout-message" *ngIf="showLogoutMessage">
-    <i class="bi bi-check-circle"></i>
-    ออกจากระบบเรียบร้อยแล้ว
-  </div> -->
-
   <div class="login-card card-split">
-    <!-- LEFT : IMAGE (อยู่ในกรอบเดียวกับ form) -->
+    <!-- LEFT : IMAGE -->
     <div class="card-image">
       <img src="assets/login.jpg" alt="login" />
     </div>
@@ -14,58 +9,65 @@
     <div class="card-form" @slideForm>
       <h1>เข้าสู่ระบบ</h1>
 
-<form #loginForm="ngForm" (ngSubmit)="login()">
-  <!-- USERNAME -->
-  <div class="form-group">
-    <label>ชื่อผู้ใช้</label>
-    <div class="password-wrapper">
-      <input
-        type="text"
-        name="username"
-        [(ngModel)]="Username"
-        required
-        placeholder="ชื่อผู้ใช้"
-      />
-    </div>
-  </div>
+      <form #loginForm="ngForm" (ngSubmit)="login()">
+        <!-- USERNAME -->
+        <div class="form-group">
+          <label>ชื่อผู้ใช้</label>
+          <div class="password-wrapper">
+            <input
+              type="text"
+              name="username"
+              [(ngModel)]="Username"
+              required
+              placeholder="ชื่อผู้ใช้"
+            />
+          </div>
+        </div>
 
-  <!-- PASSWORD -->
-  <div class="form-group">
-    <label>รหัสผ่าน</label>
-    <div class="password-wrapper">
-      <input
-        [type]="showPassword ? 'text' : 'password'"
-        name="password"
-        [(ngModel)]="Password"
-        required
-        placeholder="ป้อนรหัสผ่าน"
-      />
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label>รหัสผ่าน</label>
+          <div class="password-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              [(ngModel)]="Password"
+              required
+              placeholder="ป้อนรหัสผ่าน"
+            />
 
-      <i
-        class="bi"
-        [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
-        (click)="togglePasswordVisibility()"
-      ></i>
-    </div>
-  </div>
+            <i
+              class="bi"
+              [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+              (click)="togglePasswordVisibility()"
+            ></i>
+          </div>
+        </div>
 
-  <div class="error-slot">
-    <p *ngIf="errorMessage" class="error-text">
-      {{ errorMessage }}
-    </p>
-  </div>
+        <!-- FORGOT PASSWORD -->
+        <div class="forgot-row">
+          <a [routerLink]="['/forgot-password']" class="forgot-link">
+            ลืมรหัสผ่าน?
+          </a>
+        </div>
 
-  <div class="fake-input-space"></div>
+        <div class="error-slot">
+          <p *ngIf="errorMessage" class="error-text">
+            {{ errorMessage }}
+          </p>
+        </div>
 
-  <button type="submit" class="btn-singin">
-    เข้าสู่ระบบ
-  </button>
+        <div class="fake-input-space"></div>
 
-  <div class="register-link">
-    ยังไม่มีบัญชี ?
-    <a [routerLink]="['/register']">สมัครสมาชิก</a>
-  </div>
-</form>
+        <button type="submit" class="btn-singin">
+          เข้าสู่ระบบ
+        </button>
+
+        <div class="register-link">
+          ยังไม่มีบัญชี ?
+          <a [routerLink]="['/register']">สมัครสมาชิก</a>
+        </div>
+      </form>
     </div>
   </div>
 </div>

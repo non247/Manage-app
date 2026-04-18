@@ -19,7 +19,7 @@ $input-border: #ccc;
   width: min(1100px, 95vw);
   height: min(620px, 90vh);
   display: flex;
-  overflow: hidden; /* 🔥 ทำให้รูปอยู่ในกรอบโค้ง */
+  overflow: hidden;
   border-radius: 30px;
   background-color: $card-bg;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
@@ -49,6 +49,13 @@ $input-border: #ccc;
   flex-direction: column;
   justify-content: center;
   will-change: transform;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-right: 6px;
+  }
 }
 
 /* ===== Title ===== */
@@ -59,6 +66,22 @@ $input-border: #ccc;
   font-size: 40px;
 }
 
+/* ===== Form Group ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 8px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d81b60;
+    margin-bottom: 4px;
+    margin-left: 2px;
+  }
+}
+
 /* ===== Input ===== */
 .card-form input[type='text'],
 .card-form input[type='password'] {
@@ -66,16 +89,17 @@ $input-border: #ccc;
   padding: 12px;
   border-radius: 10px;
   border: 1px solid $input-border;
-  margin: 10px 0;
+  margin: 0;
   font-size: 15px;
   outline: none;
+  box-sizing: border-box;
 
   &:focus {
     border-color: #dd1d56;
   }
 }
 
-/* ✅ fake input space (เหมือนของเดิม) */
+/* ===== fake input space ===== */
 .fake-input-space {
   width: 100%;
   height: 40px;
@@ -89,10 +113,9 @@ $input-border: #ccc;
 .password-wrapper {
   position: relative;
   width: 100%;
-  
 
   input {
-    padding-right: 45px; // เว้นที่ icon
+    padding-right: 45px;
   }
 
   i {
@@ -114,7 +137,7 @@ $input-border: #ccc;
 /* ===== Button ===== */
 .btn-singin {
   background-color: #dd1d56;
-  margin-top: 18px; /* เดิม 50px แต่ตอนนี้มี fake space แล้ว */
+  margin-top: 18px;
   width: 100%;
   padding: 15px;
   border-radius: 50px;
@@ -128,13 +151,24 @@ $input-border: #ccc;
   }
 }
 
-/* ===== Error ===== */
+/* ===== Error Slot ===== */
+.error-slot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+/* ===== Error Text ===== */
 .error-text {
-  margin: 0; /* override browser default */
-  color: red;
-  text-align: center;
-  font-size: 14px;
-  line-height: 18px;
+  color: #e53935;
+  font-size: 13px;
+  margin: 0;
+  background: #ffe5e5;
+  padding: 4px 10px;
+  border-radius: 8px;
+  line-height: 1.4;
 }
 
 /* ===== Register Link ===== */
@@ -154,6 +188,29 @@ $input-border: #ccc;
       text-decoration: underline;
     }
   }
+}
+
+/* ===== Forgot Password ===== */
+.forgot-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.forgot-link {
+  font-size: 14px;
+  color: #d81b60;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  opacity: 0.85;
 }
 
 /* ===== Logout Message ===== */
@@ -207,25 +264,8 @@ $input-border: #ccc;
   .card-form {
     padding: 40px 28px;
   }
-}
 
-/* ✅ จองที่ไว้ให้ error ตลอดเวลา => ไม่ดันปุ่ม/ลิงก์ */
-.error-slot {
-  min-height: 18px; /* ถ้าข้อความยาวอาจใช้ 36px */
-  margin-top: 6px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 5px;
-
-  label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #d81b60; // theme เดียวกับคุณ
-    margin-bottom: 4px;
-    margin-left: 2px;
+  .card-form h1 {
+    font-size: 32px;
   }
 }
