@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-resetpassword',
@@ -18,6 +19,8 @@ export class ResetpasswordComponent {
 
   successMessage = '';
   errorMessage = '';
+
+  fieldError = '';
 
   showPassword = false;
   showConfirmPassword = false;
@@ -73,20 +76,36 @@ export class ResetpasswordComponent {
       token: this.token,
       password: this.newPassword
     }).subscribe({
-      next: (res) => {
+      next: async (res) => {
         this.loading = false;
-        this.successMessage = res?.message || 'รีเซ็ตรหัสผ่านสำเร็จ';
+        this.successMessage = '';
+        this.errorMessage = '';
+
         this.newPassword = '';
         this.confirmPassword = '';
 
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 1800);
+        await Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: res?.message || 'รีเซ็ตรหัสผ่านสำเร็จ',
+          timer: 1800,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;
         this.errorMessage =
           err?.error?.message || 'ไม่สามารถรีเซ็ตรหัสผ่านได้ กรุณาลองใหม่';
+
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: this.errorMessage,
+          confirmButtonText: 'ตกลง'
+        });
       }
     });
   }

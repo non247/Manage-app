@@ -59,20 +59,26 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // ✅ ตรวจสอบกรอกครบ (รวม Email)
+    // ตรวจสอบกรอกข้อมูลให้ครบ
     if (!this.Username || !this.Email || !this.Password || !this.ConfirmPassword) {
       this.errorMessage = 'กรุณากรอกข้อมูลให้ครบ';
       return;
     }
 
-    // ✅ ตรวจสอบรูปแบบ Email
+    // ตรวจสอบรูปแบบ Email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(this.Email)) {
       this.errorMessage = 'กรุณากรอกอีเมลให้ถูกต้อง';
       return;
     }
 
-    // ✅ ตรวจสอบรหัสผ่านตรงกัน
+    // ตรวจสอบความยาวรหัสผ่าน
+    if (this.Password.length < 6) {
+      this.errorMessage = 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+      return;
+    }
+
+    // ตรวจสอบรหัสผ่านตรงกัน
     if (this.Password !== this.ConfirmPassword) {
       this.errorMessage = 'รหัสผ่านไม่ตรงกัน';
       return;
@@ -80,10 +86,11 @@ export class RegisterComponent {
 
     this.isLoading = true;
 
-    // ✅ ส่ง email ไป backend
     this.auth.register(this.Username, this.Password, this.Email).subscribe({
       next: () => {
         this.isLoading = false;
+        this.errorMessage = '';
+        this.successMessage = 'สมัครสมาชิกสำเร็จ';
 
         Swal.fire({
           icon: 'success',
@@ -101,23 +108,14 @@ export class RegisterComponent {
 
       error: (err) => {
         this.isLoading = false;
+        this.successMessage = '';
 
         if (err?.status === 409) {
-          Swal.fire({
-            icon: 'error',
-            title: 'สมัครไม่สำเร็จ',
-            text: 'Username นี้ถูกใช้แล้ว',
-          });
+          this.errorMessage = 'Username นี้ถูกใช้แล้ว';
           return;
         }
 
-        Swal.fire({
-          icon: 'error',
-          title: 'ผิดพลาด',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'ตกลง',
-          text: err?.error?.message || 'สมัครสมาชิกไม่สำเร็จ',
-        });
+        this.errorMessage = err?.error?.message || 'สมัครสมาชิกไม่สำเร็จ';
       },
     });
   }

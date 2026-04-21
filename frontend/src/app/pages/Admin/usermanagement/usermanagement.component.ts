@@ -12,12 +12,14 @@ type Role = 'admin' | 'user';
 interface User {
   Id: number;
   Username: string;
+  Email: string;
   Role: Role;
 }
 
 interface NewUserForm {
   Username: string;
   Password: string;
+  Email: string;
   Role: Role;
 }
 
@@ -31,174 +33,143 @@ interface NewUserForm {
 export class UsermanagementComponent implements OnInit {
   users: User[] = [];
 
-  constructor(private readonly userService: UserService) {}
+  editIndex: number | null = null;
+  editUser: User | null = null;
 
-  ngOnInit(): void {
-    this.loadUsers();
-  }
-
-  // ================= ROLE DISPLAY =================
-  getRoleLabel(role: Role) {
-    return role === 'admin' ? 'Manager' : 'Employee';
-  }
-
-  getRoleClass(role: Role) {
-    return role === 'admin' ? 'admin' : 'user';
-  }
-
-  roleToBackend(role: string): Role {
-    return role === 'Manager' ? 'admin' : 'user';
-  }
-
-  roleFromBackend(role: Role) {
-    return role === 'admin' ? 'Manager' : 'Employee';
-  }
-
-  // ================= LOAD USERS =================
-  loadUsers() {
-    this.userService.getUsers().subscribe({
-      next: (data: User[]) => (this.users = data),
-      error: () =>
-        Swal.fire({
-          title: 'Error',
-          text: 'โหลดผู้ใช้ไม่สำเร็จ',
-          icon: 'error',
-        }),
-    });
-  }
-
-  // ================= CREATE =================
   showCreateForm = false;
   isClosing = false;
 
   newUser: NewUserForm = {
     Username: '',
     Password: '',
+    Email: '',
     Role: 'user',
   };
 
-  onCreateSave() {
-    if (!this.newUser.Username || !this.newUser.Password) {
-      Swal.fire({
-        title: 'ข้อมูลไม่ครบ',
-        text: 'กรุณากรอก Username และ Password',
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'ตกลง',
-      });
+  constructor(private readonly userService: UserService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  getRoleLabel(role: Role) {
+    return role === 'admin' ? 'Manager' : 'Employee';
+  }
+
+  loadUsers(): void {
+    this.userService.getUsers().subscribe({
+      next: (res: User[]) => {
+        this.users = res;
+      },
+      error: (err) => {
+        console.error('โหลดผู้ใช้ไม่สำเร็จ', err);
+        Swal.fire('ผิดพลาด', 'โหลดข้อมูลผู้ใช้ไม่สำเร็จ', 'error');
+      },
+    });
+  }
+
+  onEdit(index: number): void {
+    this.editIndex = index;
+    this.editUser = { ...this.users[index] };
+  }
+
+  onCancel(): void {
+    this.editIndex = null;
+    this.editUser = null;
+  }
+
+  onSave(index: number): void {
+    if (!this.editUser) return;
+
+    if (
+      !this.editUser.Username?.trim() ||
+      !this.editUser.Email?.trim() ||
+      !this.editUser.Role
+    ) {
+      Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
+      return;
+    }
+
+    this.userService.updateUser(this.editUser.Id, this.editUser).subscribe({
+      next: () => {
+        this.users[index] = { ...this.editUser! };
+        this.onCancel();
+        Swal.fire('สำเร็จ', 'แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว', 'success');
+      },
+      error: (err) => {
+        console.error('อัปเดตผู้ใช้ไม่สำเร็จ', err);
+        Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกการแก้ไขได้', 'error');
+      },
+    });
+  }
+
+  onDelete(index: number): void {
+    const user = this.users[index];
+
+    Swal.fire({
+      title: 'ยืนยันการลบ',
+      text: `ต้องการลบผู้ใช้ ${user.Username} ใช่หรือไม่?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ลบ',
+      cancelButtonText: 'ยกเลิก',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deleteUser(user.Id).subscribe({
+          next: () => {
+            this.users.splice(index, 1);
+            Swal.fire('สำเร็จ', 'ลบผู้ใช้เรียบร้อยแล้ว', 'success');
+          },
+          error: (err) => {
+            console.error('ลบผู้ใช้ไม่สำเร็จ', err);
+            Swal.fire('ผิดพลาด', 'ไม่สามารถลบผู้ใช้ได้', 'error');
+          },
+        });
+      }
+    });
+  }
+
+  onCreateSave(): void {
+    if (
+      !this.newUser.Username.trim() ||
+      !this.newUser.Password.trim() ||
+      !this.newUser.Email.trim() ||
+      !this.newUser.Role
+    ) {
+      Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
       return;
     }
 
     this.userService.createUser(this.newUser).subscribe({
       next: () => {
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'เพิ่มผู้ใช้สำเร็จ',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-        });
-
-        this.onCreateCancel();
+        Swal.fire('สำเร็จ', 'เพิ่มผู้ใช้เรียบร้อยแล้ว', 'success');
         this.loadUsers();
+        this.resetCreateForm();
+        this.showCreateForm = false;
       },
-      error: (err: any) => {
-        const msg = err?.error?.message || 'เพิ่มผู้ใช้ไม่สำเร็จ';
-        Swal.fire('Error', msg, 'error');
+      error: (err) => {
+        console.error('เพิ่มผู้ใช้ไม่สำเร็จ', err);
+        Swal.fire('ผิดพลาด', 'ไม่สามารถเพิ่มผู้ใช้ได้', 'error');
       },
     });
   }
 
-  onCreateCancel() {
+  onCreateCancel(): void {
     this.isClosing = true;
 
     setTimeout(() => {
       this.showCreateForm = false;
       this.isClosing = false;
-
-      this.newUser = {
-        Username: '',
-        Password: '',
-        Role: 'user',
-      };
+      this.resetCreateForm();
     }, 200);
   }
 
-  // ================= INLINE EDIT =================
-  editIndex: number | null = null;
-  editUser: User | null = null;
-
-  onEdit(index: number) {
-    this.editIndex = index;
-    this.editUser = { ...this.users[index] };
-  }
-
-  onSave(index: number) {
-    if (!this.editUser) return;
-
-    const id = this.users[index].Id;
-
-    this.userService
-      .updateUser(id, {
-        Username: this.editUser.Username,
-        Role: this.editUser.Role,
-      })
-      .subscribe({
-        next: (updated: User) => {
-          this.users[index] = updated;
-          this.editIndex = null;
-          this.editUser = null;
-
-          Swal.fire({
-            title: 'สำเร็จ',
-            text: 'บันทึกข้อมูลเรียบร้อย',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false,
-          });
-        },
-        error: (err: any) => {
-          const msg = err?.error?.message || 'บันทึกไม่สำเร็จ';
-          Swal.fire('Error', msg, 'error');
-        },
-      });
-  }
-
-  onCancel() {
-    this.editIndex = null;
-    this.editUser = null;
-  }
-
-  // ================= DELETE =================
-  onDelete(index: number) {
-    const id = this.users[index].Id;
-
-    Swal.fire({
-      title: 'ยืนยันที่จะลบ?',
-      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'ตกลง',
-      cancelButtonText: 'ยกเลิก',
-    }).then((result) => {
-      if (!result.isConfirmed) return;
-
-      this.userService.deleteUser(id).subscribe({
-        next: () => {
-          Swal.fire({
-            title: 'สำเร็จ',
-            text: 'ลบรายการสำเร็จ',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false,
-            timerProgressBar: true,
-          });
-
-          this.users.splice(index, 1);
-        },
-        error: () => Swal.fire('Error', 'ลบไม่สำเร็จ', 'error'),
-      });
-    });
+  resetCreateForm(): void {
+    this.newUser = {
+      Username: '',
+      Password: '',
+      Email: '',
+      Role: 'user',
+    };
   }
 }

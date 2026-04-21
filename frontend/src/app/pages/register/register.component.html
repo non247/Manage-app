@@ -88,34 +88,56 @@
         </div>
 
         <!-- 🔥 รวม error ทั้งหมด -->
-        <div class="error-slot">
+<div class="error-slot">
 
-          <p *ngIf="usernameRef.invalid && usernameRef.touched" class="error-text">
-            กรุณากรอกชื่อผู้ใช้
-          </p>
+  <!-- Username -->
+  <ng-container *ngIf="usernameRef.invalid && usernameRef.touched; else emailError">
+    <p class="error-text">กรุณากรอกชื่อผู้ใช้</p>
+  </ng-container>
 
-          <p *ngIf="emailRef.invalid && emailRef.touched" class="error-text">
-            กรุณากรอกอีเมลให้ถูกต้อง
-          </p>
+  <!-- Email -->
+  <ng-template #emailError>
+    <ng-container *ngIf="emailRef.invalid && emailRef.touched; else passwordRequired">
+      <p class="error-text">กรุณากรอกอีเมลให้ถูกต้อง</p>
+    </ng-container>
+  </ng-template>
 
-          <p *ngIf="passwordRef.invalid && passwordRef.touched" class="error-text">
-            กรุณากรอกรหัสผ่าน
-          </p>
+  <!-- Password required -->
+  <ng-template #passwordRequired>
+    <ng-container *ngIf="passwordRef.errors?.['required'] && passwordRef.touched; else passwordLength">
+      <p class="error-text">กรุณากรอกรหัสผ่าน</p>
+    </ng-container>
+  </ng-template>
 
-          <p *ngIf="confirmRef.invalid && confirmRef.touched" class="error-text">
-            กรุณายืนยันรหัสผ่าน
-          </p>
+  <!-- Password minlength -->
+  <ng-template #passwordLength>
+    <ng-container *ngIf="passwordRef.errors?.['minlength'] && passwordRef.touched; else confirmError">
+      <p class="error-text">รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร</p>
+    </ng-container>
+  </ng-template>
 
-          <p *ngIf="Password && ConfirmPassword && Password !== ConfirmPassword" class="error-text">
-            รหัสผ่านไม่ตรงกัน
-          </p>
+  <!-- Confirm required -->
+  <ng-template #confirmError>
+    <ng-container *ngIf="confirmRef.invalid && confirmRef.touched; else mismatchError">
+      <p class="error-text">กรุณายืนยันรหัสผ่าน</p>
+    </ng-container>
+  </ng-template>
 
-          <p *ngIf="errorMessage" class="error-text">
-            {{ errorMessage }}
-          </p>
+  <!-- Password mismatch -->
+  <ng-template #mismatchError>
+    <ng-container *ngIf="Password && ConfirmPassword && Password !== ConfirmPassword; else backendError">
+      <p class="error-text">รหัสผ่านไม่ตรงกัน</p>
+    </ng-container>
+  </ng-template>
 
-        </div>
+  <!-- Backend error -->
+  <ng-template #backendError>
+    <p *ngIf="errorMessage" class="error-text">
+      {{ errorMessage }}
+    </p>
+  </ng-template>
 
+</div>
         <button type="submit" class="btn-singin">ลงทะเบียน</button>
 
         <div class="register-link">

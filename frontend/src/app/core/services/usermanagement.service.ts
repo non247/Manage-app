@@ -7,17 +7,20 @@ export type Role = 'admin' | 'user';
 export interface User {
   Id: number;
   Username: string;
+  Email: string;   // ✅ เพิ่ม
   Role: Role;
 }
 
 export interface CreateUserDto {
   Username: string;
   Password: string;
+  Email: string;   // ✅ เพิ่ม
   Role: Role;
 }
 
 export interface UpdateUserDto {
   Username: string;
+  Email: string;   // ✅ เพิ่ม
   Role: Role;
 }
 
