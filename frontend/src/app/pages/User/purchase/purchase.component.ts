@@ -670,48 +670,48 @@ export class PurchaseComponent implements OnInit {
     });
   }
 
-submitHistory(): void {
-  this.isSubmittingHistory = true;
+  submitHistory(): void {
+    this.isSubmittingHistory = true;
 
-  const payload = this.saleDraftItems.map((item) => ({
-    name: item.name,
-    category: item.category,
-    quantity: item.sellQty,
-    price: item.price,
-    date: this.todayString(),
-    image: item.image ?? '',
-  }));
+    const payload = this.saleDraftItems.map((item) => ({
+      name: item.name,
+      category: item.category,
+      quantity: item.sellQty,
+      price: item.price,
+      date: this.todayString(),
+      image: item.image ?? '',
+    }));
 
-  const requests = payload.map((item) =>
-    this.purchasehistoryService.create(item)
-  );
+    const requests = payload.map((item) =>
+      this.purchasehistoryService.create(item)
+    );
 
-  forkJoin(requests).subscribe({
-    next: () => {
-      Swal.fire({
-        icon: 'success',
-        title: 'บันทึกประวัติสำเร็จ',
-        text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อเรียบร้อยแล้ว',
-        timer: 1400,
-        showConfirmButton: false,
-      });
+    forkJoin(requests).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'บันทึกประวัติสำเร็จ',
+          text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อเรียบร้อยแล้ว',
+          timer: 1400,
+          showConfirmButton: false,
+        });
 
-      this.isSubmittingHistory = false;
-      this.saleDraftItems = [];
-      this.closeHistoryForm();
-    },
-    error: (err: unknown) => {
-      console.error('submit purchase history error:', err);
-      this.isSubmittingHistory = false;
+        this.isSubmittingHistory = false;
+        this.saleDraftItems = [];
+        this.closeHistoryForm();
+      },
+      error: (err: unknown) => {
+        console.error('submit purchase history error:', err);
+        this.isSubmittingHistory = false;
 
-      Swal.fire({
-        icon: 'error',
-        title: 'ส่งข้อมูลไม่สำเร็จ',
-        text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
-      });
-    },
-  });
-}
+        Swal.fire({
+          icon: 'error',
+          title: 'ส่งข้อมูลไม่สำเร็จ',
+          text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
+        });
+      },
+    });
+  }
   makeHistoryCode(): string {
     return `H${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   }

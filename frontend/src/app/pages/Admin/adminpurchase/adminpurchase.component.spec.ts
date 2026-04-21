@@ -8,9 +8,8 @@ describe('AdminpurchaseComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminpurchaseComponent]
-    })
-    .compileComponents();
+      imports: [AdminpurchaseComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AdminpurchaseComponent);
     component = fixture.componentInstance;

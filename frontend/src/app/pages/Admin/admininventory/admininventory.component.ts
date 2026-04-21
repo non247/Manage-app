@@ -46,11 +46,21 @@ type SaleDraftItem = {
   date: string;
 };
 
-
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [TableModule, MultiSelectModule, ReactiveFormsModule, FormsModule, CommonModule ,ButtonModule, InputTextModule, DatePickerModule, InputNumberModule, CheckboxModule],
+  imports: [
+    TableModule,
+    MultiSelectModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule,
+    ButtonModule,
+    InputTextModule,
+    DatePickerModule,
+    InputNumberModule,
+    CheckboxModule,
+  ],
   templateUrl: './admininventory.component.html',
   styleUrl: './admininventory.component.scss',
 })

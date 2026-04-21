@@ -8,7 +8,10 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
-import { HistoryService,ProductMaster } from '../../../core/services/history.service';
+import {
+  HistoryService,
+  ProductMaster,
+} from '../../../core/services/history.service';
 
 /* ================= INTERFACE ================= */
 export interface Product {
@@ -22,7 +25,6 @@ export interface Product {
   total?: number; // ✅ ต้องมี field จริงเพื่อให้ sort ได้
   image?: string; // ✅ เพิ่มรูป
 }
-
 
 @Component({
   selector: 'app-admin-history',
@@ -75,19 +77,19 @@ export class AdminhistoryComponent implements OnInit {
   ) {}
 
   /* ================= INIT ================= */
-ngOnInit(): void {
-  this.loadProductMasters();
+  ngOnInit(): void {
+    this.loadProductMasters();
 
-  const nav = this.router.getCurrentNavigation();
-  const items = nav?.extras?.state?.['items'] as Product[] | undefined;
+    const nav = this.router.getCurrentNavigation();
+    const items = nav?.extras?.state?.['items'] as Product[] | undefined;
 
-  if (Array.isArray(items) && items.length > 0) {
-    this.products = this.mapProductsWithMasterImage(this.withTotal(items));
-    this.filteredProducts = [...this.products];
-  } else {
-    this.loadProducts();
+    if (Array.isArray(items) && items.length > 0) {
+      this.products = this.mapProductsWithMasterImage(this.withTotal(items));
+      this.filteredProducts = [...this.products];
+    } else {
+      this.loadProducts();
+    }
   }
-}
   /* ================= IMAGE HELPERS ================= */
   private getMasterByName(name: string): ProductMaster | undefined {
     return this.productMasters.find((x) => x.name === name);

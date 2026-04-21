@@ -253,7 +253,9 @@ select,
   text-align: center;
   font-family: inherit;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* ================= FOCUS กรอบชมพู ================= */
@@ -758,10 +760,11 @@ tr.editing {
   background: #fff;
 }
 
-
 .clickable-image {
   cursor: zoom-in;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .image-preview-backdrop {
@@ -831,4 +834,3 @@ tr.editing {
     transform: scale(1);
   }
 }
-

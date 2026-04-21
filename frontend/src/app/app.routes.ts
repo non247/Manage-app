@@ -48,13 +48,13 @@ export const routes: Routes = [
     },
   },
 
-{
-  path: 'reset-password',
-  component: ResetpasswordComponent,
-  data: {
-    hideSidebar: true,
+  {
+    path: 'reset-password',
+    component: ResetpasswordComponent,
+    data: {
+      hideSidebar: true,
+    },
   },
-},
 
   // ===== USER =====
   {

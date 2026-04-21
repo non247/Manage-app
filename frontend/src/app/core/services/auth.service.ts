@@ -92,9 +92,12 @@ export class AuthService {
 
   // ✅ Forgot Password
   forgotPassword(email: string): Observable<ForgotPasswordResponse> {
-    return this.http.post<ForgotPasswordResponse>(`${this.api}/forgot-password`, {
-      email,
-    });
+    return this.http.post<ForgotPasswordResponse>(
+      `${this.api}/forgot-password`,
+      {
+        email,
+      }
+    );
   }
 
   // ✅ Reset Password

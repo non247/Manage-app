@@ -60,7 +60,12 @@ export class RegisterComponent {
     this.successMessage = '';
 
     // ตรวจสอบกรอกข้อมูลให้ครบ
-    if (!this.Username || !this.Email || !this.Password || !this.ConfirmPassword) {
+    if (
+      !this.Username ||
+      !this.Email ||
+      !this.Password ||
+      !this.ConfirmPassword
+    ) {
       this.errorMessage = 'กรุณากรอกข้อมูลให้ครบ';
       return;
     }

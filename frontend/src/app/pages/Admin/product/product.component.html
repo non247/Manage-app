@@ -71,16 +71,16 @@
               <div class="field">
                 <label for="productCategory">ประเภท</label>
                 <select
-  id="productCategory"
-  class="p-inputtext p-component"
-  [(ngModel)]="form.category"
-  name="productCategory"
->
-  <option value="" disabled>-- เลือกประเภท --</option>
-  <option *ngFor="let c of categories" [value]="c.value">
-    {{ c.label }}
-  </option>
-</select>
+                  id="productCategory"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="form.category"
+                  name="productCategory"
+                >
+                  <option value="" disabled>-- เลือกประเภท --</option>
+                  <option *ngFor="let c of categories" [value]="c.value">
+                    {{ c.label }}
+                  </option>
+                </select>
               </div>
 
               <div class="field">
@@ -134,9 +134,7 @@
                     <div class="name">
                       {{ form.name || 'ยังไม่ได้ใส่ชื่อสินค้า' }}
                     </div>
-                    <div class="muted">
-                      ประเภท: {{ form.category || '-' }}
-                    </div>
+                    <div class="muted">ประเภท: {{ form.category || '-' }}</div>
                     <div class="muted">
                       ราคา: {{ form.price ?? 0 | number }} บาท
                     </div>
@@ -256,18 +254,10 @@
   (click)="closeImagePreview()"
 >
   <div class="image-preview-modal" (click)="$event.stopPropagation()">
-    <button
-      type="button"
-      class="image-close-btn"
-      (click)="closeImagePreview()"
-    >
+    <button type="button" class="image-close-btn" (click)="closeImagePreview()">
       <i class="bi bi-x-lg"></i>
     </button>
 
-    <img
-      [src]="fullImageUrl"
-      alt="full preview"
-      class="image-preview-full"
-    />
+    <img [src]="fullImageUrl" alt="full preview" class="image-preview-full" />
   </div>
 </div>

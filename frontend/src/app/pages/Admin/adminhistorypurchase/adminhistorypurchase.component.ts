@@ -30,7 +30,7 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-adminhistorypurchase',
-  imports: [ CommonModule, FormsModule, TableModule, InputTextModule],
+  imports: [CommonModule, FormsModule, TableModule, InputTextModule],
   templateUrl: './adminhistorypurchase.component.html',
   styleUrl: './adminhistorypurchase.component.scss',
 })
@@ -58,7 +58,9 @@ export class AdminhistorypurchaseComponent {
     { label: 'อื่น ๆ', value: 'อื่น ๆ' },
   ];
 
-  constructor(private readonly purchaseHistoryService: PurchasehistoryService) {}
+  constructor(
+    private readonly purchaseHistoryService: PurchasehistoryService
+  ) {}
 
   ngOnInit(): void {
     this.loadProductMasters();

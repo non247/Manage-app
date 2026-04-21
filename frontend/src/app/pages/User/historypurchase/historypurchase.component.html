@@ -133,7 +133,7 @@
             'quantity',
             'price',
             'date',
-            'total'
+            'total',
           ]"
           [scrollable]="true"
           scrollHeight="500px"
@@ -142,7 +142,7 @@
           [tableStyle]="{
             width: '100%',
             'table-layout': 'fixed',
-            'min-width': '1120px'
+            'min-width': '1120px',
           }"
         >
           <ng-template pTemplate="header">
@@ -286,18 +286,10 @@
   (click)="closeImagePreview()"
 >
   <div class="image-preview-modal" (click)="$event.stopPropagation()">
-    <button
-      type="button"
-      class="image-close-btn"
-      (click)="closeImagePreview()"
-    >
+    <button type="button" class="image-close-btn" (click)="closeImagePreview()">
       <i class="bi bi-x-lg"></i>
     </button>
 
-    <img
-      [src]="previewImageUrl"
-      alt="preview"
-      class="image-preview-full"
-    />
+    <img [src]="previewImageUrl" alt="preview" class="image-preview-full" />
   </div>
 </div>

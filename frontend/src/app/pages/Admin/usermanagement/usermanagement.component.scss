@@ -148,7 +148,9 @@ app-sidebar-user {
   text-align: center;
   font-size: 20px;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .search-wrapper input:focus {
@@ -300,7 +302,9 @@ app-sidebar-user {
   border-radius: 8px;
   text-align: center;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 ::ng-deep .p-datatable .p-datatable-tbody td input:focus,
@@ -372,7 +376,9 @@ tr.editing {
   border-radius: 8px;
   font-size: 20px;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .create-card .field input:focus,
@@ -543,7 +549,9 @@ tr.editing {
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .create-card .file-box:focus-within {

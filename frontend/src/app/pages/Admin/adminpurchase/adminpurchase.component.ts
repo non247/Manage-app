@@ -528,9 +528,7 @@ export class AdminpurchaseComponent implements OnInit {
     return this.products
       .filter(
         (p) =>
-          !!p.id &&
-          this.toInt(p.quantity, 0) > 0 &&
-          !selectedIds.has(p.id!)
+          !!p.id && this.toInt(p.quantity, 0) > 0 && !selectedIds.has(p.id!)
       )
       .map((p) => ({
         id: p.id!,

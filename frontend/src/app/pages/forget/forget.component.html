@@ -1,6 +1,8 @@
-<div class="login-page"> <!-- ✅ เปลี่ยน -->
-  <div class="login-card card-split"> <!-- ✅ เปลี่ยน -->
-    
+<div class="login-page">
+  <!-- ✅ เปลี่ยน -->
+  <div class="login-card card-split">
+    <!-- ✅ เปลี่ยน -->
+
     <!-- LEFT : IMAGE -->
     <div class="card-image">
       <img src="assets/login.jpg" alt="forgot-password" />
@@ -10,9 +12,7 @@
     <div class="card-form" @slideForm>
       <h1>ลืมรหัสผ่าน</h1>
 
-      <p class="subtitle">
-        กรอกอีเมลของคุณเพื่อรับลิงก์รีเซ็ตรหัสผ่าน
-      </p>
+      <p class="subtitle">กรอกอีเมลของคุณเพื่อรับลิงก์รีเซ็ตรหัสผ่าน</p>
 
       <!-- SUCCESS -->
       <p *ngIf="successMessage" class="success-text">
@@ -20,62 +20,59 @@
       </p>
 
       <!-- FORM -->
-<form (ngSubmit)="sendReset()" #forgotForm="ngForm">
-        
-  <div class="form-group">
-    <label>อีเมล</label>
-    <input
-      type="email"
-      name="email"
-      [(ngModel)]="email"
-      #emailModel="ngModel"   
-      required
-      email               
-      placeholder="example@email.com"
-    />
-  </div>
+      <form (ngSubmit)="sendReset()" #forgotForm="ngForm">
+        <div class="form-group">
+          <label>อีเมล</label>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            #emailModel="ngModel"
+            required
+            email
+            placeholder="example@email.com"
+          />
+        </div>
 
-  <!-- ERROR -->
-  <div class="error-slot">
+        <!-- ERROR -->
+        <div class="error-slot">
+          <!-- ❌ error จาก input -->
+          <p
+            *ngIf="emailModel.invalid && emailModel.touched"
+            class="error-text"
+          >
+            <!-- ไม่กรอก -->
+            <span *ngIf="emailModel.errors?.['required']">
+              กรุณากรอกอีเมล
+            </span>
 
-    <!-- ❌ error จาก input -->
-    <p *ngIf="emailModel.invalid && emailModel.touched" class="error-text">
+            <!-- format ผิด -->
+            <span *ngIf="emailModel.errors?.['email']">
+              กรุณากรอกอีเมลให้ถูกต้อง
+            </span>
+          </p>
 
-      <!-- ไม่กรอก -->
-      <span *ngIf="emailModel.errors?.['required']">
-        กรุณากรอกอีเมล
-      </span>
+          <!-- ❌ error จาก backend -->
+          <p *ngIf="errorMessage" class="error-text">
+            {{ errorMessage }}
+          </p>
+        </div>
 
-      <!-- format ผิด -->
-      <span *ngIf="emailModel.errors?.['email']">
-        กรุณากรอกอีเมลให้ถูกต้อง
-      </span>
+        <div class="fake-input-space"></div>
 
-    </p>
+        <!-- ✅ ปิดปุ่มถ้ายังไม่ valid -->
+        <button
+          type="submit"
+          class="btn-singin"
+          [disabled]="forgotForm.invalid"
+        >
+          ส่งลิงก์รีเซ็ต
+        </button>
 
-    <!-- ❌ error จาก backend -->
-    <p *ngIf="errorMessage" class="error-text">
-      {{ errorMessage }}
-    </p>
-
-  </div>
-
-  <div class="fake-input-space"></div>
-
-  <!-- ✅ ปิดปุ่มถ้ายังไม่ valid -->
-  <button 
-    type="submit" 
-    class="btn-singin"
-    [disabled]="forgotForm.invalid"
-  >
-    ส่งลิงก์รีเซ็ต
-  </button>
-
-  <div class="register-link">
-    <a [routerLink]="['/login']">กลับไปเข้าสู่ระบบ</a>
-  </div>
-
-</form>
+        <div class="register-link">
+          <a [routerLink]="['/login']">กลับไปเข้าสู่ระบบ</a>
+        </div>
+      </form>
     </div>
   </div>
 </div>

@@ -314,7 +314,7 @@
             'category',
             'quantity',
             'price',
-            'date'
+            'date',
           ]"
           [scrollable]="true"
           scrollHeight="500px"
@@ -323,7 +323,7 @@
           [tableStyle]="{
             width: '100%',
             'table-layout': 'fixed',
-            'min-width': '980px'
+            'min-width': '980px',
           }"
         >
           <!-- header -->
@@ -535,18 +535,10 @@
   (click)="closeImagePreview()"
 >
   <div class="image-preview-modal" (click)="$event.stopPropagation()">
-    <button
-      type="button"
-      class="image-close-btn"
-      (click)="closeImagePreview()"
-    >
+    <button type="button" class="image-close-btn" (click)="closeImagePreview()">
       <i class="bi bi-x-lg"></i>
     </button>
 
-    <img
-      [src]="previewImageUrl"
-      alt="preview"
-      class="image-preview-full"
-    />
+    <img [src]="previewImageUrl" alt="preview" class="image-preview-full" />
   </div>
 </div>

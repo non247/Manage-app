@@ -59,7 +59,9 @@ export class HistorypurchaseComponent implements OnInit {
     { label: 'อื่น ๆ', value: 'อื่น ๆ' },
   ];
 
-  constructor(private readonly purchaseHistoryService: PurchasehistoryService) {}
+  constructor(
+    private readonly purchaseHistoryService: PurchasehistoryService
+  ) {}
 
   ngOnInit(): void {
     this.loadProductMasters();

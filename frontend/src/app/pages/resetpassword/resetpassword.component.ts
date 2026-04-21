@@ -35,7 +35,7 @@ export class ResetpasswordComponent {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.token = params['token'] || '';
 
       console.log('TOKEN =', this.token);
@@ -72,41 +72,43 @@ export class ResetpasswordComponent {
 
     this.loading = true;
 
-    this.http.post<any>(this.apiUrl, {
-      token: this.token,
-      password: this.newPassword
-    }).subscribe({
-      next: async (res) => {
-        this.loading = false;
-        this.successMessage = '';
-        this.errorMessage = '';
+    this.http
+      .post<any>(this.apiUrl, {
+        token: this.token,
+        password: this.newPassword,
+      })
+      .subscribe({
+        next: async (res) => {
+          this.loading = false;
+          this.successMessage = '';
+          this.errorMessage = '';
 
-        this.newPassword = '';
-        this.confirmPassword = '';
+          this.newPassword = '';
+          this.confirmPassword = '';
 
-        await Swal.fire({
-          icon: 'success',
-          title: 'สำเร็จ',
-          text: res?.message || 'รีเซ็ตรหัสผ่านสำเร็จ',
-          timer: 1800,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
+          await Swal.fire({
+            icon: 'success',
+            title: 'สำเร็จ',
+            text: res?.message || 'รีเซ็ตรหัสผ่านสำเร็จ',
+            timer: 1800,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          });
 
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.errorMessage =
-          err?.error?.message || 'ไม่สามารถรีเซ็ตรหัสผ่านได้ กรุณาลองใหม่';
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMessage =
+            err?.error?.message || 'ไม่สามารถรีเซ็ตรหัสผ่านได้ กรุณาลองใหม่';
 
-        Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: this.errorMessage,
-          confirmButtonText: 'ตกลง'
-        });
-      }
-    });
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: this.errorMessage,
+            confirmButtonText: 'ตกลง',
+          });
+        },
+      });
   }
 }
