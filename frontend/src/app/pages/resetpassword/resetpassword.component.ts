@@ -1,0 +1,93 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+@Component({
+  selector: 'app-resetpassword',
+  standalone: true,
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
+  templateUrl: './resetpassword.component.html',
+  styleUrl: './resetpassword.component.scss',
+})
+export class ResetpasswordComponent {
+  newPassword = '';
+  confirmPassword = '';
+  token = '';
+
+  successMessage = '';
+  errorMessage = '';
+
+  showPassword = false;
+  showConfirmPassword = false;
+  loading = false;
+
+  private apiUrl = 'http://localhost:3000/api/auth/reset-password';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.token = params['token'] || '';
+
+      console.log('TOKEN =', this.token);
+
+      if (!this.token) {
+        this.errorMessage = 'ไม่พบ token สำหรับรีเซ็ตรหัสผ่าน';
+      }
+    });
+  }
+
+  resetPassword(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    if (!this.token) {
+      this.errorMessage = 'Token ไม่ถูกต้อง';
+      return;
+    }
+
+    if (!this.newPassword.trim() || !this.confirmPassword.trim()) {
+      this.errorMessage = 'กรุณากรอกรหัสผ่านให้ครบถ้วน';
+      return;
+    }
+
+    if (this.newPassword.length < 6) {
+      this.errorMessage = 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+      return;
+    }
+
+    if (this.newPassword !== this.confirmPassword) {
+      this.errorMessage = 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน';
+      return;
+    }
+
+    this.loading = true;
+
+    this.http.post<any>(this.apiUrl, {
+      token: this.token,
+      password: this.newPassword
+    }).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.successMessage = res?.message || 'รีเซ็ตรหัสผ่านสำเร็จ';
+        this.newPassword = '';
+        this.confirmPassword = '';
+
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1800);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage =
+          err?.error?.message || 'ไม่สามารถรีเซ็ตรหัสผ่านได้ กรุณาลองใหม่';
+      }
+    });
+  }
+}

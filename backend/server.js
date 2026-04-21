@@ -1,3 +1,9 @@
+require('dotenv').config();
+
+console.log('MAIL_USER =', process.env.MAIL_USER);
+console.log('has MAIL_PASS =', !!process.env.MAIL_PASS);
+console.log('JWT_SECRET =', process.env.JWT_SECRET ? 'loaded' : 'missing');
+
 const _exit = process.exit;
 process.exit = (code) => {
   console.trace('🧨 process.exit called with code:', code);

@@ -16,6 +16,7 @@ import { AdminhistorypurchaseComponent } from './pages/Admin/adminhistorypurchas
 import { HistorypurchaseComponent } from './pages/User/historypurchase/historypurchase.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ForgetComponent } from './pages/forget/forget.component';
+import { ResetpasswordComponent } from './pages/resetpassword/resetpassword.component';
 
 export const routes: Routes = [
   {
@@ -46,6 +47,14 @@ export const routes: Routes = [
       hideSidebar: true,
     },
   },
+
+{
+  path: 'reset-password',
+  component: ResetpasswordComponent,
+  data: {
+    hideSidebar: true,
+  },
+},
 
   // ===== USER =====
   {

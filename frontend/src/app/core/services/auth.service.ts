@@ -22,6 +22,14 @@ type RegisterResponse = {
   message?: string;
 };
 
+type ForgotPasswordResponse = {
+  message?: string;
+};
+
+type ResetPasswordResponse = {
+  message?: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly TOKEN_KEY = 'token';
@@ -80,6 +88,24 @@ export class AuthService {
           this._isLoggedIn$.next(!!res?.token);
         })
       );
+  }
+
+  // ✅ Forgot Password
+  forgotPassword(email: string): Observable<ForgotPasswordResponse> {
+    return this.http.post<ForgotPasswordResponse>(`${this.api}/forgot-password`, {
+      email,
+    });
+  }
+
+  // ✅ Reset Password
+  resetPassword(
+    token: string,
+    password: string
+  ): Observable<ResetPasswordResponse> {
+    return this.http.post<ResetPasswordResponse>(`${this.api}/reset-password`, {
+      token,
+      password,
+    });
   }
 
   isLoggedIn(): boolean {

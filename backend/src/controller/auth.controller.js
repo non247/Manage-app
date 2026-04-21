@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const pool = require('../config/database');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
@@ -141,25 +142,26 @@ exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // ✅ validate
+    console.log('📩 forgotPassword email:', email);
+
     if (!email || !email.trim()) {
       return res.status(400).json({ message: 'กรุณากรอกอีเมล' });
     }
 
-    // ✅ email format
+    const cleanEmail = email.trim();
+
     const emailRegex = /^[^\s@]+\@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
+    if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({ message: 'รูปแบบอีเมลไม่ถูกต้อง' });
     }
 
-    // 🔍 check user by email
     const result = await pool.query(
       `
       SELECT "Id", "Username", "Email"
       FROM "User"
       WHERE "Email" = $1
       `,
-      [email.trim()]
+      [cleanEmail]
     );
 
     if (result.rowCount === 0) {
@@ -167,21 +169,120 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const user = result.rows[0];
+    console.log('🔎 user found:', user);
 
-    // ✅ ตอนนี้ยังไม่ได้ส่งอีเมลจริง
-    // ภายหลังสามารถเพิ่ม nodemailer + reset token ได้ตรงนี้
+    const token = jwt.sign(
+      {
+        sub: user.Id,
+        email: user.Email,
+        type: 'reset-password',
+      },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    const resetLink = `http://localhost:4200/reset-password?token=${token}`;
+    console.log('🔗 resetLink:', resetLink);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
+
+    const info = await transporter.sendMail({
+      from: `"Manage App" <${process.env.MAIL_USER}>`,
+      to: user.Email,
+      subject: 'รีเซ็ตรหัสผ่าน',
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2>รีเซ็ตรหัสผ่าน</h2>
+          <p>สวัสดี ${user.Username}</p>
+          <p>คุณได้ส่งคำขอรีเซ็ตรหัสผ่านสำหรับบัญชีนี้</p>
+          <p>กรุณากดลิงก์ด้านล่างเพื่อรีเซ็ตรหัสผ่าน:</p>
+          <p>
+            <a href="${resetLink}" target="_blank">
+              รีเซ็ตรหัสผ่าน
+            </a>
+          </p>
+          <p>ลิงก์นี้จะหมดอายุใน 15 นาที</p>
+        </div>
+      `,
+    });
+
+    console.log('✅ Email sent:', info.response);
 
     return res.json({
       ok: true,
       message: 'ส่งลิงก์รีเซ็ตรหัสผ่านเรียบร้อยแล้ว',
-      user: {
-        id: user.Id,
-        username: user.Username,
-        email: user.Email,
-      },
     });
   } catch (error) {
-    console.error('❌ Forgot Password API Error:', error.message);
-    res.status(500).json({ error: error.message });
+    console.error('❌ Forgot Password API Error:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'ส่งอีเมลไม่สำเร็จ',
+      error: error.message,
+    });
+  }
+};
+
+/* =========================
+   RESET PASSWORD
+========================= */
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !token.trim()) {
+      return res.status(400).json({ message: 'ไม่พบ token' });
+    }
+
+    if (!password || !password.trim()) {
+      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
+    }
+
+    if (password.trim().length < 6) {
+      return res.status(400).json({ message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' });
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว' });
+    }
+
+    if (payload.type !== 'reset-password') {
+      return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
+    }
+
+    const hash = await bcrypt.hash(password.trim(), 10);
+
+    const result = await pool.query(
+      `
+      UPDATE "User"
+      SET "Password" = $1
+      WHERE "Id" = $2 AND "Email" = $3
+      RETURNING "Id", "Username", "Email"
+      `,
+      [hash, payload.sub, payload.email]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
+    }
+
+    return res.json({
+      ok: true,
+      message: 'รีเซ็ตรหัสผ่านสำเร็จ',
+    });
+  } catch (error) {
+    console.error('❌ Reset Password API Error:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน',
+    });
   }
 };
