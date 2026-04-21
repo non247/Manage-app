@@ -207,7 +207,6 @@ exports.forgotPassword = async (req, res) => {
               รีเซ็ตรหัสผ่าน
             </a>
           </p>
-          <p>ลิงก์นี้จะหมดอายุใน 15 นาที</p>
         </div>
       `,
     });
