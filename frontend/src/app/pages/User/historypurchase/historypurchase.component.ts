@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -33,7 +34,7 @@ export interface SelectOption {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, InputTextModule],
   templateUrl: './historypurchase.component.html',
-  styleUrl: './historypurchase.component.scss',
+  styleUrls: ['./historypurchase.component.scss'],
 })
 export class HistorypurchaseComponent implements OnInit {
   products: Product[] = [];
@@ -68,6 +69,7 @@ export class HistorypurchaseComponent implements OnInit {
     this.loadProducts();
   }
 
+  /* ================= CREATE EMPTY ================= */
   createEmptyProduct(): Product {
     return {
       code: '',
@@ -81,8 +83,34 @@ export class HistorypurchaseComponent implements OnInit {
     };
   }
 
+  /* ================= DATE / NUMBER HELPERS ================= */
+  toInt(value: any, fallback = 0): number {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.floor(n) : fallback;
+  }
+
   todayString(): string {
-    return new Date().toLocaleDateString('en-CA', {
+    return new Date().toLocaleDateString('sv-SE', {
+      timeZone: 'Asia/Bangkok',
+    });
+  }
+
+  normalizeYmd(value: any): string {
+    if (!value) return this.todayString();
+
+    if (typeof value === 'string') {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+        const [dd, mm, yyyy] = value.split('/');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    }
+
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return this.todayString();
+
+    return d.toLocaleDateString('sv-SE', {
       timeZone: 'Asia/Bangkok',
     });
   }
@@ -121,29 +149,53 @@ export class HistorypurchaseComponent implements OnInit {
   }
 
   private mapProductsWithMasterImage(list: Product[]): Product[] {
-    return (list || []).map((p) => this.applyMasterImage(p));
+    return (list || []).map((p) => this.applyMasterImage(this.withTotal(p)));
   }
 
-  /* ================= TOTAL ================= */
+  /* ================= TOTAL / NORMALIZE ================= */
   withTotal(product: Product): Product {
+    const quantity = this.toInt(product.quantity, 0);
+    const price = this.toInt(product.price, 0);
+
     return {
       ...product,
-      quantity: Number(product.quantity) || 0,
-      price: Number(product.price) || 0,
-      total: (Number(product.quantity) || 0) * (Number(product.price) || 0),
+      quantity,
+      price,
+      date: this.normalizeYmd(product.date),
+      total: quantity * price,
+    };
+  }
+
+  normalizeProduct(item: Partial<Product>): Product {
+    const quantity = this.toInt(item.quantity, 0);
+    const price = this.toInt(item.price, 0);
+
+    return {
+      id: item.id,
+      code: item.code ?? '',
+      name: item.name ?? '',
+      category: item.category ?? '',
+      quantity,
+      price,
+      date: this.normalizeYmd(item.date),
+      total: quantity * price,
+      image: this.getImageUrl(item.image),
     };
   }
 
   toPayload(product: Product): PurchaseHistoryProduct {
+    const normalized = this.withTotal(product);
+
     return {
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      quantity: Number(product.quantity) || 0,
-      price: Number(product.price) || 0,
-      date: product.date,
-      total: (Number(product.quantity) || 0) * (Number(product.price) || 0),
-      image: product.image || '',
+      id: normalized.id,
+      code: normalized.code ?? '',
+      name: normalized.name,
+      category: normalized.category,
+      quantity: normalized.quantity,
+      price: normalized.price,
+      date: normalized.date,
+      total: normalized.total ?? normalized.quantity * normalized.price,
+      image: normalized.image || '',
     };
   }
 
@@ -160,6 +212,11 @@ export class HistorypurchaseComponent implements OnInit {
       },
       error: (err: unknown) => {
         console.error('โหลดรูปสินค้าจาก product master ไม่สำเร็จ', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'โหลดรูปสินค้าไม่สำเร็จ',
+          text: 'ไม่สามารถดึงรูปจาก product master ได้',
+        });
       },
     });
   }
@@ -169,8 +226,9 @@ export class HistorypurchaseComponent implements OnInit {
       next: (res: PurchaseHistoryProduct[]) => {
         const mapped: Product[] = (res || []).map(
           (item: PurchaseHistoryProduct) =>
-            this.withTotal({
+            this.normalizeProduct({
               id: item.id,
+              code: item.code ?? '',
               name: item.name,
               category: item.category,
               quantity: item.quantity,
@@ -186,6 +244,11 @@ export class HistorypurchaseComponent implements OnInit {
       },
       error: (err: unknown) => {
         console.error('โหลดข้อมูล purchase history ไม่สำเร็จ', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'โหลดข้อมูลไม่สำเร็จ',
+          text: 'ไม่สามารถดึงข้อมูลประวัติการสั่งซื้อได้',
+        });
       },
     });
   }
@@ -200,31 +263,56 @@ export class HistorypurchaseComponent implements OnInit {
   onCreateSave(): void {
     const name = this.newProduct.name.trim();
     const category = this.newProduct.category.trim();
-    const quantity = Number(this.newProduct.quantity);
-    const price = Number(this.newProduct.price);
-    const date = this.newProduct.date;
+    const quantity = this.toInt(this.newProduct.quantity, 0);
+    const price = this.toInt(this.newProduct.price, 0);
+    const date = this.normalizeYmd(this.newProduct.date);
 
     if (!name || !category || !date) {
-      alert('กรุณากรอกข้อมูลให้ครบ');
+      Swal.fire({
+        icon: 'warning',
+        title: 'กรอกข้อมูลไม่ครบ',
+        text: 'กรุณากรอกชื่อสินค้า ประเภท และวันที่ให้ครบ',
+      });
       return;
     }
 
     if (quantity <= 0 || price < 0) {
-      alert('จำนวนหรือราคาสินค้าไม่ถูกต้อง');
+      Swal.fire({
+        icon: 'warning',
+        title: 'ข้อมูลไม่ถูกต้อง',
+        text: 'จำนวนต้องมากกว่า 0 และราคาต้องไม่ติดลบ',
+      });
       return;
     }
 
-    const payload = this.toPayload(this.newProduct);
+    const payload = this.toPayload({
+      ...this.newProduct,
+      code: this.newProduct.code || `H${Date.now()}`,
+      quantity,
+      price,
+      date,
+    });
 
     this.purchaseHistoryService.create(payload).subscribe({
       next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'เพิ่มข้อมูลสำเร็จ',
+          timer: 1200,
+          showConfirmButton: false,
+        });
+
         this.newProduct = this.createEmptyProduct();
         this.closeCreateForm();
         this.loadProducts();
       },
       error: (err: unknown) => {
         console.error('เพิ่มข้อมูล purchase history ไม่สำเร็จ', err);
-        alert('ไม่สามารถเพิ่มข้อมูลได้');
+        Swal.fire({
+          icon: 'error',
+          title: 'เพิ่มข้อมูลไม่สำเร็จ',
+          text: 'ไม่สามารถบันทึกข้อมูลได้',
+        });
       },
     });
   }
@@ -239,13 +327,17 @@ export class HistorypurchaseComponent implements OnInit {
     setTimeout(() => {
       this.showCreateForm = false;
       this.isClosing = false;
+      this.newProduct = this.createEmptyProduct();
     }, 200);
   }
 
   /* ================= EDIT ================= */
   startEdit(index: number, product: Product): void {
     this.editIndex = index;
-    this.editProduct = { ...this.applyMasterImage(product) };
+    this.editProduct = {
+      ...this.applyMasterImage(this.withTotal(product)),
+      date: this.normalizeYmd(product.date),
+    };
   }
 
   saveEdit(index: number): void {
@@ -255,27 +347,43 @@ export class HistorypurchaseComponent implements OnInit {
 
     const name = this.editProduct.name.trim();
     const category = this.editProduct.category.trim();
-    const quantity = Number(this.editProduct.quantity);
-    const price = Number(this.editProduct.price);
-    const date = this.editProduct.date;
+    const quantity = this.toInt(this.editProduct.quantity, 0);
+    const price = this.toInt(this.editProduct.price, 0);
+    const date = this.normalizeYmd(this.editProduct.date);
 
     if (!name || !category || !date) {
-      alert('กรุณากรอกข้อมูลให้ครบ');
+      Swal.fire({
+        icon: 'warning',
+        title: 'กรอกข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลให้ครบก่อนบันทึก',
+      });
       return;
     }
 
     if (quantity <= 0 || price < 0) {
-      alert('จำนวนหรือราคาสินค้าไม่ถูกต้อง');
+      Swal.fire({
+        icon: 'warning',
+        title: 'ข้อมูลไม่ถูกต้อง',
+        text: 'จำนวนต้องมากกว่า 0 และราคาต้องไม่ติดลบ',
+      });
       return;
     }
 
-    const payload = this.toPayload(this.editProduct);
+    const payload = this.toPayload({
+      ...this.editProduct,
+      quantity,
+      price,
+      date,
+    });
 
     this.purchaseHistoryService.update(this.editProduct.id, payload).subscribe({
       next: () => {
         const updatedProduct = this.applyMasterImage(
           this.withTotal({
             ...this.editProduct!,
+            quantity,
+            price,
+            date,
           })
         );
 
@@ -289,10 +397,21 @@ export class HistorypurchaseComponent implements OnInit {
         }
 
         this.cancelEdit();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'แก้ไขสำเร็จ',
+          timer: 1200,
+          showConfirmButton: false,
+        });
       },
       error: (err: unknown) => {
         console.error('แก้ไขข้อมูล purchase history ไม่สำเร็จ', err);
-        alert('ไม่สามารถแก้ไขข้อมูลได้');
+        Swal.fire({
+          icon: 'error',
+          title: 'แก้ไขไม่สำเร็จ',
+          text: 'ไม่สามารถบันทึกข้อมูลได้',
+        });
       },
     });
   }
@@ -300,17 +419,36 @@ export class HistorypurchaseComponent implements OnInit {
   deleteProduct(product: Product): void {
     if (!product.id) return;
 
-    const confirmed = window.confirm('ต้องการลบรายการนี้หรือไม่?');
-    if (!confirmed) return;
+    Swal.fire({
+      title: 'ยืนยันการลบ?',
+      text: `ต้องการลบ ${product.name} ใช่หรือไม่`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ลบ',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#d33',
+    }).then((result) => {
+      if (!result.isConfirmed) return;
 
-    this.purchaseHistoryService.delete(product.id).subscribe({
-      next: () => {
-        this.loadProducts();
-      },
-      error: (err: unknown) => {
-        console.error('ลบข้อมูล purchase history ไม่สำเร็จ', err);
-        alert('ไม่สามารถลบข้อมูลได้');
-      },
+      this.purchaseHistoryService.delete(product.id!).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'ลบสำเร็จ',
+            timer: 1200,
+            showConfirmButton: false,
+          });
+          this.loadProducts();
+        },
+        error: (err: unknown) => {
+          console.error('ลบข้อมูล purchase history ไม่สำเร็จ', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'ลบไม่สำเร็จ',
+            text: 'ไม่สามารถลบข้อมูลได้',
+          });
+        },
+      });
     });
   }
 
@@ -333,6 +471,10 @@ export class HistorypurchaseComponent implements OnInit {
 
   /* ================= EXPORT ================= */
   exportToExcel(): void {
-    console.log('Export Excel');
+    Swal.fire({
+      icon: 'info',
+      title: 'ยังไม่ได้เปิดใช้งาน',
+      text: 'ฟังก์ชัน Export Excel ยังไม่ได้ถูกพัฒนา',
+    });
   }
 }

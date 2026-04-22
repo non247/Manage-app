@@ -670,49 +670,64 @@ export class PurchaseComponent implements OnInit {
     });
   }
 
-  submitHistory(): void {
-    this.isSubmittingHistory = true;
+submitHistory(): void {
+  this.isSubmittingHistory = true;
 
-    const payload = this.saleDraftItems.map((item) => ({
+  const jobs = this.saleDraftItems.map((item) => {
+    const source = this.products.find((p) => p.id === item.id);
+
+    if (!source) {
+      throw new Error(`ไม่พบสินค้า id=${item.id}`);
+    }
+
+    const newQty = this.toInt(source.quantity, 0) - this.toInt(item.sellQty, 0);
+
+    const historyPayload = {
       name: item.name,
       category: item.category,
       quantity: item.sellQty,
       price: item.price,
       date: this.todayString(),
-      image: item.image ?? '',
-    }));
+    };
 
-    const requests = payload.map((item) =>
-      this.purchasehistoryService.create(item)
-    );
+    const updatePayload: Product = {
+      ...source,
+      quantity: newQty,
+      total: newQty * this.toInt(source.price, 0),
+      date: this.normalizeYmd(source.date),
+    };
 
-    forkJoin(requests).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'บันทึกประวัติสำเร็จ',
-          text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อเรียบร้อยแล้ว',
-          timer: 1400,
-          showConfirmButton: false,
-        });
+    return forkJoin([
+      this.purchasehistoryService.create(historyPayload),
+      this.purchaseService.update(source.id!, updatePayload),
+    ]);
+  });
 
-        this.isSubmittingHistory = false;
-        this.saleDraftItems = [];
-        this.closeHistoryForm();
-      },
-      error: (err: unknown) => {
-        console.error('submit purchase history error:', err);
-        this.isSubmittingHistory = false;
+  forkJoin(jobs).subscribe({
+    next: () => {
+      Swal.fire({
+        icon: 'success',
+        title: 'บันทึกประวัติสำเร็จ',
+        text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อและตัดจำนวนเรียบร้อยแล้ว',
+        timer: 1400,
+        showConfirmButton: false,
+      });
 
-        Swal.fire({
-          icon: 'error',
-          title: 'ส่งข้อมูลไม่สำเร็จ',
-          text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
-        });
-      },
-    });
-  }
-  makeHistoryCode(): string {
-    return `H${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-  }
+      this.isSubmittingHistory = false;
+      this.saleDraftItems = [];
+      this.closeHistoryForm();
+      this.loadProducts();
+    },
+    error: (err: unknown) => {
+      console.error('submit purchase history error:', err);
+      this.isSubmittingHistory = false;
+
+      Swal.fire({
+        icon: 'error',
+        title: 'ส่งข้อมูลไม่สำเร็จ',
+        text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
+      });
+    },
+  });
+}
 }
