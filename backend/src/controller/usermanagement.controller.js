@@ -1,11 +1,43 @@
 const pool = require('../config/database');
 const bcrypt = require('bcrypt');
 
+// ================= HELPER: GENERATE USER CODE =================
+const makeUserCode = async (role) => {
+  const safeRole = role === 'admin' ? 'admin' : 'user';
+  const prefix = safeRole === 'admin' ? 'M' : 'E';
+
+  const result = await pool.query(
+    `
+    SELECT "Code"
+    FROM public."User"
+    WHERE "Role" = $1
+      AND "Code" IS NOT NULL
+      AND "Code" LIKE $2
+    ORDER BY "Id" DESC
+    LIMIT 1
+    `,
+    [safeRole, `${prefix}%`]
+  );
+
+  let nextNumber = 1;
+
+  if (result.rowCount > 0) {
+    const lastCode = result.rows[0].Code; // เช่น M0003 หรือ E0012
+    const numberPart = parseInt(String(lastCode).slice(1), 10);
+
+    if (!Number.isNaN(numberPart)) {
+      nextNumber = numberPart + 1;
+    }
+  }
+
+  return `${prefix}${String(nextNumber).padStart(4, '0')}`;
+};
+
 // ================= GET ALL USERS =================
 exports.getUsers = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT "Id", "Username", "Email", "Role"
+      SELECT "Id", "Code", "Username", "Email", "Role"
       FROM public."User"
       ORDER BY "Id" ASC
     `);
@@ -24,7 +56,7 @@ exports.getUserById = async (req, res) => {
   try {
     const result = await pool.query(
       `
-      SELECT "Id", "Username", "Email", "Role"
+      SELECT "Id", "Code", "Username", "Email", "Role"
       FROM public."User"
       WHERE "Id" = $1
       `,
@@ -55,6 +87,7 @@ exports.createUser = async (req, res) => {
 
     const cleanUsername = Username.trim();
     const cleanEmail = Email.trim().toLowerCase();
+    const safeRole = Role === 'admin' ? 'admin' : 'user';
 
     if (!cleanUsername || !cleanEmail) {
       return res
@@ -84,13 +117,16 @@ exports.createUser = async (req, res) => {
 
     const hash = await bcrypt.hash(Password, 10);
 
+    // generate code by role
+    const userCode = await makeUserCode(safeRole);
+
     const result = await pool.query(
       `
-      INSERT INTO public."User" ("Username", "Password", "Email", "Role")
-      VALUES ($1, $2, $3, $4)
-      RETURNING "Id", "Username", "Email", "Role"
+      INSERT INTO public."User" ("Code", "Username", "Password", "Email", "Role")
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING "Id", "Code", "Username", "Email", "Role"
       `,
-      [cleanUsername, hash, cleanEmail, Role || 'user']
+      [userCode, cleanUsername, hash, cleanEmail, safeRole]
     );
 
     return res.status(201).json(result.rows[0]);
@@ -114,6 +150,7 @@ exports.updateUser = async (req, res) => {
 
     const cleanUsername = Username.trim();
     const cleanEmail = Email.trim().toLowerCase();
+    const safeRole = Role === 'admin' ? 'admin' : 'user';
 
     if (!cleanUsername || !cleanEmail) {
       return res
@@ -149,21 +186,39 @@ exports.updateUser = async (req, res) => {
       return res.status(409).json({ message: 'Email already exists' });
     }
 
+    // ดึง role เดิมของ user
+    const oldUser = await pool.query(
+      `
+      SELECT "Role", "Code"
+      FROM public."User"
+      WHERE "Id" = $1
+      `,
+      [id]
+    );
+
+    if (oldUser.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    let userCode = oldUser.rows[0].Code;
+
+    // ถ้ามีการเปลี่ยน role ให้ generate code ใหม่ตาม role ใหม่
+    if (oldUser.rows[0].Role !== safeRole) {
+      userCode = await makeUserCode(safeRole);
+    }
+
     const result = await pool.query(
       `
       UPDATE public."User"
-      SET "Username" = $1,
-          "Email" = $2,
-          "Role" = $3
-      WHERE "Id" = $4
-      RETURNING "Id", "Username", "Email", "Role"
+      SET "Code" = $1,
+          "Username" = $2,
+          "Email" = $3,
+          "Role" = $4
+      WHERE "Id" = $5
+      RETURNING "Id", "Code", "Username", "Email", "Role"
       `,
-      [cleanUsername, cleanEmail, Role, id]
+      [userCode, cleanUsername, cleanEmail, safeRole, id]
     );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
 
     return res.json(result.rows[0]);
   } catch (err) {

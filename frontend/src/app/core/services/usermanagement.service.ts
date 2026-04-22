@@ -6,43 +6,50 @@ export type Role = 'admin' | 'user';
 
 export interface User {
   Id: number;
+  Code: string;
   Username: string;
-  Email: string; // ✅ เพิ่ม
+  Email: string;
   Role: Role;
 }
 
-export interface CreateUserDto {
+export interface CreateUserPayload {
   Username: string;
   Password: string;
-  Email: string; // ✅ เพิ่ม
+  Email: string;
   Role: Role;
 }
 
-export interface UpdateUserDto {
+export interface UpdateUserPayload {
   Username: string;
-  Email: string; // ✅ เพิ่ม
+  Email: string;
   Role: Role;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class UserService {
-  private readonly baseUrl = 'http://localhost:3000/api/users';
+  private readonly apiUrl = 'http://localhost:3000/api/users';
 
   constructor(private readonly http: HttpClient) {}
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.baseUrl);
+    return this.http.get<User[]>(this.apiUrl);
   }
 
-  createUser(payload: CreateUserDto): Observable<User> {
-    return this.http.post<User>(this.baseUrl, payload);
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
-  updateUser(id: number, payload: UpdateUserDto): Observable<User> {
-    return this.http.put<User>(`${this.baseUrl}/${id}`, payload);
+  createUser(payload: CreateUserPayload): Observable<User> {
+    return this.http.post<User>(this.apiUrl, payload);
+  }
+
+  updateUser(id: number, payload: UpdateUserPayload): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, payload);
   }
 
   deleteUser(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/${id}`);
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
   }
 }

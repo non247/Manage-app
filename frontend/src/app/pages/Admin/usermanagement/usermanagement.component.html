@@ -97,13 +97,13 @@
           scrollHeight="500px"
           stripedRows
           [rowHover]="true"
-          [globalFilterFields]="['Id', 'Username', 'Email', 'Role']"
+          [globalFilterFields]="['Code', 'Username', 'Email', 'Role']"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="Id" scope="col">
-                รหัสผู้ใช้ <p-sortIcon field="Id"></p-sortIcon>
+              <th pSortableColumn="Code" scope="col">
+                รหัสผู้ใช้ <p-sortIcon field="Code"></p-sortIcon>
               </th>
 
               <th pSortableColumn="Username" scope="col">
@@ -124,7 +124,7 @@
 
           <ng-template pTemplate="body" let-user let-i="rowIndex">
             <tr>
-              <td>{{ user.Id }}</td>
+              <td>{{ user.Code }}</td>
 
               <td>
                 <ng-container *ngIf="editIndex !== i; else editUsername">

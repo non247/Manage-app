@@ -10,7 +10,8 @@ import { UserService } from '../../../core/services/usermanagement.service';
 type Role = 'admin' | 'user';
 
 interface User {
-  Id: number;
+  Id: number; // ยังใช้สำหรับ update / delete
+  Code: string; // ใช้แสดงรหัสผู้ใช้
   Username: string;
   Email: string;
   Role: Role;
@@ -52,7 +53,7 @@ export class UsermanagementComponent implements OnInit {
     this.loadUsers();
   }
 
-  getRoleLabel(role: Role) {
+  getRoleLabel(role: Role): string {
     return role === 'admin' ? 'Manager' : 'Employee';
   }
 
@@ -90,17 +91,23 @@ export class UsermanagementComponent implements OnInit {
       return;
     }
 
-    this.userService.updateUser(this.editUser.Id, this.editUser).subscribe({
-      next: () => {
-        this.users[index] = { ...this.editUser! };
-        this.onCancel();
-        Swal.fire('สำเร็จ', 'แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว', 'success');
-      },
-      error: (err) => {
-        console.error('อัปเดตผู้ใช้ไม่สำเร็จ', err);
-        Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกการแก้ไขได้', 'error');
-      },
-    });
+    this.userService
+      .updateUser(this.editUser.Id, {
+        Username: this.editUser.Username,
+        Email: this.editUser.Email,
+        Role: this.editUser.Role,
+      })
+      .subscribe({
+        next: (updatedUser: User) => {
+          this.users[index] = updatedUser;
+          this.onCancel();
+          Swal.fire('สำเร็จ', 'แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว', 'success');
+        },
+        error: (err) => {
+          console.error('อัปเดตผู้ใช้ไม่สำเร็จ', err);
+          Swal.fire('ผิดพลาด', 'ไม่สามารถบันทึกการแก้ไขได้', 'error');
+        },
+      });
   }
 
   onDelete(index: number): void {
