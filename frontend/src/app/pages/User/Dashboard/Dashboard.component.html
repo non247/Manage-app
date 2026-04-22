@@ -6,120 +6,157 @@
       </header>
     </div>
 
-    <div class="main-content">
+    <div class="main-content dashboard-page">
+      <!-- TOP CARDS -->
       <div class="top-cards">
-        <div class="card">
-          <div class="card-icon">
+        <div class="stat-card">
+          <div class="stat-icon soft-blue">
             <i class="bi bi-cash-coin"></i>
           </div>
-          <div class="card-content">
-            <h3>ยอดขายวันนี้</h3>
+          <div class="stat-info">
+            <h4>ยอดขายวันนี้</h4>
             <p>{{ todaySales | number }} บาท</p>
+            <span>สรุปยอดขายของวันนี้</span>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-icon">
+        <div class="stat-card">
+          <div class="stat-icon soft-green">
             <i class="bi bi-box-seam"></i>
           </div>
-          <div class="card-content">
-            <h3>วันนี้ขายไปแล้ว</h3>
-            <p>{{ todayProducts }} รายการ</p>
+          <div class="stat-info">
+            <h4>วันนี้ขายไปแล้ว</h4>
+            <p>{{ todayProducts | number }} รายการ</p>
+            <span>จำนวนรายการที่ถูกขาย</span>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-icon">
+        <div class="stat-card">
+          <div class="stat-icon soft-orange">
             <i class="bi bi-cart-check"></i>
           </div>
-          <div class="card-content">
-            <h3>จำนวนที่ขายได้วันนี้</h3>
-            <p>{{ totalSold }} ถ้วย</p>
+          <div class="stat-info">
+            <h4>จำนวนที่ขายได้วันนี้</h4>
+            <p>{{ totalSold | number }} ถ้วย</p>
+            <span>รวมจำนวนสินค้าที่ขายได้</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon soft-purple">
+            <i class="bi bi-grid-3x3-gap"></i>
+          </div>
+          <div class="stat-info">
+            <h4>สินค้าทั้งหมด</h4>
+            <p>{{ totalProducts | number }} รายการ</p>
+            <span>จำนวนสินค้าทั้งหมดในระบบ</span>
           </div>
         </div>
       </div>
 
-      <div class="graphs">
-        <div class="graph-box">
-          <h3 style="color: #e91e63">สินค้าทั้งหมด</h3>
-          <canvas #productChartCanvas></canvas>
+            <!-- BOTTOM GRID -->
+      <div class="bottom-grid">
+        <!-- ALL PRODUCTS -->
+        <div class="panel product-panel">
+          <div class="panel-header">
+            <div>
+              <h3>จำนวนขายของสินค้าทั้งหมด</h3>
+            </div>
+          </div>
+
+          <div class="chart-wrap chart-product">
+            <canvas #productChartCanvas></canvas>
+          </div>
         </div>
 
-        <div class="graph-box">
-          <h3 style="color: #e91e63">ขายดีที่สุด</h3>
-          <canvas #topSellerCanvas></canvas>
-        </div>
-      </div>
+        <!-- FORECAST -->
+        <div class="forecast-box">
+          <div class="forecast-header">
+            <h3>พยากรณ์รสไอศกรีมที่น่าขายดี</h3>
+            <span>อ้างอิงจากแนวโน้มการขายล่าสุด</span>
+          </div>
 
-      <!-- ✅ พยากรณ์รสไอศกรีมที่น่าขายดี -->
-      <div class="forecast-box">
-        <div class="forecast-header">
-          <h3>พยากรณ์รสไอศกรีมที่น่าขายดี</h3>
-          <span>อ้างอิงจากแนวโน้มการขายล่าสุด</span>
-        </div>
-
-        <div
-          *ngIf="predictedFlavors.length > 0; else noForecast"
-          class="forecast-list"
-        >
           <div
-            class="forecast-item"
-            *ngFor="let item of predictedFlavors; let i = index"
+            *ngIf="predictedFlavors.length > 0; else noForecast"
+            class="forecast-list"
           >
-            <div class="rank-circle">
-              {{ i + 1 }}
-            </div>
+            <div
+              class="forecast-item"
+              *ngFor="let item of predictedFlavors; let i = index"
+            >
+              <div class="rank-circle">
+                {{ i + 1 }}
+              </div>
 
-            <div class="forecast-detail">
-              <h4>{{ item.name }}</h4>
-              <p>คาดว่าขายดี จากยอดขาย {{ item.sold | number }} ชิ้น</p>
+              <div class="forecast-detail">
+                <h4>{{ item.name }}</h4>
+                <p>คาดว่าขายดี จากยอดขาย {{ item.sold | number }} ชิ้น</p>
+              </div>
             </div>
           </div>
+
+          <ng-template #noForecast>
+            <div class="forecast-empty">
+              ยังไม่มีข้อมูลเพียงพอสำหรับการพยากรณ์
+            </div>
+          </ng-template>
         </div>
-
-        <ng-template #noForecast>
-          <div class="forecast-empty">
-            ยังไม่มีข้อมูลเพียงพอสำหรับการพยากรณ์
-          </div>
-        </ng-template>
       </div>
 
-      <!-- ✅ กราฟยอดขาย + ปุ่มสลับมุมมอง -->
-      <div class="graph-box graph-box--main">
-        <div class="graph-header">
-          <h3>ภาพรวมยอดขาย</h3>
+      <!-- MAIN GRID -->
+      <div class="dashboard-grid">
+        <div class="panel panel-large">
+          <div class="panel-header">
+            <div>
+              <h3>ภาพรวมยอดขาย</h3>
+            </div>
 
-          <div class="segmented">
-            <button
-              type="button"
-              class="seg-btn"
-              [class.active]="salesView === 'day'"
-              (click)="changeSalesView('day')"
-            >
-              รายวัน
-            </button>
+            <div class="segmented">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="salesView === 'day'"
+                (click)="changeSalesView('day')"
+              >
+                Day
+              </button>
 
-            <button
-              type="button"
-              class="seg-btn"
-              [class.active]="salesView === 'month'"
-              (click)="changeSalesView('month')"
-            >
-              รายเดือน
-            </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="salesView === 'month'"
+                (click)="changeSalesView('month')"
+              >
+                Month
+              </button>
 
-            <button
-              type="button"
-              class="seg-btn"
-              [class.active]="salesView === 'year'"
-              (click)="changeSalesView('year')"
-            >
-              รายปี
-            </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="salesView === 'year'"
+                (click)="changeSalesView('year')"
+              >
+                Year
+              </button>
+            </div>
+          </div>
+
+          <div class="chart-wrap chart-main">
+            <canvas #salesCanvas></canvas>
           </div>
         </div>
 
-        <canvas #salesCanvas></canvas>
+        <div class="panel panel-side">
+          <div class="panel-header">
+            <div>
+              <h3>สินค้าขายดีที่สุด</h3>
+            </div>
+          </div>
+
+          <div class="chart-wrap chart-donut">
+            <canvas #topSellerCanvas></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </div>
