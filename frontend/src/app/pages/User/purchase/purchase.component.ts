@@ -621,54 +621,51 @@ export class PurchaseComponent implements OnInit {
     this.saleDraftItems = this.saleDraftItems.filter((x) => x.id !== id);
   }
 
-  confirmSendToHistory(): void {
-    if (this.saleDraftItems.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ยังไม่มีรายการสั่งซื้อ',
-        text: 'กรุณาเพิ่มรายการก่อนยืนยัน',
-      });
-      return;
-    }
+confirmSendToHistory(): void {
+  const items = [...(this.saleDraftItems || [])];
 
-    const invalid = this.saleDraftItems.find(
-      (x) => x.sellQty <= 0 || x.sellQty > x.stock
-    );
-
-    if (invalid) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'จำนวนสั่งซื้อไม่ถูกต้อง',
-        text: `สินค้า ${invalid.name} มีจำนวนไม่ถูกต้อง`,
-      });
-      return;
-    }
-
-    const totalPrice = this.saleDraftItems.reduce(
-      (sum, item) => sum + item.sellQty * item.price,
-      0
-    );
-
+  if (!items.length) {
     Swal.fire({
-      title: 'ยืนยันส่งประวัติการสั่งซื้อ?',
-      html: `
-        <div style="text-align:left">
-          <div>จำนวนรายการ: <b>${this.saleDraftItems.length}</b></div>
-          <div>ยอดรวม: <b style="color:#d81b60">${totalPrice.toLocaleString()} บาท</b></div>
-          <div style="margin-top:8px;color:#c62828">
-            ข้อมูลจะถูกบันทึกเป็นประวัติการสั่งซื้อทันที
-          </div>
-        </div>
-      `,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก',
-    }).then((result) => {
-      if (!result.isConfirmed) return;
-      this.submitHistory();
+      title: 'แจ้งเตือน',
+      text: 'ยังไม่มีรายการสั่งซื้อในฟอร์ม',
+      icon: 'info',
     });
+    return;
   }
+
+  const mapById = new Map<number, Product>(
+    this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
+  );
+
+  const invalid = items.find((it) => {
+    const p = mapById.get(it.id);
+    const stockNow = p ? this.toInt(p.quantity, 0) : 0;
+    return it.sellQty < 1 || it.sellQty > stockNow;
+  });
+
+  if (invalid) {
+    Swal.fire({
+      title: 'ข้อมูลไม่ถูกต้อง',
+      text: 'มีรายการที่จำนวนสั่งซื้อเกินสต๊อกหรือไม่ถูกต้อง กรุณาตรวจสอบ',
+      icon: 'warning',
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: `ยืนยันส่งไปประวัติการสั่งซื้อ\n${items.length} รายการ?`,
+    html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
+    <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'ตกลง',
+    cancelButtonText: 'ยกเลิก',
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+    this.submitHistory();
+  });
+}
 
 submitHistory(): void {
   this.isSubmittingHistory = true;

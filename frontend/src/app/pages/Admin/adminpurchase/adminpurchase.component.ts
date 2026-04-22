@@ -15,6 +15,7 @@ import {
   Product as PurchaseProduct,
   ProductMaster,
 } from '../../../core/services/purchase.service';
+import { PurchasehistoryService } from '../../../core/services/purchasehistory.service';
 
 export interface Product {
   id?: number;
@@ -111,7 +112,7 @@ export class AdminpurchaseComponent implements OnInit {
 
   constructor(
     private purchaseService: PurchaseService,
-    private historyService: HistoryService
+    private purchasehistoryService: PurchasehistoryService
   ) {}
 
   ngOnInit(): void {
@@ -621,99 +622,110 @@ export class AdminpurchaseComponent implements OnInit {
     this.saleDraftItems = this.saleDraftItems.filter((x) => x.id !== id);
   }
 
-  confirmSendToHistory(): void {
-    if (this.saleDraftItems.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ยังไม่มีรายการขาย',
-        text: 'กรุณาเพิ่มรายการก่อนยืนยัน',
-      });
-      return;
-    }
+confirmSendToHistory(): void {
+  const items = [...(this.saleDraftItems || [])];
 
-    const invalid = this.saleDraftItems.find(
-      (x) => x.sellQty <= 0 || x.sellQty > x.stock
-    );
-
-    if (invalid) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'จำนวนขายไม่ถูกต้อง',
-        text: `สินค้า ${invalid.name} มีจำนวนไม่ถูกต้อง`,
-      });
-      return;
-    }
-
-    const totalPrice = this.saleDraftItems.reduce(
-      (sum, item) => sum + item.sellQty * item.price,
-      0
-    );
-
+  if (!items.length) {
     Swal.fire({
-      title: 'ยืนยันส่งประวัติการขาย?',
-      html: `
-        <div style="text-align:left">
-          <div>จำนวนรายการ: <b>${this.saleDraftItems.length}</b></div>
-          <div>ยอดรวม: <b style="color:#d81b60">${totalPrice.toLocaleString()} บาท</b></div>
-          <div style="margin-top:8px;color:#c62828">
-            ข้อมูลจะถูกบันทึกเป็นประวัติการขายทันที
-          </div>
-        </div>
-      `,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก',
-    }).then((result) => {
-      if (!result.isConfirmed) return;
-      this.submitHistory();
+      title: 'แจ้งเตือน',
+      text: 'ยังไม่มีรายการสั่งซื้อในฟอร์ม',
+      icon: 'info',
     });
+    return;
   }
 
-  submitHistory(): void {
-    this.isSubmittingHistory = true;
+  const mapById = new Map<number, Product>(
+    this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
+  );
 
-    const payload = this.saleDraftItems.map((item) => ({
-      code: this.makeHistoryCode(),
+  const invalid = items.find((it) => {
+    const p = mapById.get(it.id);
+    const stockNow = p ? this.toInt(p.quantity, 0) : 0;
+    return it.sellQty < 1 || it.sellQty > stockNow;
+  });
+
+  if (invalid) {
+    Swal.fire({
+      title: 'ข้อมูลไม่ถูกต้อง',
+      text: 'มีรายการที่จำนวนสั่งซื้อเกินสต๊อกหรือไม่ถูกต้อง กรุณาตรวจสอบ',
+      icon: 'warning',
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: `ยืนยันส่งไปประวัติการสั่งซื้อ\n${items.length} รายการ?`,
+    html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
+    <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'ตกลง',
+    cancelButtonText: 'ยกเลิก',
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+    this.submitHistory();
+  });
+}
+
+submitHistory(): void {
+  this.isSubmittingHistory = true;
+
+  const jobs = this.saleDraftItems.map((item) => {
+    const source = this.products.find((p) => p.id === item.id);
+
+    if (!source) {
+      throw new Error(`ไม่พบสินค้า id=${item.id}`);
+    }
+
+    const newQty = this.toInt(source.quantity, 0) - this.toInt(item.sellQty, 0);
+
+    const historyPayload = {
       name: item.name,
       category: item.category,
       quantity: item.sellQty,
       price: item.price,
       date: this.todayString(),
-      total: item.sellQty * item.price,
-      image: item.image ?? '',
-    }));
+    };
 
-    const requests = payload.map((item) => this.historyService.create(item));
+    const updatePayload: Product = {
+      ...source,
+      quantity: newQty,
+      total: newQty * this.toInt(source.price, 0),
+      date: this.normalizeYmd(source.date),
+    };
 
-    forkJoin(requests).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'บันทึกประวัติสำเร็จ',
-          text: 'ส่งข้อมูลไปยังประวัติการขายเรียบร้อยแล้ว',
-          timer: 1400,
-          showConfirmButton: false,
-        });
+    return forkJoin([
+      this.purchasehistoryService.create(historyPayload),
+      this.purchaseService.update(source.id!, updatePayload),
+    ]);
+  });
 
-        this.isSubmittingHistory = false;
-        this.saleDraftItems = [];
-        this.closeHistoryForm();
-      },
-      error: (err: unknown) => {
-        console.error('submitHistory error:', err);
-        this.isSubmittingHistory = false;
+  forkJoin(jobs).subscribe({
+    next: () => {
+      Swal.fire({
+        icon: 'success',
+        title: 'บันทึกประวัติสำเร็จ',
+        text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อและตัดจำนวนเรียบร้อยแล้ว',
+        timer: 1400,
+        showConfirmButton: false,
+      });
 
-        Swal.fire({
-          icon: 'error',
-          title: 'ส่งข้อมูลไม่สำเร็จ',
-          text: 'ไม่สามารถบันทึกประวัติการขายได้',
-        });
-      },
-    });
-  }
+      this.isSubmittingHistory = false;
+      this.saleDraftItems = [];
+      this.closeHistoryForm();
+      this.loadProducts();
+    },
+    error: (err: unknown) => {
+      console.error('submit purchase history error:', err);
+      this.isSubmittingHistory = false;
 
-  makeHistoryCode(): string {
-    return `H${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-  }
+      Swal.fire({
+        icon: 'error',
+        title: 'ส่งข้อมูลไม่สำเร็จ',
+        text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
+      });
+    },
+  });
+}
 }
