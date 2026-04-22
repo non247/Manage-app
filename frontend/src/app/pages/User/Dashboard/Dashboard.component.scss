@@ -267,7 +267,6 @@
 //   }
 // }
 
-
 .layout {
   display: flex;
   height: 100vh;
@@ -279,7 +278,6 @@ app-sidebar-user {
   flex-shrink: 0;
 }
 
-
 .main-area {
   flex: 1;
   display: flex;
@@ -288,7 +286,6 @@ app-sidebar-user {
   overflow-y: auto;
   overflow-x: hidden;
 }
-
 
 .main-content {
   padding: 24px;
@@ -316,7 +313,6 @@ app-sidebar-user {
   font-size: 24px;
   font-weight: bold;
 }
-
 
 .page-title {
   margin: 0;

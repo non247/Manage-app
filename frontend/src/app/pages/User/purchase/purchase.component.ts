@@ -621,110 +621,111 @@ export class PurchaseComponent implements OnInit {
     this.saleDraftItems = this.saleDraftItems.filter((x) => x.id !== id);
   }
 
-confirmSendToHistory(): void {
-  const items = [...(this.saleDraftItems || [])];
+  confirmSendToHistory(): void {
+    const items = [...(this.saleDraftItems || [])];
 
-  if (!items.length) {
-    Swal.fire({
-      title: 'แจ้งเตือน',
-      text: 'ยังไม่มีรายการสั่งซื้อในฟอร์ม',
-      icon: 'info',
-    });
-    return;
-  }
-
-  const mapById = new Map<number, Product>(
-    this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
-  );
-
-  const invalid = items.find((it) => {
-    const p = mapById.get(it.id);
-    const stockNow = p ? this.toInt(p.quantity, 0) : 0;
-    return it.sellQty < 1 || it.sellQty > stockNow;
-  });
-
-  if (invalid) {
-    Swal.fire({
-      title: 'ข้อมูลไม่ถูกต้อง',
-      text: 'มีรายการที่จำนวนสั่งซื้อเกินสต๊อกหรือไม่ถูกต้อง กรุณาตรวจสอบ',
-      icon: 'warning',
-    });
-    return;
-  }
-
-  Swal.fire({
-    title: `ยืนยันส่งไปประวัติการสั่งซื้อ\n${items.length} รายการ?`,
-    html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
-    <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    confirmButtonText: 'ตกลง',
-    cancelButtonText: 'ยกเลิก',
-  }).then((result) => {
-    if (!result.isConfirmed) return;
-    this.submitHistory();
-  });
-}
-
-submitHistory(): void {
-  this.isSubmittingHistory = true;
-
-  const jobs = this.saleDraftItems.map((item) => {
-    const source = this.products.find((p) => p.id === item.id);
-
-    if (!source) {
-      throw new Error(`ไม่พบสินค้า id=${item.id}`);
+    if (!items.length) {
+      Swal.fire({
+        title: 'แจ้งเตือน',
+        text: 'ยังไม่มีรายการสั่งซื้อในฟอร์ม',
+        icon: 'info',
+      });
+      return;
     }
 
-    const newQty = this.toInt(source.quantity, 0) - this.toInt(item.sellQty, 0);
+    const mapById = new Map<number, Product>(
+      this.products.filter((p) => !!p.id).map((p) => [p.id!, p])
+    );
 
-    const historyPayload = {
-      name: item.name,
-      category: item.category,
-      quantity: item.sellQty,
-      price: item.price,
-      date: this.todayString(),
-    };
+    const invalid = items.find((it) => {
+      const p = mapById.get(it.id);
+      const stockNow = p ? this.toInt(p.quantity, 0) : 0;
+      return it.sellQty < 1 || it.sellQty > stockNow;
+    });
 
-    const updatePayload: Product = {
-      ...source,
-      quantity: newQty,
-      total: newQty * this.toInt(source.price, 0),
-      date: this.normalizeYmd(source.date),
-    };
-
-    return forkJoin([
-      this.purchasehistoryService.create(historyPayload),
-      this.purchaseService.update(source.id!, updatePayload),
-    ]);
-  });
-
-  forkJoin(jobs).subscribe({
-    next: () => {
+    if (invalid) {
       Swal.fire({
-        icon: 'success',
-        title: 'บันทึกประวัติสำเร็จ',
-        text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อและตัดจำนวนเรียบร้อยแล้ว',
-        timer: 1400,
-        showConfirmButton: false,
+        title: 'ข้อมูลไม่ถูกต้อง',
+        text: 'มีรายการที่จำนวนสั่งซื้อเกินสต๊อกหรือไม่ถูกต้อง กรุณาตรวจสอบ',
+        icon: 'warning',
       });
+      return;
+    }
 
-      this.isSubmittingHistory = false;
-      this.saleDraftItems = [];
-      this.closeHistoryForm();
-      this.loadProducts();
-    },
-    error: (err: unknown) => {
-      console.error('submit purchase history error:', err);
-      this.isSubmittingHistory = false;
+    Swal.fire({
+      title: `ยืนยันส่งไปประวัติการสั่งซื้อ\n${items.length} รายการ?`,
+      html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
+    <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'ตกลง',
+      cancelButtonText: 'ยกเลิก',
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      this.submitHistory();
+    });
+  }
 
-      Swal.fire({
-        icon: 'error',
-        title: 'ส่งข้อมูลไม่สำเร็จ',
-        text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
-      });
-    },
-  });
-}
+  submitHistory(): void {
+    this.isSubmittingHistory = true;
+
+    const jobs = this.saleDraftItems.map((item) => {
+      const source = this.products.find((p) => p.id === item.id);
+
+      if (!source) {
+        throw new Error(`ไม่พบสินค้า id=${item.id}`);
+      }
+
+      const newQty =
+        this.toInt(source.quantity, 0) - this.toInt(item.sellQty, 0);
+
+      const historyPayload = {
+        name: item.name,
+        category: item.category,
+        quantity: item.sellQty,
+        price: item.price,
+        date: this.todayString(),
+      };
+
+      const updatePayload: Product = {
+        ...source,
+        quantity: newQty,
+        total: newQty * this.toInt(source.price, 0),
+        date: this.normalizeYmd(source.date),
+      };
+
+      return forkJoin([
+        this.purchasehistoryService.create(historyPayload),
+        this.purchaseService.update(source.id!, updatePayload),
+      ]);
+    });
+
+    forkJoin(jobs).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'บันทึกประวัติสำเร็จ',
+          text: 'ส่งข้อมูลไปยังประวัติการสั่งซื้อและตัดจำนวนเรียบร้อยแล้ว',
+          timer: 1400,
+          showConfirmButton: false,
+        });
+
+        this.isSubmittingHistory = false;
+        this.saleDraftItems = [];
+        this.closeHistoryForm();
+        this.loadProducts();
+      },
+      error: (err: unknown) => {
+        console.error('submit purchase history error:', err);
+        this.isSubmittingHistory = false;
+
+        Swal.fire({
+          icon: 'error',
+          title: 'ส่งข้อมูลไม่สำเร็จ',
+          text: 'ไม่สามารถบันทึกประวัติการสั่งซื้อได้',
+        });
+      },
+    });
+  }
 }

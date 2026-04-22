@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface PurchaseHistoryProduct {
   id?: number;
-  code?: string;   // ✅ เพิ่มตรงนี้
+  code?: string; // ✅ เพิ่มตรงนี้
   name: string;
   category: string;
   quantity: number;
