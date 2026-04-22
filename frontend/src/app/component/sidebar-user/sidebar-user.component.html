@@ -14,24 +14,6 @@
 >
   <div class="top">
     <ul class="nav-links">
-      <!-- Dashboard -->
-      <li
-        routerLink="/dashboard"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        <a (click)="navigateTo('/dashboard')">
-          <i class="bi bi-grid-fill" style="font-size: 30px"></i>
-          <span
-            class="text"
-            [class.show]="!isCollapsed"
-            style="font-size: 20px"
-          >
-            ภาพรวม
-          </span>
-        </a>
-      </li>
-
       <!-- Purchase -->
       <li routerLink="/purchase" routerLinkActive="active">
         <a (click)="navigateTo('/purchase')">

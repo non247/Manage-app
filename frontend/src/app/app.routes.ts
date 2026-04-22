@@ -58,14 +58,6 @@ export const routes: Routes = [
 
   // ===== USER =====
   {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: {
-      role: 'user',
-    },
-  },
-  {
     path: 'history',
     component: HistoryComponent,
     canActivate: [AuthGuard, RoleGuard],
@@ -99,6 +91,14 @@ export const routes: Routes = [
   },
 
   // ===== ADMIN =====
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'admin',
+    },
+  },
   {
     path: 'product',
     component: ProductComponent,

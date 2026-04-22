@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit {
       next: (res) => {
         const role = res.role;
 
-        this.router.navigate([role === 'admin' ? '/product' : '/dashboard'], {
+        this.router.navigate([role === 'admin' ? '/dashboard' : '/purchase'], {
           state: { loginSuccess: true },
         });
       },
