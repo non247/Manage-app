@@ -218,7 +218,10 @@ export class PurchaseComponent implements OnInit {
   }
 
   get createProductImage(): string {
-    const master = this.getMaster(this.newProduct.name, this.newProduct.category);
+    const master = this.getMaster(
+      this.newProduct.name,
+      this.newProduct.category
+    );
     return this.getImageUrl(master?.image);
   }
 
@@ -363,66 +366,66 @@ export class PurchaseComponent implements OnInit {
     }, 180);
   }
 
-onCreateSave(): void {
-  if (!this.newProduct.name || !this.newProduct.category) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'กรอกข้อมูลไม่ครบ',
-      text: 'กรุณาเลือกชื่อสินค้าและประเภท',
-    });
-    return;
-  }
-
-  const payload: Product = {
-    code: this.newProduct.code || '',
-    name: this.newProduct.name,
-    category: this.newProduct.category,
-    quantity: this.toInt(this.newProduct.quantity, 1),
-    price: this.toInt(this.newProduct.price, 0),
-    date: this.normalizeYmd(this.newProduct.date),
-    total:
-      this.toInt(this.newProduct.quantity, 1) *
-      this.toInt(this.newProduct.price, 0),
-    image: this.createProductImage || this.newProduct.image || '',
-  };
-
-  console.log('🔥 FINAL payload =', payload);
-
-  if (!payload.code) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'ไม่พบรหัสสินค้า',
-      text: 'กรุณาเลือกชื่อสินค้าและประเภทใหม่อีกครั้ง',
-    });
-    return;
-  }
-
-  this.purchaseService.create(payload).subscribe({
-    next: (res) => {
-      console.log('create success response =', res);
-
+  onCreateSave(): void {
+    if (!this.newProduct.name || !this.newProduct.category) {
       Swal.fire({
-        icon: 'success',
-        title: 'บันทึกสำเร็จ',
-        text: 'เพิ่มข้อมูลเรียบร้อยแล้ว',
-        timer: 1300,
-        showConfirmButton: false,
+        icon: 'warning',
+        title: 'กรอกข้อมูลไม่ครบ',
+        text: 'กรุณาเลือกชื่อสินค้าและประเภท',
       });
+      return;
+    }
 
-      this.showCreateForm = false;
-      this.newProduct = this.createEmptyProduct();
-      this.loadProducts();
-    },
-    error: (err: unknown) => {
-      console.error('create error:', err);
+    const payload: Product = {
+      code: this.newProduct.code || '',
+      name: this.newProduct.name,
+      category: this.newProduct.category,
+      quantity: this.toInt(this.newProduct.quantity, 1),
+      price: this.toInt(this.newProduct.price, 0),
+      date: this.normalizeYmd(this.newProduct.date),
+      total:
+        this.toInt(this.newProduct.quantity, 1) *
+        this.toInt(this.newProduct.price, 0),
+      image: this.createProductImage || this.newProduct.image || '',
+    };
+
+    console.log('🔥 FINAL payload =', payload);
+
+    if (!payload.code) {
       Swal.fire({
-        icon: 'error',
-        title: 'บันทึกไม่สำเร็จ',
-        text: 'ไม่สามารถเพิ่มข้อมูลได้',
+        icon: 'warning',
+        title: 'ไม่พบรหัสสินค้า',
+        text: 'กรุณาเลือกชื่อสินค้าและประเภทใหม่อีกครั้ง',
       });
-    },
-  });
-}
+      return;
+    }
+
+    this.purchaseService.create(payload).subscribe({
+      next: (res) => {
+        console.log('create success response =', res);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'บันทึกสำเร็จ',
+          text: 'เพิ่มข้อมูลเรียบร้อยแล้ว',
+          timer: 1300,
+          showConfirmButton: false,
+        });
+
+        this.showCreateForm = false;
+        this.newProduct = this.createEmptyProduct();
+        this.loadProducts();
+      },
+      error: (err: unknown) => {
+        console.error('create error:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'บันทึกไม่สำเร็จ',
+          text: 'ไม่สามารถเพิ่มข้อมูลได้',
+        });
+      },
+    });
+  }
   onEdit(index: number): void {
     this.editIndex = index;
     const prepared = this.applyMasterData(

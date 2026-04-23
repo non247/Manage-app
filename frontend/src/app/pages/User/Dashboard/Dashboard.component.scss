@@ -404,7 +404,14 @@ app-sidebar-user {
 /* ===== MAIN GRID ===== */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 1500fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   gap: 24px;
   align-items: stretch;
 }
@@ -462,31 +469,82 @@ app-sidebar-user {
   gap: 6px;
   padding: 6px;
   border-radius: 18px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #ffe4ec;
+  border: 1px solid #f8bbd0;
+  box-shadow: inset 0 1px 2px rgba(216, 27, 96, 0.08);
 }
 
 .seg-btn {
   border: none;
   background: transparent;
-  color: #64748b;
+  color: #ad1457;
   padding: 10px 18px;
   border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .seg-btn:hover {
-  background: #eef2f7;
+  background: #ffd6e5;
+  color: #c2185b;
 }
 
 .seg-btn.active {
-  background: #ffffff;
-  color: #0f172a;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+  background: #d81b60;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(216, 27, 96, 0.15);
+}
+/* ===== WEEK TOOLBAR ===== */
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 6px 0 16px;
+  flex-wrap: wrap;
+}
+
+.week-label {
+  min-width: 220px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.week-btn {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  color: #334155;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.week-btn:hover:not(:disabled) {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.week-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.today-btn {
+  background: #fde2e7;
+  color: #d81b60;
+}
+
+.today-btn:hover:not(:disabled) {
+  background: #fbcfe8;
 }
 
 /* ===== CHART AREA ===== */
@@ -520,6 +578,7 @@ app-sidebar-user {
   padding: 22px 24px;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
   box-sizing: border-box;
+  min-height: 420px;
 }
 
 .forecast-header {
@@ -602,8 +661,14 @@ app-sidebar-user {
     grid-template-columns: 1fr;
   }
 
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
   .panel-large,
-  .panel-side {
+  .panel-side,
+  .product-panel,
+  .forecast-box {
     min-height: 460px;
   }
 }
@@ -611,6 +676,12 @@ app-sidebar-user {
 @media (max-width: 768px) {
   app-sidebar-user {
     width: 78px;
+  }
+
+  .main-content {
+    padding: 16px;
+    margin-left: 0;
+    max-width: 100%;
   }
 
   .main-content:first-child {
@@ -652,6 +723,15 @@ app-sidebar-user {
     padding: 10px 12px;
   }
 
+  .chart-toolbar {
+    justify-content: flex-start;
+  }
+
+  .week-label {
+    min-width: 100%;
+    text-align: left;
+  }
+
   .chart-main,
   .chart-donut,
   .chart-product {
@@ -667,43 +747,51 @@ app-sidebar-user {
   }
 }
 
-.bottom-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: 24px;
-  align-items: stretch;
+.calendar-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 14px;
 }
 
-.product-panel {
-  min-height: 420px;
+.panel-subtitle {
+  margin: 22px 0 12px;
 }
 
-.forecast-box {
-  background: #ffd6e0;
-  border-radius: 24px;
-  padding: 22px 24px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  box-sizing: border-box;
-  min-height: 420px;
+.panel-subtitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-@media (max-width: 1200px) {
-  .top-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.chart-line {
+  height: 320px;
+}
+
+:host ::ng-deep .p-datepicker {
+  min-width: 240px;
+}
+
+:host ::ng-deep .p-datepicker-input {
+  width: 100%;
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+:host ::ng-deep .p-datepicker-trigger {
+  border-radius: 0 14px 14px 0;
+}
+
+@media (max-width: 768px) {
+  .calendar-toolbar {
+    width: 100%;
   }
 
-  .dashboard-grid {
-    grid-template-columns: 1fr;
+  :host ::ng-deep .p-datepicker {
+    width: 100%;
   }
 
-  .bottom-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .panel-large,
-  .panel-side,
-  .product-panel,
-  .forecast-box {
-    min-height: 460px;
+  .chart-line {
+    height: 280px;
   }
 }

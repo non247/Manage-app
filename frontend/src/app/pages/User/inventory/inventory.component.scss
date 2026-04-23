@@ -89,7 +89,6 @@ app-sidebar-user {
   padding: 12px;
 }
 
-
 /* ================= HEADER ================= */
 .header-row {
   display: flex;
@@ -557,11 +556,10 @@ tr.editing {
   border-radius: 10px;
   border: none;
 
-  background: #fee2e2;   /* แดงอ่อน */
+  background: #fee2e2; /* แดงอ่อน */
   display: flex-end;
   align-items: flex-end;
   justify-content: flex-end;
-
 }
 
 .history-card .sale-del .btn-delete i {
@@ -579,7 +577,6 @@ tr.editing {
 .history-card .sale-del .btn-delete:active {
   transform: scale(0.92);
 }
-
 
 .history-body {
   display: grid;
@@ -829,4 +826,3 @@ tr.editing {
     transform: scale(1);
   }
 }
-

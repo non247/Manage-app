@@ -7,45 +7,7 @@
     </div>
 
     <div class="main-content dashboard-page">
-      <!-- TOP CARDS -->
-      <!-- <div class="top-cards">
-        <div class="stat-card">
-          <div class="stat-icon soft-blue">
-            <i class="bi bi-cash-coin"></i>
-          </div>
-          <div class="stat-info">
-            <h4>ยอดขายวันนี้</h4>
-            <p>{{ todaySales | number }} บาท</p>
-            <span>สรุปยอดขายของวันนี้</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon soft-green">
-            <i class="bi bi-box-seam"></i>
-          </div>
-          <div class="stat-info">
-            <h4>วันนี้ขายไปแล้ว</h4>
-            <p>{{ todayProducts | number }} รายการ</p>
-            <span>จำนวนรายการที่ถูกขาย</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon soft-orange">
-            <i class="bi bi-cart-check"></i>
-          </div>
-          <div class="stat-info">
-            <h4>จำนวนที่ขายได้วันนี้</h4>
-            <p>{{ totalSold | number }} ถ้วย</p>
-            <span>รวมจำนวนสินค้าที่ขายได้</span>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- BOTTOM GRID -->
       <div class="bottom-grid">
-        <!-- ALL PRODUCTS -->
         <div class="panel product-panel">
           <div class="panel-header">
             <div>
@@ -58,7 +20,6 @@
           </div>
         </div>
 
-        <!-- FORECAST -->
         <div class="forecast-box">
           <div class="forecast-header">
             <h3>พยากรณ์รสไอศกรีมที่น่าขายดี</h3>
@@ -73,9 +34,7 @@
               class="forecast-item"
               *ngFor="let item of predictedFlavors; let i = index"
             >
-              <div class="rank-circle">
-                {{ i + 1 }}
-              </div>
+              <div class="rank-circle">{{ i + 1 }}</div>
 
               <div class="forecast-detail">
                 <h4>{{ item.name }}</h4>
@@ -92,7 +51,6 @@
         </div>
       </div>
 
-      <!-- MAIN GRID -->
       <div class="dashboard-grid">
         <div class="panel panel-large">
           <div class="panel-header">
@@ -107,7 +65,7 @@
                 [class.active]="salesView === 'day'"
                 (click)="changeSalesView('day')"
               >
-                Day
+                สัปดาห์
               </button>
 
               <button
@@ -116,7 +74,7 @@
                 [class.active]="salesView === 'month'"
                 (click)="changeSalesView('month')"
               >
-                Month
+                เดือน
               </button>
 
               <button
@@ -125,27 +83,58 @@
                 [class.active]="salesView === 'year'"
                 (click)="changeSalesView('year')"
               >
-                Year
+                ปี
               </button>
             </div>
+          </div>
+
+          <div class="calendar-toolbar" *ngIf="salesView === 'day'">
+            <p-datepicker
+              [(ngModel)]="selectedDate"
+              [showIcon]="true"
+              dateFormat="dd/mm/yy"
+              placeholder="เลือกวันที่"
+              (ngModelChange)="onDateChange()"
+            ></p-datepicker>
+          </div>
+
+          <div class="chart-toolbar" *ngIf="salesView === 'day'">
+            <button type="button" class="week-btn" (click)="goPrevWeek()">
+              ‹ สัปดาห์ก่อน
+            </button>
+
+            <span class="week-label">{{ weekRangeLabel }}</span>
+
+            <button
+              type="button"
+              class="week-btn"
+              (click)="goNextWeek()"
+              [disabled]="weekOffset === 0"
+            >
+              สัปดาห์ถัดไป ›
+            </button>
+
+            <button
+              type="button"
+              class="week-btn today-btn"
+              (click)="goCurrentWeek()"
+            >
+              วันนี้
+            </button>
           </div>
 
           <div class="chart-wrap chart-main">
             <canvas #salesCanvas></canvas>
           </div>
+
+          <div class="panel-subtitle">
+            <h3>กราฟเส้นแนวโน้มยอดขาย</h3>
+          </div>
+
+          <div class="chart-wrap chart-line">
+            <canvas #salesLineCanvas></canvas>
+          </div>
         </div>
-
-        <!-- <div class="panel panel-side">
-          <div class="panel-header">
-            <div>
-              <h3>สินค้าขายดีที่สุด</h3>
-            </div>
-          </div>
-
-          <div class="chart-wrap chart-donut">
-            <canvas #topSellerCanvas></canvas>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>

@@ -49,100 +49,98 @@
           (click)="onCreateCancel()"
         ></div>
 
-<!-- ✅ CREATE FORM : CARD -->
-<div
-  *ngIf="showCreateForm"
-  class="create-card"
-  [class.closing]="isClosing"
-  (click)="$event.stopPropagation()"
->
-  <div class="create-card-header">
-    <h2>เพิ่มสินค้า</h2>
-  </div>
-
-  <div class="create-card-body">
-    <div class="create-grid">
-      <!-- CATEGORY -->
-
-            <!-- NAME -->
-      <div class="field">
-        <label for="productName">ชื่อสินค้า</label>
-        <select
-          id="productName"
-          class="p-inputtext p-component"
-          [(ngModel)]="newProduct.name"
-          name="productName"
-          (change)="onCreateNameChange(newProduct.name)"
+        <!-- ✅ CREATE FORM : CARD -->
+        <div
+          *ngIf="showCreateForm"
+          class="create-card"
+          [class.closing]="isClosing"
+          (click)="$event.stopPropagation()"
         >
-          <option value="" disabled>-- เลือกชื่อสินค้า --</option>
-          <option *ngFor="let n of names" [value]="n.value">
-            {{ n.label }}
-          </option>
-        </select>
-      </div>
+          <div class="create-card-header">
+            <h2>เพิ่มสินค้า</h2>
+          </div>
 
-      <div class="field">
-        <label for="productCategory">ประเภท</label>
-        <select
-          id="productCategory"
-          class="p-inputtext p-component"
-          [(ngModel)]="newProduct.category"
-          name="productCategory"
-          (change)="onCreateNameChange(newProduct.name)"
-        >
-          <option value="" disabled>-- เลือกประเภท --</option>
-          <option *ngFor="let c of categories" [value]="c.value">
-            {{ c.label }}
-          </option>
-        </select>
-      </div>
+          <div class="create-card-body">
+            <div class="create-grid">
+              <!-- CATEGORY -->
 
+              <!-- NAME -->
+              <div class="field">
+                <label for="productName">ชื่อสินค้า</label>
+                <select
+                  id="productName"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="newProduct.name"
+                  name="productName"
+                  (change)="onCreateNameChange(newProduct.name)"
+                >
+                  <option value="" disabled>-- เลือกชื่อสินค้า --</option>
+                  <option *ngFor="let n of names" [value]="n.value">
+                    {{ n.label }}
+                  </option>
+                </select>
+              </div>
 
+              <div class="field">
+                <label for="productCategory">ประเภท</label>
+                <select
+                  id="productCategory"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="newProduct.category"
+                  name="productCategory"
+                  (change)="onCreateNameChange(newProduct.name)"
+                >
+                  <option value="" disabled>-- เลือกประเภท --</option>
+                  <option *ngFor="let c of categories" [value]="c.value">
+                    {{ c.label }}
+                  </option>
+                </select>
+              </div>
 
-      <!-- QTY -->
-      <div class="field">
-        <label for="quantity">จำนวน</label>
-        <input
-          id="quantity"
-          type="number"
-          pInputText
-          min="1"
-          step="1"
-          [ngModel]="newProduct.quantity"
-          name="productQty"
-          (ngModelChange)="newProduct.quantity = toInt($event, 1)"
-        />
-      </div>
+              <!-- QTY -->
+              <div class="field">
+                <label for="quantity">จำนวน</label>
+                <input
+                  id="quantity"
+                  type="number"
+                  pInputText
+                  min="1"
+                  step="1"
+                  [ngModel]="newProduct.quantity"
+                  name="productQty"
+                  (ngModelChange)="newProduct.quantity = toInt($event, 1)"
+                />
+              </div>
 
-      <!-- PRICE -->
-      <div class="field">
-        <label for="price">ราคา</label>
-        <input
-          id="price"
-          type="number"
-          pInputText
-          min="0"
-          step="1"
-          [ngModel]="newProduct.price"
-          name="productPrice"
-          readonly
-        />
-      </div>
+              <!-- PRICE -->
+              <div class="field">
+                <label for="price">ราคา</label>
+                <input
+                  id="price"
+                  type="number"
+                  pInputText
+                  min="0"
+                  step="1"
+                  [ngModel]="newProduct.price"
+                  name="productPrice"
+                  readonly
+                />
+              </div>
 
-      <!-- DATE -->
-      <div class="field">
-        <label for="date">วันที่</label>
-        <input
-          id="date"
-          type="date"
-          [(ngModel)]="newProduct.date"
-          name="productDate"
-          readonly
-        />
-      </div>
+              <!-- DATE -->
+              <div class="field">
+                <label for="date">วันที่</label>
+                <input
+                  id="date"
+                  type="date"
+                  [(ngModel)]="newProduct.date"
+                  name="productDate"
+                  readonly
+                />
+              </div>
 
-      <!-- CODE -->
-      <!-- <div class="field">
+              <!-- CODE -->
+              <!-- <div class="field">
         <label for="code">รหัสสินค้า</label>
         <input
           id="code"
@@ -153,18 +151,18 @@
           readonly
         />
       </div> -->
-    </div>
-  </div>
+            </div>
+          </div>
 
-  <div class="create-card-footer">
-    <button class="btn-cancel" type="button" (click)="onCreateCancel()">
-      <i class="bi bi-x-square"></i> ยกเลิก
-    </button>
-    <button class="btn-save" type="button" (click)="onCreateSave()">
-      <i class="pi pi-check-square"></i> บันทึก
-    </button>
-  </div>
-</div>
+          <div class="create-card-footer">
+            <button class="btn-cancel" type="button" (click)="onCreateCancel()">
+              <i class="bi bi-x-square"></i> ยกเลิก
+            </button>
+            <button class="btn-save" type="button" (click)="onCreateSave()">
+              <i class="pi pi-check-square"></i> บันทึก
+            </button>
+          </div>
+        </div>
         <!-- ✅ HISTORY BACKDROP -->
         <div
           *ngIf="showHistoryForm"

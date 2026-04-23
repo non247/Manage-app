@@ -1,4 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   AfterViewInit,
   Component,
@@ -11,6 +12,7 @@ import {
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { TableModule } from 'primeng/table';
+import { DatePickerModule } from 'primeng/datepicker';
 import Swal from 'sweetalert2';
 import {
   DashboardResponse,
@@ -22,17 +24,21 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TableModule, CommonModule],
+  imports: [TableModule, CommonModule, DatePickerModule, FormsModule],
   templateUrl: './Dashboard.component.html',
   styleUrl: './Dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  selectedDate: Date = new Date();
+
   @ViewChild('salesCanvas') salesCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('salesLineCanvas') salesLineCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('topSellerCanvas') topSellerCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('productChartCanvas')
   productChartCanvas!: ElementRef<HTMLCanvasElement>;
 
   salesChart?: Chart;
+  salesLineChart?: Chart;
   topSellerChart?: Chart;
   productChart?: Chart;
 
@@ -45,6 +51,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   salesView: 'day' | 'month' | 'year' = 'day';
 
   predictedFlavors: { name: string; sold: number; totalSales?: number }[] = [];
+
+  weekOffset = 0;
 
   private dashboardData?: DashboardResponse;
   private viewReady = false;
@@ -61,7 +69,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isBrowser) {
       const st: any = history.state;
 
-      // ✅ แสดง popup ต้อนรับเมื่อ login สำเร็จ
       if (st?.loginSuccess) {
         Swal.fire({
           toast: true,
@@ -74,14 +81,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
 
-      // ✅ รับรายการจาก checkbox แล้วนับของวันนี้
       if (st?.fromCheckbox && Array.isArray(st?.sentList)) {
         this.fromCheckbox = true;
         this.sentTodayList = st.sentList;
         this.todayProducts = this.calcTodayCount(this.sentTodayList);
       }
 
-      // ✅ ล้าง state ทีเดียวหลังใช้งานเสร็จ
       if (st?.loginSuccess || st?.fromCheckbox) {
         history.replaceState({}, '');
       }
@@ -97,13 +102,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.salesChart?.destroy();
+    this.salesLineChart?.destroy();
     this.topSellerChart?.destroy();
     this.productChart?.destroy();
   }
 
-  // =========================
-  // ✅ Helpers
-  // =========================
   private toNumber(v: any): number {
     if (typeof v === 'string') v = v.replace(/,/g, '');
     const n = Number(v);
@@ -165,9 +168,75 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }).length;
   }
 
-  // =========================
-  // ✅ พยากรณ์รสไอศกรีมที่น่าขายดี
-  // =========================
+  private getMondayOfWeek(baseDate: Date): Date {
+    const ref = new Date(baseDate);
+    ref.setHours(0, 0, 0, 0);
+
+    const dayOfWeek = ref.getDay();
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+    const monday = new Date(ref);
+    monday.setDate(ref.getDate() + diffToMonday);
+    return monday;
+  }
+
+  private getBaseDateFromOffset(): Date {
+    const base = new Date(this.selectedDate || new Date());
+    base.setDate(base.getDate() + this.weekOffset * 7);
+    return base;
+  }
+
+  get weekRangeLabel(): string {
+    const monday = this.getMondayOfWeek(this.getBaseDateFromOffset());
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const start = monday.toLocaleDateString('th-TH-u-ca-gregory', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    const end = sunday.toLocaleDateString('th-TH-u-ca-gregory', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    return `${start} - ${end}`;
+  }
+
+  onDateChange(): void {
+    this.weekOffset = 0;
+    if (this.salesView === 'day') {
+      this.changeSalesView('day');
+    }
+  }
+
+  goPrevWeek(): void {
+    this.weekOffset--;
+    if (this.salesView === 'day') {
+      this.changeSalesView('day');
+    }
+  }
+
+  goNextWeek(): void {
+    if (this.weekOffset < 0) {
+      this.weekOffset++;
+      if (this.salesView === 'day') {
+        this.changeSalesView('day');
+      }
+    }
+  }
+
+  goCurrentWeek(): void {
+    this.selectedDate = new Date();
+    this.weekOffset = 0;
+    if (this.salesView === 'day') {
+      this.changeSalesView('day');
+    }
+  }
+
   private calculatePredictedFlavors() {
     if (!this.dashboardData) {
       this.predictedFlavors = [];
@@ -189,9 +258,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       .slice(0, 5);
   }
 
-  // =========================
-  // 🔹 โหลดข้อมูลจาก Backend
-  // =========================
   loadDashboard() {
     this.dashboardService.getDashboard().subscribe({
       next: (res: any) => {
@@ -247,21 +313,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createProductChart((this.dashboardData as any).productChart || []);
   }
 
-  // =========================
-  // 🔁 เปลี่ยนมุมมองยอดขาย
-  // =========================
   changeSalesView(view: 'day' | 'month' | 'year') {
     this.salesView = view;
     if (!this.dashboardData) return;
 
     const daily = (this.dashboardData as any).salesChart || [];
+    let chartData: any[] = [];
 
-    if (view === 'day') this.createSalesChart(this.toDaily(daily), 'day');
-    if (view === 'month') this.createSalesChart(this.toMonthly(daily), 'month');
-    if (view === 'year') this.createSalesChart(this.toYearly(daily), 'year');
+    if (view === 'day') {
+      chartData = this.toDaily(daily, this.getBaseDateFromOffset());
+      this.createSalesChart(chartData, 'day');
+      this.createSalesLineChart(chartData, 'day');
+    }
+
+    if (view === 'month') {
+      chartData = this.toMonthly(daily);
+      this.createSalesChart(chartData, 'month');
+      this.createSalesLineChart(chartData, 'month');
+    }
+
+    if (view === 'year') {
+      chartData = this.toYearly(daily);
+      this.createSalesChart(chartData, 'year');
+      this.createSalesLineChart(chartData, 'year');
+    }
   }
 
-  toDaily(data: any[]) {
+  toDaily(data: any[], baseDate: Date) {
     const map = new Map<string, number>();
 
     data.forEach((d) => {
@@ -273,22 +351,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const result: { label: string; total: number; color: string }[] = [];
 
     const colors = [
-      '#FCEE9E',
-      '#FFBFC5',
-      '#ADD495',
-      '#FF9800',
-      '#A8D1E7',
-      '#E0C7EE',
-      '#F898A4',
+      '#FFF3B0', // จันทร์
+      '#FFD6E0', // อังคาร
+      '#CDE7BE', // พุธ
+      '#FFD8A8', // พฤหัส
+      '#CFE8F7', // ศุกร์
+      '#E8D9F3', // เสาร์
+      '#F9D0D8', // อาทิตย์
     ];
 
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-
-    const monday = new Date(today);
-    monday.setHours(0, 0, 0, 0);
-    monday.setDate(today.getDate() + diffToMonday);
+    const monday = this.getMondayOfWeek(baseDate);
 
     for (let i = 0; i < 7; i++) {
       const date = new Date(monday);
@@ -338,31 +410,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  // =========================
-  // 📊 กราฟยอดขาย
-  // =========================
   createSalesChart(dataSource: any[], view: 'day' | 'month' | 'year') {
     const ctx = this.salesCanvas?.nativeElement?.getContext('2d');
     if (!ctx) return;
 
     this.salesChart?.destroy();
 
+    const pastelColors = [
+      '#CFE8F7',
+      '#FEC8D8',
+      '#CDE7BE',
+      '#FFD6E0',
+      '#A8D1E7',
+      '#FFDFD3',
+      '#F9E79F',
+      '#E0C7EE',
+      '#FFD8A8',
+      '#DCC6E0',
+      '#BFE3C0',
+      '#F9D0D8',
+    ];
+
     const dayColors = dataSource.map((d) => d.color ?? '#CBD5E1');
+    const pastelSeriesColors = dataSource.map(
+      (_, i) => pastelColors[i % pastelColors.length]
+    );
 
-    const monthGradient = ctx.createLinearGradient(0, 0, 0, 300);
-    monthGradient.addColorStop(0, '#60A5FA');
-    monthGradient.addColorStop(1, '#2563EB');
-
-    const yearGradient = ctx.createLinearGradient(0, 0, 0, 300);
-    yearGradient.addColorStop(0, '#34D399');
-    yearGradient.addColorStop(1, '#059669');
-
-    const backgroundColor =
-      view === 'day'
-        ? dayColors
-        : view === 'month'
-          ? monthGradient
-          : yearGradient;
+    const backgroundColor = view === 'day' ? dayColors : pastelSeriesColors;
 
     this.salesChart = new Chart(ctx, {
       type: 'bar',
@@ -373,6 +447,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             label: 'ยอดขายรวม',
             data: dataSource.map((d) => this.toNumber(d.total)),
             backgroundColor,
+            borderColor: '#ffffff',
+            borderWidth: 2,
             borderRadius: 10,
             barPercentage: 0.6,
             minBarLength: 2,
@@ -411,9 +487,64 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // =========================
-  // 🥧 กราฟสินค้าขายดีที่สุด
-  // =========================
+  createSalesLineChart(dataSource: any[], view: 'day' | 'month' | 'year') {
+    const ctx = this.salesLineCanvas?.nativeElement?.getContext('2d');
+    if (!ctx) return;
+
+    this.salesLineChart?.destroy();
+
+    this.salesLineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dataSource.map((d) => d.label),
+        datasets: [
+          {
+            label: 'แนวโน้มยอดขาย',
+            data: dataSource.map((d) => this.toNumber(d.total)),
+            borderColor: '#d81b60',
+            backgroundColor: 'rgba(216,27,96,0.12)',
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#d81b60',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 16, bottom: 12, left: 26, right: 20 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const value = (ctx as any).parsed?.y ?? 0;
+                return `ยอดขาย ${Number(value).toLocaleString()} บาท`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 0, autoSkip: true, padding: 10 },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              padding: 10,
+              callback: (v) => `${Number(v).toLocaleString()}`,
+            },
+          },
+        },
+      },
+    });
+  }
+
   createTopSellerChart(dataSource: any[]) {
     const ctx = this.topSellerCanvas?.nativeElement?.getContext('2d');
     if (!ctx) return;
@@ -453,9 +584,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // =========================
-  // 📦 กราฟสินค้าทั้งหมด
-  // =========================
   createProductChart(dataSource: any[]) {
     const ctx = this.productChartCanvas?.nativeElement?.getContext('2d');
     if (!ctx) return;

@@ -173,51 +173,57 @@
           [paginator]="true"
           [showCurrentPageReport]="true"
           currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
-          [globalFilterFields]="['code', 'name', 'category', 'quantity', 'price']"
+          [globalFilterFields]="[
+            'code',
+            'name',
+            'category',
+            'quantity',
+            'price',
+          ]"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
-<ng-template pTemplate="header">
-  <tr>
-    <th class="col-img" scope="col"></th>
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="col-img" scope="col"></th>
 
-    <th pSortableColumn="code" scope="col" class="col-code">
-      <span class="th-wrap">
-        <span>รหัสสินค้า</span>
-        <p-sortIcon field="code"></p-sortIcon>
-      </span>
-    </th>
+              <th pSortableColumn="code" scope="col" class="col-code">
+                <span class="th-wrap">
+                  <span>รหัสสินค้า</span>
+                  <p-sortIcon field="code"></p-sortIcon>
+                </span>
+              </th>
 
-    <th pSortableColumn="name" scope="col" class="col-name">
-      <span class="th-wrap">
-        <span>ชื่อสินค้า</span>
-        <p-sortIcon field="name"></p-sortIcon>
-      </span>
-    </th>
+              <th pSortableColumn="name" scope="col" class="col-name">
+                <span class="th-wrap">
+                  <span>ชื่อสินค้า</span>
+                  <p-sortIcon field="name"></p-sortIcon>
+                </span>
+              </th>
 
-    <th pSortableColumn="category" scope="col" class="col-category">
-      <span class="th-wrap">
-        <span>ประเภท</span>
-        <p-sortIcon field="category"></p-sortIcon>
-      </span>
-    </th>
+              <th pSortableColumn="category" scope="col" class="col-category">
+                <span class="th-wrap">
+                  <span>ประเภท</span>
+                  <p-sortIcon field="category"></p-sortIcon>
+                </span>
+              </th>
 
-    <th pSortableColumn="quantity" scope="col" class="col-qty">
-      <span class="th-wrap">
-        <span>จำนวน</span>
-        <p-sortIcon field="quantity"></p-sortIcon>
-      </span>
-    </th>
+              <th pSortableColumn="quantity" scope="col" class="col-qty">
+                <span class="th-wrap">
+                  <span>จำนวน</span>
+                  <p-sortIcon field="quantity"></p-sortIcon>
+                </span>
+              </th>
 
-    <th pSortableColumn="price" scope="col" class="col-price">
-      <span class="th-wrap">
-        <span>ราคา</span>
-        <p-sortIcon field="price"></p-sortIcon>
-      </span>
-    </th>
+              <th pSortableColumn="price" scope="col" class="col-price">
+                <span class="th-wrap">
+                  <span>ราคา</span>
+                  <p-sortIcon field="price"></p-sortIcon>
+                </span>
+              </th>
 
-    <th class="col-action" scope="col"></th>
-  </tr>
-</ng-template>
+              <th class="col-action" scope="col"></th>
+            </tr>
+          </ng-template>
 
           <ng-template pTemplate="body" let-p>
             <tr>
