@@ -59,14 +59,14 @@
 
         <div *ngIf="forecastResult.length > 0" class="summary-cards">
           <div class="summary-card">
-            <div class="card-label">Top Flavor</div>
+            <div class="card-label">รสชาติที่นิยมมากที่สุด</div>
             <div class="card-value">{{ topFlavor }}</div>
             <div class="card-unit">
               {{ topFlavorSold | number: '1.0-0' }} ถ้วย
             </div>
           </div>
           <div class="summary-card">
-            <div class="card-label">Total Forecast Sold</div>
+            <div class="card-label">จำนวนที่พยากรณ์ทั้งหมด</div>
             <div class="card-value">
               {{ totalForecastSold | number: '1.0-0' }}
             </div>

@@ -178,7 +178,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
         labels,
         datasets: [
           {
-            label: 'Forecast Totalsold',
+            label: 'จำนวนที่พยากรณ์',
             data: totals,
             backgroundColor: labels.map((_, index) =>
               this.getFlavorColor(index)
@@ -227,7 +227,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Forecast Total Sold (ถ้วย)',
+              text: 'จำนวนที่พยากรณ์ (ถ้วย)',
             },
             ticks: {
               callback: (value) => `${value}`,
