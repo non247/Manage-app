@@ -63,7 +63,7 @@
                   pInputText
                   type="text"
                   [(ngModel)]="form.name"
-                  placeholder="เช่น Vanilla"
+                  placeholder="เช่น วนิลา"
                 />
               </div>
 
@@ -110,11 +110,11 @@
                     class="file-btn"
                     (click)="fileInput.click()"
                   >
-                    Choose File
+                    เลือกไฟล์
                   </button>
 
                   <span class="file-name" [class.placeholder]="!selectedFile">
-                    {{ selectedFile?.name || 'No file chosen' }}
+                    {{ selectedFile?.name || 'ไม่ได้เลือกไฟล์' }}
                   </span>
                 </div>
 

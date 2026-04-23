@@ -547,6 +547,35 @@ tr.editing {
   color: #fff;
 }
 
+.history-card .sale-del .btn-delete {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+
+  background: #fee2e2;   /* แดงอ่อน */
+  display: flex-end;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+}
+
+.history-card .sale-del .btn-delete i {
+  font-size: 20px;
+  color: #dc2626; /* แดง */
+}
+
+/* hover */
+.history-card .sale-del .btn-delete:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+/* กด */
+.history-card .sale-del .btn-delete:active {
+  transform: scale(0.92);
+}
+
 .history-body {
   display: grid;
   gap: 14px;
