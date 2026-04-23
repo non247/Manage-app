@@ -161,6 +161,21 @@
   }
 }
 
+.chart-card {
+  border-left: none;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .prediction-value {
   display: flex;
   align-items: baseline;

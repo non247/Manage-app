@@ -17,7 +17,7 @@
         >
           <div class="form-grid">
             <div class="form-group">
-              <label for="start_date">วันที่ตั้งแต่</label>
+              <label for="start_date">ตั้งแต่วันที่</label>
               <p-datepicker
                 id="start_date"
                 formControlName="start_date"
@@ -62,11 +62,10 @@
           </div>
         </form>
 
-        <div *ngIf="result !== null" class="result-card">
-          <h3>ผลการพยากรณ์</h3>
-          <div class="prediction-value">
-            <span class="number">{{ result | number: '1.0-0' }}</span>
-            <span class="unit">ถ้วย</span>
+        <div *ngIf="forecastResult.length > 0" class="result-card chart-card">
+          <h3>ผลการพยากรณ์ตามรส</h3>
+          <div class="chart-wrapper">
+            <canvas #forecastChartCanvas></canvas>
           </div>
         </div>
       </div>
