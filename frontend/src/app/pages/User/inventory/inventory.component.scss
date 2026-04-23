@@ -44,19 +44,17 @@ app-sidebar-user {
   flex-direction: column;
 }
 
-/* ================= TABLE ================= */
+/* ================= TABLE (PrimeNG) ================= */
 .main-content p-table {
   margin-top: 30px;
   flex: 1;
   min-height: 0;
 }
 
-/* ✅ ล็อกความสูงภายใน datatable และดัน paginator ติดล่าง */
 :host ::ng-deep .p-datatable {
   height: 100%;
   display: flex;
   flex-direction: column;
-
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
@@ -65,7 +63,7 @@ app-sidebar-user {
 :host ::ng-deep .p-datatable .p-datatable-wrapper {
   flex: 1;
   min-height: 0;
-  overflow: hidden; /* ไม่อยากให้มี scroll ในตาราง */
+  overflow: hidden;
   background: #fff;
 }
 
@@ -73,7 +71,6 @@ app-sidebar-user {
   margin-top: auto;
 }
 
-/* ✅ PrimeNG table style */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   padding: 11px;
@@ -91,6 +88,7 @@ app-sidebar-user {
   text-align: center;
   padding: 12px;
 }
+
 
 /* ================= HEADER ================= */
 .header-row {
@@ -145,6 +143,12 @@ app-sidebar-user {
   justify-content: center;
   position: relative;
   gap: 6px;
+}
+
+.btn-history:hover {
+  background-color: #2f26d9; /* สว่างขึ้น */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(35, 26, 167, 0.4);
 }
 
 .bubble {
@@ -825,3 +829,4 @@ tr.editing {
     transform: scale(1);
   }
 }
+

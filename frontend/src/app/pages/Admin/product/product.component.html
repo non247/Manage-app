@@ -176,33 +176,48 @@
           [globalFilterFields]="['code', 'name', 'category', 'quantity', 'price']"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
-          <ng-template pTemplate="header">
-            <tr>
-              <th style="width: 220px" scope="col"></th>
+<ng-template pTemplate="header">
+  <tr>
+    <th class="col-img" scope="col"></th>
 
-              <th pSortableColumn="code" scope="col" style="width: 14%">
-                รหัสสินค้า <p-sortIcon field="code"></p-sortIcon>
-              </th>
+    <th pSortableColumn="code" scope="col" class="col-code">
+      <span class="th-wrap">
+        <span>รหัสสินค้า</span>
+        <p-sortIcon field="code"></p-sortIcon>
+      </span>
+    </th>
 
-              <th pSortableColumn="name" scope="col" style="width: 24%">
-                ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
-              </th>
+    <th pSortableColumn="name" scope="col" class="col-name">
+      <span class="th-wrap">
+        <span>ชื่อสินค้า</span>
+        <p-sortIcon field="name"></p-sortIcon>
+      </span>
+    </th>
 
-              <th pSortableColumn="category" scope="col" style="width: 16%">
-                ประเภท <p-sortIcon field="category"></p-sortIcon>
-              </th>
+    <th pSortableColumn="category" scope="col" class="col-category">
+      <span class="th-wrap">
+        <span>ประเภท</span>
+        <p-sortIcon field="category"></p-sortIcon>
+      </span>
+    </th>
 
-              <th pSortableColumn="quantity" scope="col" style="width: 12%">
-                จำนวน <p-sortIcon field="quantity"></p-sortIcon>
-              </th>
+    <th pSortableColumn="quantity" scope="col" class="col-qty">
+      <span class="th-wrap">
+        <span>จำนวน</span>
+        <p-sortIcon field="quantity"></p-sortIcon>
+      </span>
+    </th>
 
-              <th pSortableColumn="price" style="width: 14%" scope="col">
-                ราคา <p-sortIcon field="price"></p-sortIcon>
-              </th>
+    <th pSortableColumn="price" scope="col" class="col-price">
+      <span class="th-wrap">
+        <span>ราคา</span>
+        <p-sortIcon field="price"></p-sortIcon>
+      </span>
+    </th>
 
-              <th style="width: 170px" scope="col"></th>
-            </tr>
-          </ng-template>
+    <th class="col-action" scope="col"></th>
+  </tr>
+</ng-template>
 
           <ng-template pTemplate="body" let-p>
             <tr>

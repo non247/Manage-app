@@ -147,6 +147,10 @@ app-sidebar-user {
   gap: 6px;
 }
 
+.btn-history:hover {
+  background-color: #2f26d9; /* สว่างขึ้น */
+}
+
 .bubble {
   position: absolute;
   top: -8px;

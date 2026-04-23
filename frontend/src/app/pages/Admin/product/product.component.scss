@@ -72,6 +72,19 @@ app-sidebar-user {
   margin-top: auto;
 }
 
+:host ::ng-deep .p-sortable-column-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; // ระยะห่างระหว่างข้อความกับ icon
+}
+
+:host ::ng-deep .p-sortable-column .p-sortable-column-icon {
+  margin-left: 2px;
+  font-size: 18px;
+}
+
+
 /* style table */
 .main-content p-table th,
 .main-content p-table td {
@@ -709,3 +722,4 @@ tr.editing {
     height: 220px;
   }
 }
+
