@@ -102,8 +102,15 @@ try {
   console.error('❌ purchasehistory mount fail', e);
 }
 
-const server = app.listen(3000, () => console.log('server 3000'));
+const server = app.listen(3000, () => {
+  console.log('server 3000');
+  console.log('server.listening =', server.listening);
+  console.log('server.address() =', server.address());
+});
 
 server.on('listening', () => console.log('🟢 server listening event fired'));
-
 server.on('close', () => console.log('🧨 server close event fired'));
+
+setInterval(() => {
+  console.log('⏳ still alive', new Date().toISOString());
+}, 5000);
