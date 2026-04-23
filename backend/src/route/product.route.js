@@ -2,8 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const productController = require('../controller/product.controller');
+const upload = require('../middleware/upload');
 
-const upload = require('../middleware/upload'); // ใช้ตัวนี้ตัวเดียว
+console.log('productController keys =', Object.keys(productController));
+console.log('getAllProducts =', typeof productController.getAllProducts);
+console.log('getProductById =', typeof productController.getProductById);
+console.log('createProduct =', typeof productController.createProduct);
+console.log('updateProduct =', typeof productController.updateProduct);
+console.log('deleteProduct =', typeof productController.deleteProduct);
 
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);

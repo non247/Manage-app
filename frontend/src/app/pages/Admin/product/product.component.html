@@ -67,7 +67,6 @@
                 />
               </div>
 
-              <!-- เพิ่ม dropdown category -->
               <div class="field">
                 <label for="productCategory">ประเภท</label>
                 <select
@@ -174,26 +173,30 @@
           [paginator]="true"
           [showCurrentPageReport]="true"
           currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
-          [globalFilterFields]="['code', 'name', 'category', 'price']"
+          [globalFilterFields]="['code', 'name', 'category', 'quantity', 'price']"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
         >
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 220px" scope="col"></th>
 
-              <th pSortableColumn="code" scope="col" style="width: 15%">
+              <th pSortableColumn="code" scope="col" style="width: 14%">
                 รหัสสินค้า <p-sortIcon field="code"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="name" scope="col" style="width: 28%">
+              <th pSortableColumn="name" scope="col" style="width: 24%">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="category" scope="col" style="width: 20%">
+              <th pSortableColumn="category" scope="col" style="width: 16%">
                 ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
 
-              <th pSortableColumn="price" style="width: 17%" scope="col">
+              <th pSortableColumn="quantity" scope="col" style="width: 12%">
+                จำนวน <p-sortIcon field="quantity"></p-sortIcon>
+              </th>
+
+              <th pSortableColumn="price" style="width: 14%" scope="col">
                 ราคา <p-sortIcon field="price"></p-sortIcon>
               </th>
 
@@ -220,6 +223,7 @@
               <td>{{ p.code }}</td>
               <td class="name">{{ p.name }}</td>
               <td>{{ p.category }}</td>
+              <td>{{ p.quantity | number }}</td>
               <td>{{ p.price | number }}</td>
 
               <td class="action-cell">
@@ -238,7 +242,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6" class="empty-message">ไม่พบข้อมูล</td>
+              <td colspan="7" class="empty-message">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>

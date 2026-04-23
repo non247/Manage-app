@@ -16,8 +16,21 @@ exports.getAllProducts = async (req, res) => {
         p.name,
         p.category,
         p.price,
+        COALESCE(pu.total_quantity, 0) AS quantity,
         p.image
       FROM public."Product" p
+      LEFT JOIN (
+        SELECT
+          LOWER(TRIM(name)) AS name_key,
+          LOWER(TRIM(category)) AS category_key,
+          SUM(COALESCE(quantity, 0)) AS total_quantity
+        FROM public."Purchase"
+        GROUP BY
+          LOWER(TRIM(name)),
+          LOWER(TRIM(category))
+      ) pu
+        ON LOWER(TRIM(p.name)) = pu.name_key
+       AND LOWER(TRIM(p.category)) = pu.category_key
     `;
 
     const params = [];
@@ -26,6 +39,7 @@ exports.getAllProducts = async (req, res) => {
       sql += `
         WHERE p.name ILIKE $1
            OR p.code ILIKE $1
+           OR p.category ILIKE $1
       `;
       params.push(`%${search}%`);
     }
@@ -41,6 +55,7 @@ exports.getAllProducts = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 // GET /api/products/:id
 exports.getProductById = async (req, res) => {
   try {
@@ -53,14 +68,27 @@ exports.getProductById = async (req, res) => {
     const result = await pool.query(
       `
       SELECT
-        "Id"       AS id,
-        "code"     AS code,
-        "name"     AS name,
-        "category" AS category,
-        "price"    AS price,
-        "image"    AS image
-      FROM public."Product"
-      WHERE "Id" = $1
+        p."Id" AS id,
+        p.code,
+        p.name,
+        p.category,
+        p.price,
+        COALESCE(pu.total_quantity, 0) AS quantity,
+        p.image
+      FROM public."Product" p
+      LEFT JOIN (
+        SELECT
+          LOWER(TRIM(name)) AS name_key,
+          LOWER(TRIM(category)) AS category_key,
+          SUM(COALESCE(quantity, 0)) AS total_quantity
+        FROM public."Purchase"
+        GROUP BY
+          LOWER(TRIM(name)),
+          LOWER(TRIM(category))
+      ) pu
+        ON LOWER(TRIM(p.name)) = pu.name_key
+       AND LOWER(TRIM(p.category)) = pu.category_key
+      WHERE p."Id" = $1
       `,
       [id]
     );
@@ -109,7 +137,6 @@ exports.createProduct = async (req, res) => {
 
     await client.query('BEGIN');
 
-    // lock ตารางชั่วคราว เพื่อกัน code ซ้ำในระบบขนาดเล็ก
     await client.query(`LOCK TABLE public."Product" IN EXCLUSIVE MODE`);
 
     const lastCodeResult = await client.query(`
@@ -126,12 +153,13 @@ exports.createProduct = async (req, res) => {
       INSERT INTO public."Product" ("code", "name", "category", "price", "image")
       VALUES ($1, $2, $3, $4, $5)
       RETURNING
-        "Id"       AS id,
-        "code"     AS code,
-        "name"     AS name,
+        "Id" AS id,
+        "code" AS code,
+        "name" AS name,
         "category" AS category,
-        "price"    AS price,
-        "image"    AS image
+        "price" AS price,
+        0 AS quantity,
+        "image" AS image
       `,
       [code, cleanName, cleanCategory, cleanPrice, image]
     );
@@ -210,12 +238,12 @@ exports.updateProduct = async (req, res) => {
       SET ${sets.join(', ')}
       WHERE "Id" = $${params.length}
       RETURNING
-        "Id"       AS id,
-        "code"     AS code,
-        "name"     AS name,
+        "Id" AS id,
+        "code" AS code,
+        "name" AS name,
         "category" AS category,
-        "price"    AS price,
-        "image"    AS image
+        "price" AS price,
+        "image" AS image
     `;
 
     const result = await pool.query(sql, params);
