@@ -28,16 +28,20 @@ export class ModelComponent implements OnInit {
     private readonly modelService: ModelService,
     private readonly fb: FormBuilder
   ) {
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
+
     this.predictForm = this.fb.group({
-      flavor: 'มิ้นต์ช็อกโกแลตชิพ',
       is_holiday: false,
-      duration_days: 7,
-      start_date: null,
-      end_date: null,
+      start_date: startDate,
+      end_date: endDate,
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.onSubmit();
+  }
 
   predictForm: FormGroup;
   result: any = null;
@@ -62,7 +66,7 @@ export class ModelComponent implements OnInit {
       end_date: this.formatDate(this.predictForm.value.end_date),
     };
 
-    this.modelService.getForecastSoldPerDay(formData).subscribe({
+    this.modelService.getSaleForecastData(formData).subscribe({
       next: (res) => {
         this.result = res.forecasted_totalsold;
         console.log('Forecast result:', res);
