@@ -1,4 +1,4 @@
-const pool = require('../config/database'); 
+const pool = require('../config/database');
 
 /* ================= GET ALL ================= */
 exports.getAllPurchase = async (req, res) => {

@@ -243,14 +243,18 @@ exports.resetPassword = async (req, res) => {
     }
 
     if (password.trim().length < 6) {
-      return res.status(400).json({ message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' });
+      return res
+        .status(400)
+        .json({ message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' });
     }
 
     let payload;
     try {
       payload = jwt.verify(token, JWT_SECRET);
     } catch (err) {
-      return res.status(401).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว' });
+      return res
+        .status(401)
+        .json({ message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว' });
     }
 
     if (payload.type !== 'reset-password') {
