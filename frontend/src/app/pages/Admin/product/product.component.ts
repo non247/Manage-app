@@ -65,24 +65,6 @@ export class ProductComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
-
-    const key = 'welcome_product_shown';
-
-    if (isPlatformBrowser(this.platformId)) {
-      if (!sessionStorage.getItem(key)) {
-        sessionStorage.setItem(key, '1');
-
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'ยินดีต้อนรับเข้าสู่ระบบ',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
-      }
-    }
   }
 
   toImgUrl(img: string | null | undefined) {
