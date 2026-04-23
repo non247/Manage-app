@@ -97,7 +97,10 @@
         <div *ngIf="forecastResult.length > 0" class="result-card detail-card">
           <h3>รายละเอียดการพยากรณ์ตามรส</h3>
           <div class="flavor-cards">
-            <div *ngFor="let item of forecastResult" class="summary-card">
+            <div
+              *ngFor="let item of forecastResult"
+              class="summary-card flavor-card"
+            >
               <div class="card-label">{{ item.flavor }}</div>
               <div class="card-value">
                 {{ item.forecasted_totalsold | number: '1.0-0' }}
