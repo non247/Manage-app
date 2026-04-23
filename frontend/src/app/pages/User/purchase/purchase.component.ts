@@ -661,7 +661,7 @@ export class PurchaseComponent implements OnInit {
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไปประวัติการสั่งซื้อ\n${items.length} รายการ?`,
+      title: `ยืนยันส่งไปประวัติการสั่งซื้อ?`,
       html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
     <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
       icon: 'question',

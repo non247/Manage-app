@@ -20,9 +20,9 @@ export interface Product {
   category: string;
   quantity: number;
   price: number;
-  date: string; // ✅ string กัน timezone
-  total?: number; // ✅ ต้องมี field จริงเพื่อให้ sort ได้
-  image?: string; // ✅ เพิ่มรูป
+  date: string;
+  total?: number;
+  image?: string;
 }
 
 @Component({
@@ -81,7 +81,10 @@ export class HistoryComponent implements OnInit {
     const items = history.state?.items as Product[] | undefined;
 
     if (Array.isArray(items) && items.length > 0) {
-      this.products = this.mapProductsWithMasterImage(this.withTotal(items));
+      const normalized = this.withTotal(items);
+      const aggregated = this.aggregateProducts(normalized);
+
+      this.products = this.mapProductsWithMasterImage(aggregated);
       this.filteredProducts = [...this.products];
     } else {
       this.loadProducts();
@@ -117,7 +120,7 @@ export class HistoryComponent implements OnInit {
     const master = this.getMasterByName(product.name);
     return {
       ...product,
-      image: this.getImageUrl(master?.image),
+      image: this.getImageUrl(master?.image || product.image),
     };
   }
 
@@ -125,13 +128,13 @@ export class HistoryComponent implements OnInit {
     return (list || []).map((p) => this.applyMasterImage(p));
   }
 
-  openImagePreview(url?: string) {
+  openImagePreview(url?: string): void {
     if (!url) return;
     this.previewImageUrl = url;
     this.showImagePreview = true;
   }
 
-  closeImagePreview() {
+  closeImagePreview(): void {
     this.showImagePreview = false;
     this.previewImageUrl = '';
   }
@@ -153,13 +156,64 @@ export class HistoryComponent implements OnInit {
     });
   }
 
+  /* ================= AGGREGATE DUPLICATES ================= */
+  private aggregateProducts(list: Product[]): Product[] {
+    const map = new Map<string, Product>();
+
+    for (const item of list) {
+      const normalized: Product = {
+        ...item,
+        quantity: Number(item.quantity) || 0,
+        price: Number(item.price) || 0,
+        date: this.normalizeYmd(item.date),
+        total: (Number(item.quantity) || 0) * (Number(item.price) || 0),
+      };
+
+      const key = [
+        normalized.date,
+        normalized.name?.trim().toLowerCase(),
+        normalized.category?.trim().toLowerCase(),
+        Number(normalized.price) || 0,
+      ].join('|');
+
+      const existing = map.get(key);
+
+      if (existing) {
+        existing.quantity =
+          (Number(existing.quantity) || 0) + (Number(normalized.quantity) || 0);
+
+        existing.total =
+          (Number(existing.quantity) || 0) * (Number(existing.price) || 0);
+
+        if (!existing.image && normalized.image) {
+          existing.image = normalized.image;
+        }
+
+        if (!existing.id && normalized.id) {
+          existing.id = normalized.id;
+        }
+
+        if (!existing.code && normalized.code) {
+          existing.code = normalized.code;
+        }
+      } else {
+        map.set(key, { ...normalized });
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }
+
   /* ================= LOAD ================= */
-  loadProducts() {
+  loadProducts(): void {
     this.historyService.getAll().subscribe({
       next: (res) => {
-        this.products = this.mapProductsWithMasterImage(
-          this.withTotal(res || [])
-        );
+        const normalized = this.withTotal(res || []);
+        const aggregated = this.aggregateProducts(normalized);
+
+        this.products = this.mapProductsWithMasterImage(aggregated);
         this.filteredProducts = [...this.products];
 
         this.selectedProducts = this.selectedProducts.filter((s) =>
@@ -177,7 +231,7 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  loadProductMasters() {
+  loadProductMasters(): void {
     this.historyService.getProductMaster().subscribe({
       next: (list) => {
         this.productMasters = list || [];
@@ -199,7 +253,7 @@ export class HistoryComponent implements OnInit {
   }
 
   /* ================= FILTER ================= */
-  filterProducts() {
+  filterProducts(): void {
     if (this.selectedCategories.length === 0) {
       this.filteredProducts = [...this.products];
     } else {
@@ -214,12 +268,12 @@ export class HistoryComponent implements OnInit {
   }
 
   /* ================= CREATE ================= */
-  onCreate() {
+  onCreate(): void {
     if (this.editIndex !== null) return;
     this.showCreateForm = true;
   }
 
-  onCreateSave() {
+  onCreateSave(): void {
     this.newProduct.date = this.normalizeYmd(this.newProduct.date);
 
     if (!this.isValidProduct(this.newProduct)) {
@@ -266,7 +320,7 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  onCreateCancel() {
+  onCreateCancel(): void {
     this.isClosing = true;
     setTimeout(() => {
       this.showCreateForm = false;
@@ -276,7 +330,7 @@ export class HistoryComponent implements OnInit {
   }
 
   /* ================= EDIT ================= */
-  onEdit(index: number) {
+  onEdit(index: number): void {
     if (this.showCreateForm) return;
 
     const p = this.filteredProducts[index];
@@ -289,7 +343,7 @@ export class HistoryComponent implements OnInit {
     };
   }
 
-  onSave(index: number) {
+  onSave(index: number): void {
     if (!this.editProduct?.id) return;
 
     const quantity = Number((this.editProduct as any).quantity ?? 0) || 0;
@@ -305,18 +359,7 @@ export class HistoryComponent implements OnInit {
 
     this.historyService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        this.filteredProducts[index] = { ...payload };
-
-        const originalIndex = this.products.findIndex((p) =>
-          this.sameRow(p, this.editProduct!)
-        );
-        if (originalIndex !== -1) this.products[originalIndex] = { ...payload };
-
-        const selIndex = this.selectedProducts.findIndex((p) =>
-          this.sameRow(p, payload)
-        );
-        if (selIndex !== -1) this.selectedProducts[selIndex] = { ...payload };
-
+        this.loadProducts();
         this.editIndex = null;
         this.editProduct = null;
 
@@ -340,13 +383,13 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  onCancel() {
+  onCancel(): void {
     this.editIndex = null;
     this.editProduct = null;
   }
 
   /* ================= DELETE ================= */
-  onDelete(index: number) {
+  onDelete(index: number): void {
     const product = this.filteredProducts[index];
 
     if (!product.id) {
@@ -409,7 +452,7 @@ export class HistoryComponent implements OnInit {
     return this.selectedProducts.some((x) => this.sameRow(x, p));
   }
 
-  toggleRow(p: Product, event: Event) {
+  toggleRow(p: Product, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
 
     if (checked) {
@@ -423,7 +466,7 @@ export class HistoryComponent implements OnInit {
     }
   }
 
-  toggleSelectAll(event: Event) {
+  toggleSelectAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedProducts = checked ? [...this.filteredProducts] : [];
   }
@@ -443,7 +486,7 @@ export class HistoryComponent implements OnInit {
   }
 
   /* ================= EXPORT ================= */
-  exportToExcel() {
+  exportToExcel(): void {
     if (this.selectedProducts.length === 0) {
       Swal.fire({
         title: 'ผิดพลาด',

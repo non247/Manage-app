@@ -53,11 +53,8 @@ export class HistorypurchaseComponent implements OnInit {
   newProduct: Product = this.createEmptyProduct();
 
   categories: SelectOption[] = [
-    { label: 'เครื่องดื่ม', value: 'เครื่องดื่ม' },
-    { label: 'ขนม', value: 'ขนม' },
-    { label: 'อาหาร', value: 'อาหาร' },
-    { label: 'ของใช้', value: 'ของใช้' },
-    { label: 'อื่น ๆ', value: 'อื่น ๆ' },
+    { label: 'โคน', value: 'โคน' },
+    { label: 'ถ้วย', value: 'ถ้วย' },
   ];
 
   constructor(
@@ -69,7 +66,6 @@ export class HistorypurchaseComponent implements OnInit {
     this.loadProducts();
   }
 
-  /* ================= CREATE EMPTY ================= */
   createEmptyProduct(): Product {
     return {
       code: '',
@@ -83,34 +79,8 @@ export class HistorypurchaseComponent implements OnInit {
     };
   }
 
-  /* ================= DATE / NUMBER HELPERS ================= */
-  toInt(value: any, fallback = 0): number {
-    const n = Number(value);
-    return Number.isFinite(n) ? Math.floor(n) : fallback;
-  }
-
   todayString(): string {
-    return new Date().toLocaleDateString('sv-SE', {
-      timeZone: 'Asia/Bangkok',
-    });
-  }
-
-  normalizeYmd(value: any): string {
-    if (!value) return this.todayString();
-
-    if (typeof value === 'string') {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-
-      if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
-        const [dd, mm, yyyy] = value.split('/');
-        return `${yyyy}-${mm}-${dd}`;
-      }
-    }
-
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return this.todayString();
-
-    return d.toLocaleDateString('sv-SE', {
+    return new Date().toLocaleDateString('en-CA', {
       timeZone: 'Asia/Bangkok',
     });
   }
@@ -149,54 +119,71 @@ export class HistorypurchaseComponent implements OnInit {
   }
 
   private mapProductsWithMasterImage(list: Product[]): Product[] {
-    return (list || []).map((p) => this.applyMasterImage(this.withTotal(p)));
+    return (list || []).map((p) => this.applyMasterImage(p));
   }
 
-  /* ================= TOTAL / NORMALIZE ================= */
+  /* ================= TOTAL ================= */
   withTotal(product: Product): Product {
-    const quantity = this.toInt(product.quantity, 0);
-    const price = this.toInt(product.price, 0);
-
     return {
       ...product,
-      quantity,
-      price,
-      date: this.normalizeYmd(product.date),
-      total: quantity * price,
-    };
-  }
-
-  normalizeProduct(item: Partial<Product>): Product {
-    const quantity = this.toInt(item.quantity, 0);
-    const price = this.toInt(item.price, 0);
-
-    return {
-      id: item.id,
-      code: item.code ?? '',
-      name: item.name ?? '',
-      category: item.category ?? '',
-      quantity,
-      price,
-      date: this.normalizeYmd(item.date),
-      total: quantity * price,
-      image: this.getImageUrl(item.image),
+      quantity: Number(product.quantity) || 0,
+      price: Number(product.price) || 0,
+      total: (Number(product.quantity) || 0) * (Number(product.price) || 0),
     };
   }
 
   toPayload(product: Product): PurchaseHistoryProduct {
-    const normalized = this.withTotal(product);
-
     return {
-      id: normalized.id,
-      code: normalized.code ?? '',
-      name: normalized.name,
-      category: normalized.category,
-      quantity: normalized.quantity,
-      price: normalized.price,
-      date: normalized.date,
-      total: normalized.total ?? normalized.quantity * normalized.price,
-      image: normalized.image || '',
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      quantity: Number(product.quantity) || 0,
+      price: Number(product.price) || 0,
+      date: product.date,
+      total: (Number(product.quantity) || 0) * (Number(product.price) || 0),
+      image: product.image || '',
     };
+  }
+
+  /* ================= AGGREGATE DUPLICATES ================= */
+  private aggregateProducts(list: Product[]): Product[] {
+    const map = new Map<string, Product>();
+
+    for (const item of list) {
+      const normalized = this.withTotal(item);
+
+      const key = [
+        normalized.date,
+        normalized.name?.trim().toLowerCase(),
+        normalized.category?.trim().toLowerCase(),
+        Number(normalized.price) || 0,
+      ].join('|');
+
+      const existing = map.get(key);
+
+      if (existing) {
+        existing.quantity =
+          (Number(existing.quantity) || 0) + (Number(normalized.quantity) || 0);
+
+        existing.total =
+          (Number(existing.quantity) || 0) * (Number(existing.price) || 0);
+
+        if (!existing.image && normalized.image) {
+          existing.image = normalized.image;
+        }
+
+        // เก็บ id แรกไว้
+        if (!existing.id && normalized.id) {
+          existing.id = normalized.id;
+        }
+      } else {
+        map.set(key, { ...normalized });
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
   }
 
   /* ================= LOAD ================= */
@@ -212,11 +199,6 @@ export class HistorypurchaseComponent implements OnInit {
       },
       error: (err: unknown) => {
         console.error('โหลดรูปสินค้าจาก product master ไม่สำเร็จ', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'โหลดรูปสินค้าไม่สำเร็จ',
-          text: 'ไม่สามารถดึงรูปจาก product master ได้',
-        });
       },
     });
   }
@@ -226,9 +208,8 @@ export class HistorypurchaseComponent implements OnInit {
       next: (res: PurchaseHistoryProduct[]) => {
         const mapped: Product[] = (res || []).map(
           (item: PurchaseHistoryProduct) =>
-            this.normalizeProduct({
+            this.withTotal({
               id: item.id,
-              code: item.code ?? '',
               name: item.name,
               category: item.category,
               quantity: item.quantity,
@@ -239,16 +220,13 @@ export class HistorypurchaseComponent implements OnInit {
             })
         );
 
-        this.products = this.mapProductsWithMasterImage(mapped);
+        const aggregated = this.aggregateProducts(mapped);
+
+        this.products = this.mapProductsWithMasterImage(aggregated);
         this.filteredProducts = [...this.products];
       },
       error: (err: unknown) => {
         console.error('โหลดข้อมูล purchase history ไม่สำเร็จ', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'โหลดข้อมูลไม่สำเร็จ',
-          text: 'ไม่สามารถดึงข้อมูลประวัติการสั่งซื้อได้',
-        });
       },
     });
   }
@@ -263,56 +241,31 @@ export class HistorypurchaseComponent implements OnInit {
   onCreateSave(): void {
     const name = this.newProduct.name.trim();
     const category = this.newProduct.category.trim();
-    const quantity = this.toInt(this.newProduct.quantity, 0);
-    const price = this.toInt(this.newProduct.price, 0);
-    const date = this.normalizeYmd(this.newProduct.date);
+    const quantity = Number(this.newProduct.quantity);
+    const price = Number(this.newProduct.price);
+    const date = this.newProduct.date;
 
     if (!name || !category || !date) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'กรอกข้อมูลไม่ครบ',
-        text: 'กรุณากรอกชื่อสินค้า ประเภท และวันที่ให้ครบ',
-      });
+      alert('กรุณากรอกข้อมูลให้ครบ');
       return;
     }
 
     if (quantity <= 0 || price < 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ข้อมูลไม่ถูกต้อง',
-        text: 'จำนวนต้องมากกว่า 0 และราคาต้องไม่ติดลบ',
-      });
+      alert('จำนวนหรือราคาสินค้าไม่ถูกต้อง');
       return;
     }
 
-    const payload = this.toPayload({
-      ...this.newProduct,
-      code: this.newProduct.code || `H${Date.now()}`,
-      quantity,
-      price,
-      date,
-    });
+    const payload = this.toPayload(this.newProduct);
 
     this.purchaseHistoryService.create(payload).subscribe({
       next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'เพิ่มข้อมูลสำเร็จ',
-          timer: 1200,
-          showConfirmButton: false,
-        });
-
         this.newProduct = this.createEmptyProduct();
         this.closeCreateForm();
         this.loadProducts();
       },
       error: (err: unknown) => {
         console.error('เพิ่มข้อมูล purchase history ไม่สำเร็จ', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'เพิ่มข้อมูลไม่สำเร็จ',
-          text: 'ไม่สามารถบันทึกข้อมูลได้',
-        });
+        alert('ไม่สามารถเพิ่มข้อมูลได้');
       },
     });
   }
@@ -327,17 +280,13 @@ export class HistorypurchaseComponent implements OnInit {
     setTimeout(() => {
       this.showCreateForm = false;
       this.isClosing = false;
-      this.newProduct = this.createEmptyProduct();
     }, 200);
   }
 
   /* ================= EDIT ================= */
   startEdit(index: number, product: Product): void {
     this.editIndex = index;
-    this.editProduct = {
-      ...this.applyMasterImage(this.withTotal(product)),
-      date: this.normalizeYmd(product.date),
-    };
+    this.editProduct = { ...this.applyMasterImage(product) };
   }
 
   saveEdit(index: number): void {
@@ -347,71 +296,30 @@ export class HistorypurchaseComponent implements OnInit {
 
     const name = this.editProduct.name.trim();
     const category = this.editProduct.category.trim();
-    const quantity = this.toInt(this.editProduct.quantity, 0);
-    const price = this.toInt(this.editProduct.price, 0);
-    const date = this.normalizeYmd(this.editProduct.date);
+    const quantity = Number(this.editProduct.quantity);
+    const price = Number(this.editProduct.price);
+    const date = this.editProduct.date;
 
     if (!name || !category || !date) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'กรอกข้อมูลไม่ครบ',
-        text: 'กรุณากรอกข้อมูลให้ครบก่อนบันทึก',
-      });
+      alert('กรุณากรอกข้อมูลให้ครบ');
       return;
     }
 
     if (quantity <= 0 || price < 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ข้อมูลไม่ถูกต้อง',
-        text: 'จำนวนต้องมากกว่า 0 และราคาต้องไม่ติดลบ',
-      });
+      alert('จำนวนหรือราคาสินค้าไม่ถูกต้อง');
       return;
     }
 
-    const payload = this.toPayload({
-      ...this.editProduct,
-      quantity,
-      price,
-      date,
-    });
+    const payload = this.toPayload(this.editProduct);
 
     this.purchaseHistoryService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        const updatedProduct = this.applyMasterImage(
-          this.withTotal({
-            ...this.editProduct!,
-            quantity,
-            price,
-            date,
-          })
-        );
-
-        this.filteredProducts[index] = updatedProduct;
-
-        const originalIndex = this.products.findIndex(
-          (p) => p.id === updatedProduct.id
-        );
-        if (originalIndex !== -1) {
-          this.products[originalIndex] = updatedProduct;
-        }
-
+        this.loadProducts();
         this.cancelEdit();
-
-        Swal.fire({
-          icon: 'success',
-          title: 'แก้ไขสำเร็จ',
-          timer: 1200,
-          showConfirmButton: false,
-        });
       },
       error: (err: unknown) => {
         console.error('แก้ไขข้อมูล purchase history ไม่สำเร็จ', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'แก้ไขไม่สำเร็จ',
-          text: 'ไม่สามารถบันทึกข้อมูลได้',
-        });
+        alert('ไม่สามารถแก้ไขข้อมูลได้');
       },
     });
   }
@@ -419,36 +327,17 @@ export class HistorypurchaseComponent implements OnInit {
   deleteProduct(product: Product): void {
     if (!product.id) return;
 
-    Swal.fire({
-      title: 'ยืนยันการลบ?',
-      text: `ต้องการลบ ${product.name} ใช่หรือไม่`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'ลบ',
-      cancelButtonText: 'ยกเลิก',
-      confirmButtonColor: '#d33',
-    }).then((result) => {
-      if (!result.isConfirmed) return;
+    const confirmed = window.confirm('ต้องการลบรายการนี้หรือไม่?');
+    if (!confirmed) return;
 
-      this.purchaseHistoryService.delete(product.id!).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'ลบสำเร็จ',
-            timer: 1200,
-            showConfirmButton: false,
-          });
-          this.loadProducts();
-        },
-        error: (err: unknown) => {
-          console.error('ลบข้อมูล purchase history ไม่สำเร็จ', err);
-          Swal.fire({
-            icon: 'error',
-            title: 'ลบไม่สำเร็จ',
-            text: 'ไม่สามารถลบข้อมูลได้',
-          });
-        },
-      });
+    this.purchaseHistoryService.delete(product.id).subscribe({
+      next: () => {
+        this.loadProducts();
+      },
+      error: (err: unknown) => {
+        console.error('ลบข้อมูล purchase history ไม่สำเร็จ', err);
+        alert('ไม่สามารถลบข้อมูลได้');
+      },
     });
   }
 
@@ -471,10 +360,6 @@ export class HistorypurchaseComponent implements OnInit {
 
   /* ================= EXPORT ================= */
   exportToExcel(): void {
-    Swal.fire({
-      icon: 'info',
-      title: 'ยังไม่ได้เปิดใช้งาน',
-      text: 'ฟังก์ชัน Export Excel ยังไม่ได้ถูกพัฒนา',
-    });
+    console.log('Export Excel');
   }
 }

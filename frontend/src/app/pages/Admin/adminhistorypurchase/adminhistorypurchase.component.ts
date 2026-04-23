@@ -34,7 +34,7 @@ export interface SelectOption {
   templateUrl: './adminhistorypurchase.component.html',
   styleUrl: './adminhistorypurchase.component.scss',
 })
-export class AdminhistorypurchaseComponent {
+export class AdminhistorypurchaseComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   productMasters: ProductMaster[] = [];
@@ -51,11 +51,8 @@ export class AdminhistorypurchaseComponent {
   newProduct: Product = this.createEmptyProduct();
 
   categories: SelectOption[] = [
-    { label: 'เครื่องดื่ม', value: 'เครื่องดื่ม' },
-    { label: 'ขนม', value: 'ขนม' },
-    { label: 'อาหาร', value: 'อาหาร' },
-    { label: 'ของใช้', value: 'ของใช้' },
-    { label: 'อื่น ๆ', value: 'อื่น ๆ' },
+    { label: 'โคน', value: 'โคน' },
+    { label: 'ถ้วย', value: 'ถ้วย' },
   ];
 
   constructor(
@@ -146,6 +143,47 @@ export class AdminhistorypurchaseComponent {
     };
   }
 
+  /* ================= AGGREGATE DUPLICATES ================= */
+  private aggregateProducts(list: Product[]): Product[] {
+    const map = new Map<string, Product>();
+
+    for (const item of list) {
+      const normalized = this.withTotal(item);
+
+      const key = [
+        normalized.date,
+        normalized.name?.trim().toLowerCase(),
+        normalized.category?.trim().toLowerCase(),
+        Number(normalized.price) || 0,
+      ].join('|');
+
+      const existing = map.get(key);
+
+      if (existing) {
+        existing.quantity =
+          (Number(existing.quantity) || 0) + (Number(normalized.quantity) || 0);
+
+        existing.total =
+          (Number(existing.quantity) || 0) * (Number(existing.price) || 0);
+
+        if (!existing.image && normalized.image) {
+          existing.image = normalized.image;
+        }
+
+        // เก็บ id แรกไว้
+        if (!existing.id && normalized.id) {
+          existing.id = normalized.id;
+        }
+      } else {
+        map.set(key, { ...normalized });
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }
+
   /* ================= LOAD ================= */
   loadProductMasters(): void {
     this.purchaseHistoryService.getProductMaster().subscribe({
@@ -180,7 +218,9 @@ export class AdminhistorypurchaseComponent {
             })
         );
 
-        this.products = this.mapProductsWithMasterImage(mapped);
+        const aggregated = this.aggregateProducts(mapped);
+
+        this.products = this.mapProductsWithMasterImage(aggregated);
         this.filteredProducts = [...this.products];
       },
       error: (err: unknown) => {
@@ -272,21 +312,7 @@ export class AdminhistorypurchaseComponent {
 
     this.purchaseHistoryService.update(this.editProduct.id, payload).subscribe({
       next: () => {
-        const updatedProduct = this.applyMasterImage(
-          this.withTotal({
-            ...this.editProduct!,
-          })
-        );
-
-        this.filteredProducts[index] = updatedProduct;
-
-        const originalIndex = this.products.findIndex(
-          (p) => p.id === updatedProduct.id
-        );
-        if (originalIndex !== -1) {
-          this.products[originalIndex] = updatedProduct;
-        }
-
+        this.loadProducts();
         this.cancelEdit();
       },
       error: (err: unknown) => {
