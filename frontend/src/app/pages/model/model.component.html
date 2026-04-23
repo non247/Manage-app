@@ -54,8 +54,16 @@
 
           <div class="submit-container">
             <p-button
+              type="button"
+              label="ยกเลิก"
+              icon="pi pi-times"
+              (onClick)="ngOnInit()"
+              styleClass="p-button-secondary custom-cancel-btn"
+            ></p-button
+            ><p-button
               type="submit"
-              label="Predict Sales"
+              label="ตกลง"
+              icon="pi pi-check"
               [disabled]="!predictForm.valid"
               styleClass="p-button-primary custom-submit-btn"
             ></p-button>
@@ -66,6 +74,9 @@
           <div class="summary-card">
             <div class="card-label">Top Flavor</div>
             <div class="card-value">{{ topFlavor }}</div>
+            <div class="card-unit">
+              {{ topFlavorSold | number: '1.0-0' }} ถ้วย
+            </div>
           </div>
           <div class="summary-card">
             <div class="card-label">Total Forecast Sold</div>
@@ -85,16 +96,16 @@
 
         <div *ngIf="forecastResult.length > 0" class="result-card detail-card">
           <h3>รายละเอียดการพยากรณ์ตามรส</h3>
-          <div class="detail-table">
-            <div class="table-header">
-              <div class="table-cell">รส</div>
-              <div class="table-cell">Forecast Total Sold</div>
-            </div>
-            <div *ngFor="let item of forecastResult" class="table-row">
-              <div class="table-cell">{{ item.flavor }}</div>
-              <div class="table-cell">
-                {{ item.forecasted_totalsold | number: '1.0-0' }} ถ้วย
+          <div class="flavor-cards">
+            <div
+              *ngFor="let item of forecastResult"
+              class="summary-card flavor-card"
+            >
+              <div class="card-label">{{ item.flavor }}</div>
+              <div class="card-value">
+                {{ item.forecasted_totalsold | number: '1.0-0' }}
               </div>
+              <div class="card-unit">ถ้วย</div>
             </div>
           </div>
         </div>

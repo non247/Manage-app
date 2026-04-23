@@ -47,7 +47,9 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly modelService: ModelService,
     private readonly fb: FormBuilder
-  ) {
+  ) {}
+
+  initialForm(): void {
     const startDate = new Date();
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 6);
@@ -60,7 +62,8 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Form is ready here, but view is not
+    this.initialForm();
+    this.onSubmit();
   }
 
   ngAfterViewInit(): void {
@@ -70,7 +73,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  predictForm: FormGroup;
+  predictForm!: FormGroup;
   forecastResult: any[] = [];
   forecastChart?: Chart;
 
@@ -83,6 +86,17 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
         Number(a.forecasted_totalsold ?? 0)
     );
     return sorted[0]?.flavor ?? '-';
+  }
+
+  get topFlavorSold(): number {
+    if (!this.forecastResult || this.forecastResult.length === 0) return 0;
+    // Get the highest forecasted_totalsold
+    const sorted = [...this.forecastResult].sort(
+      (a, b) =>
+        Number(b.forecasted_totalsold ?? 0) -
+        Number(a.forecasted_totalsold ?? 0)
+    );
+    return Number(sorted[0]?.forecasted_totalsold ?? 0);
   }
 
   get totalForecastSold(): number {
@@ -138,9 +152,11 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
           {
             label: 'Forecast Totalsold',
             data: totals,
-            backgroundColor: labels.map(
-              (_, index) => `rgba(216, 27, 96, ${0.55 + index * 0.1})`
-            ),
+            backgroundColor: totals.map((value) => {
+              const maxTotal = Math.max(...totals);
+              const opacity = 0.5 + (value / maxTotal) * 0.45; // Darker for higher values
+              return `rgba(216, 27, 96, ${opacity})`;
+            }),
             borderColor: labels.map(() => 'rgba(216, 27, 96, 0.95)'),
             borderWidth: 1,
             borderRadius: 8,
@@ -209,6 +225,12 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modelService.getSaleForecastData(formData).subscribe({
       next: (res) => {
         this.forecastResult = Array.isArray(res.results) ? res.results : [];
+        // Sort results from high to low by forecasted_totalsold
+        this.forecastResult.sort(
+          (a, b) =>
+            Number(b.forecasted_totalsold ?? 0) -
+            Number(a.forecasted_totalsold ?? 0)
+        );
         console.log('Forecast result:', res);
         // Defer chart rendering until canvas is in the DOM (browser only)
         if (this.isBrowser) {
