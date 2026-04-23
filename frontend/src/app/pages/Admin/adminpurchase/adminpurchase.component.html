@@ -27,7 +27,7 @@
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
 
-          <!-- ✅ เปิดฟอร์มประวัติการขาย -->
+          <!-- ✅ เปิดฟอร์มประวัติการสั่งซื้อ -->
           <button
             class="btn-save btn-history"
             type="button"
@@ -164,7 +164,7 @@
           (click)="$event.stopPropagation()"
         >
           <div class="create-card-header">
-            <h2>ยืนยันส่งประวัติการขาย</h2>
+            <h2>ยืนยันส่งประวัติการสั่งซื้อ</h2>
           </div>
 
           <div class="create-card-body history-body">
@@ -172,7 +172,7 @@
             <div class="section-box">
               <div class="section-title" style="color: #d81b60">
                 <i class="bi bi-plus-circle"></i>
-                เพิ่มรายการขาย
+                เพิ่มรายการสั่งซื้อ
               </div>
 
               <div class="sale-form-row">
@@ -191,7 +191,8 @@
                       *ngFor="let p of saleProductOptions"
                       [ngValue]="p.id"
                     >
-                      {{ p.name }} (คงเหลือ {{ p.quantity }})
+                      {{ p.name }} • {{ p.category }} • คงเหลือ
+                      {{ p.quantity }} • วันที่ {{ formatDisplayDate(p.date) }}
                     </option>
                   </select>
                 </div>
@@ -233,7 +234,7 @@
               </div>
 
               <div *ngIf="saleDraftItems.length === 0" class="empty-draft">
-                ยังไม่มีรายการขาย
+                ยังไม่มีรายการสั่งซื้อ
               </div>
 
               <div
@@ -253,7 +254,8 @@
                   <div class="sale-name">
                     <div class="sale-title">{{ it.name }}</div>
                     <div class="sale-sub">
-                      {{ it.category }} • คงเหลือ {{ it.stock }}
+                      {{ it.category }} • คงเหลือ {{ it.stock }} • วันที่
+                      {{ formatDisplayDate(it.date) }}
                     </div>
                   </div>
 
@@ -326,7 +328,6 @@
             'min-width': '980px',
           }"
         >
-          <!-- header -->
           <ng-template pTemplate="header">
             <tr>
               <th class="col-image" scope="col"></th>
@@ -355,7 +356,6 @@
             </tr>
           </ng-template>
 
-          <!-- body -->
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <!-- IMAGE -->
@@ -390,7 +390,7 @@
               <!-- DATE -->
               <td class="col-date">
                 <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date: 'dd/MM/yyyy' }}
+                  {{ formatDisplayDate(product.date) }}
                 </ng-container>
                 <ng-template #editDate>
                   <input

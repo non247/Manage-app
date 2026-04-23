@@ -477,10 +477,10 @@ export class AdminInventoryComponent implements OnInit {
     }
 
     this.saleForm.qty = 1;
-    this.saleFormInfo = `คงเหลือ ${this.toInt(p.quantity, 0)} • ราคา ${this.toInt(
-      p.price,
-      0
-    )} บาท`;
+    this.saleFormInfo =
+      `คงเหลือ ${this.toInt(p.quantity, 0)} • ` +
+      `ราคา ${this.toInt(p.price, 0)} บาท • ` +
+      `วันที่ ${this.formatDisplayDate(p.date)}`;
   }
 
   addSaleItem() {
@@ -829,6 +829,14 @@ export class AdminInventoryComponent implements OnInit {
 
   private todayString(): string {
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+  }
+
+  formatDisplayDate(date: string | Date): string {
+    const ymd = this.normalizeYmd(date);
+    if (!ymd) return '-';
+
+    const [yyyy, mm, dd] = ymd.split('-');
+    return `${dd}/${mm}/${yyyy}`;
   }
 
   /* ================= UTILS ================= */

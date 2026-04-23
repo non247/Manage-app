@@ -191,7 +191,9 @@
                       *ngFor="let p of saleProductOptions"
                       [ngValue]="p.id"
                     >
-                      {{ p.name }} (คงเหลือ {{ p.quantity }})
+                      {{ p.name }} • {{ p.category }} • คงเหลือ
+                      {{ p.quantity }} •
+                      {{ formatDisplayDate(p.date) }}
                     </option>
                   </select>
                 </div>
@@ -253,7 +255,8 @@
                   <div class="sale-name">
                     <div class="sale-title">{{ it.name }}</div>
                     <div class="sale-sub">
-                      {{ it.category }} • คงเหลือ {{ it.stock }}
+                      {{ it.category }} • คงเหลือ {{ it.stock }} •
+                      {{ formatDisplayDate(it.date) }}
                     </div>
                   </div>
 
@@ -390,7 +393,7 @@
               <!-- DATE -->
               <td class="col-date">
                 <ng-container *ngIf="editIndex !== i; else editDate">
-                  {{ product.date | date: 'dd/MM/yyyy' }}
+                  {{ formatDisplayDate(product.date) }}
                 </ng-container>
                 <ng-template #editDate>
                   <input

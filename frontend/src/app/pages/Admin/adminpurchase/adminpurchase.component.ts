@@ -246,6 +246,14 @@ export class AdminpurchaseComponent implements OnInit {
     });
   }
 
+  formatDisplayDate(value: string | Date): string {
+    const ymd = this.normalizeYmd(value);
+    if (!ymd) return '-';
+
+    const [yyyy, mm, dd] = ymd.split('-');
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
   private withTotal(p: Product): Product {
     const qty = this.toInt(p.quantity, 1);
     const price = this.toInt(p.price, 0);
@@ -562,10 +570,10 @@ export class AdminpurchaseComponent implements OnInit {
     }
 
     this.saleForm.qty = 1;
-    this.saleFormInfo = `คงเหลือ ${this.toInt(
-      selected.quantity,
-      0
-    )} • ราคา ${this.toInt(selected.price, 0)} บาท`;
+    this.saleFormInfo =
+      `คงเหลือ ${this.toInt(selected.quantity, 0)} • ` +
+      `ราคา ${this.toInt(selected.price, 0)} บาท • ` +
+      `วันที่ ${this.formatDisplayDate(selected.date)}`;
   }
 
   addSaleItem(): void {
