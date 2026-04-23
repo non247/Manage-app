@@ -31,7 +31,6 @@ exports.getAllProducts = async (req, res) => {
     `;
 
     const result = await pool.query(sql, params);
-    console.log('API /products result =', result.rows);
 
     return res.json(result.rows);
   } catch (err) {

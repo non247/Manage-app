@@ -6,10 +6,9 @@
       </header>
 
       <div class="container-box">
-        <div class="title-row">
-          <!-- <h2 class="title">Ice Cream Sales Prediction</h2> -->
+        <!-- <div class="title-row">
           <p class="subtitle">เงื่อนไขการพยากรณ์</p>
-        </div>
+        </div> -->
 
         <form
           [formGroup]="predictForm"
@@ -18,35 +17,14 @@
         >
           <div class="form-grid">
             <div class="form-group">
-              <label for="flavor">รสชาติ</label>
-              <input
-                id="flavor"
-                type="text"
-                pInputText
-                formControlName="flavor"
-                placeholder="เลือกรสชาติ"
-              />
-            </div>
-
-            <div class="form-group checkbox-group">
-              <div class="checkbox-container">
-                <p-checkbox
-                  formControlName="is_holiday"
-                  [binary]="true"
-                  id="is_holiday"
-                ></p-checkbox>
-                <label for="is_holiday">ผ่านช่วงวันหยุด/เทศกาล</label>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="start_date">วันที่ตั้งแต่</label>
+              <label for="start_date">ตั้งแต่วันที่</label>
               <p-datepicker
                 id="start_date"
                 formControlName="start_date"
-                dateFormat="dd-mm-yy"
+                dateFormat="dd/mm/yy"
                 [showIcon]="true"
                 appendTo="body"
+                [maxDate]="this.predictForm.get('end_date')?.value"
               ></p-datepicker>
             </div>
 
@@ -55,29 +33,24 @@
               <p-datepicker
                 id="end_date"
                 formControlName="end_date"
-                dateFormat="dd-mm-yy"
+                dateFormat="dd/mm/yy"
                 [showIcon]="true"
                 appendTo="body"
+                [minDate]="this.predictForm.get('start_date')?.value"
               ></p-datepicker>
             </div>
-
-            <!-- <div class="form-group">
-              <label for="duration_days">จำนวนวัน</label>
-              <p-inputNumber
-                id="duration_days"
-                formControlName="duration_days"
-                [showButtons]="true"
-                buttonLayout="horizontal"
-                spinnerMode="horizontal"
-                decrementButtonClass="p-button-secondary"
-                incrementButtonClass="p-button-secondary"
-                incrementButtonIcon="pi pi-plus"
-                decrementButtonIcon="pi pi-minus"
-                [min]="1"
-                [max]="31"
-              ></p-inputNumber>
-            </div> -->
           </div>
+
+          <!-- <div class="form-group checkbox-group">
+            <div class="checkbox-container">
+              <p-checkbox
+                formControlName="is_holiday"
+                [binary]="true"
+                id="is_holiday"
+              ></p-checkbox>
+              <label for="is_holiday">ผ่านช่วงวันหยุด/เทศกาล</label>
+            </div>
+          </div> -->
 
           <div class="submit-container">
             <p-button
@@ -89,11 +62,40 @@
           </div>
         </form>
 
-        <div *ngIf="result !== null" class="result-card">
-          <h3>ผลการพยากรณ์</h3>
-          <div class="prediction-value">
-            <span class="number">{{ result | number: '1.0-0' }}</span>
-            <span class="unit">ถ้วย</span>
+        <div *ngIf="forecastResult.length > 0" class="summary-cards">
+          <div class="summary-card">
+            <div class="card-label">Top Flavor</div>
+            <div class="card-value">{{ topFlavor }}</div>
+          </div>
+          <div class="summary-card">
+            <div class="card-label">Total Forecast Sold</div>
+            <div class="card-value">
+              {{ totalForecastSold | number: '1.0-0' }}
+            </div>
+            <div class="card-unit">ถ้วย</div>
+          </div>
+        </div>
+
+        <div *ngIf="forecastResult.length > 0" class="result-card chart-card">
+          <h3>ผลการพยากรณ์ตามรส</h3>
+          <div class="chart-wrapper">
+            <canvas #forecastChartCanvas></canvas>
+          </div>
+        </div>
+
+        <div *ngIf="forecastResult.length > 0" class="result-card detail-card">
+          <h3>รายละเอียดการพยากรณ์ตามรส</h3>
+          <div class="detail-table">
+            <div class="table-header">
+              <div class="table-cell">รส</div>
+              <div class="table-cell">Forecast Total Sold</div>
+            </div>
+            <div *ngFor="let item of forecastResult" class="table-row">
+              <div class="table-cell">{{ item.flavor }}</div>
+              <div class="table-cell">
+                {{ item.forecasted_totalsold | number: '1.0-0' }} ถ้วย
+              </div>
+            </div>
           </div>
         </div>
       </div>

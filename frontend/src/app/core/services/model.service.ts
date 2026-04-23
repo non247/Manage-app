@@ -5,12 +5,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ModelService {
-  private readonly apiUrl = 'http://localhost:5000/api/getForecastSoldPerDay';
+  private readonly apiUrl = 'http://localhost:5000/api/getSaleForecastData';
 
   constructor(private readonly http: HttpClient) {}
 
-  getForecastSoldPerDay(payload: any): Observable<any> {
-    // โครงสร้าง Body ต้องตรงกับที่ Express รอรับ (req.body.data)
+  getSaleForecastData(payload: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, payload);
   }
 }
