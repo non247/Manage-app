@@ -6,12 +6,8 @@
       </header>
 
       <div class="container-box">
-        <!-- <div class="title-row">
-          <p class="subtitle">เงื่อนไขการพยากรณ์</p>
-        </div> -->
-
         <form
-          [formGroup]="predictForm"
+          [formGroup]="forecastForm"
           (ngSubmit)="onSubmit()"
           class="prediction-form"
         >
@@ -24,7 +20,8 @@
                 dateFormat="dd/mm/yy"
                 [showIcon]="true"
                 appendTo="body"
-                [maxDate]="this.predictForm.get('end_date')?.value"
+                autofocus="false"
+                [maxDate]="this.forecastForm.get('end_date')?.value"
               ></p-datepicker>
             </div>
 
@@ -36,21 +33,11 @@
                 dateFormat="dd/mm/yy"
                 [showIcon]="true"
                 appendTo="body"
-                [minDate]="this.predictForm.get('start_date')?.value"
+                autofocus="false"
+                [minDate]="this.forecastForm.get('start_date')?.value"
               ></p-datepicker>
             </div>
           </div>
-
-          <!-- <div class="form-group checkbox-group">
-            <div class="checkbox-container">
-              <p-checkbox
-                formControlName="is_holiday"
-                [binary]="true"
-                id="is_holiday"
-              ></p-checkbox>
-              <label for="is_holiday">ผ่านช่วงวันหยุด/เทศกาล</label>
-            </div>
-          </div> -->
 
           <div class="submit-container">
             <p-button
@@ -64,7 +51,7 @@
               type="submit"
               label="ตกลง"
               icon="pi pi-check"
-              [disabled]="!predictForm.valid"
+              [disabled]="!forecastForm.valid"
               styleClass="p-button-primary custom-submit-btn"
             ></p-button>
           </div>
@@ -87,13 +74,6 @@
           </div>
         </div>
 
-        <div *ngIf="forecastResult.length > 0" class="result-card chart-card">
-          <h3>ผลการพยากรณ์ตามรส</h3>
-          <div class="chart-wrapper">
-            <canvas #forecastChartCanvas></canvas>
-          </div>
-        </div>
-
         <div *ngIf="forecastResult.length > 0" class="result-card detail-card">
           <h3>รายละเอียดการพยากรณ์ตามรส</h3>
           <div class="flavor-cards">
@@ -107,6 +87,12 @@
               </div>
               <div class="card-unit">ถ้วย</div>
             </div>
+          </div>
+        </div>
+        <div *ngIf="forecastResult.length > 0" class="result-card chart-card">
+          <h3>ผลการพยากรณ์ตามรส</h3>
+          <div class="chart-wrapper">
+            <canvas #forecastChartCanvas></canvas>
           </div>
         </div>
       </div>

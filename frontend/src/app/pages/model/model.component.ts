@@ -9,14 +9,19 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ModelService } from '../../core/services/model.service';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Chart, registerables } from 'chart.js';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CheckboxModule } from 'primeng/checkbox';
-import { Chart, registerables } from 'chart.js';
+import { InputTextModule } from 'primeng/inputtext';
+import { ModelService } from '../../core/services/model.service';
 
 Chart.register(...registerables);
 
@@ -54,10 +59,10 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 6);
 
-    this.predictForm = this.fb.group({
+    this.forecastForm = this.fb.group({
       is_holiday: false,
-      start_date: startDate,
-      end_date: endDate,
+      start_date: [startDate, Validators.required],
+      end_date: [endDate, Validators.required],
     });
   }
 
@@ -73,7 +78,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  predictForm!: FormGroup;
+  forecastForm!: FormGroup;
   forecastResult: any[] = [];
   forecastChart?: Chart;
 
@@ -123,6 +128,29 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Color palette for different flavors
+  private readonly colorPalette = [
+    '#FF6B6B', // Red
+    '#4ECDC4', // Teal
+    '#45B7D1', // Blue
+    '#FFA07A', // Light Salmon
+    '#98D8C8', // Mint
+    '#F7DC6F', // Yellow
+    '#BB8FCE', // Purple
+    '#85C1E2', // Sky Blue
+    '#F8B88B', // Peach
+    '#A9DFBF', // Light Green
+    '#F1948A', // Coral
+    '#D5A6BD', // Mauve
+    '#AED6F1', // Light Blue
+    '#F8B7D3', // Pink
+    '#D4EFDF', // Pale Green
+  ];
+
+  private getFlavorColor(index: number): string {
+    return this.colorPalette[index % this.colorPalette.length];
+  }
+
   private renderForecastChart(): void {
     if (!this.isBrowser) return;
 
@@ -152,12 +180,10 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
           {
             label: 'Forecast Totalsold',
             data: totals,
-            backgroundColor: totals.map((value) => {
-              const maxTotal = Math.max(...totals);
-              const opacity = 0.5 + (value / maxTotal) * 0.45; // Darker for higher values
-              return `rgba(216, 27, 96, ${opacity})`;
-            }),
-            borderColor: labels.map(() => 'rgba(216, 27, 96, 0.95)'),
+            backgroundColor: labels.map((_, index) =>
+              this.getFlavorColor(index)
+            ),
+            borderColor: labels.map((_, index) => this.getFlavorColor(index)),
             borderWidth: 1,
             borderRadius: 8,
           },
@@ -213,13 +239,13 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.predictForm.invalid) return;
+    if (this.forecastForm.invalid) return;
 
     const formData = {
-      ...this.predictForm.value,
-      is_holiday: this.predictForm.value.is_holiday ? 1 : 0,
-      start_date: this.formatDate(this.predictForm.value.start_date),
-      end_date: this.formatDate(this.predictForm.value.end_date),
+      ...this.forecastForm.value,
+      is_holiday: this.forecastForm.value.is_holiday ? 1 : 0,
+      start_date: this.formatDate(this.forecastForm.value.start_date),
+      end_date: this.formatDate(this.forecastForm.value.end_date),
     };
 
     this.modelService.getSaleForecastData(formData).subscribe({
