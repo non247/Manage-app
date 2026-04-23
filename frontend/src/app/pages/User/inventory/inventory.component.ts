@@ -65,10 +65,8 @@ export class InventoryComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  // ✅ options ชื่อสินค้า
   names: Option[] = [];
 
-  // ✅ master
   productMasters: ProductMaster[] = [];
 
   categories = [
@@ -79,7 +77,7 @@ export class InventoryComponent implements OnInit {
   loading = false;
 
   // ==========================
-  // ✅ HISTORY FORM (NEW)
+  // HISTORY FORM
   // ==========================
   showHistoryForm = false;
   isClosingHistory = false;
@@ -95,7 +93,7 @@ export class InventoryComponent implements OnInit {
   saleFormInfo = '';
 
   // ==========================
-  // ✅ IMAGE PREVIEW MODAL
+  // IMAGE PREVIEW MODAL
   // ==========================
   showImagePreview = false;
   previewImageUrl = '';
@@ -127,12 +125,10 @@ export class InventoryComponent implements OnInit {
 
     const cleaned = image.trim().replace(/\\/g, '/');
 
-    // ถ้าเป็น URL เต็มอยู่แล้ว
     if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
       return cleaned;
     }
 
-    // ถ้ามี /uploads/ ติดมาแล้ว
     if (cleaned.startsWith('/uploads/')) {
       return `http://localhost:3000${cleaned}`;
     }
@@ -141,7 +137,6 @@ export class InventoryComponent implements OnInit {
       return `http://localhost:3000/${cleaned}`;
     }
 
-    // เหลือกรณีเป็นชื่อไฟล์ล้วน
     return `http://localhost:3000/uploads/${cleaned}`;
   }
 
@@ -169,14 +164,12 @@ export class InventoryComponent implements OnInit {
     };
   }
 
-  // ✅ เปิด modal ดูรูปเต็ม
   openImagePreview(url?: string) {
     if (!url) return;
     this.previewImageUrl = url;
     this.showImagePreview = true;
   }
 
-  // ✅ ปิด modal ดูรูปเต็ม
   closeImagePreview() {
     this.showImagePreview = false;
     this.previewImageUrl = '';
@@ -184,7 +177,7 @@ export class InventoryComponent implements OnInit {
 
   /* ================= TOTAL HELPERS ================= */
   private withTotal(p: Product): Product {
-    const qty = this.toInt(p.quantity, 1);
+    const qty = this.toInt(p.quantity, 0); // ✅ แก้ตรงนี้ให้เหลือ 0 ได้
     const price = this.toInt(p.price, 0);
     const date = this.normalizeYmd(p.date);
     return { ...p, quantity: qty, price, date, total: qty * price };
@@ -271,7 +264,7 @@ export class InventoryComponent implements OnInit {
     this.editProduct.price = this.toInt(master.price, 0);
     this.editProduct.image = this.getImageUrl(master.image);
     this.editProduct.total =
-      this.toInt(this.editProduct.quantity, 1) *
+      this.toInt(this.editProduct.quantity, 0) *
       this.toInt(this.editProduct.price, 0);
   }
 
@@ -349,7 +342,7 @@ export class InventoryComponent implements OnInit {
     }, 250);
   }
 
-  /* ================= SELL ONE (ยังใช้ได้ ถ้าคุณมีปุ่มขายทีละชิ้นที่อื่น) ================= */
+  /* ================= SELL ONE ================= */
   sellOne(p: Product, qty = 1) {
     if (!p.id) {
       Swal.fire({
@@ -409,29 +402,24 @@ export class InventoryComponent implements OnInit {
   }
 
   // ==========================================================
-  // ✅ HISTORY FORM : เลือกสินค้า + ใส่จำนวน + เพิ่มรายการ
+  // HISTORY FORM : เลือกสินค้า + ใส่จำนวน + เพิ่มรายการ
   // ==========================================================
-
-  /** dropdown options: เอาเฉพาะรายการที่มี id และ stock > 0 */
   get saleProductOptions(): Product[] {
     return (this.products || []).filter(
       (p) => !!p.id && this.toInt(p.quantity, 0) > 0
     );
   }
 
-  /** ✅ dropdown options: เอารายการที่ "ยังไม่ถูกเพิ่มใน draft" */
   get availableSaleProducts(): Product[] {
     const selectedIds = new Set(this.saleDraftItems.map((x) => x.id));
     return this.saleProductOptions.filter((p) => !selectedIds.has(p.id!));
   }
 
-  /** max ของ qty ในช่อง input */
   get saleFormMax(): number {
     const p = this.getProductById(this.saleForm.productId);
     return p ? this.toInt(p.quantity, 0) : 1;
   }
 
-  /** ยอดรวมในฟอร์ม */
   get saleDraftTotal(): number {
     return this.saleDraftItems.reduce(
       (sum, it) => sum + it.sellQty * it.price,
@@ -503,7 +491,6 @@ export class InventoryComponent implements OnInit {
       return;
     }
 
-    // ✅ กันเพิ่มซ้ำ
     const existing = this.saleDraftItems.find((x) => x.id === p.id);
     if (existing) {
       Swal.fire({
@@ -544,7 +531,6 @@ export class InventoryComponent implements OnInit {
     it.sellQty = v;
   }
 
-  /** ✅ ยืนยันส่ง: ส่งเข้า history + ตัดสต๊อก */
   confirmSendToHistory() {
     const items = [...(this.saleDraftItems || [])];
 
