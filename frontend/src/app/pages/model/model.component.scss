@@ -218,6 +218,13 @@
   margin-top: 30px;
 }
 
+.flavor-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
 .detail-table {
   display: flex;
   flex-direction: column;
