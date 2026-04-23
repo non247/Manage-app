@@ -152,9 +152,11 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
           {
             label: 'Forecast Totalsold',
             data: totals,
-            backgroundColor: labels.map(
-              (_, index) => `rgba(216, 27, 96, ${0.55 + index * 0.1})`
-            ),
+            backgroundColor: totals.map((value) => {
+              const maxTotal = Math.max(...totals);
+              const opacity = 0.5 + (value / maxTotal) * 0.45; // Darker for higher values
+              return `rgba(216, 27, 96, ${opacity})`;
+            }),
             borderColor: labels.map(() => 'rgba(216, 27, 96, 0.95)'),
             borderWidth: 1,
             borderRadius: 8,
