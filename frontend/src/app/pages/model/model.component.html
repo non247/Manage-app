@@ -62,10 +62,40 @@
           </div>
         </form>
 
+        <div *ngIf="forecastResult.length > 0" class="summary-cards">
+          <div class="summary-card">
+            <div class="card-label">Top Flavor</div>
+            <div class="card-value">{{ topFlavor }}</div>
+          </div>
+          <div class="summary-card">
+            <div class="card-label">Total Forecast Sold</div>
+            <div class="card-value">
+              {{ totalForecastSold | number: '1.0-0' }}
+            </div>
+            <div class="card-unit">ถ้วย</div>
+          </div>
+        </div>
+
         <div *ngIf="forecastResult.length > 0" class="result-card chart-card">
           <h3>ผลการพยากรณ์ตามรส</h3>
           <div class="chart-wrapper">
             <canvas #forecastChartCanvas></canvas>
+          </div>
+        </div>
+
+        <div *ngIf="forecastResult.length > 0" class="result-card detail-card">
+          <h3>รายละเอียดการพยากรณ์ตามรส</h3>
+          <div class="detail-table">
+            <div class="table-header">
+              <div class="table-cell">รส</div>
+              <div class="table-cell">Forecast Total Sold</div>
+            </div>
+            <div *ngFor="let item of forecastResult" class="table-row">
+              <div class="table-cell">{{ item.flavor }}</div>
+              <div class="table-cell">
+                {{ item.forecasted_totalsold | number: '1.0-0' }} ถ้วย
+              </div>
+            </div>
           </div>
         </div>
       </div>

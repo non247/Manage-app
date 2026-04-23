@@ -74,6 +74,25 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
   forecastResult: any[] = [];
   forecastChart?: Chart;
 
+  get topFlavor(): string {
+    if (!this.forecastResult || this.forecastResult.length === 0) return '-';
+    // Get the highest forecasted_totalsold
+    const sorted = [...this.forecastResult].sort(
+      (a, b) =>
+        Number(b.forecasted_totalsold ?? 0) -
+        Number(a.forecasted_totalsold ?? 0)
+    );
+    return sorted[0]?.flavor ?? '-';
+  }
+
+  get totalForecastSold(): number {
+    if (!this.forecastResult) return 0;
+    return this.forecastResult.reduce(
+      (sum, item) => sum + Number(item.forecasted_totalsold ?? 0),
+      0
+    );
+  }
+
   private formatDate(date: any): string {
     if (!date) return '';
     if (typeof date === 'string') return date;
