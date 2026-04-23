@@ -54,8 +54,16 @@
 
           <div class="submit-container">
             <p-button
+              type="button"
+              label="ยกเลิก"
+              icon="pi pi-times"
+              (onClick)="ngOnInit()"
+              styleClass="p-button-secondary custom-cancel-btn"
+            ></p-button
+            ><p-button
               type="submit"
-              label="Predict Sales"
+              label="ตกลง"
+              icon="pi pi-check"
               [disabled]="!predictForm.valid"
               styleClass="p-button-primary custom-submit-btn"
             ></p-button>
@@ -66,6 +74,9 @@
           <div class="summary-card">
             <div class="card-label">Top Flavor</div>
             <div class="card-value">{{ topFlavor }}</div>
+            <div class="card-unit">
+              {{ topFlavorSold | number: '1.0-0' }} ถ้วย
+            </div>
           </div>
           <div class="summary-card">
             <div class="card-label">Total Forecast Sold</div>

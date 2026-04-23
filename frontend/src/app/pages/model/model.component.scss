@@ -131,6 +131,7 @@
 .submit-container {
   display: flex;
   justify-content: center;
+  gap: 12px;
   margin-top: 10px;
 }
 
@@ -140,6 +141,16 @@
 }
 
 ::ng-deep .custom-submit-btn .p-button-label {
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+::ng-deep .custom-cancel-btn {
+  width: 180px !important;
+  height: 40px !important;
+}
+
+::ng-deep .custom-cancel-btn .p-button-label {
   font-size: 16px !important;
   font-weight: bold !important;
 }
