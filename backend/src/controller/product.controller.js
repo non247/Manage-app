@@ -7,40 +7,40 @@ const makeProductCode = (num) => `P${String(num).padStart(3, '0')}`;
 // GET /api/products?search=...
 exports.getAllProducts = async (req, res) => {
   try {
-    const { search = '' } = req.query;
+    const search = (req.query.search || '').trim();
 
-    const params = [];
-    let where = 'WHERE 1=1';
-
-    if (search.trim()) {
-      params.push(`%${search.trim()}%`);
-      where += ` AND ("name" ILIKE $${params.length} OR "code" ILIKE $${params.length} OR "category" ILIKE $${params.length})`;
-    }
-
-    const sql = `
+    let sql = `
       SELECT
-        "Id"       AS id,
-        "code"     AS code,
-        "name"     AS name,
-        "category" AS category,
-        "price"    AS price,
-        "image"    AS image
-      FROM public."Product"
-      ${where}
-      ORDER BY "Id" DESC
+        p."Id" AS id,
+        p.code,
+        p.name,
+        p.category,
+        p.price,
+        p.image
+      FROM public."Product" p
     `;
 
-    const result = await pool.query(sql, params);
+    const params = [];
 
-    return res.json(result.rows);
+    if (search) {
+      sql += `
+        WHERE p.name ILIKE $1
+           OR p.code ILIKE $1
+      `;
+      params.push(`%${search}%`);
+    }
+
+    sql += ` ORDER BY p."Id" DESC`;
+
+    const result = await pool.query(sql, params);
+    console.log('getAllProducts result =', result.rows);
+
+    res.status(200).json(result.rows);
   } catch (err) {
-    console.error('getAllProducts error:', err);
-    return res
-      .status(500)
-      .json({ message: 'Server error', error: String(err.message || err) });
+    console.error('getAllProducts error:', err.message);
+    res.status(500).json({ message: err.message });
   }
 };
-
 // GET /api/products/:id
 exports.getProductById = async (req, res) => {
   try {

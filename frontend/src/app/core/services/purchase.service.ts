@@ -18,7 +18,9 @@ export interface Product {
 /** ✅ สินค้า master จากหน้า product */
 export interface ProductMaster {
   id: number;
+  code?: string;
   name: string;
+  category?: string;
   price: number;
   image?: string;
 }

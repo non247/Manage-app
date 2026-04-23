@@ -9,7 +9,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CheckboxModule } from 'primeng/checkbox';
 
-import { HistoryService } from '../../../core/services/history.service';
 import {
   PurchaseService,
   Product as PurchaseProduct,
@@ -111,8 +110,8 @@ export class AdminpurchaseComponent implements OnInit {
   saleDraftItems: SaleDraftItem[] = [];
 
   constructor(
-    private purchaseService: PurchaseService,
-    private purchasehistoryService: PurchasehistoryService
+    private readonly purchaseService: PurchaseService,
+    private readonly purchasehistoryService: PurchasehistoryService
   ) {}
 
   ngOnInit(): void {
@@ -120,11 +119,10 @@ export class AdminpurchaseComponent implements OnInit {
     this.loadProducts();
   }
 
-  /* ================= LOAD ================= */
   loadProducts(): void {
     this.purchaseService.getAll().subscribe({
       next: (res: PurchaseProduct[]) => {
-        this.products = this.mapProductsWithMasterImage(
+        this.products = this.mapProductsWithMasterData(
           (res || []).map((p) => this.normalizeProduct(p))
         );
         this.filteredProducts = [...this.products];
@@ -143,6 +141,8 @@ export class AdminpurchaseComponent implements OnInit {
   loadProductMasters(): void {
     this.purchaseService.getProductMaster().subscribe({
       next: (list: ProductMaster[]) => {
+        console.log('product master list =', list);
+
         this.productMasters = list || [];
 
         const uniqueNames = Array.from(
@@ -155,7 +155,7 @@ export class AdminpurchaseComponent implements OnInit {
         }));
 
         if (this.products.length > 0) {
-          this.products = this.mapProductsWithMasterImage(this.products);
+          this.products = this.mapProductsWithMasterData(this.products);
           this.filteredProducts = [...this.products];
         }
       },
@@ -170,9 +170,31 @@ export class AdminpurchaseComponent implements OnInit {
     });
   }
 
-  /* ================= MASTER / IMAGE ================= */
-  getMasterByName(name: string): ProductMaster | undefined {
-    return this.productMasters.find((x) => x.name === name);
+  getMaster(name: string, category?: string): ProductMaster | undefined {
+    const normalizedName = (name || '').trim().toLowerCase();
+    const normalizedCategory = (category || '').trim().toLowerCase();
+
+    const exact = this.productMasters.find(
+      (x) =>
+        (x.name || '').trim().toLowerCase() === normalizedName &&
+        (x.category || '').trim().toLowerCase() === normalizedCategory
+    );
+
+    if (exact) {
+      console.log('getMaster exact =', exact);
+      return exact;
+    }
+
+    const fallback = this.productMasters.find(
+      (x) => (x.name || '').trim().toLowerCase() === normalizedName
+    );
+
+    console.log('getMaster fallback =', fallback, {
+      inputName: name,
+      inputCategory: category,
+    });
+
+    return fallback;
   }
 
   getImageUrl(image?: string): string {
@@ -196,25 +218,29 @@ export class AdminpurchaseComponent implements OnInit {
   }
 
   get createProductImage(): string {
-    const master = this.getMasterByName(this.newProduct.name);
+    const master = this.getMaster(this.newProduct.name, this.newProduct.category);
     return this.getImageUrl(master?.image);
   }
 
   get editProductImage(): string {
     if (!this.editProduct) return '';
-    const master = this.getMasterByName(this.editProduct.name);
+    const master = this.getMaster(
+      this.editProduct.name,
+      this.editProduct.category
+    );
     return this.getImageUrl(master?.image);
   }
 
-  private applyMasterImage(product: Product): Product {
-    const master = this.getMasterByName(product.name);
+  private applyMasterData(product: Product): Product {
+    const master = this.getMaster(product.name, product.category);
+
     return {
       ...product,
-      image: this.getImageUrl(master?.image),
+      code: master?.code || product.code || '',
+      image: this.getImageUrl(master?.image || product.image),
     };
   }
 
-  /* ================= HELPERS ================= */
   toInt(value: any, fallback = 0): number {
     const n = Number(value);
     return Number.isFinite(n) ? Math.floor(n) : fallback;
@@ -268,8 +294,8 @@ export class AdminpurchaseComponent implements OnInit {
     };
   }
 
-  private mapProductsWithMasterImage(list: Product[]): Product[] {
-    return (list || []).map((p) => this.applyMasterImage(this.withTotal(p)));
+  private mapProductsWithMasterData(list: Product[]): Product[] {
+    return (list || []).map((p) => this.applyMasterData(this.withTotal(p)));
   }
 
   createEmptyProduct(): Product {
@@ -302,19 +328,30 @@ export class AdminpurchaseComponent implements OnInit {
     };
   }
 
-  /* ================= CREATE ================= */
   onCreateNameChange(selectedName: string): void {
     if (!selectedName) return;
 
-    const master = this.getMasterByName(selectedName);
-    if (!master) return;
-
     this.newProduct.name = selectedName;
+
+    const master = this.getMaster(selectedName, this.newProduct.category);
+    console.log('onCreateNameChange master =', master);
+
+    if (!master) {
+      this.newProduct.code = '';
+      this.newProduct.price = 0;
+      this.newProduct.image = '';
+      this.newProduct.total = this.toInt(this.newProduct.quantity, 1) * 0;
+      return;
+    }
+
+    this.newProduct.code = master.code || '';
     this.newProduct.price = this.toInt(master.price, 0);
     this.newProduct.image = this.getImageUrl(master.image);
     this.newProduct.total =
       this.toInt(this.newProduct.quantity, 1) *
       this.toInt(this.newProduct.price, 0);
+
+    console.log('newProduct after name change =', this.newProduct);
   }
 
   onCreateCancel(): void {
@@ -326,56 +363,69 @@ export class AdminpurchaseComponent implements OnInit {
     }, 180);
   }
 
-  onCreateSave(): void {
-    this.newProduct.quantity = this.toInt(this.newProduct.quantity, 1);
-    this.newProduct.price = this.toInt(this.newProduct.price, 0);
-    this.newProduct.date = this.normalizeYmd(this.newProduct.date);
-    this.newProduct.total = this.newProduct.quantity * this.newProduct.price;
-
-    if (!this.newProduct.name || !this.newProduct.category) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'กรอกข้อมูลไม่ครบ',
-        text: 'กรุณาเลือกชื่อสินค้าและประเภท',
-      });
-      return;
-    }
-
-    const payload: Product = this.withTotal({
-      ...this.newProduct,
-      code: this.newProduct.code || 'P' + Date.now(),
-      image: this.createProductImage || this.newProduct.image || '',
+onCreateSave(): void {
+  if (!this.newProduct.name || !this.newProduct.category) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'กรอกข้อมูลไม่ครบ',
+      text: 'กรุณาเลือกชื่อสินค้าและประเภท',
     });
-
-    this.purchaseService.create(payload).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'บันทึกสำเร็จ',
-          text: 'เพิ่มข้อมูลเรียบร้อยแล้ว',
-          timer: 1300,
-          showConfirmButton: false,
-        });
-
-        this.showCreateForm = false;
-        this.newProduct = this.createEmptyProduct();
-        this.loadProducts();
-      },
-      error: (err: unknown) => {
-        console.error('create error:', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'บันทึกไม่สำเร็จ',
-          text: 'ไม่สามารถเพิ่มข้อมูลได้',
-        });
-      },
-    });
+    return;
   }
 
-  /* ================= EDIT ================= */
+  const payload: Product = {
+    code: this.newProduct.code || '',
+    name: this.newProduct.name,
+    category: this.newProduct.category,
+    quantity: this.toInt(this.newProduct.quantity, 1),
+    price: this.toInt(this.newProduct.price, 0),
+    date: this.normalizeYmd(this.newProduct.date),
+    total:
+      this.toInt(this.newProduct.quantity, 1) *
+      this.toInt(this.newProduct.price, 0),
+    image: this.createProductImage || this.newProduct.image || '',
+  };
+
+  console.log('🔥 FINAL payload =', payload);
+
+  if (!payload.code) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'ไม่พบรหัสสินค้า',
+      text: 'กรุณาเลือกชื่อสินค้าและประเภทใหม่อีกครั้ง',
+    });
+    return;
+  }
+
+  this.purchaseService.create(payload).subscribe({
+    next: (res) => {
+      console.log('create success response =', res);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'บันทึกสำเร็จ',
+        text: 'เพิ่มข้อมูลเรียบร้อยแล้ว',
+        timer: 1300,
+        showConfirmButton: false,
+      });
+
+      this.showCreateForm = false;
+      this.newProduct = this.createEmptyProduct();
+      this.loadProducts();
+    },
+    error: (err: unknown) => {
+      console.error('create error:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'บันทึกไม่สำเร็จ',
+        text: 'ไม่สามารถเพิ่มข้อมูลได้',
+      });
+    },
+  });
+}
   onEdit(index: number): void {
     this.editIndex = index;
-    const prepared = this.applyMasterImage(
+    const prepared = this.applyMasterData(
       this.withTotal(this.filteredProducts[index])
     );
 
@@ -388,10 +438,11 @@ export class AdminpurchaseComponent implements OnInit {
   onEditNameChange(selectedName: string): void {
     if (!this.editProduct || !selectedName) return;
 
-    const master = this.getMasterByName(selectedName);
+    const master = this.getMaster(selectedName, this.editProduct.category);
     if (!master) return;
 
     this.editProduct.name = selectedName;
+    this.editProduct.code = master.code || '';
     this.editProduct.price = this.toInt(master.price, 0);
     this.editProduct.image = this.getImageUrl(master.image);
     this.editProduct.total =
@@ -416,7 +467,7 @@ export class AdminpurchaseComponent implements OnInit {
       return;
     }
 
-    const payload: Product = this.applyMasterImage(
+    const payload: Product = this.applyMasterData(
       this.withTotal({
         ...this.editProduct,
         date: this.normalizeYmd(this.editProduct.date),
@@ -455,7 +506,6 @@ export class AdminpurchaseComponent implements OnInit {
     });
   }
 
-  /* ================= DELETE ================= */
   onDelete(index: number): void {
     const item = this.filteredProducts[index];
     const id = item?.id;
@@ -495,7 +545,6 @@ export class AdminpurchaseComponent implements OnInit {
     });
   }
 
-  /* ================= IMAGE PREVIEW ================= */
   openImagePreview(url?: string): void {
     if (!url) return;
     this.previewImageUrl = url;
@@ -507,7 +556,6 @@ export class AdminpurchaseComponent implements OnInit {
     this.previewImageUrl = '';
   }
 
-  /* ================= HISTORY FORM ================= */
   openHistoryForm(): void {
     this.showHistoryForm = true;
     this.isClosingHistory = false;
@@ -690,11 +738,13 @@ export class AdminpurchaseComponent implements OnInit {
         this.toInt(source.quantity, 0) - this.toInt(item.sellQty, 0);
 
       const historyPayload = {
+        code: item.code || '',
         name: item.name,
         category: item.category,
         quantity: item.sellQty,
         price: item.price,
         date: this.todayString(),
+        image: item.image || '',
       };
 
       const updatePayload: Product = {
