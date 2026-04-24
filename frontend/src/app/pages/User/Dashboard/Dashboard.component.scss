@@ -135,7 +135,7 @@ app-sidebar-user {
 /* ===== MAIN GRID ===== */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1500fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
   align-items: stretch;
 }
@@ -174,10 +174,10 @@ app-sidebar-user {
 .panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 18px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .panel-header h3 {
@@ -203,16 +203,17 @@ app-sidebar-user {
   background: #ffe4ec;
   border: 1px solid #f8bbd0;
   box-shadow: inset 0 1px 2px rgba(216, 27, 96, 0.08);
+  flex-shrink: 0;
 }
 
 .seg-btn {
   border: none;
   background: transparent;
   color: #ad1457;
-  padding: 10px 18px;
+  padding: 10px 22px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -228,33 +229,55 @@ app-sidebar-user {
   color: #ffffff;
   box-shadow: 0 4px 10px rgba(216, 27, 96, 0.15);
 }
+
+/* ===== TOP CONTROL BAR ===== */
+.top-control-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 12px 0 24px;
+  flex-wrap: nowrap;
+}
+
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
 /* ===== WEEK TOOLBAR ===== */
 .chart-toolbar {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 12px;
-  margin: 6px 0 16px;
-  flex-wrap: wrap;
+  flex: 1;
+  flex-wrap: nowrap;
+  margin: 0;
 }
 
 .week-label {
-  min-width: 220px;
+  min-width: auto;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: #475569;
+  white-space: nowrap;
 }
 
 .week-btn {
   border: none;
-  padding: 9px 14px;
+  padding: 10px 16px;
   border-radius: 12px;
   background: #f3f4f6;
   color: #334155;
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
@@ -296,10 +319,41 @@ app-sidebar-user {
   height: 320px;
 }
 
+.chart-line {
+  height: 320px;
+}
+
 .chart-wrap canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+/* ===== PANEL SUBTITLE ===== */
+.panel-subtitle {
+  margin: 22px 0 12px;
+}
+
+.panel-subtitle h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* ===== DATEPICKER ===== */
+:host ::ng-deep .p-datepicker {
+  min-width: 240px;
+}
+
+:host ::ng-deep .p-datepicker-input {
+  width: 100%;
+  border-radius: 14px 0 0 14px;
+  padding: 10px 14px;
+}
+
+:host ::ng-deep .p-datepicker-trigger {
+  border-radius: 0 14px 14px 0;
 }
 
 /* ===== FORECAST ===== */
@@ -502,6 +556,39 @@ app-sidebar-user {
   }
 }
 
+@media (max-width: 900px) {
+  .panel-header,
+  .top-control-bar {
+    flex-wrap: wrap;
+  }
+
+  .chart-toolbar {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .week-label {
+    width: 100%;
+    text-align: left;
+  }
+
+  .segmented {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .seg-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+  }
+
+  .calendar-toolbar,
+  :host ::ng-deep .p-datepicker {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   app-sidebar-user {
     width: 78px;
@@ -536,24 +623,22 @@ app-sidebar-user {
     border-radius: 20px;
   }
 
-  .panel-header {
-    flex-direction: column;
+  .chart-main,
+  .chart-donut,
+  .chart-product {
+    height: 300px;
+  }
+
+  .chart-line {
+    height: 280px;
+  }
+
+  .forecast-box {
+    padding: 18px;
+  }
+
+  .forecast-item {
     align-items: flex-start;
-  }
-
-  .segmented {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .seg-btn {
-    flex: 1;
-    text-align: center;
-    padding: 10px 12px;
-  }
-
-  .chart-toolbar {
-    justify-content: flex-start;
   }
 
   .forecast-grid {
@@ -578,73 +663,5 @@ app-sidebar-user {
 
   .grid-value {
     font-size: 14px;
-  }
-}
-
-.week-label {
-  min-width: 100%;
-  text-align: left;
-}
-
-.chart-main,
-.chart-donut,
-.chart-product {
-  height: 300px;
-}
-
-.forecast-box {
-  padding: 18px;
-}
-
-.forecast-item {
-  align-items: flex-start;
-}
-
-.calendar-toolbar {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 14px;
-}
-
-.panel-subtitle {
-  margin: 22px 0 12px;
-}
-
-.panel-subtitle h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.chart-line {
-  height: 320px;
-}
-
-:host ::ng-deep .p-datepicker {
-  min-width: 240px;
-}
-
-:host ::ng-deep .p-datepicker-input {
-  width: 100%;
-  border-radius: 14px;
-  padding: 10px 14px;
-}
-
-:host ::ng-deep .p-datepicker-trigger {
-  border-radius: 0 14px 14px 0;
-}
-
-@media (max-width: 768px) {
-  .calendar-toolbar {
-    width: 100%;
-  }
-
-  :host ::ng-deep .p-datepicker {
-    width: 100%;
-  }
-
-  .chart-line {
-    height: 280px;
   }
 }
