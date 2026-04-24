@@ -54,7 +54,7 @@ export class UsermanagementComponent implements OnInit {
   }
 
   getRoleLabel(role: Role): string {
-    return role === 'admin' ? 'Manager' : 'Employee';
+    return role === 'admin' ? 'เจ้าของร้าน' : 'พนักงาน';
   }
 
   loadUsers(): void {

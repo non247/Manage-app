@@ -578,8 +578,8 @@ export class AdminInventoryComponent implements OnInit {
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไปประวัติการขาย?`,
-      html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
+      title: `ยืนยันการเพิ่มรายการขาย`,
+      html: `ข้อมูลจะถูกบันทึกและตัดสต็อก 
       <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
       icon: 'question',
       showCancelButton: true,

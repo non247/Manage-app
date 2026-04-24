@@ -70,8 +70,8 @@
                 <label>ระดับผู้ใช้</label>
                 <select [(ngModel)]="newUser.Role">
                   <option value="" disabled>-- เลือก Role --</option>
-                  <option value="admin">Manager</option>
-                  <option value="user">Employee</option>
+                  <option value="admin">เจ้าของร้าน</option>
+                  <option value="user">พนักงาน</option>
                 </select>
               </div>
             </div>
@@ -161,8 +161,8 @@
 
                 <ng-template #editRole>
                   <select [(ngModel)]="editUser!.Role">
-                    <option value="admin">Manager</option>
-                    <option value="user">Employee</option>
+                    <option value="admin">เจ้าของร้าน</option>
+                    <option value="user">พนักงาน</option>
                   </select>
                 </ng-template>
               </td>

@@ -563,7 +563,7 @@ export class InventoryComponent implements OnInit {
     }
 
     Swal.fire({
-      title: `ยืนยันส่งไปประวัติการขาย?`,
+      title: `ยืนยันการเพิ่มรายการขาย`,
       html: `ข้อมูลจะถูกบันทึกและตัดสต๊อก 
       <span style="color:#ef4444; font-weight:700;">ตามจำนวนที่ระบุ</span>`,
       icon: 'question',

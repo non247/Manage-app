@@ -34,7 +34,7 @@
             (click)="openHistoryForm()"
           >
             <i class="bi bi-send-fill"></i>
-            ประวัติการขาย
+            เพิ่มรายการขาย
             <span class="bubble" *ngIf="saleDraftItems.length > 0">
               {{ saleDraftItems.length }}
             </span>
@@ -164,7 +164,7 @@
           (click)="$event.stopPropagation()"
         >
           <div class="create-card-header">
-            <h2>ยืนยันส่งประวัติการขาย</h2>
+            <h2>เพิ่มรายการขาย</h2>
           </div>
 
           <div class="create-card-body history-body">
@@ -172,7 +172,7 @@
             <div class="section-box">
               <div class="section-title" style="color: #d81b60">
                 <i class="bi bi-plus-circle"></i>
-                เพิ่มรายการขาย
+                เลือกสินค้าและจำนวน
               </div>
 
               <div class="sale-form-row">
@@ -228,14 +228,14 @@
             <div class="section-box">
               <div class="section-title" style="color: #d81b60">
                 <i class="bi bi-list-check"></i>
-                รายการที่เพิ่มแล้ว
+                รายการที่เลือก
                 <span class="count-pill" *ngIf="saleDraftItems.length > 0">
                   {{ saleDraftItems.length }}
                 </span>
               </div>
 
               <div *ngIf="saleDraftItems.length === 0" class="empty-draft">
-                ยังไม่มีรายการขาย
+                ไม่มีรายการที่เลือกไว้
               </div>
 
               <div
