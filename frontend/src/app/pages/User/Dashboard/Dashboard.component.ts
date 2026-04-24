@@ -18,6 +18,7 @@ import {
   DashboardResponse,
   DashboardService,
 } from '../../../core/services/Dashboard.service';
+import { ModelService } from '../../../core/services/model.service';
 
 Chart.register(...registerables);
 
@@ -51,6 +52,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   salesView: 'day' | 'month' | 'year' = 'day';
 
   predictedFlavors: { name: string; sold: number; totalSales?: number }[] = [];
+  totalForecastSold = 0;
 
   weekOffset = 0;
 
@@ -63,7 +65,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return isPlatformBrowser(this.platformId);
   }
 
-  constructor(private readonly dashboardService: DashboardService) {}
+  constructor(
+    private readonly dashboardService: DashboardService,
+    private readonly modelService: ModelService
+  ) {}
 
   ngOnInit(): void {
     if (this.isBrowser) {
@@ -258,6 +263,53 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       .slice(0, 5);
   }
 
+  private formatDateForAPI(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private loadForecastedFlavors(): void {
+    // Get current week's date range
+    const monday = this.getMondayOfWeek(new Date());
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const payload = {
+      start_date: this.formatDateForAPI(monday),
+      end_date: this.formatDateForAPI(sunday),
+      is_holiday: 0,
+    };
+
+    this.modelService.getSaleForecastData(payload).subscribe({
+      next: (res: any) => {
+        const results = Array.isArray(res.results) ? res.results : [];
+
+        // Transform API response to predictedFlavors format
+        this.predictedFlavors = results
+          .map((item: any) => ({
+            name: item.flavor,
+            sold: this.toNumber(item.forecasted_totalsold),
+          }))
+          .filter((item: any) => item.name && item.sold > 0)
+          .sort((a: any, b: any) => b.sold - a.sold);
+
+        // Calculate total forecast sold
+        this.totalForecastSold = results.reduce(
+          (sum: number, item: { forecasted_totalsold: any }) =>
+            sum + this.toNumber(item.forecasted_totalsold),
+          0
+        );
+      },
+      error: (err) => {
+        console.error('Error loading forecasted flavors:', err);
+        this.predictedFlavors = [];
+        this.totalForecastSold = 0;
+      },
+    });
+  }
+
   loadDashboard() {
     this.dashboardService.getDashboard().subscribe({
       next: (res: any) => {
@@ -293,7 +345,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         );
 
         this.dashboardData = res;
-        this.calculatePredictedFlavors();
+        this.loadForecastedFlavors();
 
         if (this.isBrowser && this.viewReady) {
           this.renderCharts();

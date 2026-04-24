@@ -8,6 +8,44 @@
 
     <div class="main-content dashboard-page">
       <div class="bottom-grid">
+        <div class="forecast-box">
+          <div class="forecast-header">
+            <h3>พยากรณ์การขายไอศกรีม</h3>
+          </div>
+
+          <div *ngIf="totalForecastSold > 0" class="forecast-summary">
+            <div class="forecast-total-card">
+              <div class="total-label">รวมการพยากรณ์ทั้งหมด</div>
+              <div class="total-value">
+                {{ totalForecastSold | number: '1.0-0' }}
+              </div>
+              <div class="total-unit">ถ้วย</div>
+            </div>
+          </div>
+
+          <div
+            *ngIf="predictedFlavors.length > 0; else noForecast"
+            class="forecast-grid"
+          >
+            <div
+              class="forecast-grid-item"
+              *ngFor="let item of predictedFlavors; let i = index"
+            >
+              <div class="grid-card">
+                <div class="grid-rank">{{ i + 1 }}</div>
+                <div class="grid-name">{{ item.name }}</div>
+                <div class="grid-value">{{ item.sold | number: '1.0-0' }}</div>
+                <div class="grid-unit">ถ้วย</div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noForecast>
+            <div class="forecast-empty">
+              ยังไม่มีข้อมูลเพียงพอสำหรับการพยากรณ์
+            </div>
+          </ng-template>
+        </div>
         <div class="panel product-panel">
           <div class="panel-header">
             <div>
@@ -18,36 +56,6 @@
           <div class="chart-wrap chart-product">
             <canvas #productChartCanvas></canvas>
           </div>
-        </div>
-
-        <div class="forecast-box">
-          <div class="forecast-header">
-            <h3>พยากรณ์รสไอศกรีมที่น่าขายดี</h3>
-            <span>อ้างอิงจากแนวโน้มการขายล่าสุด</span>
-          </div>
-
-          <div
-            *ngIf="predictedFlavors.length > 0; else noForecast"
-            class="forecast-list"
-          >
-            <div
-              class="forecast-item"
-              *ngFor="let item of predictedFlavors; let i = index"
-            >
-              <div class="rank-circle">{{ i + 1 }}</div>
-
-              <div class="forecast-detail">
-                <h4>{{ item.name }}</h4>
-                <p>คาดว่าขายดี จากยอดขาย {{ item.sold | number }} ชิ้น</p>
-              </div>
-            </div>
-          </div>
-
-          <ng-template #noForecast>
-            <div class="forecast-empty">
-              ยังไม่มีข้อมูลเพียงพอสำหรับการพยากรณ์
-            </div>
-          </ng-template>
         </div>
       </div>
 

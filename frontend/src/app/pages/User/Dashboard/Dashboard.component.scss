@@ -1,272 +1,3 @@
-// .layout {
-//   display: flex;
-//   height: 100vh;
-//   overflow: hidden;
-// }
-
-// app-sidebar-user {
-//   width: 200px;
-//   flex-shrink: 0;
-// }
-
-// .main-area {
-//   flex: 1;
-//   display: flex;
-//   flex-direction: column;
-//   background-color: #ffffff;
-//   overflow-y: auto;
-//   overflow-x: hidden;
-// }
-
-// .top-navbar {
-//   padding: 15px 20px;
-//   border-radius: 15px;
-//   color: #d81b60;
-//   font-size: 24px;
-//   font-weight: bold;
-// }
-
-// /* ✅ กันความกว้างเกินจอจาก margin-left */
-// .main-content {
-//   padding: 24px;
-//   margin-left: 90px;
-//   max-width: calc(100vw - 90px);
-//   box-sizing: border-box;
-// }
-
-// /* ===== TOP CARDS ===== */
-// .top-cards {
-//   display: grid;
-//   grid-template-columns: repeat(3, 1fr);
-//   gap: 24px;
-//   margin-bottom: 32px;
-// }
-
-// .card {
-//   background-color: #ffd6e0;
-//   border-radius: 16px;
-//   padding: 24px;
-//   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   text-align: center;
-// }
-
-// .card-icon {
-//   font-size: 40px;
-//   color: #d81b60;
-//   margin-right: 16px;
-// }
-
-// /* ===== GRAPHS GRID ===== */
-// .graphs {
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   gap: 24px;
-//   margin-top: 14px;
-// }
-
-// /* ===== GRAPH BOX ===== */
-// .graph-box {
-//   background-color: #ffffff;
-//   border-radius: 16px;
-//   height: 420px;
-//   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-//   padding: 24px 28px;
-//   display: flex;
-//   flex-direction: column;
-//   overflow: hidden;
-// }
-
-// /* ✅ กราฟบนสูงกว่า */
-// .graph-box--main {
-//   height: 560px;
-// }
-
-// /* ===== HEADER ===== */
-// .graph-header {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   margin-bottom: 16px;
-//   gap: 10px;
-//   flex-wrap: wrap;
-// }
-
-// .graph-header h3 {
-//   margin: 0;
-//   color: #d81b60;
-// }
-
-// /* ===== SEGMENTED BUTTONS ===== */
-// .segmented {
-//   display: inline-flex;
-//   gap: 6px;
-//   padding: 4px;
-//   border-radius: 999px;
-//   background: #ffe6ee;
-// }
-
-// .seg-btn {
-//   border: 1px solid #d81b60;
-//   background: #ffffff;
-//   color: #d81b60;
-//   padding: 6px 14px;
-//   border-radius: 999px;
-//   cursor: pointer;
-//   font-size: 14px;
-//   font-weight: 600;
-//   white-space: nowrap;
-// }
-
-// .seg-btn.active {
-//   background: #d81b60;
-//   color: #ffffff;
-// }
-
-// /* ===== CANVAS ===== */
-// .graph-box canvas {
-//   flex: 1;
-//   width: 100% !important;
-//   height: 100% !important;
-//   padding-right: 10px;
-//   padding-left: 6px;
-// }
-
-// /* ===== FORECAST BOX ===== */
-// .forecast-box {
-//   margin-top: 20px;
-//   margin-bottom: 20px;
-//   padding: 20px;
-//   background: #ffd6e0;
-//   border-radius: 16px;
-//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-// }
-
-// .forecast-header {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   margin-bottom: 16px;
-//   flex-wrap: wrap;
-//   gap: 8px;
-
-//   h3 {
-//     margin: 0;
-//     color: #d81b60;
-//     font-size: 22px;
-//     font-weight: bold;
-//   }
-
-//   span {
-//     color: #666;
-//     font-size: 14px;
-//   }
-// }
-
-// .forecast-list {
-//   display: flex;
-//   flex-direction: column;
-//   gap: 12px;
-// }
-
-// .forecast-item {
-//   display: flex;
-//   align-items: center;
-//   gap: 14px;
-//   background: #fff;
-//   border-radius: 12px;
-//   padding: 14px 16px;
-// }
-
-// .rank-circle {
-//   width: 38px;
-//   height: 38px;
-//   border-radius: 50%;
-//   background: #e91e63;
-//   color: #fff;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   font-weight: bold;
-//   flex-shrink: 0;
-// }
-
-// .forecast-detail {
-//   h4 {
-//     margin: 0;
-//     color: #d81b60;
-//     font-size: 18px;
-//   }
-
-//   p {
-//     margin: 4px 0 0;
-//     color: #555;
-//     font-size: 14px;
-//   }
-// }
-
-// .forecast-empty {
-//   background: #fff;
-//   padding: 16px;
-//   border-radius: 12px;
-//   color: #777;
-//   text-align: center;
-// }
-
-// /* ===== RESPONSIVE ===== */
-// @media (max-width: 992px) {
-//   .top-cards {
-//     grid-template-columns: repeat(2, 1fr);
-//   }
-
-//   .graphs {
-//     grid-template-columns: 1fr;
-//   }
-
-//   .main-content {
-//     margin-left: 20px;
-//     max-width: calc(100vw - 20px);
-//   }
-
-//   .graph-box--main {
-//     height: 520px;
-//   }
-
-//   .graph-box {
-//     height: 400px;
-//   }
-// }
-
-// @media (max-width: 600px) {
-//   .top-cards {
-//     grid-template-columns: 1fr;
-//   }
-
-//   .card {
-//     justify-content: flex-start;
-//     text-align: left;
-//   }
-
-//   .graph-box--main {
-//     height: 480px;
-//   }
-
-//   .graph-box {
-//     height: 380px;
-//   }
-
-//   .forecast-item {
-//     align-items: flex-start;
-//   }
-
-//   .forecast-header {
-//     align-items: flex-start;
-//   }
-// }
-
 .layout {
   display: flex;
   height: 100vh;
@@ -651,6 +382,100 @@ app-sidebar-user {
   color: #777;
 }
 
+/* ===== FORECAST GRID ===== */
+.forecast-summary {
+  margin-bottom: 16px;
+}
+
+.forecast-total-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.total-label {
+  font-size: 14px;
+  color: #d81b60;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.total-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #d81b60;
+  line-height: 1;
+}
+
+.total-unit {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.forecast-grid-item {
+  min-height: auto;
+}
+
+.grid-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.grid-rank {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #d81b60;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.grid-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d81b60;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #333;
+  white-space: nowrap;
+}
+
+.grid-unit {
+  font-size: 11px;
+  color: #999;
+  white-space: nowrap;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
   .top-cards {
@@ -670,6 +495,10 @@ app-sidebar-user {
   .product-panel,
   .forecast-box {
     min-height: 460px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -727,24 +556,48 @@ app-sidebar-user {
     justify-content: flex-start;
   }
 
-  .week-label {
-    min-width: 100%;
-    text-align: left;
+  .forecast-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
-  .chart-main,
-  .chart-donut,
-  .chart-product {
-    height: 300px;
+  .grid-card {
+    padding: 8px 10px;
+    gap: 8px;
   }
 
-  .forecast-box {
-    padding: 18px;
+  .grid-rank {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
   }
 
-  .forecast-item {
-    align-items: flex-start;
+  .grid-name {
+    font-size: 11px;
   }
+
+  .grid-value {
+    font-size: 14px;
+  }
+}
+
+.week-label {
+  min-width: 100%;
+  text-align: left;
+}
+
+.chart-main,
+.chart-donut,
+.chart-product {
+  height: 300px;
+}
+
+.forecast-box {
+  padding: 18px;
+}
+
+.forecast-item {
+  align-items: flex-start;
 }
 
 .calendar-toolbar {
