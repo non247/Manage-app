@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -71,14 +71,19 @@ export class HistoryComponent implements OnInit {
 
   constructor(
     private readonly historyService: HistoryService,
-    private readonly router: Router
+    private readonly router: Router,
+    @Inject(PLATFORM_ID) private readonly platformId: Object
   ) {}
 
   /* ================= INIT ================= */
   ngOnInit(): void {
     this.loadProductMasters();
 
-    const items = history.state?.items as Product[] | undefined;
+    let items: Product[] | undefined;
+
+    if (isPlatformBrowser(this.platformId)) {
+      items = window.history.state?.items as Product[] | undefined;
+    }
 
     if (Array.isArray(items) && items.length > 0) {
       const normalized = this.withTotal(items);
@@ -118,6 +123,7 @@ export class HistoryComponent implements OnInit {
 
   private applyMasterImage(product: Product): Product {
     const master = this.getMasterByName(product.name);
+
     return {
       ...product,
       image: this.getImageUrl(master?.image || product.image),
@@ -130,6 +136,7 @@ export class HistoryComponent implements OnInit {
 
   openImagePreview(url?: string): void {
     if (!url) return;
+
     this.previewImageUrl = url;
     this.showImagePreview = true;
   }
@@ -270,6 +277,7 @@ export class HistoryComponent implements OnInit {
   /* ================= CREATE ================= */
   onCreate(): void {
     if (this.editIndex !== null) return;
+
     this.showCreateForm = true;
   }
 
@@ -302,6 +310,7 @@ export class HistoryComponent implements OnInit {
       next: () => {
         this.loadProducts();
         this.onCreateCancel();
+
         Swal.fire({
           title: 'สำเร็จ',
           text: 'สร้างรายการเรียบร้อย',
@@ -322,6 +331,7 @@ export class HistoryComponent implements OnInit {
 
   onCreateCancel(): void {
     this.isClosing = true;
+
     setTimeout(() => {
       this.showCreateForm = false;
       this.isClosing = false;
@@ -421,6 +431,7 @@ export class HistoryComponent implements OnInit {
           );
 
           this.loadProducts();
+
           Swal.fire({
             title: 'สำเร็จ',
             text: 'ลบรายการสำเร็จ',
@@ -445,6 +456,7 @@ export class HistoryComponent implements OnInit {
   /* ================= CHECKBOX ================= */
   private sameRow(a: Product, b: Product): boolean {
     if (a?.id != null && b?.id != null) return a.id === b.id;
+
     return a.code === b.code;
   }
 
@@ -468,6 +480,7 @@ export class HistoryComponent implements OnInit {
 
   toggleSelectAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
+
     this.selectedProducts = checked ? [...this.filteredProducts] : [];
   }
 
@@ -509,6 +522,7 @@ export class HistoryComponent implements OnInit {
 
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
+
     XLSX.utils.book_append_sheet(wb, ws, 'History');
     XLSX.writeFile(wb, 'History.xlsx');
   }
@@ -527,13 +541,19 @@ export class HistoryComponent implements OnInit {
     }
 
     const d = new Date(date);
-    return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+
+    return d.toLocaleDateString('en-CA', {
+      timeZone: 'Asia/Bangkok',
+    });
   }
 
   private formatThDate(date: string | Date): string {
     const ymd = this.normalizeYmd(date);
     const d = new Date(`${ymd}T00:00:00`);
-    return d.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' });
+
+    return d.toLocaleDateString('th-TH', {
+      timeZone: 'Asia/Bangkok',
+    });
   }
 
   /* ================= UTILS ================= */
@@ -551,7 +571,9 @@ export class HistoryComponent implements OnInit {
   }
 
   private todayString(): string {
-    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+    return new Date().toLocaleDateString('en-CA', {
+      timeZone: 'Asia/Bangkok',
+    });
   }
 
   private isValidProduct(p: Product): boolean {

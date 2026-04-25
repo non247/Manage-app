@@ -97,7 +97,49 @@ app-sidebar-user {
   gap: 14px;
   margin-top: 6px;
   margin-bottom: 20px;
-  justify-content: space-between;
+}
+
+/* ช่องค้นหาอยู่ซ้าย */
+.search-wrap {
+  position: relative;
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  display: flex;
+  align-items: center;
+  margin-right: auto; /* ✅ ดันปุ่มไปด้านขวา */
+}
+
+.search-wrap .bi-search {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100% !important;
+  height: 46px;
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+  font-size: 20px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* ปุ่มด้านขวา */
+.btn-add {
+  margin-left: 0;
+}
+
+.btn-history {
+  margin-left: 0;
 }
 
 .title {
@@ -106,72 +148,87 @@ app-sidebar-user {
 }
 
 /* ================= BUTTONS ================= */
-.btn-add {
-  background-color: #d81b60;
-  color: #fff;
+.btn-add,
+.btn-history {
   border: none;
   border-radius: 20px;
-  width: 150px;
-  height: 40px;
-  font-weight: bold;
+  height: 42px;
+  padding: 0 18px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.btn-add:hover {
-  background-color: #e85c94;
-}
-
-/* ✅ ปุ่ม history: คงเดิม ไม่ไปแตะ */
-.btn-history {
-  background-color: #231aa7;
-  color: #fff;
-  width: 180px;
-  height: 40px;
-  font-size: 18px;
-  padding: 0 12px;
-  border-radius: 20px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  gap: 6px;
+  gap: 8px;
+
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
-.btn-history:hover {
-  background-color: #2f26d9; /* สว่างขึ้น */
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(35, 26, 167, 0.4);
-}
-
-.bubble {
-  position: absolute;
-  top: -8px;
-  right: -5px;
-
-  background: #ff3b5c;
+.btn-add {
+  width: 150px;
+  background-color: #d81b60;
   color: #fff;
+  font-size: 20px;
+}
 
-  font-size: 17px;
-  font-weight: 600;
+.btn-history {
+  width: 180px;
+  background-color: #231aa7;
+  color: #fff;
+  font-size: 18px;
+  position: relative;
+}
 
-  padding: 2px 6px;
-  border-radius: 20px;
-  min-width: 18px;
-  text-align: center;
+.btn-add:hover {
+  background-color: #e85c94;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(216, 27, 96, 0.28);
+}
+
+.btn-history:hover:not(:disabled) {
+  background-color: #3327c9;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(35, 26, 167, 0.28);
+}
+
+.btn-add:active,
+.btn-history:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn-history:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
+/* badge จำนวน */
+.bubble {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ff3b5c;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  line-height: 1;
+}
 /* ✅ NEW: ปุ่ม icon-only เฉพาะในตาราง (ไม่กระทบปุ่มอื่น เช่น ประวัติ) */
 :host ::ng-deep .p-datatable .btn-edit,
 :host ::ng-deep .p-datatable .btn-delete,
@@ -306,12 +363,13 @@ tr.editing {
 .search-wrap {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 450px;
+  max-width: 450px;
+  min-width: 450px;
   gap: 14px;
   margin-top: 6px;
   margin-bottom: 20px;
-  justify-content: space-between;
-
+  justify-content: flex-start;
   position: relative;
 }
 
@@ -328,15 +386,18 @@ tr.editing {
 
 /* input search */
 .search-input {
-  flex: 1; /* ✅ ยืดกินที่ว่าง */
-  min-width: 280px;
-  max-width: 30%;
+  width: 450px !important;
+  min-width: 450px !important;
+  max-width: 450px !important;
   height: 46px;
-  padding: 0.5rem 2.8rem 0.5rem 2.4rem; /* เผื่อไอคอนซ้าย */
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem;
   border: 1px solid #ccc;
   border-radius: 10px;
+  background: #fff;
   text-align: center;
   font-size: 20px;
+  font-family: inherit;
+  box-sizing: border-box;
 }
 
 /* ✅ จอเล็ก: search เต็มบรรทัด */
@@ -824,5 +885,273 @@ tr.editing {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .layout {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  app-sidebar-user {
+    width: 90px;
+  }
+
+  .main-content {
+    margin-left: 70px;
+    padding: 16px;
+  }
+
+  .top-navbar {
+    font-size: 22px;
+    padding: 12px 16px;
+  }
+
+  .table-box {
+    height: auto;
+    min-height: 600px;
+    padding: 16px;
+  }
+
+  .header-row,
+  .search-wrap {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .search-input {
+    max-width: 100%;
+    min-width: 260px;
+  }
+
+  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    font-size: 22px;
+    padding: 9px;
+  }
+
+  :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    font-size: 18px;
+    padding: 9px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .layout {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  app-sidebar-user {
+    width: 100%;
+  }
+
+  .main-area {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 12px;
+  }
+
+  .top-navbar {
+    font-size: 20px;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .table-box {
+    margin-top: 12px;
+    padding: 12px;
+    height: auto;
+    min-height: auto;
+    border-radius: 10px;
+  }
+
+  .header-row,
+  .search-wrap {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .search-wrap .bi-search {
+    top: 23px;
+    left: 14px;
+  }
+
+  .search-input {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .btn-add,
+  .btn-history {
+    width: 100%;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  :host ::ng-deep .p-datatable {
+    overflow-x: auto;
+  }
+
+  :host ::ng-deep .p-datatable .p-datatable-wrapper {
+    overflow-x: auto;
+  }
+
+  :host ::ng-deep .p-datatable table {
+    min-width: 850px;
+  }
+
+  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    font-size: 18px;
+    padding: 8px;
+    white-space: nowrap;
+  }
+
+  :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    font-size: 16px;
+    padding: 8px;
+    white-space: nowrap;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='date'],
+  select,
+  .search-input,
+  .draft-qty-input {
+    font-size: 17px;
+  }
+
+  .create-card {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .create-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full {
+    grid-column: span 1;
+  }
+
+  .create-card-footer {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .create-card-footer .btn-save,
+  .create-card-footer .btn-cancel {
+    width: 100%;
+  }
+
+  .history-card {
+    width: calc(100vw - 20px);
+    max-height: 90vh;
+  }
+
+  .history-body {
+    padding: 12px;
+  }
+
+  .sale-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .sale-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .scroll-area {
+    max-height: 45vh;
+  }
+
+  .sale-qty,
+  .sale-sum,
+  .sale-del {
+    text-align: left !important;
+  }
+
+  .draft-qty-input {
+    max-width: 100%;
+  }
+
+  .product-table-image {
+    width: 48px;
+    height: 48px;
+  }
+
+  .image-preview-modal {
+    max-width: 96vw;
+    max-height: 88vh;
+    padding: 10px;
+  }
+
+  .image-preview-full {
+    max-height: 76vh;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  .top-navbar {
+    font-size: 18px;
+  }
+
+  .table-box {
+    padding: 10px;
+  }
+
+  .btn-add,
+  .btn-history {
+    font-size: 16px;
+  }
+
+  :host ::ng-deep .p-datatable table {
+    min-width: 780px;
+  }
+
+  :host ::ng-deep .p-datatable .btn-edit,
+  :host ::ng-deep .p-datatable .btn-delete,
+  :host ::ng-deep .p-datatable .btn-save,
+  :host ::ng-deep .p-datatable .btn-cancel {
+    width: 38px;
+    height: 38px;
+  }
+
+  :host ::ng-deep .p-datatable .btn-edit i,
+  :host ::ng-deep .p-datatable .btn-delete i,
+  :host ::ng-deep .p-datatable .btn-save i,
+  :host ::ng-deep .p-datatable .btn-cancel i {
+    font-size: 22px;
+  }
+
+  .create-card-header,
+  .create-card-body,
+  .create-card-footer {
+    padding: 14px;
+  }
+
+  .product-table-image {
+    width: 42px;
+    height: 42px;
   }
 }
