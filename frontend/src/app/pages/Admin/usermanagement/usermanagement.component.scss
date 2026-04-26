@@ -371,95 +371,161 @@ tr.editing {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0.95);
-  width: 520px;
-  max-width: 90%;
+  width: 640px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   z-index: 2000;
-
   opacity: 0;
   animation: scaleFadeIn 0.3s ease forwards;
+  display: flex;
+  flex-direction: column;
 }
 
 .create-card-header {
-  padding: 16px 20px;
+  padding: 22px 24px 16px;
   border-bottom: 1px solid #eee;
   color: #d81b60;
 }
 
 .create-card-header h2 {
   margin: 0;
+  font-size: 22px;
+  font-weight: 800;
 }
 
 .create-card-body {
-  padding: 20px;
+  padding: 22px 24px 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
 }
 
 .create-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-}
-
-.field label {
-  font-size: 13px;
-  margin-bottom: 5px;
-  color: #555;
+  gap: 8px;
 }
 
 .field.full {
-  grid-column: span 2;
+  grid-column: span 1;
 }
 
+.field label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #555;
+}
+
+.create-card .field input,
+.create-card .field select {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f2937;
+  font-size: 18px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.create-card .field input:focus,
+.create-card .field select:focus {
+  outline: none;
+  border: 2px solid #ec4899;
+}
+
+/* ================= CREATE CARD FOOTER ================= */
 .create-card-footer {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
-  gap: 18px;
-  padding: 20px 26px 24px;
+  gap: 14px;
+  padding: 18px 24px 24px;
   border-top: 1px solid #eee;
+  background: #fff;
 }
 
 .create-card-footer .btn-save,
 .create-card-footer .btn-cancel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 130px;
-  height: 45px;
-  gap: 8px;
-  padding: 0 20px;
-
+  width: 170px;
+  height: 50px;
   border: none;
   border-radius: 14px;
-
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
-
-  cursor: pointer;
+  color: #fff !important;
 }
 
 .create-card-footer .btn-save {
-  background: #1e8a39;
+  background: #1e8a39 !important;
 }
 
 .create-card-footer .btn-cancel {
-  background: #d21515;
+  background: #d21515 !important;
 }
 
-.create-card-footer .btn-save i,
-.create-card-footer .btn-cancel i {
-  font-size: 26px;
-  color: #fff;
+/* ================= FILE UPLOAD ================= */
+.create-card .file-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 
+.create-card .file-input {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.create-card .file-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  background: #f2f2f2;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.create-card .file-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.create-card .file-name.placeholder {
+  color: #888;
+}
+
+.create-card small,
+.create-card .file-hint {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
 /* ================= BACKDROP ================= */
 .create-backdrop {
   position: fixed;
@@ -811,67 +877,49 @@ tr.editing {
   }
 }
 
-/* ================= RESPONSIVE ================= */
-
+/* ================= RESPONSIVE MOBILE ================= */
 @media (max-width: 768px) {
-  .layout {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-  }
-
   app-sidebar-user {
     width: 115px;
-    flex-shrink: 0;
   }
 
   .main-area {
-    flex: 1;
     width: calc(100vw - 115px);
-    overflow-y: auto;
-    overflow-x: hidden;
   }
 
   .main-content {
     margin-left: 0;
-    padding: 18px 14px;
+    padding: 14px 10px;
     width: 100%;
-    box-sizing: border-box;
   }
 
   .top-navbar {
-    padding: 8px 10px 16px;
+    padding: 10px;
     text-align: center;
-    font-size: 22px;
-  }
-
-  .top-navbar h1 {
-    margin: 0;
-    line-height: 1.15;
+    font-size: 20px;
+    border-radius: 12px;
   }
 
   .table-box {
     width: 100%;
-    margin-top: 8px;
+    margin-top: 10px;
     padding: 12px;
     height: auto;
-    min-height: calc(100vh - 150px);
-    border-radius: 10px;
-    box-sizing: border-box;
+    min-height: calc(100vh - 130px);
   }
 
   .header-row {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-    margin: 0 0 64px;
+    margin: 0 0 18px;
   }
 
   .search-wrap,
   .search-wrapper {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     height: 44px;
     margin: 0;
   }
@@ -888,8 +936,9 @@ tr.editing {
 
   .btn-add,
   .btn-history {
-    width: 100%;
-    height: 54px;
+    width: 100% !important;
+    height: 50px;
+    margin-left: 0 !important;
     border-radius: 999px;
     font-size: 18px;
   }
@@ -900,7 +949,6 @@ tr.editing {
 
   :host ::ng-deep .p-datatable {
     width: 100%;
-    overflow: hidden;
   }
 
   :host ::ng-deep .p-datatable .p-datatable-wrapper {
@@ -916,12 +964,89 @@ tr.editing {
   :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
     font-size: 18px;
     padding: 8px;
-    white-space: nowrap;
   }
 
   :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
     font-size: 16px;
     padding: 8px;
-    white-space: nowrap;
+  }
+
+  .btn-edit,
+  .btn-delete,
+  .btn-save,
+  .btn-cancel {
+    width: 42px;
+    height: 42px;
+  }
+
+  .btn-edit i,
+  .btn-delete i,
+  .btn-save i,
+  .btn-cancel i {
+    font-size: 24px;
+  }
+
+  .create-card {
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    border-radius: 16px;
+  }
+
+  .create-card-header {
+    padding: 18px 16px 14px;
+  }
+
+  .create-card-body {
+    padding: 18px 16px 20px;
+  }
+
+  .create-card-footer {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .create-card-footer .btn-save,
+  .create-card-footer .btn-cancel {
+    width: 100%;
+  }
+
+  .create-card .preview img {
+    height: 220px;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+@media (max-width: 480px) {
+  app-sidebar-user {
+    width: 90px;
+  }
+
+  .main-area {
+    width: calc(100vw - 90px);
+  }
+
+  .main-content {
+    padding: 10px 8px;
+  }
+
+  .top-navbar {
+    font-size: 18px;
+  }
+
+  .table-box {
+    padding: 10px;
+  }
+
+  .search-input,
+  .search-wrap input,
+  .search-wrapper input {
+    height: 42px !important;
+    font-size: 16px !important;
+  }
+
+  .btn-add,
+  .btn-history {
+    height: 46px;
+    font-size: 16px;
   }
 }

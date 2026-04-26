@@ -49,10 +49,13 @@
                 <label>ชื่อผู้ใช้</label>
                 <input type="text" [(ngModel)]="newUser.Username" />
               </div>
-
               <div class="field">
-                <label>รหัสผ่าน</label>
-                <input type="password" [(ngModel)]="newUser.Password" />
+                <label>ระดับผู้ใช้</label>
+                <select [(ngModel)]="newUser.Role">
+                  <option value="" disabled>-- เลือกระดับผู้ใช้ --</option>
+                  <option value="admin">เจ้าของร้าน</option>
+                  <option value="user">พนักงาน</option>
+                </select>
               </div>
 
               <div class="field">
@@ -61,12 +64,8 @@
               </div>
 
               <div class="field">
-                <label>ระดับผู้ใช้</label>
-                <select [(ngModel)]="newUser.Role">
-                  <option value="" disabled>-- เลือก Role --</option>
-                  <option value="admin">เจ้าของร้าน</option>
-                  <option value="user">พนักงาน</option>
-                </select>
+                <label>รหัสผ่าน</label>
+                <input type="password" [(ngModel)]="newUser.Password" />
               </div>
             </div>
           </div>
