@@ -46,66 +46,11 @@ app-sidebar-user {
 
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-}
-
-/* ================= HEADER ================= */
-.header-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 14px;
-  margin-top: 12px;
-  margin-bottom: 20px;
-  justify-content: space-between;
-}
-
-.title {
-  color: #d81b60;
-  margin: 0;
-}
-
-/* ================= SEARCH ================= */
-.search-wrap {
-  display: flex;
-  align-items: center;
-  width: 450px;
-  max-width: 450px;
-  min-width: 450px;
-  gap: 14px;
-  margin-bottom: 20px;
-  justify-content: flex-start;
-  position: relative;
-}
-
-.search-wrap .bi-search {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-  font-size: 20px;
-  pointer-events: none;
-}
-
-.search-input {
-  width: 450px !important;
-  min-width: 450px !important;
-  max-width: 450px !important;
-  height: 46px;
-  padding: 0.5rem 2.8rem 0.5rem 2.4rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background: #fff;
-  text-align: center;
-  font-size: 20px;
-  font-family: inherit;
-  box-sizing: border-box;
 }
 
 /* ================= TABLE ================= */
 .main-content p-table {
-  margin-top: 30px;
+  margin-top: 64px;
   flex: 1;
   min-height: 0;
 }
@@ -114,7 +59,6 @@ app-sidebar-user {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #fff;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -123,21 +67,13 @@ app-sidebar-user {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: #fff;
 }
 
-:host ::ng-deep .p-datatable table {
-  width: 100%;
-}
-
-:host ::ng-deep .p-datatable .p-paginator {
-  margin-top: auto;
-}
-
+/* ✅ ให้หัวตาราง/แถวขนาดเหมือนกัน */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   padding: 11px;
-  font-size: 30px;
+  font-size: 23px;
   font-weight: bold;
   white-space: nowrap;
 }
@@ -145,91 +81,165 @@ app-sidebar-user {
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   text-align: center;
   padding: 11px;
-  font-size: 23px;
-}
-
-:host ::ng-deep .p-datatable tbody td {
-  text-align: center;
-  padding: 12px;
-}
-
-/* ================= MULTISELECT PANEL ================= */
-:host ::ng-deep .p-multiselect-panel {
-  position: fixed !important;
-  z-index: 99999 !important;
-  width: max-content !important;
-  max-width: 300px !important;
-  left: auto !important;
-}
-
-/* ================= BUTTONS ================= */
-.btn-add {
-  background-color: #d81b60;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  width: 150px;
-  height: 40px;
-  gap: 5px;
-  font-weight: bold;
-  white-space: nowrap;
-  cursor: pointer;
   font-size: 20px;
-  padding: 0.1rem 1rem;
+  white-space: nowrap;
+}
+
+/* ✅ กรณีตารางกว้างเกิน ให้เลื่อนแนวนอนได้ */
+:host ::ng-deep .p-datatable table {
+  min-width: 850px;
+}
+/* ================= HEADER ================= */
+.header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 20px;
+}
+
+.search-wrap,
+.search-wrapper {
+  position: relative;
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  height: 46px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-right: auto;
 }
 
-.btn-add:hover {
-  background-color: #e85c94;
+.search-wrap .bi-search,
+.search-wrapper .bi-search,
+.search-wrap .pi-search,
+.search-wrapper .pi-search {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  color: #aaa;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 2;
 }
 
+.search-input,
+.search-wrap input,
+.search-wrapper input {
+  width: 450px !important;
+  min-width: 450px !important;
+  max-width: 450px !important;
+  height: 46px !important;
+
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem !important;
+  border: 1px solid #ccc !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+
+  color: #1f2937;
+  font-size: 20px !important;
+  text-align: center;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.search-input::placeholder,
+.search-wrap input::placeholder,
+.search-wrapper input::placeholder {
+  color: #6b7280;
+  font-size: 20px;
+  opacity: 1;
+}
+
+/* ================= BUTTONS ================= */
+.btn-add,
 .btn-history {
-  background-color: #231aa7;
-  color: #fff;
-  width: 180px;
-  height: 40px;
-  font-size: 18px;
-  padding: 0 12px;
-  border-radius: 20px;
   border: none;
+  border-radius: 20px;
+  height: 42px;
+  padding: 0 18px;
+  font-weight: 700;
   cursor: pointer;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  gap: 6px;
+  gap: 8px;
+
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
-.btn-history:hover {
-  background-color: #2f26d9;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(35, 26, 167, 0.4);
-}
-
-.bubble {
-  position: absolute;
-  top: -8px;
-  right: -5px;
-  background: #ff3b5c;
+.btn-add {
+  width: 150px;
+  margin-left: 0;
+  background-color: #d81b60;
   color: #fff;
-  font-size: 17px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 20px;
-  min-width: 18px;
-  text-align: center;
+  font-size: 20px;
+}
+
+.btn-history {
+  width: 180px;
+  margin-left: 0;
+  background-color: #231aa7;
+  color: #fff;
+  font-size: 18px;
+  position: relative;
+}
+
+.btn-add:hover {
+  background-color: #e85c94;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(216, 27, 96, 0.28);
+}
+
+.btn-history:hover:not(:disabled) {
+  background-color: #3327c9;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(35, 26, 167, 0.28);
+}
+
+.btn-add:active,
+.btn-history:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn-history:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-/* ================= TABLE BUTTONS ================= */
+.bubble {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ff3b5c;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+/* ================= TABLE ACTION BUTTONS ================= */
 :host ::ng-deep .p-datatable .btn-edit,
 :host ::ng-deep .p-datatable .btn-delete,
 :host ::ng-deep .p-datatable .btn-save,
@@ -239,12 +249,15 @@ app-sidebar-user {
   padding: 0;
   border: none;
   border-radius: 12px;
+
   background: transparent !important;
   box-shadow: none !important;
+
   display: inline-flex;
   justify-content: center;
   align-items: center;
   gap: 0;
+
   cursor: pointer;
 }
 
@@ -279,6 +292,21 @@ app-sidebar-user {
   background: rgba(0, 0, 0, 0.06) !important;
 }
 
+:host ::ng-deep .p-datatable .btn-edit:focus,
+:host ::ng-deep .p-datatable .btn-delete:focus,
+:host ::ng-deep .p-datatable .btn-save:focus,
+:host ::ng-deep .p-datatable .btn-cancel:focus {
+  outline: none;
+}
+
+:host ::ng-deep .p-datatable .btn-edit:focus-visible,
+:host ::ng-deep .p-datatable .btn-delete:focus-visible,
+:host ::ng-deep .p-datatable .btn-save:focus-visible,
+:host ::ng-deep .p-datatable .btn-cancel:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.25);
+  outline-offset: 2px;
+}
+
 /* ================= INPUT ================= */
 input[type='text'],
 input[type='number'],
@@ -299,16 +327,6 @@ select,
     box-shadow 0.2s ease;
 }
 
-.search-input {
-  flex: 1;
-  min-width: 280px;
-  max-width: 30%;
-  height: 46px;
-  padding: 0.5rem 2.8rem 0.5rem 2.4rem;
-  border-radius: 10px;
-  font-size: 20px;
-}
-
 input[type='text']:focus,
 input[type='number']:focus,
 input[type='date']:focus,
@@ -319,7 +337,7 @@ select:focus,
   border: 2px solid #ec4899;
 }
 
-/* ===== DROPDOWN ARROW ===== */
+/* ================= DROPDOWN ================= */
 select {
   padding-right: 35px;
   cursor: pointer;
@@ -343,7 +361,6 @@ select option:disabled {
   color: #aaa;
 }
 
-/* ================= EDIT ROW ================= */
 tr.editing {
   background-color: #fff3cd;
 }
@@ -369,6 +386,10 @@ tr.editing {
   padding: 16px 20px;
   border-bottom: 1px solid #eee;
   color: #d81b60;
+}
+
+.create-card-header h2 {
+  margin: 0;
 }
 
 .create-card-body {
@@ -414,11 +435,14 @@ tr.editing {
   height: 45px;
   gap: 8px;
   padding: 0 20px;
+
   border: none;
   border-radius: 14px;
+
   font-size: 20px;
   font-weight: 700;
   color: #fff;
+
   cursor: pointer;
 }
 
@@ -446,186 +470,8 @@ tr.editing {
 }
 
 /* ================= SWEETALERT ================= */
-:host ::ng-deep .swal2-container,
 ::ng-deep .swal2-container {
   z-index: 3000 !important;
-}
-
-/* ================= ANIMATION ================= */
-@keyframes scaleFadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.create-card.closing {
-  animation: scaleFadeOut 0.25s ease forwards;
-}
-
-.create-backdrop.closing {
-  animation: fadeOut 0.25s ease forwards;
-}
-
-@keyframes scaleFadeOut {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-/* ================= HISTORY MODAL ================= */
-.history-card {
-  width: min(1100px, calc(100vw - 36px));
-  max-height: 86vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.history-body {
-  display: grid;
-  gap: 14px;
-  padding: 16px;
-  overflow: visible;
-}
-
-.sale-form-row {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(120px, 0.9fr) auto;
-  gap: 14px;
-  align-items: end;
-}
-
-.sale-form-row .field {
-  min-width: 0;
-}
-
-.sale-form-row .field:first-child {
-  width: 100%;
-}
-
-.sale-form-row .field label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 700;
-  color: #444;
-}
-
-.sale-form-row select,
-.sale-form-row input {
-  width: 100%;
-  height: 48px;
-  box-sizing: border-box;
-  border-radius: 12px;
-}
-
-.sale-form-row select {
-  min-width: 0;
-  padding: 0 42px 0 14px;
-  font-size: 16px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sale-form-row input[type='number'] {
-  min-width: 120px;
-  text-align: center;
-  font-size: 18px;
-}
-
-.action-field {
-  display: flex;
-  align-items: flex-end;
-}
-
-.scroll-area {
-  max-height: 42vh;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-.sale-head {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: #fff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 10px 6px;
-  font-weight: 800;
-}
-
-.sale-row {
-  display: grid;
-  grid-template-columns: 1fr 140px 120px auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 6px;
-}
-
-.sale-item {
-  background: #f3f4f6;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 12px;
-  margin: 10px 0;
-}
-
-.sale-title {
-  font-weight: 800;
-  color: #222;
-}
-
-.sale-sub {
-  font-size: 12px;
-  color: #666;
-  margin-top: 2px;
-}
-
-.draft-qty-input {
-  width: 100%;
-  max-width: 120px;
-  text-align: center;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  padding: 8px 10px;
-}
-
-.sticky-footer {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* ================= IMAGE ================= */
@@ -726,6 +572,213 @@ tr.editing {
   background: rgba(0, 0, 0, 0.8);
 }
 
+/* ================= HISTORY MODAL ================= */
+.history-card {
+  width: min(1100px, calc(100vw - 36px));
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-body {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  overflow: visible;
+}
+
+.sale-form-row {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(120px, 0.9fr) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.sale-form-row .field {
+  min-width: 0;
+}
+
+.sale-form-row .field:first-child {
+  width: 100%;
+}
+
+.sale-form-row .field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #444;
+}
+
+.sale-form-row select,
+.sale-form-row input {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  border-radius: 12px;
+}
+
+.sale-form-row select {
+  min-width: 0;
+  padding: 0 42px 0 14px;
+  font-size: 16px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sale-form-row input[type='number'] {
+  min-width: 120px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.action-field {
+  display: flex;
+  align-items: flex-end;
+}
+
+.history-card .sale-form-row .btn-save {
+  height: 48px;
+  min-width: 130px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: none;
+  background: #1e3a8a;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.history-card .sale-form-row .btn-save i {
+  font-size: 20px;
+  line-height: 1;
+  color: #fff;
+}
+
+.scroll-area {
+  max-height: 42vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.sale-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 6px;
+  font-weight: 800;
+}
+
+.sale-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 120px auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 6px;
+}
+
+.sale-item {
+  background: #f3f4f6;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  margin: 10px 0;
+}
+
+.sale-title {
+  font-weight: 800;
+  color: #222;
+}
+
+.sale-sub {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.draft-qty-input {
+  width: 100%;
+  max-width: 120px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+}
+
+.sticky-footer {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.history-card .sale-del .btn-delete {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+
+  background: #fee2e2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-card .sale-del .btn-delete i {
+  font-size: 20px;
+  color: #dc2626;
+}
+
+.history-card .sale-del .btn-delete:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+.history-card .sale-del .btn-delete:active {
+  transform: scale(0.92);
+}
+
+/* ================= ANIMATION ================= */
+.create-card.closing {
+  animation: scaleFadeOut 0.25s ease forwards;
+}
+
+.create-backdrop.closing {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes scaleFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
 @keyframes scaleFadeInImage {
   from {
     opacity: 0;
@@ -738,127 +791,122 @@ tr.editing {
   }
 }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 1024px) {
-  .layout {
-    display: flex;
-    height: auto;
-    min-height: 100vh;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
 
-  app-sidebar-user {
-    width: 90px;
-    flex-shrink: 0;
-  }
-
-  .main-content {
-    margin-left: 70px;
-    padding: 16px;
-  }
-
-  .top-navbar {
-    font-size: 22px;
-    padding: 12px 16px;
-  }
-
-  .table-box {
-    height: auto;
-    min-height: 600px;
-    padding: 16px;
-  }
-
-  .header-row,
-  .search-wrap {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .search-input {
-    max-width: 100%;
-    min-width: 260px;
-  }
-
-  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-    font-size: 22px;
-    padding: 9px;
-  }
-
-  :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    font-size: 18px;
-    padding: 9px;
+  to {
+    opacity: 1;
   }
 }
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
 
 @media (max-width: 768px) {
   .layout {
     display: flex;
-    height: auto;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
   }
 
   app-sidebar-user {
-    width: 90px;
+    width: 115px;
     flex-shrink: 0;
   }
 
   .main-area {
     flex: 1;
-    width: auto;
+    width: calc(100vw - 115px);
+    overflow-y: auto;
     overflow-x: hidden;
   }
 
   .main-content {
     margin-left: 0;
-    padding: 12px;
+    padding: 18px 14px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .top-navbar {
-    font-size: 20px;
+    padding: 8px 10px 16px;
     text-align: center;
-    padding: 12px;
+    font-size: 22px;
+  }
+
+  .top-navbar h1 {
+    margin: 0;
+    line-height: 1.15;
   }
 
   .table-box {
-    margin-top: 12px;
+    width: 100%;
+    margin-top: 8px;
     padding: 12px;
     height: auto;
-    min-height: auto;
+    min-height: calc(100vh - 150px);
     border-radius: 10px;
+    box-sizing: border-box;
   }
 
-  .header-row,
-  .search-wrap {
+  .header-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
+    margin: 0 0 64px;
   }
 
-  .search-wrap .bi-search {
-    top: 23px;
-    left: 14px;
-  }
-
-  .search-input {
+  .search-wrap,
+  .search-wrapper {
     width: 100%;
-    min-width: 100%;
+    min-width: 0;
     max-width: 100%;
     height: 44px;
-    font-size: 18px;
+    margin: 0;
+  }
+
+  .search-input,
+  .search-wrap input,
+  .search-wrapper input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 44px !important;
+    font-size: 18px !important;
   }
 
   .btn-add,
   .btn-history {
     width: 100%;
-    height: 44px;
+    height: 54px;
+    border-radius: 999px;
     font-size: 18px;
   }
 
+  .main-content p-table {
+    margin-top: 0;
+  }
+
   :host ::ng-deep .p-datatable {
-    overflow-x: auto;
+    width: 100%;
+    overflow: hidden;
   }
 
   :host ::ng-deep .p-datatable .p-datatable-wrapper {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 520px;
   }
 
   :host ::ng-deep .p-datatable table {
@@ -875,137 +923,5 @@ tr.editing {
     font-size: 16px;
     padding: 8px;
     white-space: nowrap;
-  }
-
-  input[type='text'],
-  input[type='number'],
-  input[type='date'],
-  select,
-  .search-input,
-  .draft-qty-input {
-    font-size: 17px;
-  }
-
-  .create-card {
-    width: calc(100vw - 24px);
-    max-width: calc(100vw - 24px);
-  }
-
-  .create-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .field.full {
-    grid-column: span 1;
-  }
-
-  .create-card-footer {
-    flex-direction: column;
-    padding: 16px;
-  }
-
-  .create-card-footer .btn-save,
-  .create-card-footer .btn-cancel {
-    width: 100%;
-  }
-
-  .history-card {
-    width: calc(100vw - 20px);
-    max-height: 90vh;
-  }
-
-  .history-body {
-    padding: 12px;
-  }
-
-  .sale-form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .sale-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .scroll-area {
-    max-height: 45vh;
-  }
-
-  .sale-qty,
-  .sale-sum,
-  .sale-del {
-    text-align: left !important;
-  }
-
-  .draft-qty-input {
-    max-width: 100%;
-  }
-
-  .product-table-image {
-    width: 48px;
-    height: 48px;
-  }
-
-  .image-preview-modal {
-    max-width: 96vw;
-    max-height: 88vh;
-    padding: 10px;
-  }
-
-  .image-preview-full {
-    max-height: 76vh;
-  }
-}
-
-@media (max-width: 480px) {
-  app-sidebar-user {
-    width: 82px;
-  }
-
-  .main-content {
-    padding: 10px;
-  }
-
-  .top-navbar {
-    font-size: 18px;
-  }
-
-  .table-box {
-    padding: 10px;
-  }
-
-  .btn-add,
-  .btn-history {
-    font-size: 16px;
-  }
-
-  :host ::ng-deep .p-datatable table {
-    min-width: 780px;
-  }
-
-  :host ::ng-deep .p-datatable .btn-edit,
-  :host ::ng-deep .p-datatable .btn-delete,
-  :host ::ng-deep .p-datatable .btn-save,
-  :host ::ng-deep .p-datatable .btn-cancel {
-    width: 38px;
-    height: 38px;
-  }
-
-  :host ::ng-deep .p-datatable .btn-edit i,
-  :host ::ng-deep .p-datatable .btn-delete i,
-  :host ::ng-deep .p-datatable .btn-save i,
-  :host ::ng-deep .p-datatable .btn-cancel i {
-    font-size: 22px;
-  }
-
-  .create-card-header,
-  .create-card-body,
-  .create-card-footer {
-    padding: 14px;
-  }
-
-  .product-table-image {
-    width: 42px;
-    height: 42px;
   }
 }

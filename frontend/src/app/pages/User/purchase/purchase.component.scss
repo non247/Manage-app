@@ -31,6 +31,10 @@ app-sidebar-user {
   font-weight: bold;
 }
 
+.top-navbar h1 {
+  margin: 0;
+}
+
 /* ================= TABLE BOX ================= */
 .table-box {
   padding: 20px;
@@ -46,18 +50,15 @@ app-sidebar-user {
 
 /* ================= TABLE ================= */
 .main-content p-table {
-  margin-top: 30px;
+  margin-top: 64px;
   flex: 1;
   min-height: 0;
 }
 
-/* ✅ ล็อกความสูงภายใน datatable และดัน paginator ติดล่าง */
 :host ::ng-deep .p-datatable {
   height: 100%;
   display: flex;
   flex-direction: column;
-
-  background: #fff;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -65,34 +66,29 @@ app-sidebar-user {
 :host ::ng-deep .p-datatable .p-datatable-wrapper {
   flex: 1;
   min-height: 0;
-  overflow: hidden; /* ไม่อยากให้มี scroll ในตาราง */
-  background: #fff;
+  overflow: hidden;
 }
 
-:host ::ng-deep .p-datatable .p-paginator {
-  margin-top: auto;
-}
-
-/* ✅ PrimeNG table style */
+/* ✅ ให้หัวตาราง/แถวขนาดเหมือนกัน */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: center;
   padding: 11px;
-  font-size: 30px;
+  font-size: 23px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   text-align: center;
   padding: 11px;
-  font-size: 23px;
+  font-size: 20px;
+  white-space: nowrap;
 }
 
-:host ::ng-deep .p-datatable tbody td {
-  text-align: center;
-  padding: 12px;
+/* ✅ กรณีตารางกว้างเกิน ให้เลื่อนแนวนอนได้ */
+:host ::ng-deep .p-datatable table {
+  min-width: 850px;
 }
-
-/* ================= HEADER ================= */
 /* ================= HEADER ================= */
 .header-row {
   display: flex;
@@ -103,52 +99,60 @@ app-sidebar-user {
   margin-bottom: 20px;
 }
 
-/* ช่องค้นหาอยู่ซ้าย */
-.search-wrap {
+.search-wrap,
+.search-wrapper {
   position: relative;
   width: 450px;
   min-width: 450px;
   max-width: 450px;
+  height: 46px;
+
   display: flex;
   align-items: center;
-  margin-right: auto; /* ✅ ดันปุ่มไปด้านขวา */
+  margin-right: auto;
 }
 
-.search-wrap .bi-search {
+.search-wrap .bi-search,
+.search-wrapper .bi-search,
+.search-wrap .pi-search,
+.search-wrapper .pi-search {
   position: absolute;
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
+
   color: #aaa;
   font-size: 20px;
   pointer-events: none;
+  z-index: 2;
 }
 
-.search-input {
-  width: 100% !important;
-  height: 46px;
-  padding: 0.5rem 2.8rem 0.5rem 2.4rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background: #fff;
+.search-input,
+.search-wrap input,
+.search-wrapper input {
+  width: 450px !important;
+  min-width: 450px !important;
+  max-width: 450px !important;
+  height: 46px !important;
+
+  padding: 0.5rem 2.8rem 0.5rem 2.4rem !important;
+  border: 1px solid #ccc !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+
+  color: #1f2937;
+  font-size: 20px !important;
   text-align: center;
-  font-size: 20px;
   font-family: inherit;
   box-sizing: border-box;
 }
 
-/* ปุ่มด้านขวา */
-.btn-add {
-  margin-left: 0;
-}
-
-.btn-history {
-  margin-left: 0;
-}
-
-.title {
-  color: #d81b60;
-  margin: 0;
+.search-input::placeholder,
+.search-wrap input::placeholder,
+.search-wrapper input::placeholder {
+  color: #6b7280;
+  font-size: 20px;
+  opacity: 1;
 }
 
 /* ================= BUTTONS ================= */
@@ -175,6 +179,7 @@ app-sidebar-user {
 
 .btn-add {
   width: 150px;
+  margin-left: 0;
   background-color: #d81b60;
   color: #fff;
   font-size: 20px;
@@ -182,6 +187,7 @@ app-sidebar-user {
 
 .btn-history {
   width: 180px;
+  margin-left: 0;
   background-color: #231aa7;
   color: #fff;
   font-size: 18px;
@@ -213,7 +219,6 @@ app-sidebar-user {
   box-shadow: none;
 }
 
-/* badge จำนวน */
 .bubble {
   position: absolute;
   top: -8px;
@@ -234,7 +239,7 @@ app-sidebar-user {
   line-height: 1;
 }
 
-/* ✅ NEW: ปุ่ม icon-only เฉพาะในตาราง (ไม่กระทบปุ่มอื่น เช่น ประวัติ) */
+/* ================= TABLE ACTION BUTTONS ================= */
 :host ::ng-deep .p-datatable .btn-edit,
 :host ::ng-deep .p-datatable .btn-delete,
 :host ::ng-deep .p-datatable .btn-save,
@@ -256,21 +261,22 @@ app-sidebar-user {
   cursor: pointer;
 }
 
-/* สีของ icon (เฉพาะในตาราง) */
 :host ::ng-deep .p-datatable .btn-edit {
   color: #1e3a8a !important;
 }
+
 :host ::ng-deep .p-datatable .btn-delete {
   color: #d21515 !important;
 }
+
 :host ::ng-deep .p-datatable .btn-save {
   color: #1e8a39 !important;
 }
+
 :host ::ng-deep .p-datatable .btn-cancel {
   color: #d21515 !important;
 }
 
-/* ขนาด icon */
 :host ::ng-deep .p-datatable .btn-edit i,
 :host ::ng-deep .p-datatable .btn-delete i,
 :host ::ng-deep .p-datatable .btn-save i,
@@ -279,7 +285,6 @@ app-sidebar-user {
   line-height: 1;
 }
 
-/* hover เฉพาะในตาราง */
 :host ::ng-deep .p-datatable .btn-edit:hover,
 :host ::ng-deep .p-datatable .btn-delete:hover,
 :host ::ng-deep .p-datatable .btn-save:hover,
@@ -287,13 +292,13 @@ app-sidebar-user {
   background: rgba(0, 0, 0, 0.06) !important;
 }
 
-/* focus เฉพาะในตาราง */
 :host ::ng-deep .p-datatable .btn-edit:focus,
 :host ::ng-deep .p-datatable .btn-delete:focus,
 :host ::ng-deep .p-datatable .btn-save:focus,
 :host ::ng-deep .p-datatable .btn-cancel:focus {
   outline: none;
 }
+
 :host ::ng-deep .p-datatable .btn-edit:focus-visible,
 :host ::ng-deep .p-datatable .btn-delete:focus-visible,
 :host ::ng-deep .p-datatable .btn-save:focus-visible,
@@ -302,7 +307,6 @@ app-sidebar-user {
   outline-offset: 2px;
 }
 
-/* ================= INPUT ================= */
 /* ================= INPUT ================= */
 input[type='text'],
 input[type='number'],
@@ -323,7 +327,6 @@ select,
     box-shadow 0.2s ease;
 }
 
-/* ================= FOCUS กรอบชมพู ================= */
 input[type='text']:focus,
 input[type='number']:focus,
 input[type='date']:focus,
@@ -334,7 +337,7 @@ select:focus,
   border: 2px solid #ec4899;
 }
 
-/* ===== DROPDOWN ARROW ===== */
+/* ================= DROPDOWN ================= */
 select {
   padding-right: 35px;
   cursor: pointer;
@@ -344,7 +347,6 @@ select {
   -moz-appearance: none;
 
   background-color: #fff;
-
   background-image: url("data:image/svg+xml;utf8,<svg fill='%23999' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 7l4.5 4.5L14.5 7'/></svg>");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -359,60 +361,11 @@ select option:disabled {
   color: #aaa;
 }
 
-/* ================= EDIT ROW ================= */
 tr.editing {
   background-color: #fff3cd;
 }
 
-/* ================= SEARCH (UPDATED) ================= */
-.search-wrap {
-  display: flex;
-  align-items: center;
-  width: 450px;
-  max-width: 450px;
-  min-width: 450px;
-  gap: 14px;
-  margin-top: 6px;
-  margin-bottom: 20px;
-  justify-content: flex-start;
-  position: relative;
-}
-
-/* ไอคอน search (bootstrap icon) */
-.search-wrap .bi-search {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-  font-size: 20px;
-  pointer-events: none;
-}
-
-/* input search */
-.search-input {
-  width: 450px !important;
-  min-width: 450px !important;
-  max-width: 450px !important;
-  height: 46px;
-  padding: 0.5rem 2.8rem 0.5rem 2.4rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background: #fff;
-  text-align: center;
-  font-size: 20px;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-
-/* ✅ จอเล็ก: search เต็มบรรทัด */
-@media (max-width: 768px) {
-  .search-input {
-    flex: 1 1 100%;
-    min-width: 100%;
-    max-width: 100%;
-  }
-} /* ================= CREATE CARD ================= */
+/* ================= CREATE CARD ================= */
 .create-card {
   position: fixed;
   top: 50%;
@@ -433,6 +386,10 @@ tr.editing {
   padding: 16px 20px;
   border-bottom: 1px solid #eee;
   color: #d81b60;
+}
+
+.create-card-header h2 {
+  margin: 0;
 }
 
 .create-card-body {
@@ -461,11 +418,46 @@ tr.editing {
 }
 
 .create-card-footer {
-  padding: 16px 20px;
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 26px 24px;
   border-top: 1px solid #eee;
+}
+
+.create-card-footer .btn-save,
+.create-card-footer .btn-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 130px;
+  height: 45px;
+  gap: 8px;
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+.create-card-footer .btn-save {
+  background: #1e8a39;
+}
+
+.create-card-footer .btn-cancel {
+  background: #d21515;
+}
+
+.create-card-footer .btn-save i,
+.create-card-footer .btn-cancel i {
+  font-size: 26px;
+  color: #fff;
 }
 
 /* ================= BACKDROP ================= */
@@ -482,309 +474,7 @@ tr.editing {
   z-index: 3000 !important;
 }
 
-/* ================= ANIMATION ================= */
-@keyframes scaleFadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* ===== CLOSE ===== */
-.create-card.closing {
-  animation: scaleFadeOut 0.25s ease forwards;
-}
-
-.create-backdrop.closing {
-  animation: fadeOut 0.25s ease forwards;
-}
-
-@keyframes scaleFadeOut {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-/* ================= FORM FOOTER (ปุ่มในฟอร์มเท่านั้น) ================= */
-/* ================= FORM FOOTER ================= */
-.create-card-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 18px; /* ระยะห่างระหว่างปุ่ม */
-  padding: 20px 26px 24px; /* เว้นขอบล่าง/ขวา */
-}
-
-/* ================= FORM BUTTON ================= */
-.create-card-footer .btn-save,
-.create-card-footer .btn-cancel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 150px; /* 🔹 ความกว้างปุ่ม */
-  height: 48px; /* 🔹 ความสูงปุ่ม */
-  gap: 8px;
-  padding: 0 16px; /* 🔹 ระยะด้านใน */
-
-  min-width: 130px; /* ✅ ความกว้างปุ่ม */
-  height: 45px; /* ✅ ความสูงปุ่ม */
-
-  padding: 0 20px;
-
-  border: none;
-  border-radius: 14px;
-
-  font-size: 20px; /* ✅ ข้อความใหญ่ */
-  font-weight: 700;
-  color: #fff;
-
-  cursor: pointer;
-}
-
-/* สีปุ่ม */
-.create-card-footer .btn-save {
-  background: #1e8a39;
-}
-
-.create-card-footer .btn-cancel {
-  background: #d21515;
-}
-
-/* icon ในปุ่ม */
-.create-card-footer .btn-save i,
-.create-card-footer .btn-cancel i {
-  font-size: 26px; /* ✅ icon ใหญ่ */
-  color: #fff;
-}
-
-/* ================= HISTORY MODAL IMPROVE ================= */
-.history-card {
-  width: min(1100px, calc(100vw - 36px));
-  max-height: 86vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.history-card .sale-form-row .btn-save {
-  height: 48px;
-  min-width: 130px;
-  padding: 0 18px;
-  border-radius: 12px;
-  border: none;
-  background: #1e3a8a;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.history-card .sale-form-row .btn-save i {
-  font-size: 20px;
-  line-height: 1;
-  color: #fff;
-}
-
-.history-card .sale-del .btn-delete {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: none;
-
-  background: #fee2e2; /* แดงอ่อน */
-  display: flex-end;
-  align-items: flex-end;
-  justify-content: flex-end;
-}
-
-.history-card .sale-del .btn-delete i {
-  font-size: 20px;
-  color: #dc2626; /* แดง */
-}
-
-/* hover */
-.history-card .sale-del .btn-delete:hover {
-  background: #fecaca;
-  transform: scale(1.05);
-}
-
-/* กด */
-.history-card .sale-del .btn-delete:active {
-  transform: scale(0.92);
-}
-
-.history-body {
-  display: grid;
-  gap: 14px;
-  padding: 16px;
-  overflow: visible;
-}
-
-.sale-form-row {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(120px, 0.9fr) auto;
-  gap: 14px;
-  align-items: end;
-}
-
-.sale-form-row .field {
-  min-width: 0;
-}
-
-.sale-form-row .field:first-child {
-  width: 100%;
-}
-
-.sale-form-row .field label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 700;
-  color: #444;
-}
-
-.sale-form-row select,
-.sale-form-row input {
-  width: 100%;
-  height: 48px;
-  box-sizing: border-box;
-  border-radius: 12px;
-}
-
-.sale-form-row select {
-  min-width: 0;
-  padding: 0 42px 0 14px;
-  font-size: 16px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sale-form-row input[type='number'] {
-  min-width: 120px;
-  text-align: center;
-  font-size: 18px;
-}
-
-.action-field {
-  display: flex;
-  align-items: flex-end;
-}
-/* รายการที่เพิ่มแล้ว: ทำให้เลื่อนเฉพาะโซนนี้ */
-.scroll-area {
-  max-height: 42vh; /* ปรับได้ */
-  overflow-y: auto;
-  padding-right: 6px; /* เผื่อ scrollbar */
-}
-
-/* หัวตาราง sticky */
-.sale-head {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: #fff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 10px 6px;
-  font-weight: 800;
-}
-
-/* แถวรายการ */
-.sale-row {
-  display: grid;
-  grid-template-columns: 1fr 140px 120px auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 6px;
-}
-
-.sale-item {
-  background: #f3f4f6;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 12px;
-  margin: 10px 0;
-}
-
-.sale-title {
-  font-weight: 800;
-  color: #222;
-}
-
-.sale-sub {
-  font-size: 12px;
-  color: #666;
-  margin-top: 2px;
-}
-
-.draft-qty-input {
-  width: 100%;
-  max-width: 120px;
-  text-align: center;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  padding: 8px 10px;
-}
-
-/* footer ติดล่าง อ่านง่าย */
-.sticky-footer {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-/* มือถือ: ทำให้เป็น 1 คอลัมน์ */
-@media (max-width: 640px) {
-  .sale-form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .sale-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .sale-qty,
-  .sale-sum,
-  .sale-del {
-    text-align: left !important;
-  }
-
-  .draft-qty-input {
-    max-width: 100%;
-  }
-}
-
+/* ================= IMAGE ================= */
 .image-cell {
   text-align: center;
   vertical-align: middle;
@@ -882,137 +572,341 @@ tr.editing {
   background: rgba(0, 0, 0, 0.8);
 }
 
+/* ================= HISTORY MODAL ================= */
+.history-card {
+  width: min(1100px, calc(100vw - 36px));
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-body {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  overflow: visible;
+}
+
+.sale-form-row {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(120px, 0.9fr) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.sale-form-row .field {
+  min-width: 0;
+}
+
+.sale-form-row .field:first-child {
+  width: 100%;
+}
+
+.sale-form-row .field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #444;
+}
+
+.sale-form-row select,
+.sale-form-row input {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  border-radius: 12px;
+}
+
+.sale-form-row select {
+  min-width: 0;
+  padding: 0 42px 0 14px;
+  font-size: 16px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sale-form-row input[type='number'] {
+  min-width: 120px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.action-field {
+  display: flex;
+  align-items: flex-end;
+}
+
+.history-card .sale-form-row .btn-save {
+  height: 48px;
+  min-width: 130px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: none;
+  background: #1e3a8a;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.history-card .sale-form-row .btn-save i {
+  font-size: 20px;
+  line-height: 1;
+  color: #fff;
+}
+
+.scroll-area {
+  max-height: 42vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.sale-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 6px;
+  font-weight: 800;
+}
+
+.sale-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 120px auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 6px;
+}
+
+.sale-item {
+  background: #f3f4f6;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  margin: 10px 0;
+}
+
+.sale-title {
+  font-weight: 800;
+  color: #222;
+}
+
+.sale-sub {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.draft-qty-input {
+  width: 100%;
+  max-width: 120px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+}
+
+.sticky-footer {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.history-card .sale-del .btn-delete {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+
+  background: #fee2e2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-card .sale-del .btn-delete i {
+  font-size: 20px;
+  color: #dc2626;
+}
+
+.history-card .sale-del .btn-delete:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+.history-card .sale-del .btn-delete:active {
+  transform: scale(0.92);
+}
+
+/* ================= ANIMATION ================= */
+.create-card.closing {
+  animation: scaleFadeOut 0.25s ease forwards;
+}
+
+.create-backdrop.closing {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes scaleFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
 @keyframes scaleFadeInImage {
   from {
     opacity: 0;
     transform: scale(0.94);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
-/* ================= RESPONSIVE ================= */
-
-/* Tablet */
-@media (max-width: 1024px) {
-  .layout {
-    height: auto;
-    min-height: 100vh;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
 
-  app-sidebar-user {
-    width: 90px;
-  }
-
-  .main-content {
-    margin-left: 70px;
-    padding: 16px;
-  }
-
-  .top-navbar {
-    font-size: 22px;
-    padding: 12px 16px;
-  }
-
-  .table-box {
-    height: auto;
-    min-height: 600px;
-    padding: 16px;
-  }
-
-  .header-row,
-  .search-wrap {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .search-input {
-    max-width: 100%;
-    min-width: 260px;
-  }
-
-  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-    font-size: 22px;
-    padding: 9px;
-  }
-
-  :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    font-size: 18px;
-    padding: 9px;
+  to {
+    opacity: 1;
   }
 }
 
-/* Mobile */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
 @media (max-width: 768px) {
   .layout {
-    display: block;
-    height: auto;
-    min-height: 100vh;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
   }
 
   app-sidebar-user {
-    width: 100%;
+    width: 115px;
+    flex-shrink: 0;
   }
 
   .main-area {
-    width: 100%;
+    flex: 1;
+    width: calc(100vw - 115px);
+    overflow-y: auto;
     overflow-x: hidden;
   }
 
   .main-content {
     margin-left: 0;
-    padding: 12px;
+    padding: 18px 14px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .top-navbar {
-    font-size: 20px;
+    padding: 8px 10px 16px;
     text-align: center;
-    padding: 12px;
+    font-size: 22px;
+  }
+
+  .top-navbar h1 {
+    margin: 0;
+    line-height: 1.15;
   }
 
   .table-box {
-    margin-top: 12px;
+    width: 100%;
+    margin-top: 8px;
     padding: 12px;
     height: auto;
-    min-height: auto;
+    min-height: calc(100vh - 150px);
     border-radius: 10px;
+    box-sizing: border-box;
   }
 
-  .header-row,
-  .search-wrap {
+  .header-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
+    margin: 0 0 64px;
   }
 
-  .search-wrap .bi-search {
-    top: 23px;
-    left: 14px;
-  }
-
-  .search-input {
+  .search-wrap,
+  .search-wrapper {
     width: 100%;
-    min-width: 100%;
+    min-width: 0;
     max-width: 100%;
     height: 44px;
-    font-size: 18px;
+    margin: 0;
+  }
+
+  .search-input,
+  .search-wrap input,
+  .search-wrapper input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 44px !important;
+    font-size: 18px !important;
   }
 
   .btn-add,
   .btn-history {
     width: 100%;
-    height: 44px;
+    height: 54px;
+    border-radius: 999px;
     font-size: 18px;
   }
 
+  .main-content p-table {
+    margin-top: 0;
+  }
+
   :host ::ng-deep .p-datatable {
-    overflow-x: auto;
+    width: 100%;
+    overflow: hidden;
   }
 
   :host ::ng-deep .p-datatable .p-datatable-wrapper {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 520px;
   }
 
   :host ::ng-deep .p-datatable table {
@@ -1029,134 +923,5 @@ tr.editing {
     font-size: 16px;
     padding: 8px;
     white-space: nowrap;
-  }
-
-  input[type='text'],
-  input[type='number'],
-  input[type='date'],
-  select,
-  .search-input,
-  .draft-qty-input {
-    font-size: 17px;
-  }
-
-  .create-card {
-    width: calc(100vw - 24px);
-    max-width: calc(100vw - 24px);
-  }
-
-  .create-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .field.full {
-    grid-column: span 1;
-  }
-
-  .create-card-footer {
-    flex-direction: column;
-    padding: 16px;
-  }
-
-  .create-card-footer .btn-save,
-  .create-card-footer .btn-cancel {
-    width: 100%;
-  }
-
-  .history-card {
-    width: calc(100vw - 20px);
-    max-height: 90vh;
-  }
-
-  .history-body {
-    padding: 12px;
-  }
-
-  .sale-form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .sale-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .scroll-area {
-    max-height: 45vh;
-  }
-
-  .sale-qty,
-  .sale-sum,
-  .sale-del {
-    text-align: left !important;
-  }
-
-  .draft-qty-input {
-    max-width: 100%;
-  }
-
-  .product-table-image {
-    width: 48px;
-    height: 48px;
-  }
-
-  .image-preview-modal {
-    max-width: 96vw;
-    max-height: 88vh;
-    padding: 10px;
-  }
-
-  .image-preview-full {
-    max-height: 76vh;
-  }
-}
-
-/* Small Mobile */
-@media (max-width: 480px) {
-  .main-content {
-    padding: 10px;
-  }
-
-  .top-navbar {
-    font-size: 18px;
-  }
-
-  .table-box {
-    padding: 10px;
-  }
-
-  .btn-add,
-  .btn-history {
-    font-size: 16px;
-  }
-
-  :host ::ng-deep .p-datatable table {
-    min-width: 780px;
-  }
-
-  :host ::ng-deep .p-datatable .btn-edit,
-  :host ::ng-deep .p-datatable .btn-delete,
-  :host ::ng-deep .p-datatable .btn-save,
-  :host ::ng-deep .p-datatable .btn-cancel {
-    width: 38px;
-    height: 38px;
-  }
-
-  :host ::ng-deep .p-datatable .btn-edit i,
-  :host ::ng-deep .p-datatable .btn-delete i,
-  :host ::ng-deep .p-datatable .btn-save i,
-  :host ::ng-deep .p-datatable .btn-cancel i {
-    font-size: 22px;
-  }
-
-  .create-card-header,
-  .create-card-body,
-  .create-card-footer {
-    padding: 14px;
-  }
-
-  .product-table-image {
-    width: 42px;
-    height: 42px;
   }
 }

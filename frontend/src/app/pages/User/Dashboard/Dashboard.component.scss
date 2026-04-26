@@ -1,6 +1,7 @@
+/* ================= LAYOUT ================= */
 .layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
 }
 
@@ -16,6 +17,7 @@ app-sidebar-user {
   background-color: #ffffff;
   overflow-y: auto;
   overflow-x: hidden;
+  min-width: 0;
 }
 
 .main-content {
@@ -34,26 +36,30 @@ app-sidebar-user {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-sizing: border-box;
 }
 
-/* ===== TOP NAV ===== */
+/* ================= TOP NAV ================= */
 .top-navbar {
   padding: 15px 20px;
   border-radius: 15px;
   color: #d81b60;
   font-size: 24px;
   font-weight: bold;
+  overflow-wrap: anywhere;
 }
 
 .page-title {
   margin: 0;
-  font-size: 30px;
+  font-size: clamp(22px, 4vw, 30px);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.15;
   color: #d81b60;
+  word-break: keep-all;
 }
 
-/* ===== TOP CARDS ===== */
+
+/* ================= TOP CARDS ================= */
 .top-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -71,6 +77,7 @@ app-sidebar-user {
   border: 1px solid #edf2f7;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   box-sizing: border-box;
+  min-width: 0;
 }
 
 .stat-icon {
@@ -132,22 +139,20 @@ app-sidebar-user {
   line-height: 1.4;
 }
 
-/* ===== MAIN GRID ===== */
+/* ================= GRID ================= */
 .dashboard-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 24px;
-  align-items: stretch;
 }
 
 .bottom-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   gap: 24px;
-  align-items: stretch;
 }
 
-/* ===== PANEL ===== */
+/* ================= PANEL ================= */
 .panel {
   background: #ffffff;
   border-radius: 28px;
@@ -156,12 +161,10 @@ app-sidebar-user {
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   box-sizing: border-box;
   overflow: hidden;
+  min-width: 0;
 }
 
-.panel-large {
-  min-height: 520px;
-}
-
+.panel-large,
 .panel-side {
   min-height: 520px;
 }
@@ -170,12 +173,12 @@ app-sidebar-user {
   min-height: 420px;
 }
 
-/* ===== PANEL HEADER ===== */
+/* ================= PANEL HEADER ================= */
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 18px;
   flex-wrap: nowrap;
 }
@@ -193,7 +196,7 @@ app-sidebar-user {
   color: #94a3b8;
 }
 
-/* ===== SEGMENT ===== */
+/* ================= SEGMENT ================= */
 .segmented {
   display: inline-flex;
   align-items: center;
@@ -230,7 +233,7 @@ app-sidebar-user {
   box-shadow: 0 4px 10px rgba(216, 27, 96, 0.15);
 }
 
-/* ===== TOP CONTROL BAR ===== */
+/* ================= CONTROL BAR ================= */
 .top-control-bar {
   display: flex;
   align-items: center;
@@ -245,10 +248,8 @@ app-sidebar-user {
   align-items: center;
   justify-content: flex-start;
   flex-shrink: 0;
-  margin-bottom: 0;
 }
 
-/* ===== WEEK TOOLBAR ===== */
 .chart-toolbar {
   display: flex;
   align-items: center;
@@ -256,11 +257,9 @@ app-sidebar-user {
   gap: 12px;
   flex: 1;
   flex-wrap: nowrap;
-  margin: 0;
 }
 
 .week-label {
-  min-width: auto;
   text-align: center;
   font-size: 15px;
   font-weight: 700;
@@ -289,7 +288,6 @@ app-sidebar-user {
 .week-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 .today-btn {
@@ -301,10 +299,11 @@ app-sidebar-user {
   background: #fbcfe8;
 }
 
-/* ===== CHART AREA ===== */
+/* ================= CHART ================= */
 .chart-wrap {
   position: relative;
   width: 100%;
+  min-width: 0;
 }
 
 .chart-main {
@@ -315,10 +314,7 @@ app-sidebar-user {
   height: 400px;
 }
 
-.chart-product {
-  height: 320px;
-}
-
+.chart-product,
 .chart-line {
   height: 320px;
 }
@@ -329,19 +325,7 @@ app-sidebar-user {
   height: 100% !important;
 }
 
-/* ===== PANEL SUBTITLE ===== */
-.panel-subtitle {
-  margin: 22px 0 12px;
-}
-
-.panel-subtitle h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-/* ===== DATEPICKER ===== */
+/* ================= DATEPICKER ================= */
 :host ::ng-deep .p-datepicker {
   min-width: 240px;
 }
@@ -356,7 +340,7 @@ app-sidebar-user {
   border-radius: 0 14px 14px 0;
 }
 
-/* ===== FORECAST ===== */
+/* ================= FORECAST ================= */
 .forecast-box {
   background: #ffd6e0;
   border-radius: 24px;
@@ -387,56 +371,6 @@ app-sidebar-user {
   color: #6b7280;
 }
 
-.forecast-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.forecast-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 14px 16px;
-}
-
-.rank-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #e91e63;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-
-.forecast-detail h4 {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 700;
-  color: #d81b60;
-}
-
-.forecast-detail p {
-  margin: 4px 0 0;
-  font-size: 14px;
-  color: #555;
-}
-
-.forecast-empty {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 16px;
-  text-align: center;
-  color: #777;
-}
-
-/* ===== FORECAST GRID ===== */
 .forecast-summary {
   margin-bottom: 16px;
 }
@@ -474,12 +408,8 @@ app-sidebar-user {
 
 .forecast-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-}
-
-.forecast-grid-item {
-  min-height: auto;
 }
 
 .grid-card {
@@ -487,10 +417,10 @@ app-sidebar-user {
   border-radius: 10px;
   padding: 10px 12px;
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  min-width: 0;
 }
 
 .grid-rank {
@@ -499,7 +429,7 @@ app-sidebar-user {
   height: 26px;
   border-radius: 50%;
   background: #d81b60;
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -509,6 +439,7 @@ app-sidebar-user {
 
 .grid-name {
   flex: 1;
+  min-width: 0;
   font-size: 12px;
   font-weight: 600;
   color: #d81b60;
@@ -530,14 +461,10 @@ app-sidebar-user {
   white-space: nowrap;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 1200px) {
   .top-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
   }
 
   .bottom-grid {
@@ -550,19 +477,22 @@ app-sidebar-user {
   .forecast-box {
     min-height: 460px;
   }
-
-  .forecast-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
   .panel-header,
   .top-control-bar {
     flex-wrap: wrap;
+    align-items: flex-start;
   }
 
   .chart-toolbar {
+    width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
   }
@@ -590,6 +520,10 @@ app-sidebar-user {
 }
 
 @media (max-width: 768px) {
+  .layout {
+    min-height: 100vh;
+  }
+
   app-sidebar-user {
     width: 78px;
   }
@@ -609,6 +543,14 @@ app-sidebar-user {
     gap: 18px;
   }
 
+  .top-navbar {
+    padding: 12px 14px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
   .top-cards {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -616,6 +558,23 @@ app-sidebar-user {
 
   .stat-card {
     min-height: auto;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .stat-info p {
+    font-size: 20px;
+  }
+
+  .dashboard-grid,
+  .bottom-grid {
+    gap: 18px;
   }
 
   .panel {
@@ -623,26 +582,27 @@ app-sidebar-user {
     border-radius: 20px;
   }
 
+  .panel-header h3 {
+    font-size: 18px;
+  }
+
   .chart-main,
-  .chart-donut,
-  .chart-product {
+  .chart-donut {
     height: 300px;
   }
 
+  .chart-product,
   .chart-line {
     height: 280px;
   }
 
   .forecast-box {
     padding: 18px;
-  }
-
-  .forecast-item {
-    align-items: flex-start;
+    border-radius: 20px;
   }
 
   .forecast-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
 
@@ -663,5 +623,110 @@ app-sidebar-user {
 
   .grid-value {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  app-sidebar-user {
+    width: 64px;
+  }
+
+  .main-content {
+    padding: 12px;
+  }
+
+  .main-content:first-child {
+    padding: 12px 12px 6px;
+  }
+
+  .dashboard-page {
+    padding: 0 12px 16px;
+    gap: 14px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .stat-card {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat-info h4 {
+    font-size: 14px;
+  }
+
+  .stat-info p {
+    font-size: 19px;
+  }
+
+  .panel {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .panel-large,
+  .panel-side,
+  .product-panel,
+  .forecast-box {
+    min-height: auto;
+  }
+
+  .segmented {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .seg-btn {
+    font-size: 13px;
+    padding: 9px 8px;
+  }
+
+  .top-control-bar {
+    gap: 12px;
+  }
+
+  .chart-toolbar {
+    gap: 8px;
+  }
+
+  .week-btn {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .week-label {
+    font-size: 13px;
+  }
+
+  .chart-main,
+  .chart-donut {
+    height: 250px;
+  }
+
+  .chart-product,
+  .chart-line {
+    height: 240px;
+  }
+
+  .forecast-header h3 {
+    font-size: 19px;
+  }
+
+  .total-value {
+    font-size: 24px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-card {
+    padding: 10px 12px;
+  }
+
+  .grid-name {
+    font-size: 12px;
   }
 }
