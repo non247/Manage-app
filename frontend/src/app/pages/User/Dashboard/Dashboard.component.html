@@ -1,5 +1,6 @@
 <div class="layout">
   <div class="main-area">
+    <!-- ===== TITLE ===== -->
     <div class="main-content">
       <header class="top-navbar">
         <h1>ภาพรวมของการขายสินค้า</h1>
@@ -7,6 +8,7 @@
     </div>
 
     <div class="main-content dashboard-page">
+      <!-- ===== TOP GRID ===== -->
       <div class="bottom-grid">
         <div class="forecast-box">
           <div class="forecast-header">
@@ -46,11 +48,10 @@
             </div>
           </ng-template>
         </div>
+
         <div class="panel product-panel">
           <div class="panel-header">
-            <div>
-              <h3>จำนวนขายของสินค้าทั้งหมด</h3>
-            </div>
+            <h3>จำนวนขายของสินค้าทั้งหมด</h3>
           </div>
 
           <div class="chart-wrap chart-product">
@@ -59,13 +60,56 @@
         </div>
       </div>
 
+      <!-- ===== MAIN DASHBOARD ===== -->
       <div class="dashboard-grid">
         <div class="panel panel-large">
           <div class="panel-header">
-            <div>
-              <h3>ภาพรวมยอดขาย</h3>
+            <h3>ภาพรวมยอดขาย</h3>
+          </div>
+
+          <!-- ===== CONTROL BAR (สำคัญ) ===== -->
+          <div class="sales-control-row">
+            <!-- DATE -->
+            <div class="calendar-toolbar">
+              <p-datepicker
+                *ngIf="salesView === 'day'"
+                [(ngModel)]="selectedDate"
+                [showIcon]="true"
+                dateFormat="dd/mm/yy"
+                placeholder="เลือกวันที่"
+                (ngModelChange)="onDateChange()"
+              ></p-datepicker>
             </div>
 
+            <!-- WEEK CONTROL -->
+            <div class="chart-toolbar">
+              <ng-container *ngIf="salesView === 'day'">
+                <button type="button" class="week-btn" (click)="goPrevWeek()">
+                  ‹ ก่อนหน้า
+                </button>
+
+                <span class="week-label">{{ weekRangeLabel }}</span>
+
+                <button
+                  type="button"
+                  class="week-btn"
+                  (click)="goNextWeek()"
+                  [disabled]="weekOffset === 0"
+                >
+                  ถัดไป ›
+                </button>
+
+                <button
+                  type="button"
+                  class="week-btn today-btn"
+                  (click)="goCurrentWeek()"
+                >
+                  วันนี้
+                </button>
+              </ng-container>
+            </div>
+
+            <!-- VIEW BUTTONS (ขวาบน) -->
             <div class="segmented">
               <button
                 type="button"
@@ -96,41 +140,7 @@
             </div>
           </div>
 
-          <div class="calendar-toolbar" *ngIf="salesView === 'day'">
-            <p-datepicker
-              [(ngModel)]="selectedDate"
-              [showIcon]="true"
-              dateFormat="dd/mm/yy"
-              placeholder="เลือกวันที่"
-              (ngModelChange)="onDateChange()"
-            ></p-datepicker>
-          </div>
-
-          <div class="chart-toolbar" *ngIf="salesView === 'day'">
-            <button type="button" class="week-btn" (click)="goPrevWeek()">
-              ‹ สัปดาห์ก่อน
-            </button>
-
-            <span class="week-label">{{ weekRangeLabel }}</span>
-
-            <button
-              type="button"
-              class="week-btn"
-              (click)="goNextWeek()"
-              [disabled]="weekOffset === 0"
-            >
-              สัปดาห์ถัดไป ›
-            </button>
-
-            <button
-              type="button"
-              class="week-btn today-btn"
-              (click)="goCurrentWeek()"
-            >
-              วันนี้
-            </button>
-          </div>
-
+          <!-- ===== CHART ===== -->
           <div class="chart-wrap chart-main">
             <canvas #salesCanvas></canvas>
           </div>

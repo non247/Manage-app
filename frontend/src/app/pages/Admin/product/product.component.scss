@@ -270,8 +270,6 @@ app-sidebar-user {
 /* ================= TABLE ACTION BUTTONS ================= */
 .btn-edit,
 .btn-delete,
-.btn-save,
-.btn-cancel,
 :host ::ng-deep .p-datatable .btn-edit,
 :host ::ng-deep .p-datatable .btn-delete,
 :host ::ng-deep .p-datatable .btn-save,
@@ -301,13 +299,11 @@ app-sidebar-user {
   font-size: 26px;
 }
 
-.btn-save i,
 :host ::ng-deep .p-datatable .btn-save i {
   color: #1e8a39 !important;
   font-size: 26px;
 }
 
-.btn-cancel i,
 :host ::ng-deep .p-datatable .btn-cancel i {
   color: #d21515 !important;
   font-size: 26px;
@@ -315,8 +311,6 @@ app-sidebar-user {
 
 .btn-edit:hover,
 .btn-delete:hover,
-.btn-save:hover,
-.btn-cancel:hover,
 :host ::ng-deep .p-datatable .btn-edit:hover,
 :host ::ng-deep .p-datatable .btn-delete:hover,
 :host ::ng-deep .p-datatable .btn-save:hover,
@@ -427,22 +421,33 @@ tr.editing {
   border: 2px solid #ec4899;
 }
 
+/* ================= CREATE CARD FOOTER ================= */
 .create-card-footer {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 14px;
   padding: 18px 24px 24px;
   border-top: 1px solid #eee;
 }
 
 .create-card-footer .btn-save,
-.create-card-footer .btn-cancel {
+.create-card-footer .btn-cancel,
+.create-card-footer .btn-form {
   width: 170px;
   height: 50px;
+  border: none;
   border-radius: 14px;
   font-size: 20px;
   font-weight: 700;
   color: #fff !important;
+
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  cursor: pointer;
 }
 
 .create-card-footer .btn-save {
@@ -453,6 +458,16 @@ tr.editing {
   background: #d21515 !important;
 }
 
+.create-card-footer .btn-save i,
+.create-card-footer .btn-cancel i,
+.create-card-footer .btn-form i {
+  display: inline-block !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+  color: #fff !important;
+}
+
+/* ================= BACKDROP ================= */
 .create-backdrop {
   position: fixed;
   inset: 0;
@@ -601,6 +616,7 @@ tr.editing {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -611,6 +627,7 @@ tr.editing {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -743,16 +760,16 @@ tr.editing {
 
   .btn-edit,
   .btn-delete,
-  .btn-save,
-  .btn-cancel {
+  :host ::ng-deep .p-datatable .btn-save,
+  :host ::ng-deep .p-datatable .btn-cancel {
     width: 42px;
     height: 42px;
   }
 
   .btn-edit i,
   .btn-delete i,
-  .btn-save i,
-  .btn-cancel i {
+  :host ::ng-deep .p-datatable .btn-save i,
+  :host ::ng-deep .p-datatable .btn-cancel i {
     font-size: 24px;
   }
 
@@ -776,8 +793,23 @@ tr.editing {
   }
 
   .create-card-footer .btn-save,
-  .create-card-footer .btn-cancel {
+  .create-card-footer .btn-cancel,
+  .create-card-footer .btn-form {
     width: 100%;
+    height: 54px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .create-card-footer .btn-save i,
+  .create-card-footer .btn-cancel i,
+  .create-card-footer .btn-form i {
+    display: inline-block !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    color: #fff !important;
   }
 
   .create-card .preview img {
