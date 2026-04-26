@@ -134,11 +134,17 @@ app-sidebar-user {
   padding: 0 18px;
   font-weight: 700;
   cursor: pointer;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
   white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
 .btn-add {
@@ -160,15 +166,27 @@ app-sidebar-user {
 
 .btn-add:hover {
   background-color: #e85c94;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(216, 27, 96, 0.28);
 }
 
 .btn-history:hover:not(:disabled) {
   background-color: #3327c9;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(35, 26, 167, 0.28);
+}
+
+.btn-add:active,
+.btn-history:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn-history:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .bubble {
@@ -178,14 +196,17 @@ app-sidebar-user {
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   background: #ff3b5c;
   color: #fff;
   font-size: 13px;
   font-weight: 700;
   border-radius: 999px;
+  line-height: 1;
 }
 
 /* ================= TABLE ================= */

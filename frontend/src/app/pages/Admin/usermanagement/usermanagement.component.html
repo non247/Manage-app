@@ -8,26 +8,23 @@
 
       <div class="table-box">
         <!-- HEADER -->
-<div class="header-row">
-<div class="search-wrapper">
-  <i class="bi bi-search"></i>
-  <input
-    #searchInput
-    pInputText
-    type="text"
-    placeholder="ค้นหา..."
-    (input)="dt.filterGlobal(searchInput.value, 'contains')"
-  />
-</div>
+        <div class="header-row">
+          <div class="search-wrapper">
+            <i class="bi bi-search"></i>
+            <input
+              #searchInput
+              pInputText
+              type="text"
+              placeholder="ค้นหา..."
+              (input)="dt.filterGlobal(searchInput.value, 'contains')"
+            />
+          </div>
 
-  <button
-    class="btn-add"
-    (click)="showCreateForm = !showCreateForm"
-  >
-    <i class="bi bi-plus-circle-fill"></i>
-    เพิ่มผู้ใช้
-  </button>
-</div>
+          <button class="btn-add" (click)="showCreateForm = !showCreateForm">
+            <i class="bi bi-plus-circle-fill"></i>
+            เพิ่มผู้ใช้
+          </button>
+        </div>
         <!-- BACKDROP -->
         <div
           *ngIf="showCreateForm"

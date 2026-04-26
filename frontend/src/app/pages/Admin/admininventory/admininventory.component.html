@@ -7,39 +7,36 @@
 
       <div class="table-box">
         <!-- HEADER ROW -->
-<div class="header-row">
-  <div class="search-wrap">
-    <i class="bi bi-search"></i>
+        <div class="header-row">
+          <div class="search-wrap">
+            <i class="bi bi-search"></i>
 
-    <input
-      #gb
-      type="text"
-      class="search-input"
-      pInputText
-      placeholder="ค้นหา..."
-      (input)="dt.filterGlobal(gb.value, 'contains')"
-    />
-  </div>
+            <input
+              #gb
+              type="text"
+              class="search-input"
+              pInputText
+              placeholder="ค้นหา..."
+              (input)="dt.filterGlobal(gb.value, 'contains')"
+            />
+          </div>
 
-  <button
-    class="btn-add"
-    (click)="showCreateForm = !showCreateForm"
-  >
-    <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
-  </button>
+          <button class="btn-add" (click)="showCreateForm = !showCreateForm">
+            <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
+          </button>
 
-  <button
-    class="btn-save btn-history"
-    type="button"
-    (click)="openHistoryForm()"
-  >
-    <i class="bi bi-send-fill"></i>
-    เพิ่มรายการขาย
-    <span class="bubble" *ngIf="saleDraftItems.length > 0">
-      {{ saleDraftItems.length }}
-    </span>
-  </button>
-</div>
+          <button
+            class="btn-save btn-history"
+            type="button"
+            (click)="openHistoryForm()"
+          >
+            <i class="bi bi-send-fill"></i>
+            เพิ่มรายการขาย
+            <span class="bubble" *ngIf="saleDraftItems.length > 0">
+              {{ saleDraftItems.length }}
+            </span>
+          </button>
+        </div>
         <!-- ✅ BACKDROP CREATE -->
         <div
           *ngIf="showCreateForm"
