@@ -156,6 +156,7 @@ app-sidebar-user {
 .sales-control-row {
   display: grid;
   grid-template-columns: 330px minmax(0, 1fr) 315px;
+  justify-self: center;
   align-items: center;
   gap: 16px;
   margin: 12px 0 24px;
@@ -393,19 +394,38 @@ app-sidebar-user {
   }
 
   .sales-control-row {
-    grid-template-columns: 300px minmax(0, 1fr) 300px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 14px;
   }
 
-  .seg-btn {
-    padding: 10px 18px;
+  .calendar-toolbar,
+  .chart-toolbar {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .segmented {
+    justify-self: center;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 992px) {
+  .layout {
+    overflow-x: hidden;
+  }
+
+  app-sidebar-user {
+    width: 0;
+  }
+
   .main-content {
-    margin-left: 90px;
-    width: calc(100% - 90px);
-    max-width: none;
+    margin-left: 0;
+    width: 100%;
     padding: 18px;
   }
 
@@ -415,85 +435,89 @@ app-sidebar-user {
 
   .dashboard-page {
     padding: 0 18px 20px;
+    gap: 18px;
   }
 
-  .sales-control-row {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    gap: 12px;
-  }
-
-  .calendar-toolbar {
+  .top-navbar {
+    position: relative;
     width: 100%;
-    justify-content: center;
-  }
+    padding: 12px 80px;
+    min-height: 78px;
 
-  .chart-toolbar {
-    width: 100%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    flex-wrap: nowrap;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
+    text-align: center;
+
+    box-sizing: border-box;
+  }
+
+  .top-navbar h1 {
+    margin: 0;
+    width: 100%;
+    font-size: 42px;
+    line-height: 1.15;
+    font-weight: 900;
+    text-align: center;
+    color: #d81b60;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .segmented {
-    justify-self: center;
     width: 100%;
-    max-width: 330px;
-    justify-content: space-between;
+    max-width: 360px;
+    align-self: center;
   }
 
   .seg-btn {
     flex: 1;
-    text-align: center;
     padding: 10px 12px;
   }
 
-  .week-label {
-    width: auto;
-    min-width: max-content;
-    text-align: center;
-    white-space: nowrap;
+  .chart-toolbar {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 6px;
   }
 
+  .week-label,
   .week-btn {
     flex-shrink: 0;
     white-space: nowrap;
   }
 
-  :host ::ng-deep .p-datepicker {
-    max-width: 330px;
+  .forecast-box {
+    padding: 18px;
+    margin-top: 8px;
   }
 }
 
 @media (max-width: 768px) {
-  app-sidebar-user {
-    width: 78px;
-  }
-
   .main-content {
-    margin-left: 78px;
-    width: calc(100% - 78px);
     padding: 14px;
   }
 
   .main-content:first-child {
-    padding: 14px 14px 6px;
+    padding: 20px 14px 8px;
   }
 
   .dashboard-page {
-    padding: 0 14px 18px;
-    gap: 18px;
+    padding: 4px 14px 18px;
   }
 
   .top-navbar {
-    padding: 12px 14px;
+    padding: 10px 82px;
+    min-height: 84px;
   }
 
   .top-navbar h1 {
-    font-size: 24px;
+    font-size: 40px;
+    line-height: 1.15;
+    text-align: center;
   }
 
   .panel {
@@ -514,19 +538,45 @@ app-sidebar-user {
   }
 
   .forecast-box {
-    padding: 18px;
     border-radius: 20px;
+    padding: 16px;
+    margin-top: 10px;
   }
 
   .forecast-header h3 {
-    font-size: 19px;
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .forecast-total-card {
+    padding: 14px;
+  }
+
+  .total-value {
+    font-size: 30px;
   }
 
   .forecast-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .chart-main {
+  .grid-card {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .grid-name {
+    font-size: 12px;
+  }
+
+  .grid-value {
+    font-size: 18px;
+  }
+
+  .chart-main,
+  .chart-donut {
     height: 300px;
   }
 
@@ -535,15 +585,9 @@ app-sidebar-user {
     height: 260px;
   }
 
-  .chart-toolbar {
-    justify-content: flex-start;
-    gap: 6px;
-  }
-
   .week-btn {
-    padding: 8px 9px;
+    padding: 8px 10px;
     font-size: 12px;
-    border-radius: 10px;
   }
 
   .week-label {
@@ -552,35 +596,83 @@ app-sidebar-user {
 }
 
 @media (max-width: 480px) {
-  app-sidebar-user {
-    width: 72px;
-  }
-
   .main-content {
-    margin-left: 72px;
-    width: calc(100% - 72px);
-    padding: 12px;
+    padding: 10px;
   }
 
   .main-content:first-child {
-    padding: 12px 12px 6px;
+    padding: 18px 10px 8px;
   }
 
   .dashboard-page {
-    padding: 0 12px 16px;
+    padding: 4px 10px 14px;
     gap: 14px;
   }
 
+  .top-navbar {
+    padding: 8px 74px;
+    min-height: 78px;
+  }
+
   .top-navbar h1 {
-    font-size: 22px;
+    font-size: 34px;
+    line-height: 1.15;
+    text-align: center;
   }
 
   .panel {
-    padding: 14px;
+    padding: 12px;
     border-radius: 18px;
   }
 
+  .forecast-box {
+    padding: 14px;
+    border-radius: 18px;
+    margin-top: 10px;
+  }
+
+  .forecast-header h3 {
+    width: 100%;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .forecast-total-card {
+    padding: 12px;
+  }
+
+  .total-label {
+    font-size: 13px;
+  }
+
+  .total-value {
+    font-size: 28px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-card {
+    min-height: 46px;
+  }
+
+  .grid-rank {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .grid-name {
+    font-size: 13px;
+  }
+
+  .grid-value {
+    font-size: 18px;
+  }
+
   .segmented {
+    max-width: 100%;
     gap: 4px;
     padding: 5px;
   }
@@ -590,11 +682,8 @@ app-sidebar-user {
     padding: 9px 8px;
   }
 
-  .forecast-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-main {
+  .chart-main,
+  .chart-donut {
     height: 250px;
   }
 
@@ -604,7 +693,7 @@ app-sidebar-user {
   }
 
   .chart-toolbar {
-    gap: 5px;
+    gap: 6px;
   }
 
   .week-btn {
