@@ -175,23 +175,21 @@
                 <div class="field">
                   <label>ชื่อสินค้า</label>
                   <select
-                    class="p-inputtext p-component"
-                    [(ngModel)]="saleForm.productId"
-                    name="saleProductId"
-                    (change)="onSaleProductChange()"
-                  >
-                    <option [ngValue]="null" disabled>
-                      -- เลือกชื่อสินค้า --
-                    </option>
-                    <option
-                      *ngFor="let p of saleProductOptions"
-                      [ngValue]="p.id"
-                    >
-                      {{ p.name }} • {{ p.category }} • คงเหลือ
-                      {{ p.quantity }} •
-                      {{ formatDisplayDate(p.date) }}
-                    </option>
-                  </select>
+  class="p-inputtext p-component scroll-select"
+  size="5"
+  [(ngModel)]="saleForm.productId"
+  name="saleProductId"
+  (change)="onSaleProductChange()"
+>
+  <option [ngValue]="null" disabled>
+    -- เลือกชื่อสินค้า --
+  </option>
+
+  <option *ngFor="let p of saleProductOptions" [ngValue]="p.id">
+    {{ p.name }} • {{ p.category }} • คงเหลือ {{ p.quantity }} •
+    {{ formatDisplayDate(p.date) }}
+  </option>
+</select>
                 </div>
 
                 <div class="field">
@@ -238,11 +236,15 @@
                 *ngIf="saleDraftItems.length > 0"
                 class="sale-list scroll-area"
               >
-                <div class="sale-row sale-head">
+                <!-- <div class="sale-row sale-head">
                   <div>สินค้า</div>
-                  <div style="text-align: center">จำนวน</div>
+                  <div>จำนวน</div>
                   <div></div>
-                </div>
+                </div> -->
+                <div class="sale-header">
+  <div class="col-name">สินค้า</div>
+  <div class="col-qty">จำนวน</div>
+</div>
 
                 <div
                   class="sale-row sale-item"
