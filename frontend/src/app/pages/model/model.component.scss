@@ -321,9 +321,70 @@
 
 /* ================= RESPONSIVE ================= */
 
+@media (max-width: 1200px) {
+  .main-content {
+    margin-left: 90px;
+    padding: 18px;
+  }
+
+  .container-box {
+    padding: 24px;
+  }
+
+  .flavor-cards {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .top-navbar {
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .container-box {
+    padding: 20px;
+    min-height: auto;
+  }
+
+  .title-row {
+    margin-bottom: 20px;
+  }
+
+  .subtitle {
+    text-align: center;
+  }
+
+  .prediction-form {
+    padding: 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .flavor-cards {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 14px;
+  }
+
+  .chart-wrapper {
+    min-height: 280px;
+  }
+}
+
 @media (max-width: 768px) {
   .layout {
-    display: flex;
     height: 100vh;
     overflow: hidden;
   }
@@ -350,7 +411,6 @@
   .top-navbar {
     padding: 8px 10px 16px;
     text-align: center;
-    font-size: 22px;
   }
 
   .top-navbar h1 {
@@ -358,78 +418,179 @@
     line-height: 1.15;
   }
 
-  .table-box {
+  .container-box {
     width: 100%;
+    max-width: 100%;
     margin-top: 8px;
     padding: 12px;
-    height: auto;
     min-height: calc(100vh - 150px);
     border-radius: 10px;
+    overflow: hidden;
     box-sizing: border-box;
   }
 
-  .header-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    margin: 0 0 64px;
+  .title-row {
+    margin-bottom: 18px;
+    text-align: center;
   }
 
-  .search-wrap,
-  .search-wrapper {
+  .prediction-form {
+    padding: 16px;
+    gap: 16px;
+    border-radius: 12px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-group label {
+    font-size: 15px;
+  }
+
+  .form-group input[type='text'],
+  .form-group input[type='number'],
+  .form-group input[type='date'],
+  .form-group ::ng-deep .p-inputtext,
+  .form-group ::ng-deep .p-datepicker,
+  .form-group ::ng-deep .p-inputnumber {
+    width: 100% !important;
+  }
+
+  .form-group ::ng-deep .p-inputtext,
+  .form-group ::ng-deep .p-datepicker .p-inputtext,
+  .form-group ::ng-deep .p-inputnumber .p-inputtext {
+    height: 44px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .checkbox-group {
+    justify-content: flex-start;
+  }
+
+  .checkbox-container {
+    font-size: 16px;
+    align-items: center;
+  }
+
+  .submit-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  ::ng-deep .custom-submit-btn,
+  ::ng-deep .custom-cancel-btn {
+    width: 100% !important;
+    height: 46px !important;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 20px;
+  }
+
+  .summary-card,
+  .flavor-card {
     width: 100%;
     min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .summary-card {
+    padding: 16px;
+  }
+
+  .summary-card .card-label {
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  .summary-card .card-value {
+    font-size: 28px;
+  }
+
+  .result-card,
+  .detail-card {
+    width: 100%;
     max-width: 100%;
-    height: 44px;
-    margin: 0;
-  }
-
-  .search-input,
-  .search-wrap input,
-  .search-wrapper input {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    height: 44px !important;
-    font-size: 18px !important;
-  }
-
-  .btn-add,
-  .btn-history {
-    width: 100%;
-    height: 54px;
-    border-radius: 999px;
-    font-size: 18px;
-  }
-
-  .main-content p-table {
-    margin-top: 0;
-  }
-
-  :host ::ng-deep .p-datatable {
-    width: 100%;
+    margin-top: 20px;
+    padding: 18px;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
-  :host ::ng-deep .p-datatable .p-datatable-wrapper {
+  .prediction-value {
+    gap: 6px;
+  }
+
+  .prediction-value .number {
+    font-size: 38px;
+  }
+
+  .prediction-value .unit {
+    font-size: 20px;
+  }
+
+  .chart-wrapper {
+    min-height: 240px;
+  }
+
+  .flavor-cards {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    width: 100%;
+  }
+
+  .detail-table {
     overflow-x: auto;
-    overflow-y: auto;
-    max-height: 520px;
   }
 
-  :host ::ng-deep .p-datatable table {
-    min-width: 850px;
+  .table-header,
+  .table-row {
+    min-width: 420px;
+    grid-template-columns: 1fr 1fr;
+    padding: 10px 12px;
   }
 
-  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  .table-cell {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 10px 8px;
+  }
+
+  .container-box {
+    padding: 12px;
+  }
+
+  .prediction-form {
+    padding: 14px;
+  }
+
+  .flavor-cards {
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 10px;
+  }
+
+  .summary-card {
+    padding: 14px 10px;
+  }
+
+  .summary-card .card-value {
+    font-size: 26px;
+  }
+
+  .prediction-value .number {
+    font-size: 34px;
+  }
+
+  .prediction-value .unit {
     font-size: 18px;
-    padding: 8px;
-    white-space: nowrap;
-  }
-
-  :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    font-size: 16px;
-    padding: 8px;
-    white-space: nowrap;
   }
 }
