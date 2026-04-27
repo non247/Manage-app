@@ -15,6 +15,7 @@ app-sidebar-user {
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
+  position: relative;
   overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
@@ -31,6 +32,7 @@ app-sidebar-user {
 .main-content:first-child {
   padding: 20px 24px 8px;
 }
+
 
 .dashboard-page {
   padding: 0 24px 24px;
@@ -387,7 +389,6 @@ app-sidebar-user {
 }
 
 /* ================= RESPONSIVE ================= */
-/* ================= RESPONSIVE ================= */
 @media (max-width: 1200px) {
   .bottom-grid {
     grid-template-columns: 1fr;
@@ -423,6 +424,11 @@ app-sidebar-user {
     width: 0;
   }
 
+  .main-area {
+    width: 100%;
+    margin-left: 0;
+  }
+
   .main-content {
     margin-left: 0;
     width: 100%;
@@ -439,16 +445,13 @@ app-sidebar-user {
   }
 
   .top-navbar {
-    position: relative;
     width: 100%;
-    padding: 12px 80px;
+    padding: 12px 24px 12px 84px;
     min-height: 78px;
-
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     text-align: center;
-
     box-sizing: border-box;
   }
 
@@ -458,8 +461,16 @@ app-sidebar-user {
     font-size: 42px;
     line-height: 1.15;
     font-weight: 900;
-    text-align: center;
     color: #d81b60;
+  }
+
+  :host ::ng-deep .hamburger {
+    position: fixed !important;
+    top: 14px !important;
+    left: 14px !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    transform: none !important;
   }
 
   .panel-header {
@@ -510,14 +521,18 @@ app-sidebar-user {
   }
 
   .top-navbar {
-    padding: 10px 82px;
+    padding: 10px 20px 10px 78px;
     min-height: 84px;
   }
 
   .top-navbar h1 {
     font-size: 40px;
     line-height: 1.15;
-    text-align: center;
+  }
+
+  :host ::ng-deep .hamburger {
+    top: 12px !important;
+    left: 12px !important;
   }
 
   .panel {
@@ -610,14 +625,18 @@ app-sidebar-user {
   }
 
   .top-navbar {
-    padding: 8px 74px;
+    padding: 8px 16px 8px 70px;
     min-height: 78px;
   }
 
   .top-navbar h1 {
     font-size: 34px;
     line-height: 1.15;
-    text-align: center;
+  }
+
+  :host ::ng-deep .hamburger {
+    top: 12px !important;
+    left: 12px !important;
   }
 
   .panel {

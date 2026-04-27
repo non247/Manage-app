@@ -1,7 +1,15 @@
 /* ================= LAYOUT ================= */
+/* ================= LAYOUT ================= */
 .layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+app-sidebar-user,
+app-sidebar-admin {
+  width: 200px;
+  flex-shrink: 0;
 }
 
 .main-area {
@@ -10,11 +18,15 @@
   flex-direction: column;
   background-color: #ffffff;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 .main-content {
   padding: 20px;
   margin-left: 90px;
+  width: calc(100% - 90px);
+  box-sizing: border-box;
 }
 
 /* ================= TOP NAV ================= */
@@ -320,11 +332,11 @@
 }
 
 /* ================= RESPONSIVE ================= */
-
 @media (max-width: 1200px) {
   .main-content {
     margin-left: 90px;
     padding: 18px;
+    width: calc(100% - 90px);
   }
 
   .container-box {
@@ -341,10 +353,20 @@
   .main-content {
     margin-left: 0;
     padding: 16px;
+    width: 100%;
+  }
+
+  :host ::ng-deep .hamburger {
+    position: fixed !important;
+    top: 14px !important;
+    left: 14px !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    transform: none !important;
   }
 
   .top-navbar {
-    padding: 12px 16px;
+    padding: 12px 16px 12px 78px;
     text-align: center;
   }
 
@@ -365,10 +387,7 @@
     padding: 24px;
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
+  .form-grid,
   .summary-cards {
     grid-template-columns: 1fr;
   }
@@ -385,18 +404,19 @@
 
 @media (max-width: 768px) {
   .layout {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  app-sidebar-user {
-    width: 115px;
+  app-sidebar-user,
+  app-sidebar-admin {
+    width: 0;
     flex-shrink: 0;
   }
 
   .main-area {
-    flex: 1;
-    width: calc(100vw - 115px);
+    width: 100%;
+    margin-left: 0;
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -408,9 +428,23 @@
     box-sizing: border-box;
   }
 
+  :host ::ng-deep .hamburger {
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    transform: none !important;
+  }
+
   .top-navbar {
-    padding: 8px 10px 16px;
+    padding: 8px 10px 16px 68px;
     text-align: center;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
   }
 
   .top-navbar h1 {
@@ -561,8 +595,32 @@
 }
 
 @media (max-width: 480px) {
+  app-sidebar-user,
+  app-sidebar-admin {
+    width: 0;
+  }
+
+  .main-area {
+    width: 100%;
+  }
+
   .main-content {
+    margin-left: 0;
+    width: 100%;
     padding: 10px 8px;
+  }
+
+  :host ::ng-deep .hamburger {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    transform: none !important;
+  }
+
+  .top-navbar {
+    padding-left: 62px;
   }
 
   .container-box {
