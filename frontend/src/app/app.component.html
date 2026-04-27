@@ -1,9 +1,15 @@
-<!-- ===== ADMIN SIDEBAR ===== -->
-<app-sidebar-admin *ngIf="role === 'admin' && !hideSidebar">
-</app-sidebar-admin>
+<div class="layout" *ngIf="!hideSidebar">
+  <div class="main-area">
+    <!-- ===== ADMIN SIDEBAR ===== -->
+    <app-sidebar-admin *ngIf="role === 'admin'"></app-sidebar-admin>
 
-<!-- ===== USER SIDEBAR ===== -->
-<app-sidebar-user *ngIf="role === 'user' && !hideSidebar"> </app-sidebar-user>
+    <!-- ===== USER SIDEBAR ===== -->
+    <app-sidebar-user *ngIf="role === 'user'"></app-sidebar-user>
 
-<!-- ===== PAGE CONTENT ===== -->
-<router-outlet></router-outlet>
+    <!-- ===== PAGE CONTENT ===== -->
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- ===== LOGIN / PAGE WITHOUT SIDEBAR ===== -->
+<router-outlet *ngIf="hideSidebar"></router-outlet>
