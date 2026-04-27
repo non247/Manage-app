@@ -298,7 +298,8 @@
             <button
               class="btn-save"
               (click)="confirmSendToHistory()"
-              [disabled]="saleDraftItems.length === 0 || isSubmittingHistory"
+              type="button"
+              isSubmittingHistory
             >
               <i class="pi pi-check-square"></i> ยืนยัน
             </button>

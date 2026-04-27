@@ -33,7 +33,6 @@ app-sidebar-user {
   padding: 20px 24px 8px;
 }
 
-
 .dashboard-page {
   padding: 0 24px 24px;
   display: flex;
@@ -156,11 +155,11 @@ app-sidebar-user {
 /* ================= CONTROL BAR ================= */
 .sales-control-row {
   display: grid;
-  grid-template-columns: 330px minmax(0, 1fr) 315px;
-  justify-self: center;
+  grid-template-columns: 330px 1fr 330px;
   align-items: center;
   gap: 16px;
   margin: 12px 0 24px;
+  width: 100%;
 }
 
 .calendar-toolbar {
@@ -394,18 +393,25 @@ app-sidebar-user {
   }
 
   .sales-control-row {
+    display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
+    align-items: center;
     gap: 14px;
+    width: 100%;
   }
 
   .calendar-toolbar,
   .chart-toolbar {
     width: 100%;
+    display: flex;
     justify-content: center;
   }
 
   .segmented {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
     justify-self: center;
   }
 
@@ -414,6 +420,7 @@ app-sidebar-user {
   }
 }
 
+/* ================= TABLET ================= */
 @media (max-width: 992px) {
   .layout {
     overflow-x: hidden;
@@ -434,47 +441,31 @@ app-sidebar-user {
     padding: 18px;
   }
 
-  .main-content:first-child {
-    padding: 18px 18px 8px;
-  }
-
   .dashboard-page {
     padding: 0 18px 20px;
     gap: 18px;
   }
 
-    .top-navbar {
-    position: relative;
-    width: 100%;
-    min-height: 64px;
-
+  /* ✅ navbar กลาง */
+  .top-navbar {
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: center; /* ⭐ กลางจริง */
-
-    padding: 8px 10px 16px; /* ❌ ไม่มี padding-left แล้ว */
     text-align: center;
-    box-sizing: border-box;
   }
 
   .top-navbar h1 {
-    margin: 0;
     width: 100%;
     text-align: center;
-    line-height: 1.15;
-
-    /* ⭐ กันชน hamburger แต่ยังดูอยู่กลาง */
     padding: 0 60px;
-    box-sizing: border-box;
   }
 
+  /* ✅ hamburger fix */
   :host ::ng-deep .hamburger {
     position: fixed !important;
     top: 14px !important;
     left: 14px !important;
-    margin: 0 !important;
     z-index: 9999 !important;
-    transform: none !important;
   }
 
   .panel-header {
@@ -482,19 +473,22 @@ app-sidebar-user {
     align-items: stretch;
   }
 
+  /* ✅ SEGMENTED กลาง */
   .segmented {
     width: 100%;
-    max-width: 360px;
+    max-width: 450px;
+    margin: 0 auto;
     align-self: center;
   }
 
   .seg-btn {
     flex: 1;
-    padding: 10px 12px;
+    text-align: center;
   }
 
+  /* ❌ สำคัญ: ห้ามใช้ flex-start */
   .chart-toolbar {
-    justify-content: flex-start;
+    justify-content: center;
     overflow-x: auto;
     padding-bottom: 6px;
   }
@@ -502,22 +496,13 @@ app-sidebar-user {
   .week-label,
   .week-btn {
     flex-shrink: 0;
-    white-space: nowrap;
-  }
-
-  .forecast-box {
-    padding: 18px;
-    margin-top: 8px;
   }
 }
 
+/* ================= MOBILE ================= */
 @media (max-width: 768px) {
   .main-content {
     padding: 14px;
-  }
-
-  .main-content:first-child {
-    padding: 20px 14px 8px;
   }
 
   .dashboard-page {
@@ -526,12 +511,11 @@ app-sidebar-user {
 
   .top-navbar {
     min-height: 84px;
-    padding: 10px 20px;
+    text-align: center;
   }
 
   .top-navbar h1 {
     font-size: 40px;
-    line-height: 1.15;
     padding: 0 58px;
   }
 
@@ -542,162 +526,42 @@ app-sidebar-user {
 
   .panel {
     padding: 16px;
-    border-radius: 20px;
   }
 
-  .panel-large,
-  .panel-side,
-  .product-panel,
-  .forecast-box {
-    min-height: auto;
-  }
-
-  .panel-header h3,
-  .panel-subtitle h3 {
-    font-size: 18px;
-  }
-
-  .forecast-box {
-    border-radius: 20px;
-    padding: 16px;
-    margin-top: 10px;
-  }
-
-  .forecast-header h3 {
+  .segmented {
     width: 100%;
-    font-size: 20px;
-    text-align: center;
+    max-width: 420px;
+    margin: 0 auto;
   }
 
-  .forecast-total-card {
-    padding: 14px;
+  .seg-btn {
+    font-size: 14px;
   }
 
-  .total-value {
-    font-size: 30px;
-  }
-
-  .forecast-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .grid-card {
-    padding: 10px;
-    gap: 8px;
-  }
-
-  .grid-name {
-    font-size: 12px;
-  }
-
-  .grid-value {
-    font-size: 18px;
-  }
-
-  .chart-main,
-  .chart-donut {
+  .chart-main {
     height: 300px;
-  }
-
-  .chart-product,
-  .chart-line {
-    height: 260px;
-  }
-
-  .week-btn {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-
-  .week-label {
-    font-size: 12px;
   }
 }
 
+/* ================= SMALL MOBILE ================= */
 @media (max-width: 480px) {
   .main-content {
     padding: 10px;
   }
 
-  .main-content:first-child {
-    padding: 18px 10px 8px;
-  }
-
   .dashboard-page {
     padding: 4px 10px 14px;
-    gap: 14px;
-  }
-
-  .top-navbar {
-    min-height: 78px;
-    padding: 8px 16px;
   }
 
   .top-navbar h1 {
     font-size: 34px;
-    line-height: 1.15;
     padding: 0 52px;
   }
 
-  :host ::ng-deep .hamburger {
-    top: 12px !important;
-    left: 12px !important;
-  }
-
-  .panel {
-    padding: 12px;
-    border-radius: 18px;
-  }
-
-  .forecast-box {
-    padding: 14px;
-    border-radius: 18px;
-    margin-top: 10px;
-  }
-
-  .forecast-header h3 {
-    width: 100%;
-    font-size: 18px;
-    text-align: center;
-  }
-
-  .forecast-total-card {
-    padding: 12px;
-  }
-
-  .total-label {
-    font-size: 13px;
-  }
-
-  .total-value {
-    font-size: 28px;
-  }
-
-  .forecast-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .grid-card {
-    min-height: 46px;
-  }
-
-  .grid-rank {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-
-  .grid-name {
-    font-size: 13px;
-  }
-
-  .grid-value {
-    font-size: 18px;
-  }
-
   .segmented {
+    width: 100%;
     max-width: 100%;
+    margin: 0 auto;
     gap: 4px;
     padding: 5px;
   }
@@ -707,31 +571,7 @@ app-sidebar-user {
     padding: 9px 8px;
   }
 
-  .chart-main,
-  .chart-donut {
+  .chart-main {
     height: 250px;
-  }
-
-  .chart-product,
-  .chart-line {
-    height: 230px;
-  }
-
-  .chart-toolbar {
-    gap: 6px;
-  }
-
-  .week-btn {
-    padding: 7px 8px;
-    font-size: 11px;
-  }
-
-  .week-label {
-    font-size: 11px;
-  }
-
-  :host ::ng-deep .p-datepicker {
-    min-width: 0;
-    max-width: 100%;
   }
 }

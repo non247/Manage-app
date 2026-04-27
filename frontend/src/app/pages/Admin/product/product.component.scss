@@ -28,7 +28,6 @@ app-sidebar-admin {
   box-sizing: border-box;
 }
 
-
 /* ================= TOP NAV ================= */
 .top-navbar {
   padding: 15px 20px;
@@ -609,11 +608,16 @@ tr.editing {
   cursor: pointer;
 }
 
-/* ================= SWEETALERT ================= */
+/* ================= SWEETALERT ABOVE FORM ================= */
+:host ::ng-deep .swal2-container,
 ::ng-deep .swal2-container {
-  z-index: 3000 !important;
+  z-index: 30000 !important;
 }
 
+:host ::ng-deep .swal2-popup,
+::ng-deep .swal2-popup {
+  z-index: 30001 !important;
+}
 /* ================= ANIMATIONS ================= */
 @keyframes scaleFadeIn {
   from {
@@ -705,16 +709,14 @@ tr.editing {
     transform: none !important;
   }
 
-   .top-navbar {
+  .top-navbar {
     position: relative;
     width: 100%;
     min-height: 64px;
-
     display: flex;
     align-items: center;
-    justify-content: center; /* ⭐ กลางจริง */
-
-    padding: 8px 10px 16px; /* ❌ ไม่มี padding-left แล้ว */
+    justify-content: center;
+    padding: 8px 10px 16px;
     text-align: center;
     box-sizing: border-box;
   }
@@ -724,8 +726,6 @@ tr.editing {
     width: 100%;
     text-align: center;
     line-height: 1.15;
-
-    /* ⭐ กันชน hamburger แต่ยังดูอยู่กลาง */
     padding: 0 60px;
     box-sizing: border-box;
   }
@@ -817,10 +817,17 @@ tr.editing {
     font-size: 24px;
   }
 
+  /* ⭐ backdrop ทับ hamburger */
+  .create-backdrop {
+    z-index: 11000 !important;
+  }
+
+  /* ⭐ form อยู่บนสุด */
   .create-card {
     width: calc(100vw - 20px);
     max-height: calc(100vh - 20px);
     border-radius: 16px;
+    z-index: 12000 !important;
   }
 
   .create-card-header {
@@ -900,5 +907,14 @@ tr.editing {
   .btn-history {
     height: 46px;
     font-size: 16px;
+  }
+
+  /* ⭐ กัน hamburger ทับฟอร์มบนจอเล็ก */
+  .create-backdrop {
+    z-index: 11000 !important;
+  }
+
+  .create-card {
+    z-index: 12000 !important;
   }
 }

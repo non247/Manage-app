@@ -293,8 +293,8 @@ export class ProductComponent implements OnInit {
       html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'ลบ',
       cancelButtonText: 'ยกเลิก',
     });
 

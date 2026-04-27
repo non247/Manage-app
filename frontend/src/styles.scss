@@ -17,3 +17,8 @@ body {
   font-family: Copperplate, sans-serif;
   background-color: #f0f0f0;
 }
+
+/* SweetAlert อยู่เหนือทุกอย่าง */
+.swal2-container {
+  z-index: 99999 !important;
+}

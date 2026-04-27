@@ -369,9 +369,11 @@ export class AdminpurchaseComponent implements OnInit {
   onCreateSave(): void {
     if (!this.newProduct.name || !this.newProduct.category) {
       Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
         icon: 'warning',
-        title: 'กรอกข้อมูลไม่ครบ',
-        text: 'กรุณาเลือกชื่อสินค้าและประเภท',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
       });
       return;
     }
@@ -516,7 +518,8 @@ export class AdminpurchaseComponent implements OnInit {
     if (id == null) return;
 
     Swal.fire({
-      title: 'ยืนยันการลบ?',
+      title: 'ยืนยันที่จะลบ?',
+      html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       text: `ต้องการลบ ${item.name} ใช่หรือไม่`,
       icon: 'warning',
       showCancelButton: true,

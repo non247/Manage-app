@@ -87,7 +87,11 @@ export class UsermanagementComponent implements OnInit {
       !this.editUser.Email?.trim() ||
       !this.editUser.Role
     ) {
-      Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
+      Swal.fire({
+        title: 'แจ้งเตือน',
+        text: 'ยังไม่มีรายการสั่งซื้อในฟอร์ม',
+        icon: 'info',
+      });
       return;
     }
 
@@ -114,12 +118,13 @@ export class UsermanagementComponent implements OnInit {
     const user = this.users[index];
 
     Swal.fire({
-      title: 'ยืนยันการลบ',
+      title: 'ยืนยันที่จะลบ',
       text: `ต้องการลบผู้ใช้ ${user.Username} ใช่หรือไม่?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'ลบ',
       cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#d33',
     }).then((result) => {
       if (result.isConfirmed) {
         this.userService.deleteUser(user.Id).subscribe({
@@ -143,7 +148,13 @@ export class UsermanagementComponent implements OnInit {
       !this.newUser.Email.trim() ||
       !this.newUser.Role
     ) {
-      Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
+      Swal.fire({
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'ตกลง',
+      });
       return;
     }
 

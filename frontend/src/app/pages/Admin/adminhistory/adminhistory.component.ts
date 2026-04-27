@@ -290,7 +290,7 @@ export class AdminhistoryComponent implements OnInit {
     if (!this.isValidProduct(this.newProduct)) {
       Swal.fire({
         title: 'ข้อมูลไม่ครบ',
-        text: 'กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, หมวดหมู่, จำนวน, ราคา)',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
         icon: 'warning',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'ตกลง',
@@ -421,8 +421,8 @@ export class AdminhistoryComponent implements OnInit {
       html: '<span style="color:red; font-weight:bold;">ข้อมูลจะไม่สามารถกู้คืนได้</span>',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'ลบ',
       cancelButtonText: 'ยกเลิก',
     }).then((result) => {
       if (!result.isConfirmed) return;
