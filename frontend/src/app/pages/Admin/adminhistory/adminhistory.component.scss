@@ -845,6 +845,7 @@ tr.editing {
     box-sizing: border-box;
   }
 
+  /* ================= HAMBURGER ================= */
   :host ::ng-deep .hamburger {
     position: fixed !important;
     top: 12px !important;
@@ -854,22 +855,33 @@ tr.editing {
     transform: none !important;
   }
 
+  /* ================= TOP NAVBAR ================= */
   .top-navbar {
-    padding: 8px 10px 16px 68px;
-    text-align: center;
-    font-size: 22px;
+    position: relative;
+    width: 100%;
     min-height: 64px;
+
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* ⭐ กลางจริง */
+
+    padding: 8px 10px 16px; /* ❌ ไม่มี padding-left แล้ว */
+    text-align: center;
     box-sizing: border-box;
   }
 
   .top-navbar h1 {
     margin: 0;
+    width: 100%;
+    text-align: center;
     line-height: 1.15;
+
+    /* ⭐ กันชน hamburger แต่ยังดูอยู่กลาง */
+    padding: 0 60px;
+    box-sizing: border-box;
   }
 
+  /* ================= TABLE ================= */
   .table-box {
     width: 100%;
     margin-top: 8px;
@@ -947,6 +959,7 @@ tr.editing {
   }
 }
 
+/* ================= SMALL MOBILE ================= */
 @media (max-width: 480px) {
   app-sidebar-user,
   app-sidebar-admin {
@@ -964,16 +977,16 @@ tr.editing {
   }
 
   :host ::ng-deep .hamburger {
-    position: fixed !important;
     top: 10px !important;
     left: 10px !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    transform: none !important;
   }
 
   .top-navbar {
-    padding-left: 62px;
+    padding: 8px 10px 14px;
+  }
+
+  .top-navbar h1 {
     font-size: 18px;
+    padding: 0 50px; /* ปรับตามขนาดปุ่ม */
   }
 }

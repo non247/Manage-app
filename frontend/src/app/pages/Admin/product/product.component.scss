@@ -705,22 +705,29 @@ tr.editing {
     transform: none !important;
   }
 
-  .top-navbar {
-    padding: 10px 10px 10px 68px;
-    text-align: center;
-    font-size: 20px;
-    border-radius: 12px;
+   .top-navbar {
+    position: relative;
+    width: 100%;
     min-height: 64px;
+
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* ⭐ กลางจริง */
+
+    padding: 8px 10px 16px; /* ❌ ไม่มี padding-left แล้ว */
+    text-align: center;
     box-sizing: border-box;
   }
 
   .top-navbar h1 {
-    font-size: 34px;
-    white-space: normal;
+    margin: 0;
+    width: 100%;
+    text-align: center;
     line-height: 1.15;
+
+    /* ⭐ กันชน hamburger แต่ยังดูอยู่กลาง */
+    padding: 0 60px;
+    box-sizing: border-box;
   }
 
   .table-box {
