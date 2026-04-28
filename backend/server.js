@@ -3,6 +3,7 @@ require('dotenv').config();
 console.log('MAIL_USER =', process.env.MAIL_USER);
 console.log('has MAIL_PASS =', !!process.env.MAIL_PASS);
 console.log('JWT_SECRET =', process.env.JWT_SECRET ? 'loaded' : 'missing');
+console.log('DATABASE_URL =', process.env.DATABASE_URL ? 'loaded' : 'missing');
 
 const _exit = process.exit;
 process.exit = (code) => {
@@ -10,7 +11,6 @@ process.exit = (code) => {
   _exit(code);
 };
 
-// ====== DEBUG: why process exits ======
 process.on('exit', (code) => console.log('🧨 process exit code =', code));
 
 process.on('SIGINT', () => {
@@ -33,6 +33,7 @@ process.on('unhandledRejection', (reason) => {
 
 const express = require('express');
 const cors = require('cors');
+const pool = require('./src/config/database');
 
 const userRoutes = require('./src/route/usermanagement.route');
 const Dashboard = require('./src/route/Dashboard.route');
@@ -45,7 +46,6 @@ const purchasehistory = require('./src/route/purchasehistory.route');
 
 const app = express();
 
-// ✅ CORS สำหรับ frontend ที่ deploy แล้ว + localhost ตอน dev
 app.use(
   cors({
     origin: [
@@ -58,15 +58,30 @@ app.use(
 
 app.use(express.json());
 
-// ✅ test route
 app.get('/api/probe', (req, res) => {
   res.json({ probe: true, message: 'Backend is working' });
+});
+
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({
+      ok: true,
+      db: 'connected',
+      time: result.rows[0],
+    });
+  } catch (err) {
+    console.error('❌ TEST DB ERROR:', err.message);
+    res.status(500).json({
+      ok: false,
+      error: err.message,
+    });
+  }
 });
 
 app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'));
 
-// ✅ เปิดทีละอัน
 try {
   app.use('/api/auth', authRoutes);
   console.log('✅ auth mounted');
@@ -116,7 +131,6 @@ try {
   console.error('❌ purchasehistory mount fail', e);
 }
 
-// ✅ สำคัญสำหรับ Render: ใช้ process.env.PORT
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
