@@ -44,10 +44,24 @@ const purchase = require('./src/route/purchase.route');
 const purchasehistory = require('./src/route/purchasehistory.route');
 
 const app = express();
-app.use(cors());
+
+// ✅ CORS สำหรับ frontend ที่ deploy แล้ว + localhost ตอน dev
+app.use(
+  cors({
+    origin: [
+      'https://manage-app-glcg.onrender.com',
+      'http://localhost:4200',
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-app.get('/api/probe', (req, res) => res.json({ probe: true }));
+// ✅ test route
+app.get('/api/probe', (req, res) => {
+  res.json({ probe: true, message: 'Backend is working' });
+});
 
 app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'));
@@ -102,8 +116,11 @@ try {
   console.error('❌ purchasehistory mount fail', e);
 }
 
-const server = app.listen(3000, () => {
-  console.log('server 3000');
+// ✅ สำคัญสำหรับ Render: ใช้ process.env.PORT
+const PORT = process.env.PORT || 3000;
+
+const server = app.listen(PORT, () => {
+  console.log(`server running on port ${PORT}`);
   console.log('server.listening =', server.listening);
   console.log('server.address() =', server.address());
 });
