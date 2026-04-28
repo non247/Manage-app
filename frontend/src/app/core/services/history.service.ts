@@ -29,7 +29,8 @@ export class HistoryService {
   private readonly apiUrl = 'https://manage-app-5koc.onrender.com/api/history';
 
   // ✅ endpoint ของหน้า product
-  private readonly productApiUrl = 'https://manage-app-5koc.onrender.com/api/products';
+  private readonly productApiUrl =
+    'https://manage-app-5koc.onrender.com/api/products';
 
   constructor(private readonly http: HttpClient) {}
 

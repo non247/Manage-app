@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DashboardService {
-  private readonly apiUrl = 'https://manage-app-5koc.onrender.com/api/dashboard';
+  private readonly apiUrl =
+    'https://manage-app-5koc.onrender.com/api/dashboard';
 
   constructor(private readonly http: HttpClient) {}
 

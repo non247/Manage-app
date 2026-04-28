@@ -14,7 +14,8 @@ export interface Product {
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly baseUrl = 'https://manage-app-5koc.onrender.com/api/products';
+  private readonly baseUrl =
+    'https://manage-app-5koc.onrender.com/api/products';
 
   constructor(private readonly http: HttpClient) {}
 

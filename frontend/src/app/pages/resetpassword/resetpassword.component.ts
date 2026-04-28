@@ -26,7 +26,8 @@ export class ResetpasswordComponent {
   showConfirmPassword = false;
   loading = false;
 
-  private apiUrl = 'https://manage-app-5koc.onrender.com/api/auth/reset-password';
+  private apiUrl =
+    'https://manage-app-5koc.onrender.com/api/auth/reset-password';
 
   constructor(
     private route: ActivatedRoute,
