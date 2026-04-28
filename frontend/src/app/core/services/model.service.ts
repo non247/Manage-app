@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ModelService {
-  private readonly apiUrl = 'http://localhost:5000/api/getSaleForecastData';
+  private readonly apiUrl = 'https://manage-app-5koc.onrender.com/api/getSaleForecastData';
 
   constructor(private readonly http: HttpClient) {}
 
