@@ -1,13 +1,13 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
+const isProduction = !!process.env.DATABASE_URL;
+
 const pool = new Pool(
-  process.env.DATABASE_URL
+  isProduction
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        ssl: false,
       }
     : {
         host: 'localhost',
