@@ -36,7 +36,7 @@ export class AuthService {
   private readonly ROLE_KEY = 'role';
   private readonly USERNAME_KEY = 'username';
   private readonly EMAIL_KEY = 'email';
-  private readonly api = 'http://localhost:3000/api/auth';
+  private readonly api = 'https://manage-app-5koc.onrender.com/api/auth';
 
   private readonly platformId = inject(PLATFORM_ID);
   private get isBrowser() {

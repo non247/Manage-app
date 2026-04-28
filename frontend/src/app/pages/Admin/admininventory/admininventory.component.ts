@@ -145,14 +145,14 @@ export class AdminInventoryComponent implements OnInit {
     }
 
     if (cleaned.startsWith('/uploads/')) {
-      return `http://localhost:3000${cleaned}`;
+      return `https://manage-app-5koc.onrender.com${cleaned}`;
     }
 
     if (cleaned.startsWith('uploads/')) {
-      return `http://localhost:3000/${cleaned}`;
+      return `https://manage-app-5koc.onrender.com/${cleaned}`;
     }
 
-    return `http://localhost:3000/uploads/${cleaned}`;
+    return `https://manage-app-5koc.onrender.com/uploads/${cleaned}`;
   }
 
   getImageUrlByProductName(name: string): string {

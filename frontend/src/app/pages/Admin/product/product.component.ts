@@ -43,7 +43,7 @@ export class ProductComponent implements OnInit {
   showImagePreview = false;
   fullImageUrl = '';
 
-  apiUrl = 'http://localhost:3000';
+  apiUrl = 'https://manage-app-5koc.onrender.com';
 
   private platformId = inject(PLATFORM_ID);
 

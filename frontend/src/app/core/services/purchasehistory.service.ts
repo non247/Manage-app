@@ -30,8 +30,8 @@ export interface ProductMaster {
   providedIn: 'root',
 })
 export class PurchasehistoryService {
-  private readonly apiUrl = 'http://localhost:3000/api/purchasehistory';
-  private readonly productUrl = 'http://localhost:3000/api/products';
+  private readonly apiUrl = 'https://manage-app-5koc.onrender.com/api/purchasehistory';
+  private readonly productUrl = 'https://manage-app-5koc.onrender.com/api/products';
 
   constructor(private readonly http: HttpClient) {}
 

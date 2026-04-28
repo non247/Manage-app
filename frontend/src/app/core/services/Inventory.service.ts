@@ -23,10 +23,10 @@ export interface ProductMaster {
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
-  private readonly apiUrl = 'http://localhost:3000/api/inventory';
+  private readonly apiUrl = 'https://manage-app-5koc.onrender.com/api/inventory';
 
   // ✅ เพิ่ม: endpoint ของหน้า product
-  private readonly productApiUrl = 'http://localhost:3000/api/products';
+  private readonly productApiUrl = 'https://manage-app-5koc.onrender.com/api/products';
   // ⬆️ ถ้าของคุณเป็น /api/product ให้เปลี่ยนตรงนี้
 
   constructor(private readonly http: HttpClient) {}
