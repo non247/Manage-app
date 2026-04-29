@@ -223,20 +223,25 @@ exports.forgotPassword = async (req, res) => {
 
     console.log('SMTP IPV4 =', smtp.address);
 
-    const transporter = nodemailer.createTransport({
-      host: smtp.address,
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-      tls: {
-        servername: 'smtp.gmail.com',
-      },
-    });
+   const smtp = await dns.promises.lookup('smtp.gmail.com', {
+  family: 4,
+});
 
+console.log('SMTP IPV4 =', smtp.address);
+
+const transporter = nodemailer.createTransport({
+  host: smtp.address, // ✅ ใช้ IP v4 ที่ lookup มา
+  port: 587,
+  secure: false,
+  requireTLS: true,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+  tls: {
+    servername: 'smtp.gmail.com', // ✅ ให้ TLS รู้ว่าเป็น Gmail
+  },
+});
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
     console.log('📩 MAIL_USER:', process.env.MAIL_USER);
     console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
