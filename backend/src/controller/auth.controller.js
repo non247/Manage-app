@@ -27,9 +27,7 @@ const createCode = async (role) => {
     [`${prefix}%`]
   );
 
-  if (lastUser.rowCount === 0) {
-    return `${prefix}0001`;
-  }
+  if (lastUser.rowCount === 0) return `${prefix}0001`;
 
   const lastCode = lastUser.rows[0].Code;
   const lastNumber = parseInt(lastCode.slice(1), 10);
@@ -218,15 +216,24 @@ exports.forgotPassword = async (req, res) => {
       token
     )}`;
 
+    // ✅ บังคับหา IPv4 ก่อน ป้องกัน Render ไปใช้ IPv6 แล้ว ENETUNREACH
+    const smtp = await dns.promises.lookup('smtp.gmail.com', {
+      family: 4,
+    });
+
+    console.log('SMTP IPV4 =', smtp.address);
+
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: smtp.address,
       port: 587,
       secure: false,
       requireTLS: true,
-      family: 4,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
+      },
+      tls: {
+        servername: 'smtp.gmail.com',
       },
     });
 
@@ -252,6 +259,7 @@ exports.forgotPassword = async (req, res) => {
           </p>
           <p>หรือคัดลอกลิงก์นี้:</p>
           <p>${resetLink}</p>
+          <p>ลิงก์นี้หมดอายุภายใน 15 นาที</p>
         </div>
       `,
     });
