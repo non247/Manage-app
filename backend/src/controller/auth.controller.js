@@ -218,12 +218,12 @@ exports.forgotPassword = async (req, res) => {
     )}`;
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS.replace(/\s/g, ''),
-      },
-    });
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
 
     // 🔥 DEBUG LOG
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
