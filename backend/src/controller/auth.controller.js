@@ -1,3 +1,6 @@
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -40,18 +43,23 @@ exports.register = async (req, res) => {
   try {
     const { username, password, email, role = 'user' } = req.body;
 
-    if (!username || !password || !email) {
+    const cleanUsername = username?.trim();
+    const cleanPassword = password?.trim();
+    const cleanEmail = email?.trim().toLowerCase();
+    const cleanRole = role === 'manager' ? 'manager' : 'user';
+
+    if (!cleanUsername || !cleanPassword || !cleanEmail) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
 
     const existsUsername = await pool.query(
       `SELECT 1 FROM "User" WHERE "Username" = $1`,
-      [username]
+      [cleanUsername]
     );
 
     if (existsUsername.rowCount > 0) {
@@ -59,16 +67,16 @@ exports.register = async (req, res) => {
     }
 
     const existsEmail = await pool.query(
-      `SELECT 1 FROM "User" WHERE "Email" = $1`,
-      [email]
+      `SELECT 1 FROM "User" WHERE LOWER("Email") = $1`,
+      [cleanEmail]
     );
 
     if (existsEmail.rowCount > 0) {
       return res.status(409).json({ message: 'Email already used' });
     }
 
-    const hash = await bcrypt.hash(password, 10);
-    const Code = await createCode(role);
+    const hash = await bcrypt.hash(cleanPassword, 10);
+    const Code = await createCode(cleanRole);
 
     const result = await pool.query(
       `
@@ -76,7 +84,7 @@ exports.register = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING "Id", "Code", "Username", "Email", "Role"
       `,
-      [Code, username, hash, email.trim().toLowerCase(), role]
+      [Code, cleanUsername, hash, cleanEmail, cleanRole]
     );
 
     return res.status(201).json({
@@ -85,6 +93,7 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Register API Error:', error);
+
     return res.status(500).json({
       ok: false,
       message: 'Register failed',
@@ -100,7 +109,14 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    if (username === 'admin' && password === '1234') {
+    const loginName = username?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!loginName || !cleanPassword) {
+      return res.status(400).json({ message: 'Username and password required' });
+    }
+
+    if (loginName === 'admin' && cleanPassword === '1234') {
       const token = jwt.sign(
         { sub: 0, username: 'admin', role: 'admin' },
         JWT_SECRET,
@@ -120,7 +136,7 @@ exports.login = async (req, res) => {
       FROM "User"
       WHERE "Username" = $1 OR LOWER("Email") = LOWER($1)
       `,
-      [username]
+      [loginName]
     );
 
     if (result.rowCount === 0) {
@@ -128,7 +144,7 @@ exports.login = async (req, res) => {
     }
 
     const user = result.rows[0];
-    const ok = await bcrypt.compare(password, user.Password);
+    const ok = await bcrypt.compare(cleanPassword, user.Password);
 
     if (!ok) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -156,6 +172,7 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Login API Error:', error);
+
     return res.status(500).json({
       ok: false,
       message: 'Login failed',
@@ -171,7 +188,9 @@ exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    if (!email || !email.trim()) {
+    const cleanEmail = email?.trim().toLowerCase();
+
+    if (!cleanEmail) {
       return res.status(400).json({ message: 'กรุณากรอกอีเมล' });
     }
 
@@ -188,8 +207,6 @@ exports.forgotPassword = async (req, res) => {
         message: 'ยังไม่ได้ตั้งค่า FRONTEND_URL บน server',
       });
     }
-
-    const cleanEmail = email.trim().toLowerCase();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
@@ -222,27 +239,35 @@ exports.forgotPassword = async (req, res) => {
     );
 
     const frontendUrl = process.env.FRONTEND_URL.replace(/\/$/, '');
-
     const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(
       token
     )}`;
 
+    const smtp = await dns.promises.lookup('smtp.gmail.com', {
+      family: 4,
+    });
+
+    console.log('✅ SMTP IPv4 =', smtp.address);
+
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: smtp.address,
       port: 465,
       secure: true,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS.replace(/\s/g, ''),
       },
-      connectionTimeout: 30000,
-      greetingTimeout: 30000,
-      socketTimeout: 30000,
+      tls: {
+        servername: 'smtp.gmail.com',
+      },
+      connectionTimeout: 45000,
+      greetingTimeout: 45000,
+      socketTimeout: 45000,
     });
 
     await transporter.verify();
-    console.log('✅ Gmail SMTP ready');
 
+    console.log('✅ Gmail SMTP ready');
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
     console.log('📩 MAIL_USER:', process.env.MAIL_USER);
     console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
@@ -297,6 +322,7 @@ exports.forgotPassword = async (req, res) => {
     });
   }
 };
+
 /* =========================
    RESET PASSWORD
 ========================= */
@@ -304,15 +330,18 @@ exports.resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
 
-    if (!token || !token.trim()) {
+    const cleanToken = token?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!cleanToken) {
       return res.status(400).json({ message: 'ไม่พบ token' });
     }
 
-    if (!password || !password.trim()) {
+    if (!cleanPassword) {
       return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
     }
 
-    if (password.trim().length < 6) {
+    if (cleanPassword.length < 6) {
       return res.status(400).json({
         message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
       });
@@ -321,7 +350,7 @@ exports.resetPassword = async (req, res) => {
     let payload;
 
     try {
-      payload = jwt.verify(token, JWT_SECRET);
+      payload = jwt.verify(cleanToken, JWT_SECRET);
     } catch (err) {
       return res.status(401).json({
         message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว',
@@ -332,7 +361,7 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
     }
 
-    const hash = await bcrypt.hash(password.trim(), 10);
+    const hash = await bcrypt.hash(cleanPassword, 10);
 
     const result = await pool.query(
       `
