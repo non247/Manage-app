@@ -6,6 +6,36 @@ const pool = require('../config/database');
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 /* =========================
+   CREATE USER CODE
+   user     = E0001
+   manager  = M0001
+========================= */
+const createCode = async (role) => {
+  const prefix = role === 'manager' ? 'M' : 'E';
+
+  const lastUser = await pool.query(
+    `
+    SELECT "Code"
+    FROM "User"
+    WHERE "Code" LIKE $1
+    ORDER BY "Code" DESC
+    LIMIT 1
+    `,
+    [`${prefix}%`]
+  );
+
+  if (lastUser.rowCount === 0) {
+    return `${prefix}0001`;
+  }
+
+  const lastCode = lastUser.rows[0].Code; // E0001 / M0001
+  const lastNumber = parseInt(lastCode.slice(1), 10);
+  const nextNumber = lastNumber + 1;
+
+  return `${prefix}${nextNumber.toString().padStart(4, '0')}`;
+};
+
+/* =========================
    REGISTER
 ========================= */
 exports.register = async (req, res) => {
@@ -41,13 +71,15 @@ exports.register = async (req, res) => {
 
     const hash = await bcrypt.hash(password, 10);
 
+    const Code = await createCode(role);
+
     const result = await pool.query(
       `
-      INSERT INTO "User" ("Username", "Password", "Email", "Role")
-      VALUES ($1, $2, $3, $4)
-      RETURNING "Id", "Username", "Email", "Role"
+      INSERT INTO "User" ("Code", "Username", "Password", "Email", "Role")
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING "Id", "Code", "Username", "Email", "Role"
       `,
-      [username, hash, email, role]
+      [Code, username, hash, email, role]
     );
 
     return res.status(201).json({
@@ -83,7 +115,7 @@ exports.login = async (req, res) => {
 
     const result = await pool.query(
       `
-      SELECT "Id", "Username", "Password", "Role", "Email"
+      SELECT "Id", "Code", "Username", "Password", "Role", "Email"
       FROM "User"
       WHERE "Username" = $1 OR "Email" = $1
       `,
@@ -105,6 +137,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       {
         sub: user.Id,
+        Code: user.Code,
         username: user.Username,
         role: user.Role,
         email: user.Email,
@@ -115,6 +148,8 @@ exports.login = async (req, res) => {
 
     return res.json({
       token,
+      id: user.Id,
+      Code: user.Code,
       role: user.Role,
       username: user.Username,
       email: user.Email,
