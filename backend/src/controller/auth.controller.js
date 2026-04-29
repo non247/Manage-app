@@ -12,18 +12,15 @@ exports.register = async (req, res) => {
   try {
     const { username, password, email, role = 'user' } = req.body;
 
-    // ✅ validate
     if (!username || !password || !email) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // ✅ email format
     const emailRegex = /^[^\s@]+\@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    // 🔍 check username ซ้ำ
     const existsUsername = await pool.query(
       `SELECT 1 FROM "User" WHERE "Username" = $1`,
       [username]
@@ -33,7 +30,6 @@ exports.register = async (req, res) => {
       return res.status(409).json({ message: 'Username exists' });
     }
 
-    // 🔍 check email ซ้ำ
     const existsEmail = await pool.query(
       `SELECT 1 FROM "User" WHERE "Email" = $1`,
       [email]
@@ -43,10 +39,8 @@ exports.register = async (req, res) => {
       return res.status(409).json({ message: 'Email already used' });
     }
 
-    // 🔐 hash password
     const hash = await bcrypt.hash(password, 10);
 
-    // 💾 insert
     const result = await pool.query(
       `
       INSERT INTO "User" ("Username", "Password", "Email", "Role")
@@ -56,13 +50,13 @@ exports.register = async (req, res) => {
       [username, hash, email, role]
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       ok: true,
       user: result.rows[0],
     });
   } catch (error) {
     console.error('❌ Register API Error:', error.message);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -73,7 +67,6 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // 🔥 MOCK ADMIN
     if (username === 'admin' && password === '1234') {
       const token = jwt.sign(
         { sub: 0, username: 'admin', role: 'admin' },
@@ -88,7 +81,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 🔍 หา user (login ด้วย username หรือ email)
     const result = await pool.query(
       `
       SELECT "Id", "Username", "Password", "Role", "Email"
@@ -104,14 +96,12 @@ exports.login = async (req, res) => {
 
     const user = result.rows[0];
 
-    // 🔐 check password
     const ok = await bcrypt.compare(password, user.Password);
 
     if (!ok) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // 🎟 token
     const token = jwt.sign(
       {
         sub: user.Id,
@@ -123,7 +113,7 @@ exports.login = async (req, res) => {
       { expiresIn: '2h' }
     );
 
-    res.json({
+    return res.json({
       token,
       role: user.Role,
       username: user.Username,
@@ -131,7 +121,7 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Login API Error:', error.message);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -227,6 +217,71 @@ exports.forgotPassword = async (req, res) => {
     return res.status(500).json({
       ok: false,
       message: 'ส่งอีเมลไม่สำเร็จ',
+      error: error.message,
+    });
+  }
+};
+
+/* =========================
+   RESET PASSWORD
+========================= */
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !token.trim()) {
+      return res.status(400).json({ message: 'ไม่พบ token' });
+    }
+
+    if (!password || !password.trim()) {
+      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
+    }
+
+    if (password.trim().length < 6) {
+      return res.status(400).json({
+        message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
+      });
+    }
+
+    let payload;
+
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว',
+      });
+    }
+
+    if (payload.type !== 'reset-password') {
+      return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
+    }
+
+    const hash = await bcrypt.hash(password.trim(), 10);
+
+    const result = await pool.query(
+      `
+      UPDATE "User"
+      SET "Password" = $1
+      WHERE "Id" = $2 AND "Email" = $3
+      RETURNING "Id", "Username", "Email"
+      `,
+      [hash, payload.sub, payload.email]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
+    }
+
+    return res.json({
+      ok: true,
+      message: 'รีเซ็ตรหัสผ่านสำเร็จ',
+    });
+  } catch (error) {
+    console.error('❌ Reset Password API Error:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน',
       error: error.message,
     });
   }
