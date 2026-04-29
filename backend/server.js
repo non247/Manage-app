@@ -1,9 +1,10 @@
 require('dotenv').config();
 
-console.log('MAIL_USER =', process.env.MAIL_USER);
-console.log('has MAIL_PASS =', !!process.env.MAIL_PASS);
+console.log('MAIL_USER =', process.env.MAIL_USER ? 'loaded' : 'missing');
+console.log('MAIL_PASS =', process.env.MAIL_PASS ? 'loaded' : 'missing');
 console.log('JWT_SECRET =', process.env.JWT_SECRET ? 'loaded' : 'missing');
 console.log('DATABASE_URL =', process.env.DATABASE_URL ? 'loaded' : 'missing');
+console.log('FRONTEND_URL =', process.env.FRONTEND_URL ? 'loaded' : 'missing');
 
 const express = require('express');
 const cors = require('cors');
@@ -20,13 +21,15 @@ const purchasehistory = require('./src/route/purchasehistory.route');
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://manage-app-glcg.onrender.com',
+  'http://localhost:4200',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [
-      'https://manage-app-glcg.onrender.com',
-      'https://manage-app-5koc.onrender.com',
-      'http://localhost:4200',
-    ],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
   })
@@ -59,25 +62,12 @@ app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'));
 
 app.use('/api/auth', authRoutes);
-console.log('✅ auth mounted');
-
 app.use('/api/dashboard', Dashboard);
-console.log('✅ dashboard mounted');
-
 app.use('/api/history', history);
-console.log('✅ history mounted');
-
 app.use('/api/inventory', inventory);
-console.log('✅ inventory mounted');
-
 app.use('/api/products', product);
-console.log('✅ products mounted');
-
 app.use('/api/purchase', purchase);
-console.log('✅ purchase mounted');
-
 app.use('/api/purchasehistory', purchasehistory);
-console.log('✅ purchasehistory mounted');
 
 const PORT = process.env.PORT || 3000;
 
