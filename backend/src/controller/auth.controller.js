@@ -1,3 +1,6 @@
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -28,7 +31,7 @@ const createCode = async (role) => {
     return `${prefix}0001`;
   }
 
-  const lastCode = lastUser.rows[0].Code; // E0001 / M0001
+  const lastCode = lastUser.rows[0].Code;
   const lastNumber = parseInt(lastCode.slice(1), 10);
   const nextNumber = lastNumber + 1;
 
@@ -70,7 +73,6 @@ exports.register = async (req, res) => {
     }
 
     const hash = await bcrypt.hash(password, 10);
-
     const Code = await createCode(role);
 
     const result = await pool.query(
@@ -127,7 +129,6 @@ exports.login = async (req, res) => {
     }
 
     const user = result.rows[0];
-
     const ok = await bcrypt.compare(password, user.Password);
 
     if (!ok) {
@@ -161,7 +162,7 @@ exports.login = async (req, res) => {
 };
 
 /* =========================
-   FORGOT PASSWORD (UPDATED)
+   FORGOT PASSWORD
 ========================= */
 exports.forgotPassword = async (req, res) => {
   try {
@@ -218,14 +219,17 @@ exports.forgotPassword = async (req, res) => {
     )}`;
 
     const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      family: 4,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
 
-    // 🔥 DEBUG LOG
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
     console.log('📩 MAIL_USER:', process.env.MAIL_USER);
     console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
@@ -248,7 +252,6 @@ exports.forgotPassword = async (req, res) => {
           </p>
           <p>หรือคัดลอกลิงก์นี้:</p>
           <p>${resetLink}</p>
-          <p>ลิงก์นี้หมดอายุภายใน 15 นาที</p>
         </div>
       `,
     });
