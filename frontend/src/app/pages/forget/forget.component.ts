@@ -67,14 +67,27 @@ export class ForgetComponent {
             icon: 'success',
             title: 'สำเร็จ',
             text: 'กรุณาตรวจสอบอีเมลของคุณ',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#d81b60',
             confirmButtonText: 'ตกลง',
           });
         },
-        error: (err) => {
+        error: (err: any) => {
+          console.log('FORGOT ERROR =', err);
+
           this.successMessage = '';
           this.errorMessage =
-            err?.error?.message || 'ส่งอีเมลไม่สำเร็จ กรุณาลองใหม่';
+            err?.error?.response ||
+            err?.error?.error ||
+            err?.error?.message ||
+            'ส่งอีเมลไม่สำเร็จ กรุณาลองใหม่';
+
+          Swal.fire({
+            icon: 'error',
+            title: 'ส่งอีเมลไม่สำเร็จ',
+            text: this.errorMessage,
+            confirmButtonColor: '#d81b60',
+            confirmButtonText: 'ตกลง',
+          });
         },
       });
   }
