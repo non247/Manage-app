@@ -1,6 +1,3 @@
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -47,7 +44,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const emailRegex = /^[^\s@]+\@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
@@ -79,7 +76,7 @@ exports.register = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING "Id", "Code", "Username", "Email", "Role"
       `,
-      [Code, username, hash, email, role]
+      [Code, username, hash, email.trim().toLowerCase(), role]
     );
 
     return res.status(201).json({
@@ -87,8 +84,12 @@ exports.register = async (req, res) => {
       user: result.rows[0],
     });
   } catch (error) {
-    console.error('❌ Register API Error:', error.message);
-    return res.status(500).json({ error: error.message });
+    console.error('❌ Register API Error:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Register failed',
+      error: error.message,
+    });
   }
 };
 
@@ -117,7 +118,7 @@ exports.login = async (req, res) => {
       `
       SELECT "Id", "Code", "Username", "Password", "Role", "Email"
       FROM "User"
-      WHERE "Username" = $1 OR "Email" = $1
+      WHERE "Username" = $1 OR LOWER("Email") = LOWER($1)
       `,
       [username]
     );
@@ -154,8 +155,12 @@ exports.login = async (req, res) => {
       email: user.Email,
     });
   } catch (error) {
-    console.error('❌ Login API Error:', error.message);
-    return res.status(500).json({ error: error.message });
+    console.error('❌ Login API Error:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Login failed',
+      error: error.message,
+    });
   }
 };
 
@@ -174,6 +179,13 @@ exports.forgotPassword = async (req, res) => {
       return res.status(500).json({
         ok: false,
         message: 'ยังไม่ได้ตั้งค่า MAIL_USER หรือ MAIL_PASS บน server',
+      });
+    }
+
+    if (!process.env.FRONTEND_URL) {
+      return res.status(500).json({
+        ok: false,
+        message: 'ยังไม่ได้ตั้งค่า FRONTEND_URL บน server',
       });
     }
 
@@ -209,30 +221,17 @@ exports.forgotPassword = async (req, res) => {
       { expiresIn: '15m' }
     );
 
-    const frontendUrl =
-      process.env.FRONTEND_URL || 'https://manage-app-glcg.onrender.com';
+    const frontendUrl = process.env.FRONTEND_URL.replace(/\/$/, '');
 
     const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(
       token
     )}`;
 
-    const smtp = await dns.promises.lookup('smtp.gmail.com', {
-      family: 4,
-    });
-
-    console.log('SMTP IPV4 =', smtp.address);
-
     const transporter = nodemailer.createTransport({
-      host: smtp.address,
-      port: 587,
-      secure: false,
-      requireTLS: true,
+      service: 'gmail',
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
-      },
-      tls: {
-        servername: 'smtp.gmail.com',
       },
     });
 
@@ -275,6 +274,7 @@ exports.forgotPassword = async (req, res) => {
       code: error.code,
       command: error.command,
       response: error.response,
+      stack: error.stack,
     });
 
     return res.status(500).json({
