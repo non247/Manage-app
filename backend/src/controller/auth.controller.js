@@ -161,7 +161,7 @@ exports.login = async (req, res) => {
 };
 
 /* =========================
-   FORGOT PASSWORD
+   FORGOT PASSWORD (UPDATED)
 ========================= */
 exports.forgotPassword = async (req, res) => {
   try {
@@ -218,16 +218,18 @@ exports.forgotPassword = async (req, res) => {
     )}`;
 
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
+      service: 'gmail',
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS.replace(/\s/g, ''),
       },
     });
 
-    await transporter.verify();
+    // 🔥 DEBUG LOG
+    console.log('📩 TRY SEND EMAIL TO:', user.Email);
+    console.log('📩 MAIL_USER:', process.env.MAIL_USER);
+    console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
+    console.log('📩 RESET LINK:', resetLink);
 
     const info = await transporter.sendMail({
       from: `"Manage App" <${process.env.MAIL_USER}>`,
@@ -237,7 +239,6 @@ exports.forgotPassword = async (req, res) => {
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2>รีเซ็ตรหัสผ่าน</h2>
           <p>สวัสดี ${user.Username}</p>
-          <p>คุณได้ส่งคำขอรีเซ็ตรหัสผ่านสำหรับบัญชีนี้</p>
           <p>กรุณากดลิงก์ด้านล่างเพื่อรีเซ็ตรหัสผ่าน:</p>
           <p>
             <a href="${resetLink}" target="_blank"
@@ -245,7 +246,7 @@ exports.forgotPassword = async (req, res) => {
               รีเซ็ตรหัสผ่าน
             </a>
           </p>
-          <p>หรือคัดลอกลิงก์นี้ไปเปิด:</p>
+          <p>หรือคัดลอกลิงก์นี้:</p>
           <p>${resetLink}</p>
           <p>ลิงก์นี้หมดอายุภายใน 15 นาที</p>
         </div>
@@ -259,80 +260,16 @@ exports.forgotPassword = async (req, res) => {
       message: 'ส่งลิงก์รีเซ็ตรหัสผ่านเรียบร้อยแล้ว',
     });
   } catch (error) {
-    console.error('❌ Forgot Password API Error:', error);
-
-    return res.status(500).json({
-      ok: false,
-      message: 'ส่งอีเมลไม่สำเร็จ',
-      error: error.message,
+    console.error('❌ Forgot Password API Error:', {
+      message: error.message,
       code: error.code,
       command: error.command,
       response: error.response,
     });
-  }
-};
-
-/* =========================
-   RESET PASSWORD
-========================= */
-exports.resetPassword = async (req, res) => {
-  try {
-    const { token, password } = req.body;
-
-    if (!token || !token.trim()) {
-      return res.status(400).json({ message: 'ไม่พบ token' });
-    }
-
-    if (!password || !password.trim()) {
-      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
-    }
-
-    if (password.trim().length < 6) {
-      return res.status(400).json({
-        message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
-      });
-    }
-
-    let payload;
-
-    try {
-      payload = jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-      return res.status(401).json({
-        message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว',
-      });
-    }
-
-    if (payload.type !== 'reset-password') {
-      return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
-    }
-
-    const hash = await bcrypt.hash(password.trim(), 10);
-
-    const result = await pool.query(
-      `
-      UPDATE "User"
-      SET "Password" = $1
-      WHERE "Id" = $2 AND "Email" = $3
-      RETURNING "Id", "Username", "Email"
-      `,
-      [hash, payload.sub, payload.email]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
-    }
-
-    return res.json({
-      ok: true,
-      message: 'รีเซ็ตรหัสผ่านสำเร็จ',
-    });
-  } catch (error) {
-    console.error('❌ Reset Password API Error:', error);
 
     return res.status(500).json({
       ok: false,
-      message: 'เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน',
+      message: 'ส่งอีเมลไม่สำเร็จ',
       error: error.message,
     });
   }
