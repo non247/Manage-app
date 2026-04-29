@@ -26,7 +26,7 @@ print("Model and scalers loaded successfully.")
 # This is crucial for calculating accurate SoldPerDay, lags, and rolling means.
 # Create a copy to avoid modifying the original df unnecessarily
 df = pd.read_excel("icecream_sales_data.xlsx")
-X_train_time = pd.read_excel("X_train_time.xlsx")
+X_train_time = pd.read_excel("x_train_time.xlsx")
 
 
 # --- Define global lists for feature consistency ---
