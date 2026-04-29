@@ -274,3 +274,69 @@ exports.forgotPassword = async (req, res) => {
     });
   }
 };
+
+/* =========================
+   RESET PASSWORD
+========================= */
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !token.trim()) {
+      return res.status(400).json({ message: 'ไม่พบ token' });
+    }
+
+    if (!password || !password.trim()) {
+      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
+    }
+
+    if (password.trim().length < 6) {
+      return res.status(400).json({
+        message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
+      });
+    }
+
+    let payload;
+
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว',
+      });
+    }
+
+    if (payload.type !== 'reset-password') {
+      return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
+    }
+
+    const hash = await bcrypt.hash(password.trim(), 10);
+
+    const result = await pool.query(
+      `
+      UPDATE "User"
+      SET "Password" = $1
+      WHERE "Id" = $2 AND "Email" = $3
+      RETURNING "Id", "Username", "Email"
+      `,
+      [hash, payload.sub, payload.email]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
+    }
+
+    return res.json({
+      ok: true,
+      message: 'รีเซ็ตรหัสผ่านสำเร็จ',
+    });
+  } catch (error) {
+    console.error('❌ Reset Password API Error:', error);
+
+    return res.status(500).json({
+      ok: false,
+      message: 'เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน',
+      error: error.message,
+    });
+  }
+};
