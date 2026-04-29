@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-forget',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './forget.component.html',
   styleUrl: './forget.component.scss',
   animations: [
@@ -35,10 +35,12 @@ export class ForgetComponent {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private authService: AuthService) {}
 
   sendReset() {
-    if (!this.email || !this.email.trim()) {
+    const cleanEmail = this.email.trim();
+
+    if (!cleanEmail) {
       this.errorMessage = 'กรุณากรอกอีเมล';
       this.successMessage = '';
       return;
@@ -46,7 +48,7 @@ export class ForgetComponent {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(this.email.trim())) {
+    if (!emailRegex.test(cleanEmail)) {
       this.errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
       this.successMessage = '';
       return;
@@ -55,40 +57,34 @@ export class ForgetComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http
-      .post('https://manage-app-5koc.onrender.com/api/auth/forgot-password', {
-        email: this.email.trim(),
-      })
-      .subscribe({
-        next: () => {
-          this.successMessage = 'ส่งลิงก์รีเซ็ตรหัสผ่านเรียบร้อยแล้ว';
+    this.authService.forgotPassword(cleanEmail).subscribe({
+      next: (res) => {
+        this.successMessage =
+          res?.message || 'ส่งลิงก์รีเซ็ตรหัสผ่านเรียบร้อยแล้ว';
 
-          Swal.fire({
-            icon: 'success',
-            title: 'สำเร็จ',
-            text: 'กรุณาตรวจสอบอีเมลของคุณ',
-            confirmButtonColor: '#d81b60',
-            confirmButtonText: 'ตกลง',
-          });
-        },
-        error: (err: any) => {
-          console.log('FORGOT ERROR =', err);
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: 'กรุณาตรวจสอบอีเมลของคุณ',
+          confirmButtonColor: '#d81b60',
+          confirmButtonText: 'ตกลง',
+        });
+      },
+      error: (err) => {
+        console.log('FORGOT ERROR =', err);
 
-          this.successMessage = '';
-          this.errorMessage =
-            err?.error?.response ||
-            err?.error?.error ||
-            err?.error?.message ||
-            'ส่งอีเมลไม่สำเร็จ กรุณาลองใหม่';
+        this.successMessage = '';
+        this.errorMessage =
+          err?.error?.message || 'ส่งอีเมลไม่สำเร็จ กรุณาลองใหม่';
 
-          Swal.fire({
-            icon: 'error',
-            title: 'ส่งอีเมลไม่สำเร็จ',
-            text: this.errorMessage,
-            confirmButtonColor: '#d81b60',
-            confirmButtonText: 'ตกลง',
-          });
-        },
-      });
+        Swal.fire({
+          icon: 'error',
+          title: 'ส่งอีเมลไม่สำเร็จ',
+          text: this.errorMessage,
+          confirmButtonColor: '#d81b60',
+          confirmButtonText: 'ตกลง',
+        });
+      },
+    });
   }
 }

@@ -7,7 +7,9 @@ const pool = new Pool(
   isProduction
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: false,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }
     : {
         host: 'localhost',
