@@ -1,6 +1,3 @@
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -243,31 +240,19 @@ exports.forgotPassword = async (req, res) => {
       token
     )}`;
 
-    const smtp = await dns.promises.lookup('smtp.gmail.com', {
-      family: 4,
-    });
-
-    console.log('✅ SMTP IPv4 =', smtp.address);
-
     const transporter = nodemailer.createTransport({
-      host: smtp.address,
-      port: 465,
-      secure: true,
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS.replace(/\s/g, ''),
+        pass: process.env.MAIL_PASS,
       },
-      tls: {
-        servername: 'smtp.gmail.com',
-      },
-      connectionTimeout: 45000,
-      greetingTimeout: 45000,
-      socketTimeout: 45000,
     });
 
     await transporter.verify();
 
-    console.log('✅ Gmail SMTP ready');
+    console.log('✅ Brevo SMTP ready');
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
     console.log('📩 MAIL_USER:', process.env.MAIL_USER);
     console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
