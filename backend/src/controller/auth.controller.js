@@ -178,9 +178,9 @@ exports.forgotPassword = async (req, res) => {
       });
     }
 
-    const cleanEmail = email.trim();
+    const cleanEmail = email.trim().toLowerCase();
 
-    const emailRegex = /^[^\s@]+\@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({ message: 'รูปแบบอีเมลไม่ถูกต้อง' });
     }
@@ -189,7 +189,7 @@ exports.forgotPassword = async (req, res) => {
       `
       SELECT "Id", "Username", "Email"
       FROM "User"
-      WHERE "Email" = $1
+      WHERE LOWER("Email") = $1
       `,
       [cleanEmail]
     );
@@ -210,16 +210,24 @@ exports.forgotPassword = async (req, res) => {
       { expiresIn: '15m' }
     );
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
-    const resetLink = `${frontendUrl}/reset-password?token=${token}`;
+    const frontendUrl =
+      process.env.FRONTEND_URL || 'https://manage-app-glcg.onrender.com';
+
+    const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(
+      token
+    )}`;
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS.replace(/\s/g, ''),
       },
     });
+
+    await transporter.verify();
 
     const info = await transporter.sendMail({
       from: `"Manage App" <${process.env.MAIL_USER}>`,
@@ -232,16 +240,19 @@ exports.forgotPassword = async (req, res) => {
           <p>คุณได้ส่งคำขอรีเซ็ตรหัสผ่านสำหรับบัญชีนี้</p>
           <p>กรุณากดลิงก์ด้านล่างเพื่อรีเซ็ตรหัสผ่าน:</p>
           <p>
-            <a href="${resetLink}" target="_blank">
+            <a href="${resetLink}" target="_blank"
+               style="background:#d81b60;color:white;padding:10px 16px;border-radius:8px;text-decoration:none;">
               รีเซ็ตรหัสผ่าน
             </a>
           </p>
+          <p>หรือคัดลอกลิงก์นี้ไปเปิด:</p>
+          <p>${resetLink}</p>
           <p>ลิงก์นี้หมดอายุภายใน 15 นาที</p>
         </div>
       `,
     });
 
-    console.log('✅ Email sent:', info.response);
+    console.log('✅ Email sent:', info.messageId);
 
     return res.json({
       ok: true,
@@ -249,75 +260,14 @@ exports.forgotPassword = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Forgot Password API Error:', error);
+
     return res.status(500).json({
       ok: false,
       message: 'ส่งอีเมลไม่สำเร็จ',
       error: error.message,
-    });
-  }
-};
-
-/* =========================
-   RESET PASSWORD
-========================= */
-exports.resetPassword = async (req, res) => {
-  try {
-    const { token, password } = req.body;
-
-    if (!token || !token.trim()) {
-      return res.status(400).json({ message: 'ไม่พบ token' });
-    }
-
-    if (!password || !password.trim()) {
-      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
-    }
-
-    if (password.trim().length < 6) {
-      return res.status(400).json({
-        message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
-      });
-    }
-
-    let payload;
-
-    try {
-      payload = jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-      return res.status(401).json({
-        message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว',
-      });
-    }
-
-    if (payload.type !== 'reset-password') {
-      return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
-    }
-
-    const hash = await bcrypt.hash(password.trim(), 10);
-
-    const result = await pool.query(
-      `
-      UPDATE "User"
-      SET "Password" = $1
-      WHERE "Id" = $2 AND "Email" = $3
-      RETURNING "Id", "Username", "Email"
-      `,
-      [hash, payload.sub, payload.email]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
-    }
-
-    return res.json({
-      ok: true,
-      message: 'รีเซ็ตรหัสผ่านสำเร็จ',
-    });
-  } catch (error) {
-    console.error('❌ Reset Password API Error:', error);
-    return res.status(500).json({
-      ok: false,
-      message: 'เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน',
-      error: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
     });
   }
 };
