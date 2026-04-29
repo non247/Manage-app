@@ -228,12 +228,20 @@ exports.forgotPassword = async (req, res) => {
     )}`;
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        pass: process.env.MAIL_PASS.replace(/\s/g, ''),
       },
+      connectionTimeout: 30000,
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
     });
+
+    await transporter.verify();
+    console.log('✅ Gmail SMTP ready');
 
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
     console.log('📩 MAIL_USER:', process.env.MAIL_USER);
@@ -247,16 +255,21 @@ exports.forgotPassword = async (req, res) => {
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2>รีเซ็ตรหัสผ่าน</h2>
+
           <p>สวัสดี ${user.Username}</p>
+
           <p>กรุณากดลิงก์ด้านล่างเพื่อรีเซ็ตรหัสผ่าน:</p>
+
           <p>
             <a href="${resetLink}" target="_blank"
                style="background:#d81b60;color:white;padding:10px 16px;border-radius:8px;text-decoration:none;">
               รีเซ็ตรหัสผ่าน
             </a>
           </p>
+
           <p>หรือคัดลอกลิงก์นี้:</p>
           <p>${resetLink}</p>
+
           <p>ลิงก์นี้หมดอายุภายใน 15 นาที</p>
         </div>
       `,
@@ -284,7 +297,6 @@ exports.forgotPassword = async (req, res) => {
     });
   }
 };
-
 /* =========================
    RESET PASSWORD
 ========================= */
