@@ -1,11 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environments';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ModelService {
-  private readonly apiUrl = 'http://localhost:5000/api/getSaleForecastData';
+  private readonly apiUrl =
+    `${environment.modelApiUrl}/getSaleForecastData`;
 
   constructor(private readonly http: HttpClient) {}
 
