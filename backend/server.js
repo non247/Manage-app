@@ -75,7 +75,10 @@ app.get('/api/test-db', async (req, res) => {
 app.get('/api/test-mail', async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      family: 4, // ✅ บังคับใช้ IPv4
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,

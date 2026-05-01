@@ -225,12 +225,15 @@ exports.forgotPassword = async (req, res) => {
     const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  family: 4, // ✅ บังคับ IPv4
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
 
     await transporter.verify();
 
