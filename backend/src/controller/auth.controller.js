@@ -240,10 +240,9 @@ exports.forgotPassword = async (req, res) => {
       token
     )}`;
 
+    // ✅ เปลี่ยนจาก Brevo เป็น Gmail SMTP
     const transporter = nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com',
-      port: 587,
-      secure: false,
+      service: 'gmail',
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
@@ -252,7 +251,7 @@ exports.forgotPassword = async (req, res) => {
 
     await transporter.verify();
 
-    console.log('✅ Brevo SMTP ready');
+    console.log('✅ Gmail SMTP ready');
     console.log('📩 TRY SEND EMAIL TO:', user.Email);
     console.log('📩 MAIL_USER:', process.env.MAIL_USER);
     console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
