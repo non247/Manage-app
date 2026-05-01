@@ -1,3 +1,7 @@
+// ✅ FIX IPv6 → บังคับใช้ IPv4
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
@@ -7,8 +11,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 /* =========================
    CREATE USER CODE
-   user     = E0001
-   manager  = M0001
 ========================= */
 const createCode = async (role) => {
   const prefix = role === 'manager' ? 'M' : 'E';
@@ -34,157 +36,11 @@ const createCode = async (role) => {
 };
 
 /* =========================
-   REGISTER
-========================= */
-exports.register = async (req, res) => {
-  try {
-    const { username, password, email, role = 'user' } = req.body;
-
-    const cleanUsername = username?.trim();
-    const cleanPassword = password?.trim();
-    const cleanEmail = email?.trim().toLowerCase();
-    const cleanRole = role === 'manager' ? 'manager' : 'user';
-
-    if (!cleanUsername || !cleanPassword || !cleanEmail) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      return res.status(400).json({ message: 'Invalid email format' });
-    }
-
-    const existsUsername = await pool.query(
-      `SELECT 1 FROM "User" WHERE "Username" = $1`,
-      [cleanUsername]
-    );
-
-    if (existsUsername.rowCount > 0) {
-      return res.status(409).json({ message: 'Username exists' });
-    }
-
-    const existsEmail = await pool.query(
-      `SELECT 1 FROM "User" WHERE LOWER("Email") = $1`,
-      [cleanEmail]
-    );
-
-    if (existsEmail.rowCount > 0) {
-      return res.status(409).json({ message: 'Email already used' });
-    }
-
-    const hash = await bcrypt.hash(cleanPassword, 10);
-    const Code = await createCode(cleanRole);
-
-    const result = await pool.query(
-      `
-      INSERT INTO "User" ("Code", "Username", "Password", "Email", "Role")
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING "Id", "Code", "Username", "Email", "Role"
-      `,
-      [Code, cleanUsername, hash, cleanEmail, cleanRole]
-    );
-
-    return res.status(201).json({
-      ok: true,
-      user: result.rows[0],
-    });
-  } catch (error) {
-    console.error('❌ Register API Error:', error);
-
-    return res.status(500).json({
-      ok: false,
-      message: 'Register failed',
-      error: error.message,
-    });
-  }
-};
-
-/* =========================
-   LOGIN
-========================= */
-exports.login = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    const loginName = username?.trim();
-    const cleanPassword = password?.trim();
-
-    if (!loginName || !cleanPassword) {
-      return res.status(400).json({ message: 'Username and password required' });
-    }
-
-    if (loginName === 'admin' && cleanPassword === '1234') {
-      const token = jwt.sign(
-        { sub: 0, username: 'admin', role: 'admin' },
-        JWT_SECRET,
-        { expiresIn: '2h' }
-      );
-
-      return res.json({
-        token,
-        role: 'admin',
-        username: 'admin',
-      });
-    }
-
-    const result = await pool.query(
-      `
-      SELECT "Id", "Code", "Username", "Password", "Role", "Email"
-      FROM "User"
-      WHERE "Username" = $1 OR LOWER("Email") = LOWER($1)
-      `,
-      [loginName]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const user = result.rows[0];
-    const ok = await bcrypt.compare(cleanPassword, user.Password);
-
-    if (!ok) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign(
-      {
-        sub: user.Id,
-        Code: user.Code,
-        username: user.Username,
-        role: user.Role,
-        email: user.Email,
-      },
-      JWT_SECRET,
-      { expiresIn: '2h' }
-    );
-
-    return res.json({
-      token,
-      id: user.Id,
-      Code: user.Code,
-      role: user.Role,
-      username: user.Username,
-      email: user.Email,
-    });
-  } catch (error) {
-    console.error('❌ Login API Error:', error);
-
-    return res.status(500).json({
-      ok: false,
-      message: 'Login failed',
-      error: error.message,
-    });
-  }
-};
-
-/* =========================
-   FORGOT PASSWORD
+   FORGOT PASSWORD (สำคัญ)
 ========================= */
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-
     const cleanEmail = email?.trim().toLowerCase();
 
     if (!cleanEmail) {
@@ -194,28 +50,12 @@ exports.forgotPassword = async (req, res) => {
     if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
       return res.status(500).json({
         ok: false,
-        message: 'ยังไม่ได้ตั้งค่า MAIL_USER หรือ MAIL_PASS บน server',
+        message: 'ยังไม่ได้ตั้งค่า MAIL_USER หรือ MAIL_PASS',
       });
-    }
-
-    if (!process.env.FRONTEND_URL) {
-      return res.status(500).json({
-        ok: false,
-        message: 'ยังไม่ได้ตั้งค่า FRONTEND_URL บน server',
-      });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      return res.status(400).json({ message: 'รูปแบบอีเมลไม่ถูกต้อง' });
     }
 
     const result = await pool.query(
-      `
-      SELECT "Id", "Username", "Email"
-      FROM "User"
-      WHERE LOWER("Email") = $1
-      `,
+      `SELECT "Id","Username","Email" FROM "User" WHERE LOWER("Email")=$1`,
       [cleanEmail]
     );
 
@@ -236,11 +76,9 @@ exports.forgotPassword = async (req, res) => {
     );
 
     const frontendUrl = process.env.FRONTEND_URL.replace(/\/$/, '');
-    const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(
-      token
-    )}`;
+    const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
-    // ✅ เปลี่ยนจาก Brevo เป็น Gmail SMTP
+    // ✅ ใช้ Gmail
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -252,126 +90,28 @@ exports.forgotPassword = async (req, res) => {
     await transporter.verify();
 
     console.log('✅ Gmail SMTP ready');
-    console.log('📩 TRY SEND EMAIL TO:', user.Email);
-    console.log('📩 MAIL_USER:', process.env.MAIL_USER);
-    console.log('📩 MAIL_PASS EXISTS:', !!process.env.MAIL_PASS);
-    console.log('📩 RESET LINK:', resetLink);
 
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Manage App" <${process.env.MAIL_USER}>`,
       to: user.Email,
       subject: 'รีเซ็ตรหัสผ่าน',
       html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2>รีเซ็ตรหัสผ่าน</h2>
-
-          <p>สวัสดี ${user.Username}</p>
-
-          <p>กรุณากดลิงก์ด้านล่างเพื่อรีเซ็ตรหัสผ่าน:</p>
-
-          <p>
-            <a href="${resetLink}" target="_blank"
-               style="background:#d81b60;color:white;padding:10px 16px;border-radius:8px;text-decoration:none;">
-              รีเซ็ตรหัสผ่าน
-            </a>
-          </p>
-
-          <p>หรือคัดลอกลิงก์นี้:</p>
-          <p>${resetLink}</p>
-
-          <p>ลิงก์นี้หมดอายุภายใน 15 นาที</p>
-        </div>
+        <h2>รีเซ็ตรหัสผ่าน</h2>
+        <p>สวัสดี ${user.Username}</p>
+        <a href="${resetLink}">กดเพื่อรีเซ็ต</a>
       `,
     });
 
-    console.log('✅ Email sent:', info.messageId);
-
     return res.json({
       ok: true,
-      message: 'ส่งลิงก์รีเซ็ตรหัสผ่านเรียบร้อยแล้ว',
+      message: 'ส่งลิงก์เรียบร้อยแล้ว',
     });
   } catch (error) {
-    console.error('❌ Forgot Password API Error:', {
+    console.error('❌ Forgot Error:', error);
+
+    return res.status(500).json({
+      ok: false,
       message: error.message,
-      code: error.code,
-      command: error.command,
-      response: error.response,
-      stack: error.stack,
-    });
-
-    return res.status(500).json({
-      ok: false,
-      message: 'ส่งอีเมลไม่สำเร็จ',
-      error: error.message,
-    });
-  }
-};
-
-/* =========================
-   RESET PASSWORD
-========================= */
-exports.resetPassword = async (req, res) => {
-  try {
-    const { token, password } = req.body;
-
-    const cleanToken = token?.trim();
-    const cleanPassword = password?.trim();
-
-    if (!cleanToken) {
-      return res.status(400).json({ message: 'ไม่พบ token' });
-    }
-
-    if (!cleanPassword) {
-      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านใหม่' });
-    }
-
-    if (cleanPassword.length < 6) {
-      return res.status(400).json({
-        message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
-      });
-    }
-
-    let payload;
-
-    try {
-      payload = jwt.verify(cleanToken, JWT_SECRET);
-    } catch (err) {
-      return res.status(401).json({
-        message: 'Token ไม่ถูกต้องหรือหมดอายุแล้ว',
-      });
-    }
-
-    if (payload.type !== 'reset-password') {
-      return res.status(400).json({ message: 'Token ไม่ถูกต้อง' });
-    }
-
-    const hash = await bcrypt.hash(cleanPassword, 10);
-
-    const result = await pool.query(
-      `
-      UPDATE "User"
-      SET "Password" = $1
-      WHERE "Id" = $2 AND "Email" = $3
-      RETURNING "Id", "Username", "Email"
-      `,
-      [hash, payload.sub, payload.email]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
-    }
-
-    return res.json({
-      ok: true,
-      message: 'รีเซ็ตรหัสผ่านสำเร็จ',
-    });
-  } catch (error) {
-    console.error('❌ Reset Password API Error:', error);
-
-    return res.status(500).json({
-      ok: false,
-      message: 'เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน',
-      error: error.message,
     });
   }
 };

@@ -1,5 +1,8 @@
 require('dotenv').config();
 
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 console.log('MAIL_USER =', process.env.MAIL_USER ? 'loaded' : 'missing');
 console.log('MAIL_PASS =', process.env.MAIL_PASS ? 'loaded' : 'missing');
 console.log('JWT_SECRET =', process.env.JWT_SECRET ? 'loaded' : 'missing');
@@ -8,7 +11,7 @@ console.log('FRONTEND_URL =', process.env.FRONTEND_URL ? 'loaded' : 'missing');
 
 const express = require('express');
 const cors = require('cors');
-const nodemailer = require('nodemailer'); // ✅ เพิ่ม
+const nodemailer = require('nodemailer');
 const pool = require('./src/config/database');
 
 const userRoutes = require('./src/route/usermanagement.route');
@@ -42,7 +45,6 @@ app.use(express.json());
    TEST ROUTES
 ========================= */
 
-// ✅ เช็ค env
 app.get('/api/test-env', (req, res) => {
   res.json({
     MAIL_USER: process.env.MAIL_USER ? 'loaded' : 'missing',
@@ -53,7 +55,6 @@ app.get('/api/test-env', (req, res) => {
   });
 });
 
-// ✅ เช็ค DB
 app.get('/api/test-db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -71,7 +72,6 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-// ✅ เช็ค Gmail SMTP
 app.get('/api/test-mail', async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -100,7 +100,6 @@ app.get('/api/test-mail', async (req, res) => {
   }
 });
 
-// 🔍 probe
 app.get('/api/probe', (req, res) => {
   res.json({ probe: true, message: 'Backend is working' });
 });
