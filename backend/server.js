@@ -8,6 +8,7 @@ console.log('FRONTEND_URL =', process.env.FRONTEND_URL ? 'loaded' : 'missing');
 
 const express = require('express');
 const cors = require('cors');
+const nodemailer = require('nodemailer'); // ✅ เพิ่ม
 const pool = require('./src/config/database');
 
 const userRoutes = require('./src/route/usermanagement.route');
@@ -37,10 +38,22 @@ app.use(
 
 app.use(express.json());
 
-app.get('/api/probe', (req, res) => {
-  res.json({ probe: true, message: 'Backend is working' });
+/* =========================
+   TEST ROUTES
+========================= */
+
+// ✅ เช็ค env
+app.get('/api/test-env', (req, res) => {
+  res.json({
+    MAIL_USER: process.env.MAIL_USER ? 'loaded' : 'missing',
+    MAIL_PASS: process.env.MAIL_PASS ? 'loaded' : 'missing',
+    JWT_SECRET: process.env.JWT_SECRET ? 'loaded' : 'missing',
+    DATABASE_URL: process.env.DATABASE_URL ? 'loaded' : 'missing',
+    FRONTEND_URL: process.env.FRONTEND_URL || 'missing',
+  });
 });
 
+// ✅ เช็ค DB
 app.get('/api/test-db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -57,6 +70,44 @@ app.get('/api/test-db', async (req, res) => {
     });
   }
 });
+
+// ✅ เช็ค Gmail SMTP
+app.get('/api/test-mail', async (req, res) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
+
+    await transporter.verify();
+
+    res.json({
+      ok: true,
+      message: 'Gmail SMTP ready ✅',
+    });
+  } catch (err) {
+    console.error('❌ TEST MAIL ERROR:', err);
+
+    res.status(500).json({
+      ok: false,
+      message: err.message,
+      code: err.code,
+      response: err.response,
+    });
+  }
+});
+
+// 🔍 probe
+app.get('/api/probe', (req, res) => {
+  res.json({ probe: true, message: 'Backend is working' });
+});
+
+/* =========================
+   ROUTES
+========================= */
 
 app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'));
