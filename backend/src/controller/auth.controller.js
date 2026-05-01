@@ -4,7 +4,7 @@ dns.setDefaultResultOrder('ipv4first');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { createMailTransporter } = require('../config/mail');
 const pool = require('../config/database');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
@@ -86,9 +86,60 @@ exports.register = async (req, res) => {
       [Code, cleanUsername, hash, cleanEmail, cleanRole]
     );
 
+    const user = result.rows[0];
+
+    // ✅ Send welcome email
+    try {
+      if (process.env.MAIL_USER && process.env.MAIL_PASS) {
+        const transporter = createMailTransporter();
+
+        await transporter.verify();
+
+        await transporter.sendMail({
+          from: `"Manage App" <${process.env.MAIL_USER}>`,
+          to: user.Email,
+          subject: 'ยินดีต้อนรับเข้ยู Manage App',
+          html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #d81b60;">ยินดีต้อนรับเข้ยู Manage App</h2>
+              <p>สวัสดี <strong>${user.Username}</strong></p>
+              <p>บัญชีของคุณได้ถูกสร้างขึ้นเรียบร้อยแล้ว</p>
+              
+              <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>รายละเอียดบัญชี:</strong></p>
+                <ul style="list-style: none; padding: 0;">
+                  <li>📧 <strong>อีเมล:</strong> ${user.Email}</li>
+                  <li>👤 <strong>ชื่อผู้ใช้:</strong> ${user.Username}</li>
+                  <li>🎯 <strong>บทบาท:</strong> ${user.Role === 'manager' ? 'ผู้จัดการ' : 'ผู้ใช้ทั่วไป'}</li>
+                  <li>🔢 <strong>รหัสประจำตัว:</strong> ${user.Code}</li>
+                </ul>
+              </div>
+
+              <p>ขณะนี้คุณสามารถเข้าสู่ระบบได้โดยใช้:</p>
+              <ul>
+                <li>ชื่อผู้ใช้หรืออีเมล: <strong>${user.Username}</strong></li>
+                <li>รหัสผ่าน: ที่คุณกำหนดไว้</li>
+              </ul>
+
+              <div style="border-top: 2px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                <p style="color: #666; font-size: 12px;">
+                  หากคุณต้องการความช่วยเหลือ โปรดติดต่อทีม Support ของเรา
+                </p>
+              </div>
+            </div>
+          `,
+        });
+
+        console.log('✅ Welcome email sent to:', user.Email);
+      }
+    } catch (emailError) {
+      console.error('⚠️ Failed to send welcome email:', emailError.message);
+      // ไม่ return error เพราะ register ยังสำเร็จ แม้ส่งอีเมลไม่สำเร็จ
+    }
+
     return res.status(201).json({
       ok: true,
-      user: result.rows[0],
+      user: user,
     });
   } catch (error) {
     console.error('❌ Register API Error:', error);
@@ -228,20 +279,7 @@ exports.forgotPassword = async (req, res) => {
       token
     )}`;
 
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      family: 4,
-      requireTLS: true,
-      connectionTimeout: 30000,
-      greetingTimeout: 30000,
-      socketTimeout: 30000,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+    const transporter = createMailTransporter();
 
     await transporter.verify();
 

@@ -1,17 +1,13 @@
 require('dotenv').config();
 
 const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
 
-console.log('MAIL_USER =', process.env.MAIL_USER ? 'loaded' : 'missing');
-console.log('MAIL_PASS =', process.env.MAIL_PASS ? 'loaded' : 'missing');
-console.log('JWT_SECRET =', process.env.JWT_SECRET ? 'loaded' : 'missing');
-console.log('DATABASE_URL =', process.env.DATABASE_URL ? 'loaded' : 'missing');
-console.log('FRONTEND_URL =', process.env.FRONTEND_URL ? 'loaded' : 'missing');
+// ✅ Force IPv4 DNS resolution globally
+dns.setDefaultResultOrder('ipv4first');
 
 const express = require('express');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const { createMailTransporter, customLookup } = require('./src/config/mail');
 const pool = require('./src/config/database');
 
 const userRoutes = require('./src/route/usermanagement.route');
@@ -22,6 +18,12 @@ const authRoutes = require('./src/route/auth.route');
 const product = require('./src/route/product.route');
 const purchase = require('./src/route/purchase.route');
 const purchasehistory = require('./src/route/purchasehistory.route');
+
+console.log('MAIL_USER =', process.env.MAIL_USER ? 'loaded' : 'missing');
+console.log('MAIL_PASS =', process.env.MAIL_PASS ? 'loaded' : 'missing');
+console.log('JWT_SECRET =', process.env.JWT_SECRET ? 'loaded' : 'missing');
+console.log('DATABASE_URL =', process.env.DATABASE_URL ? 'loaded' : 'missing');
+console.log('FRONTEND_URL =', process.env.FRONTEND_URL ? 'loaded' : 'missing');
 
 const app = express();
 
@@ -74,24 +76,12 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-// ✅ เช็ค Gmail SMTP (แก้แล้ว)
+// ✅ เช็ค Gmail SMTP (แก้แล้ว - IPv4 only)
 app.get('/api/test-mail', async (req, res) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      family: 4,
-      requireTLS: true,
-      connectionTimeout: 30000,
-      greetingTimeout: 30000,
-      socketTimeout: 30000,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+    const transporter = createMailTransporter();
 
+    console.log('🔍 Verifying email configuration...');
     await transporter.verify();
 
     res.json({
@@ -99,7 +89,15 @@ app.get('/api/test-mail', async (req, res) => {
       message: 'Gmail SMTP ready ✅',
     });
   } catch (err) {
-    console.error('❌ TEST MAIL ERROR:', err);
+    console.error('❌ TEST MAIL ERROR:', {
+      message: err.message,
+      code: err.code,
+      response: err.response,
+      hostname: err.hostname,
+      syscall: err.syscall,
+      address: err.address,
+      port: err.port,
+    });
 
     res.status(500).json({
       ok: false,
