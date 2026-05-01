@@ -45,6 +45,7 @@ app.use(express.json());
    TEST ROUTES
 ========================= */
 
+// ✅ เช็ค env
 app.get('/api/test-env', (req, res) => {
   res.json({
     MAIL_USER: process.env.MAIL_USER ? 'loaded' : 'missing',
@@ -55,6 +56,7 @@ app.get('/api/test-env', (req, res) => {
   });
 });
 
+// ✅ เช็ค DB
 app.get('/api/test-db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -72,13 +74,18 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
+// ✅ เช็ค Gmail SMTP (แก้แล้ว)
 app.get('/api/test-mail', async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      family: 4, // ✅ บังคับใช้ IPv4
+      port: 587,
+      secure: false,
+      family: 4,
+      requireTLS: true,
+      connectionTimeout: 30000,
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
@@ -103,6 +110,7 @@ app.get('/api/test-mail', async (req, res) => {
   }
 });
 
+// 🔍 probe
 app.get('/api/probe', (req, res) => {
   res.json({ probe: true, message: 'Backend is working' });
 });
