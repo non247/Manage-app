@@ -5,6 +5,38 @@ const pool = require('../config/database');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
+// ================= HELPER: GENERATE USER CODE =================
+const makeUserCode = async (role) => {
+  const safeRole = role === 'admin' ? 'admin' : 'user';
+  const prefix = safeRole === 'admin' ? 'M' : 'E';
+
+  const result = await pool.query(
+    `
+    SELECT "Code"
+    FROM "User"
+    WHERE "Role" = $1
+      AND "Code" IS NOT NULL
+      AND "Code" LIKE $2
+    ORDER BY "Id" DESC
+    LIMIT 1
+    `,
+    [safeRole, `${prefix}%`]
+  );
+
+  let nextNumber = 1;
+
+  if (result.rowCount > 0) {
+    const lastCode = result.rows[0].Code; // เช่น M0003 หรือ E0012
+    const numberPart = Number.parseInt(String(lastCode).slice(1), 10);
+
+    if (!Number.isNaN(numberPart)) {
+      nextNumber = numberPart + 1;
+    }
+  }
+
+  return `${prefix}${String(nextNumber).padStart(4, '0')}`;
+};
+
 /* =========================
    REGISTER
 ========================= */
@@ -46,14 +78,17 @@ exports.register = async (req, res) => {
     // 🔐 hash password
     const hash = await bcrypt.hash(password, 10);
 
+    // generate code by role
+    const userCode = await makeUserCode(role);
+
     // 💾 insert
     const result = await pool.query(
       `
-      INSERT INTO "User" ("Username", "Password", "Email", "Role")
-      VALUES ($1, $2, $3, $4)
-      RETURNING "Id", "Username", "Email", "Role"
+      INSERT INTO "User" ("Code", "Username", "Password", "Email", "Role", "create_date")
+      VALUES ($1, $2, $3, $4, $5, NOW())
+      RETURNING "Id", "Code", "Username", "Email", "Role"
       `,
-      [username, hash, email, role]
+      [userCode, username, hash, email, role]
     );
 
     res.status(201).json({
