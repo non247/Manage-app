@@ -2,7 +2,7 @@ const pool = require('../config/database');
 console.log('🔥 NEW PRODUCT CONTROLLER LOADED');
 
 // helper: สร้าง code จาก running number
-const makeProductCode = (num) => `P${String(num).padStart(3, '0')}`;
+const makeProductCode = (num) => `P${String(num).padStart(4, '0')}`;
 
 // GET /api/products?search=...
 exports.getAllProducts = async (req, res) => {
