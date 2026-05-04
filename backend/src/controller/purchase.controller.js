@@ -11,9 +11,9 @@ exports.getAllPurchase = async (req, res) => {
         category,
         quantity,
         price,
-        date
+        create_date
       FROM public."Purchase"
-      ORDER BY id DESC
+      ORDER BY create_date DESC
     `);
 
     console.log('getAllPurchase result =', result.rows);
@@ -27,36 +27,54 @@ exports.getAllPurchase = async (req, res) => {
 
 /* ================= CREATE ================= */
 exports.createPurchase = async (req, res) => {
+  const client = await pool.connect();
   try {
     console.log('createPurchase req.body =', req.body);
 
-    const { code, name, category, quantity, price, date } = req.body;
+    const { code, name, category, quantity, price } = req.body;
 
-    const result = await pool.query(
+    await client.query('BEGIN');
+
+    // 1. Insert into Purchase
+    const result = await client.query(
       `
       INSERT INTO public."Purchase"
-      (code, name, category, quantity, price, date)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, code, name, category, quantity, price, date
+      (code, name, category, quantity, price, create_date)
+      VALUES ($1, $2, $3, $4, $5, now())
+      RETURNING id, code, name, category, quantity, price, create_date
       `,
-      [code, name, category, quantity, price, date]
+      [code, name, category, quantity, price]
     );
 
     console.log('createPurchase inserted row =', result.rows[0]);
 
-    const check = await pool.query(
-      `SELECT id, code, name, category, quantity, price, date
-       FROM public."Purchase"
-       WHERE id = $1`,
-      [result.rows[0].id]
+    // 2. Update Inventory: add quantity and update date (matched by code)
+    const invResult = await client.query(
+      `
+      UPDATE public."Inventory"
+      SET quantity = quantity + $1,
+          update_date = now()
+      WHERE code = $2
+      RETURNING id, code, quantity, update_date
+      `,
+      [quantity, code]
     );
 
-    console.log('createPurchase recheck row =', check.rows[0]);
+    if (invResult.rowCount === 0) {
+      console.warn(`createPurchase: no Inventory row found for code=${code}`);
+    } else {
+      console.log('createPurchase updated Inventory row =', invResult.rows[0]);
+    }
+
+    await client.query('COMMIT');
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('createPurchase error:', err);
     res.status(500).json({ error: 'เพิ่มข้อมูลไม่สำเร็จ' });
+  } finally {
+    client.release();
   }
 };
 /* ================= UPDATE ================= */
