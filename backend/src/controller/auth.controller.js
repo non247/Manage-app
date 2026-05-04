@@ -181,7 +181,7 @@ exports.forgotPassword = async (req, res) => {
       { expiresIn: '15m' }
     );
 
-    const resetLink = `http://localhost:4200/reset-password?token=${token}`;
+    const resetLink = `https://snagged-breeze-unvisited.ngrok-free.dev/reset-password?token=${token}`;
     console.log('🔗 resetLink:', resetLink);
 
     const transporter = nodemailer.createTransport({
@@ -193,13 +193,13 @@ exports.forgotPassword = async (req, res) => {
     });
 
     const info = await transporter.sendMail({
-      from: `"Manage App" <${process.env.MAIL_USER}>`,
+      from: `"Day-Icecream-Store" <${process.env.MAIL_USER}>`,
       to: user.Email,
       subject: 'รีเซ็ตรหัสผ่าน',
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2>รีเซ็ตรหัสผ่าน</h2>
-          <p>สวัสดี ${user.Username}</p>
+          <p>สวัสดีคุณ ${user.Username}</p>
           <p>คุณได้ส่งคำขอรีเซ็ตรหัสผ่านสำหรับบัญชีนี้</p>
           <p>กรุณากดลิงก์ด้านล่างเพื่อรีเซ็ตรหัสผ่าน:</p>
           <p>
@@ -207,6 +207,8 @@ exports.forgotPassword = async (req, res) => {
               รีเซ็ตรหัสผ่าน
             </a>
           </p>
+          <br>
+          <p>อีเมลนี้เป็นอีเมลอัตโนมัติ โปรดอย่าตอบกลับ</p>
         </div>
       `,
     });
