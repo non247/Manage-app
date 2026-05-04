@@ -4,7 +4,7 @@ exports.getHistory = async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT * FROM "History"
-      ORDER BY id DESC
+      ORDER BY create_date DESC
     `);
     res.status(200).json(result.rows);
   } catch (err) {
@@ -14,28 +14,55 @@ exports.getHistory = async (req, res) => {
 };
 
 exports.createHistory = async (req, res) => {
+  const client = await pool.connect();
   try {
-    const { name, category, quantity, price, date } = req.body;
+    const { name, category, quantity, price, code } = req.body;
 
-    await pool.query(
+    await client.query('BEGIN');
+
+    // 1. Insert into History
+    await client.query(
       `
-      INSERT INTO "History" (name, category, quantity, price, date)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO "History" (name, category, quantity, price, create_date, code)
+      VALUES ($1, $2, $3, $4, NOW(), $5)
       `,
-      [name, category, quantity, price, date]
+      [name, category, quantity, price, code]
     );
+
+    // 2. Update Inventory: subtract quantity and update date (matched by name)
+    const invResult = await client.query(
+      `
+      UPDATE public."Inventory"
+      SET quantity = quantity - $1,
+          update_date = NOW()
+      WHERE code = $2
+      RETURNING id, name, quantity, update_date
+      `,
+      [quantity, code]
+    );
+
+    if (invResult.rowCount === 0) {
+      console.warn(`createHistory: no Inventory row found for name=${name}`);
+    } else {
+      console.log('createHistory updated Inventory row =', invResult.rows[0]);
+    }
+
+    await client.query('COMMIT');
 
     res.status(201).json({ message: 'เพิ่มข้อมูลสำเร็จ' });
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error(err);
     res.status(500).json({ message: err.message });
+  } finally {
+    client.release();
   }
 };
 
 exports.updateHistory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, quantity, price, date } = req.body;
+    const { name, category, quantity, price, code } = req.body;
 
     await pool.query(
       `
@@ -44,10 +71,11 @@ exports.updateHistory = async (req, res) => {
           category = $2,
           quantity = $3,
           price = $4,
-          "date" = $5
-      WHERE id = $6
+          create_date = NOW(),
+          code = $6
+      WHERE id = $5
       `,
-      [name, category, quantity, price, date, id]
+      [name, category, quantity, price, id, code]
     );
 
     res.status(200).json({ message: 'แก้ไขข้อมูลสำเร็จ' });
