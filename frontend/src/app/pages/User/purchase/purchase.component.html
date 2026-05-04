@@ -316,28 +316,21 @@
           <ng-template pTemplate="header">
             <tr>
               <th class="col-image" scope="col"></th>
-
               <th class="col-date" pSortableColumn="date" scope="col">
                 วันที่ <p-sortIcon field="date"></p-sortIcon>
               </th>
-
               <th class="col-name" pSortableColumn="name" scope="col">
                 ชื่อสินค้า <p-sortIcon field="name"></p-sortIcon>
               </th>
-
               <th class="col-category" pSortableColumn="category" scope="col">
                 ประเภท <p-sortIcon field="category"></p-sortIcon>
               </th>
-
               <th class="col-qty" pSortableColumn="quantity" scope="col">
                 จำนวน <p-sortIcon field="quantity"></p-sortIcon>
               </th>
-
               <th class="col-price" pSortableColumn="price" scope="col">
                 ราคาต่อหน่วย <p-sortIcon field="price"></p-sortIcon>
               </th>
-
-              <th class="col-action" scope="col"></th>
             </tr>
           </ng-template>
 
@@ -458,53 +451,12 @@
                   />
                 </ng-template>
               </td>
-
-              <!-- ACTION -->
-              <td class="col-action action-cell">
-                <div class="table-action-wrap">
-                  <button
-                    *ngIf="editIndex !== i"
-                    class="btn-edit"
-                    type="button"
-                    (click)="onEdit(i)"
-                  >
-                    <i class="bi bi-pen"></i>
-                  </button>
-
-                  <button
-                    *ngIf="editIndex !== i"
-                    class="btn-delete"
-                    type="button"
-                    (click)="onDelete(i)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-
-                  <button
-                    *ngIf="editIndex === i"
-                    class="btn-save"
-                    type="button"
-                    (click)="onSave(i)"
-                  >
-                    <i class="pi pi-check-square"></i>
-                  </button>
-
-                  <button
-                    *ngIf="editIndex === i"
-                    class="btn-cancel"
-                    type="button"
-                    (click)="onCancel()"
-                  >
-                    <i class="bi bi-x-square"></i>
-                  </button>
-                </div>
-              </td>
             </tr>
           </ng-template>
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7">ไม่พบข้อมูล</td>
+              <td colspan="6">ไม่พบข้อมูล</td>
             </tr>
           </ng-template>
         </p-table>
