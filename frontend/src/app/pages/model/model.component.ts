@@ -60,7 +60,6 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     endDate.setDate(endDate.getDate() + 6);
 
     this.forecastForm = this.fb.group({
-      is_holiday: false,
       start_date: [startDate, Validators.required],
       end_date: [endDate, Validators.required],
     });
@@ -98,16 +97,16 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
     // Get the highest forecasted_totalsold
     const sorted = [...this.forecastResult].sort(
       (a, b) =>
-        Number(b.forecasted_totalsold ?? 0) -
-        Number(a.forecasted_totalsold ?? 0)
+        Number(b.forecasted_totalsold_rounded ?? 0) -
+        Number(a.forecasted_totalsold_rounded ?? 0)
     );
-    return Number(sorted[0]?.forecasted_totalsold ?? 0);
+    return Number(sorted[0]?.forecasted_totalsold_rounded ?? 0);
   }
 
   get totalForecastSold(): number {
     if (!this.forecastResult) return 0;
     return this.forecastResult.reduce(
-      (sum, item) => sum + Number(item.forecasted_totalsold ?? 0),
+      (sum, item) => sum + Number(item.forecasted_totalsold_rounded ?? 0),
       0
     );
   }
@@ -178,7 +177,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
         labels,
         datasets: [
           {
-            label: 'จำนวนที่พยากรณ์',
+            label: 'จำนวนที่พยากรณ์ (ถ้วย)',
             data: totals,
             backgroundColor: labels.map((_, index) =>
               this.getFlavorColor(index)
@@ -220,7 +219,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
           x: {
             title: {
               display: true,
-              text: 'Flavor',
+              text: 'รสชาติไอศครีม',
             },
           },
           y: {
@@ -243,7 +242,6 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const formData = {
       ...this.forecastForm.value,
-      is_holiday: this.forecastForm.value.is_holiday ? 1 : 0,
       start_date: this.formatDate(this.forecastForm.value.start_date),
       end_date: this.formatDate(this.forecastForm.value.end_date),
     };
