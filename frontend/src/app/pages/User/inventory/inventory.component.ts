@@ -663,7 +663,7 @@ export class InventoryComponent implements OnInit {
   /* ================= HISTORY PAYLOAD ================= */
   private safeHistoryPayload(p: Product, qty: number) {
     return {
-      code: 'H' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+      code: p.code || '',
       name: p.name,
       category: p.category,
       quantity: qty,
