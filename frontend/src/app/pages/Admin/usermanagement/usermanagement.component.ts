@@ -102,6 +102,7 @@ export class UsermanagementComponent implements OnInit {
           this.users[index] = updatedUser;
           this.onCancel();
           Swal.fire('สำเร็จ', 'แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว', 'success');
+          this.loadUsers();
         },
         error: (err) => {
           console.error('อัปเดตผู้ใช้ไม่สำเร็จ', err);
@@ -126,6 +127,7 @@ export class UsermanagementComponent implements OnInit {
           next: () => {
             this.users.splice(index, 1);
             Swal.fire('สำเร็จ', 'ลบผู้ใช้เรียบร้อยแล้ว', 'success');
+            this.loadUsers();
           },
           error: (err) => {
             console.error('ลบผู้ใช้ไม่สำเร็จ', err);
