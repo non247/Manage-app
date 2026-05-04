@@ -9,7 +9,6 @@
         <!-- HEADER ROW -->
         <div class="header-row search-wrap">
           <i class="bi bi-search"></i>
-
           <input
             #gb
             type="text"
@@ -18,16 +17,6 @@
             placeholder="ค้นหา..."
             (input)="dt.filterGlobal(gb.value, 'contains')"
           />
-
-          <button
-            class="btn-add"
-            style="margin-left: auto"
-            (click)="showCreateForm = !showCreateForm"
-          >
-            <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
-          </button>
-
-          <!-- ✅ เปิดฟอร์มประวัติการขาย -->
           <button
             class="btn-save btn-history"
             type="button"
@@ -101,7 +90,7 @@
                   id="quantity"
                   type="number"
                   pInputText
-                  min="1"
+                  min="0"
                   step="1"
                   [ngModel]="newProduct.quantity"
                   name="productQty"
@@ -203,7 +192,7 @@
                   <input
                     type="number"
                     class="p-inputtext p-component"
-                    min="1"
+                    min="0"
                     [max]="saleFormMax"
                     [(ngModel)]="saleForm.qty"
                     name="saleQty"
@@ -319,9 +308,7 @@
             'price',
             'date',
           ]"
-          [scrollable]="true"
-          scrollHeight="500px"
-          stripedRows
+          [rowsPerPageOptions]="[10, 25, 50]"
           responsiveLayout="scroll"
           [tableStyle]="{
             width: '100%',
@@ -451,11 +438,11 @@
                 <ng-template #editQty>
                   <input
                     type="number"
-                    min="1"
+                    min="0"
                     step="1"
                     [ngModel]="editProduct!.quantity"
                     name="editQty"
-                    (ngModelChange)="editProduct!.quantity = toInt($event, 1)"
+                    (ngModelChange)="editProduct!.quantity = toInt($event, 0)"
                   />
                 </ng-template>
               </td>

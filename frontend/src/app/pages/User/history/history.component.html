@@ -135,9 +135,7 @@
             'date',
             'total',
           ]"
-          [scrollable]="true"
-          scrollHeight="500px"
-          stripedRows
+          [rowsPerPageOptions]="[10, 25, 50]"
           responsiveLayout="scroll"
           [tableStyle]="{
             width: '100%',

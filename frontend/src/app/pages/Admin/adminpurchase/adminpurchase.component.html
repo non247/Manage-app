@@ -333,8 +333,7 @@
             'price',
             'date',
           ]"
-          [scrollable]="true"
-          scrollHeight="500px"
+          [rowsPerPageOptions]="[10, 25, 50]"
           stripedRows
           responsiveLayout="scroll"
           [tableStyle]="{

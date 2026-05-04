@@ -93,12 +93,13 @@
           [value]="users"
           [rows]="10"
           sortMode="single"
-          [scrollable]="true"
-          scrollHeight="500px"
-          stripedRows
-          [rowHover]="true"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [paginator]="true"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="แสดง {first} - {last} จากทั้งหมด {totalRecords} รายการ"
           [globalFilterFields]="['Code', 'Username', 'Email', 'Role']"
           [tableStyle]="{ width: '100%', 'table-layout': 'fixed' }"
+          stripedRows
         >
           <ng-template pTemplate="header">
             <tr>

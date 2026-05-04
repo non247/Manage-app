@@ -165,14 +165,13 @@
           [value]="products"
           [rows]="10"
           sortMode="single"
-          [scrollable]="true"
-          scrollHeight="500px"
           stripedRows
           [rowHover]="true"
           [loading]="loading"
           [paginator]="true"
           [showCurrentPageReport]="true"
           currentPageReportTemplate="แสดง {first} ถึง {last} จากทั้งหมด {totalRecords} รายการ"
+          [rowsPerPageOptions]="[10, 25, 50]"
           [globalFilterFields]="[
             'code',
             'name',

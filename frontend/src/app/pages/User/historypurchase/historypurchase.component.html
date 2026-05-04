@@ -135,15 +135,8 @@
             'date',
             'total',
           ]"
-          [scrollable]="true"
-          scrollHeight="500px"
-          stripedRows
-          responsiveLayout="scroll"
-          [tableStyle]="{
-            width: '100%',
-            'table-layout': 'fixed',
-            'min-width': '1120px',
-          }"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          style="width: 100%"
         >
           <ng-template pTemplate="header">
             <tr>
