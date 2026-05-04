@@ -689,7 +689,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             callbacks: {
               label: (context) => {
                 const value = Number(context.raw ?? 0);
-                return `${context.dataset.label}: ${value.toLocaleString()} ชิ้น`;
+                return `${context.dataset.label}: ${value.toLocaleString()} รายการ`;
               },
             },
           },
@@ -697,9 +697,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         scales: {
           x: { display: false },
           y: {
-            title: { display: true, text: 'จำนวนขาย (ชิ้น)' },
+            title: { display: true, text: 'จำนวนทั้งหมด (รายการ)' },
             ticks: {
-              callback: (value) => `${value} ชิ้น`,
+              callback: (value) => `${value} รายการ`,
             },
           },
         },

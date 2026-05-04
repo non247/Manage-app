@@ -53,11 +53,12 @@ exports.getDashboard = async (req, res) => {
 
     const productChartResult = await pool.query(`
       SELECT 
-        name,
+        code,
+        CONCAT(name, '(', category, ')') AS name,
         SUM(quantity) AS sold,
         SUM(price * quantity) AS total_sales
       FROM "History"
-      GROUP BY name
+      GROUP BY code, name, category
       ORDER BY total_sales DESC
 `);
 
