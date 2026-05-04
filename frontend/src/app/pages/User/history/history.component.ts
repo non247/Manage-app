@@ -273,6 +273,25 @@ export class HistoryComponent implements OnInit {
     this.showCreateForm = true;
   }
 
+  onCreateNameChange(selectedName: string): void {
+    if (!selectedName) return;
+    this.newProduct.name = selectedName;
+
+    const master = this.getMasterByName(selectedName);
+    if (!master) {
+      this.newProduct.code = '';
+      this.newProduct.price = 0;
+      this.newProduct.category = this.newProduct.category || '';
+      return;
+    }
+
+    this.newProduct.code = master.code || '';
+    this.newProduct.price = Number(master.price) || 0;
+    if (master.category) {
+      this.newProduct.category = master.category;
+    }
+  }
+
   onCreateSave(): void {
     this.newProduct.date = this.normalizeYmd(this.newProduct.date);
 
@@ -295,7 +314,7 @@ export class HistoryComponent implements OnInit {
       quantity,
       price,
       total: quantity * price,
-      code: 'P' + Date.now(),
+      code: this.newProduct.code || '',
     };
 
     this.historyService.create(payload).subscribe({

@@ -59,7 +59,18 @@
             <div class="create-grid">
               <div class="field">
                 <label for="name">ชื่อสินค้า</label>
-                <input type="text" pInputText [(ngModel)]="newProduct.name" />
+                <select
+                  id="name"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="newProduct.name"
+                  name="name"
+                  (ngModelChange)="onCreateNameChange($event)"
+                >
+                  <option value="" disabled>-- เลือกสินค้า --</option>
+                  <option *ngFor="let m of productMasters" [value]="m.name">
+                    {{ m.name }}
+                  </option>
+                </select>
               </div>
 
               <div class="field">

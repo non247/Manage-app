@@ -306,7 +306,7 @@ export class AdminpurchaseComponent implements OnInit {
     };
   }
 
-  normalizeProduct(p: Partial<Product>): Product {
+  normalizeProduct(p: Partial<Product> & { create_date?: any }): Product {
     const qty = this.toInt(p.quantity, 0);
     const price = this.toInt(p.price, 0);
 
@@ -317,7 +317,7 @@ export class AdminpurchaseComponent implements OnInit {
       category: p.category ?? '',
       quantity: qty,
       price,
-      date: this.normalizeYmd(p.date) || this.todayString(),
+      date: this.normalizeYmd(p.create_date ?? p.date) || this.todayString(),
       total: qty * price,
       image: this.getImageUrl(p.image),
     };

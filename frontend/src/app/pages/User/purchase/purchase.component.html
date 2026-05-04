@@ -26,19 +26,6 @@
           >
             <i class="bi bi-plus-circle-fill"></i> เพิ่มข้อมูล
           </button>
-
-          <!-- ✅ เปิดฟอร์มประวัติการสั่งซื้อ -->
-          <!-- <button
-            class="btn-save btn-history"
-            type="button"
-            (click)="openHistoryForm()"
-          >
-            <i class="bi bi-send-fill"></i>
-            ประวัติการสั่งซื้อ
-            <span class="bubble" *ngIf="saleDraftItems.length > 0">
-              {{ saleDraftItems.length }}
-            </span>
-          </button> -->
         </div>
 
         <!-- ✅ BACKDROP CREATE -->
@@ -61,6 +48,22 @@
 
           <div class="create-card-body">
             <div class="create-grid">
+              <!-- CATEGORY -->
+              <div class="field">
+                <label for="productCategory">ประเภท</label>
+                <select
+                  id="productCategory"
+                  class="p-inputtext p-component"
+                  [(ngModel)]="newProduct.category"
+                  name="productCategory"
+                >
+                  <option value="" disabled>-- เลือกประเภท --</option>
+                  <option *ngFor="let c of categories" [value]="c.value">
+                    {{ c.label }}
+                  </option>
+                </select>
+              </div>
+
               <!-- NAME -->
               <div class="field">
                 <label for="productName">ชื่อสินค้า</label>
@@ -74,22 +77,6 @@
                   <option value="" disabled>-- เลือกชื่อสินค้า --</option>
                   <option *ngFor="let n of names" [value]="n.value">
                     {{ n.label }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- CATEGORY -->
-              <div class="field">
-                <label for="productCategory">ประเภท</label>
-                <select
-                  id="productCategory"
-                  class="p-inputtext p-component"
-                  [(ngModel)]="newProduct.category"
-                  name="productCategory"
-                >
-                  <option value="" disabled>-- เลือกประเภท --</option>
-                  <option *ngFor="let c of categories" [value]="c.value">
-                    {{ c.label }}
                   </option>
                 </select>
               </div>
@@ -111,7 +98,7 @@
 
               <!-- PRICE -->
               <div class="field">
-                <label for="price">ราคา</label>
+                <label for="price">ราคาต่อหน่วย</label>
                 <input
                   id="price"
                   type="number"
