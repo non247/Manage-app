@@ -30,8 +30,8 @@ export interface ProductMaster {
   providedIn: 'root',
 })
 export class PurchasehistoryService {
-  private readonly apiUrl = 'http://localhost:3000/api/purchasehistory';
-  private readonly productUrl = 'http://localhost:3000/api/products';
+  private readonly apiUrl = '/api/purchasehistory';
+  private readonly productUrl = '/api/products';
 
   constructor(private readonly http: HttpClient) {}
 

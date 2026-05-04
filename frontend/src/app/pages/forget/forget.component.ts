@@ -56,7 +56,7 @@ export class ForgetComponent {
     this.successMessage = '';
 
     this.http
-      .post('http://localhost:3000/api/auth/forgot-password', {
+      .post('/api/auth/forgot-password', {
         email: this.email.trim(),
       })
       .subscribe({

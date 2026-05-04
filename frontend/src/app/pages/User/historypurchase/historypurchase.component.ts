@@ -93,21 +93,21 @@ export class HistorypurchaseComponent implements OnInit {
   getImageUrl(image?: string): string {
     if (!image) return '';
 
-    const cleaned = image.trim().replace(/\\/g, '/');
+    const cleaned = image.trim().replaceAll('\\', '/');
 
     if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
       return cleaned;
     }
 
     if (cleaned.startsWith('/uploads/')) {
-      return `http://localhost:3000${cleaned}`;
+      return cleaned; // ✅ already has leading slash
     }
 
     if (cleaned.startsWith('uploads/')) {
-      return `http://localhost:3000/${cleaned}`;
+      return `/${cleaned}`; // ✅ add leading slash
     }
 
-    return `http://localhost:3000/uploads/${cleaned}`;
+    return `/uploads/${cleaned}`; // ✅ use proxy path
   }
 
   private applyMasterImage(product: Product): Product {

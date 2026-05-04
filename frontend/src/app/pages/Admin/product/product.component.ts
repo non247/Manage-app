@@ -43,9 +43,7 @@ export class ProductComponent implements OnInit {
   showImagePreview = false;
   fullImageUrl = '';
 
-  apiUrl = 'http://localhost:3000';
-
-  private platformId = inject(PLATFORM_ID);
+  private readonly platformId = inject(PLATFORM_ID);
 
   // ✅ เพิ่ม options ของ category
   categories = [
@@ -71,7 +69,7 @@ export class ProductComponent implements OnInit {
     if (!img) return '';
     if (img.startsWith('http')) return img;
     if (!img.startsWith('/')) img = '/uploads/' + img;
-    return this.apiUrl + img;
+    return img; // Return relative path instead of apiUrl + img
   }
 
   load() {

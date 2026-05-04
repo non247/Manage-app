@@ -29,7 +29,7 @@ export interface UpdateUserPayload {
   providedIn: 'root',
 })
 export class UserService {
-  private readonly apiUrl = 'http://localhost:3000/api/users';
+  private readonly apiUrl = '/api/users';
 
   constructor(private readonly http: HttpClient) {}
 

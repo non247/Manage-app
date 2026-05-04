@@ -26,10 +26,10 @@ export interface ProductMaster {
   providedIn: 'root',
 })
 export class HistoryService {
-  private readonly apiUrl = 'http://localhost:3000/api/history';
+  private readonly apiUrl = '/api/history';
 
   // ✅ endpoint ของหน้า product
-  private readonly productApiUrl = 'http://localhost:3000/api/products';
+  private readonly productApiUrl = '/api/products';
 
   constructor(private readonly http: HttpClient) {}
 

@@ -28,10 +28,10 @@ export interface ProductMaster {
 /* ================= SERVICE ================= */
 @Injectable({ providedIn: 'root' })
 export class PurchaseService {
-  private readonly apiUrl = 'http://localhost:3000/api/purchase';
+  private readonly apiUrl = '/api/purchase';
 
   // ✅ ใช้ดึง master จาก product
-  private readonly productApiUrl = 'http://localhost:3000/api/products';
+  private readonly productApiUrl = '/api/products';
 
   constructor(private readonly http: HttpClient) {}
 

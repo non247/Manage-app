@@ -44,7 +44,29 @@ const purchase = require('./src/route/purchase.route');
 const purchasehistory = require('./src/route/purchasehistory.route');
 
 const app = express();
-app.use(cors());
+// 1. Define your allowed origins
+const allowedOrigins = new Set([
+  'http://localhost:4200', // Your standard local Angular dev server
+  'https://snagged-breeze-unvisited.ngrok-free.dev', // Your active ngrok URL
+]);
+
+// 2. Configure CORS options
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman or curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.has(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/api/probe', (req, res) => res.json({ probe: true }));
