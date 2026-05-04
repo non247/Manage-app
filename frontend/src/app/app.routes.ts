@@ -2,20 +2,20 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/Auth/auth.guard';
 import { RoleGuard } from './core/Auth/auth.role';
 import { AdminhistoryComponent } from './pages/Admin/adminhistory/adminhistory.component';
+import { AdminhistorypurchaseComponent } from './pages/Admin/adminhistorypurchase/adminhistorypurchase.component';
 import { AdminInventoryComponent } from './pages/Admin/admininventory/admininventory.component';
+import { AdminpurchaseComponent } from './pages/Admin/adminpurchase/adminpurchase.component';
 import { ProductComponent } from './pages/Admin/product/product.component';
 import { UsermanagementComponent } from './pages/Admin/usermanagement/usermanagement.component';
 import { DashboardComponent } from './pages/User/Dashboard/Dashboard.component';
 import { HistoryComponent } from './pages/User/history/history.component';
+import { HistorypurchaseComponent } from './pages/User/historypurchase/historypurchase.component';
 import { InventoryComponent } from './pages/User/inventory/inventory.component';
+import { PurchaseComponent } from './pages/User/purchase/purchase.component';
+import { ForgetComponent } from './pages/forget/forget.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ModelComponent } from './pages/model/model.component';
-import { PurchaseComponent } from './pages/User/purchase/purchase.component';
-import { AdminpurchaseComponent } from './pages/Admin/adminpurchase/adminpurchase.component';
-import { AdminhistorypurchaseComponent } from './pages/Admin/adminhistorypurchase/adminhistorypurchase.component';
-import { HistorypurchaseComponent } from './pages/User/historypurchase/historypurchase.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { ForgetComponent } from './pages/forget/forget.component';
 import { ResetpasswordComponent } from './pages/resetpassword/resetpassword.component';
 
 export const routes: Routes = [

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import {
   InventoryService,
@@ -11,11 +13,6 @@ import {
 } from '../../../core/services/Inventory.service';
 import { HistoryService } from '../../../core/services/history.service';
 
-// ✅ RXJS
-import { forkJoin, of } from 'rxjs';
-import { catchError, finalize, map, switchMap } from 'rxjs/operators';
-
-/* ================= INTERFACE ================= */
 export interface Product {
   id?: number;
   code: string;

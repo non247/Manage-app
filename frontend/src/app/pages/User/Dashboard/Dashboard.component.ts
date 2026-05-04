@@ -1,5 +1,4 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
   AfterViewInit,
   Component,
@@ -10,9 +9,10 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
-import { TableModule } from 'primeng/table';
 import { DatePickerModule } from 'primeng/datepicker';
+import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
 import {
   DashboardResponse,

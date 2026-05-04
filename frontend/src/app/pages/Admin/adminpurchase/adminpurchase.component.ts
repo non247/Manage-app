@@ -1,18 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { forkJoin } from 'rxjs';
-
-import { TableModule } from 'primeng/table';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { CheckboxModule } from 'primeng/checkbox';
-
+import { TableModule } from 'primeng/table';
+import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 import {
-  PurchaseService,
-  Product as PurchaseProduct,
   ProductMaster,
+  Product as PurchaseProduct,
+  PurchaseService,
 } from '../../../core/services/purchase.service';
 import { PurchasehistoryService } from '../../../core/services/purchasehistory.service';
 

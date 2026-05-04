@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
-
 import { UserService } from '../../../core/services/usermanagement.service';
 
 type Role = 'admin' | 'user';

@@ -1,15 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
-
-import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
-
+import { TableModule } from 'primeng/table';
 import {
-  PurchasehistoryService,
-  PurchaseHistoryProduct,
   ProductMaster,
+  PurchaseHistoryProduct,
+  PurchasehistoryService,
 } from '../../../core/services/purchasehistory.service';
 
 export interface Product {

@@ -9,15 +9,14 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+import { HistoryService } from '../../../core/services/history.service';
 import {
   InventoryService,
   ProductMaster,
 } from '../../../core/services/Inventory.service';
-import { HistoryService } from '../../../core/services/history.service';
-
-import { forkJoin, of } from 'rxjs';
-import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 /* ================= INTERFACE ================= */
 export interface Product {

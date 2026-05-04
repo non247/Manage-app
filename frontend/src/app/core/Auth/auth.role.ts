@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -6,7 +7,6 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({ providedIn: 'root' })
