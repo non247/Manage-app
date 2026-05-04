@@ -274,26 +274,31 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadForecastedFlavors(): void {
-    // Get current week's date range
-    const monday = this.getMondayOfWeek(new Date());
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
+    // Get next 7 days starting from today
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 6);
 
     // Store dates for display
-    this.forecastStartDate = monday.toLocaleDateString('th-TH-u-ca-gregory', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-    this.forecastEndDate = sunday.toLocaleDateString('th-TH-u-ca-gregory', {
+    this.forecastStartDate = startDate.toLocaleDateString(
+      'th-TH-u-ca-gregory',
+      {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      }
+    );
+    this.forecastEndDate = endDate.toLocaleDateString('th-TH-u-ca-gregory', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
     });
 
     const payload = {
-      start_date: this.formatDateForAPI(monday),
-      end_date: this.formatDateForAPI(sunday),
+      start_date: this.formatDateForAPI(startDate),
+      end_date: this.formatDateForAPI(endDate),
     };
 
     this.modelService.getSaleForecastData(payload).subscribe({
