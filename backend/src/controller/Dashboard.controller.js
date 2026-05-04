@@ -6,14 +6,14 @@ exports.getDashboard = async (req, res) => {
     const todaySalesResult = await pool.query(`
       SELECT COALESCE(SUM(price * quantity), 0) AS today_sales
       FROM "History"
-      WHERE DATE(date) = CURRENT_DATE
+      WHERE DATE("create_date") = CURRENT_DATE
     `);
 
     // ✅ วันนี้กี่ "รายการ" (จำนวนแถว)
     const todayItemsResult = await pool.query(`
       SELECT COUNT(*) AS today_items
       FROM "History"
-      WHERE DATE(date) = CURRENT_DATE
+      WHERE DATE("create_date") = CURRENT_DATE
     `);
 
     // 2️⃣ จำนวนสินค้าทั้งหมด
@@ -26,16 +26,16 @@ exports.getDashboard = async (req, res) => {
     const totalSoldResult = await pool.query(`
       SELECT COALESCE(SUM(quantity), 0) AS total_sold
       FROM "History"
-      WHERE DATE(date) = CURRENT_DATE
+      WHERE DATE("create_date") = CURRENT_DATE
     `);
 
     // 3️⃣ กราฟยอดขายรายวัน
     const salesChartResult = await pool.query(`
       SELECT 
-        DATE(date) AS date,
+        DATE("create_date") AS date,
         SUM(price * quantity) AS total
       FROM "History"
-      GROUP BY DATE(date)
+      GROUP BY DATE("create_date")
       ORDER BY date
     `);
 
