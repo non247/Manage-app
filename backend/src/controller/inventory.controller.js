@@ -4,7 +4,7 @@ exports.getInventory = async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT * FROM "Inventory"
-      ORDER BY id DESC
+      ORDER BY quantity DESC
     `);
 
     res.status(200).json(result.rows);
@@ -16,14 +16,14 @@ exports.getInventory = async (req, res) => {
 
 exports.createInventory = async (req, res) => {
   try {
-    const { code, name, category, quantity, price, date } = req.body;
+    const { code, name, category, quantity, price } = req.body;
 
     await pool.query(
       `
-      INSERT INTO "Inventory" (code, name, category, quantity, price, date)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO "Inventory" (code, name, category, quantity, price, update_date)
+      VALUES ($1, $2, $3, $4, $5, now())
       `,
-      [code, name, category, quantity, price, date]
+      [code, name, category, quantity, price]
     );
 
     res.status(201).json({ message: 'เพิ่มข้อมูลสำเร็จ' });
@@ -46,7 +46,7 @@ exports.updateInventory = async (req, res) => {
           category = $3,
           quantity = $4,
           price = $5,
-          date = $6
+          update_date = $6
       WHERE id = $7
       `,
       [code, name, category, quantity, price, date, id]

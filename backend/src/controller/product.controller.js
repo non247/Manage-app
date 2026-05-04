@@ -168,7 +168,7 @@ exports.createProduct = async (req, res) => {
     const newProduct = result.rows[0];
     await client.query(
       `
-      INSERT INTO "Inventory" (code, name, category, price, date, quantity)
+      INSERT INTO "Inventory" (code, name, category, price, update_date, quantity)
       VALUES ($1, $2, $3, $4, NOW(), 0)
       `,
       [newProduct.code, newProduct.name, newProduct.category, newProduct.price]
@@ -278,7 +278,7 @@ exports.updateProduct = async (req, res) => {
          SET price = $1,
              name = $2,
              category = $3,
-             date  = NOW()
+             update_date  = NOW()
          WHERE code = $4`,
         [updated.price, updated.name, updated.category, updated.code]
       );

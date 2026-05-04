@@ -39,7 +39,7 @@ exports.getUsers = async (req, res) => {
     const result = await pool.query(`
       SELECT "Id", "Code", "Username", "Email", "Role"
       FROM public."User"
-      ORDER BY "Id" ASC
+      ORDER BY "Role" ASC , "Code" ASC
     `);
 
     return res.json(result.rows);
@@ -122,9 +122,9 @@ exports.createUser = async (req, res) => {
 
     const result = await pool.query(
       `
-      INSERT INTO public."User" ("Code", "Username", "Password", "Email", "Role")
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING "Id", "Code", "Username", "Email", "Role"
+      INSERT INTO public."User" ("Code", "Username", "Password", "Email", "Role", "create_date")
+      VALUES ($1, $2, $3, $4, $5, NOW())
+      RETURNING "Id", "Code", "Username", "Email", "Role", "create_date"
       `,
       [userCode, cleanUsername, hash, cleanEmail, safeRole]
     );
