@@ -355,9 +355,4 @@ export class AdminhistorypurchaseComponent implements OnInit {
     this.previewImageUrl = '';
     this.showImagePreview = false;
   }
-
-  /* ================= EXPORT ================= */
-  exportToExcel(): void {
-    console.log('Export Excel');
-  }
 }

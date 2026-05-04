@@ -37,9 +37,6 @@ export class ResetpasswordComponent {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.token = params['token'] || '';
-
-      // console.log('TOKEN =', this.token);
-
       if (!this.token) {
         this.errorMessage = 'ไม่พบ token สำหรับรีเซ็ตรหัสผ่าน';
       }

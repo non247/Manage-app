@@ -132,7 +132,3 @@ const server = app.listen(3000, () => {
 
 server.on('listening', () => console.log('🟢 server listening event fired'));
 server.on('close', () => console.log('🧨 server close event fired'));
-
-setInterval(() => {
-  console.log('⏳ still alive', new Date().toISOString());
-}, 5000);

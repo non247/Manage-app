@@ -218,8 +218,6 @@ export class InventoryComponent implements OnInit {
   loadProductMasters() {
     this.inventoryService.getProductMaster().subscribe({
       next: (list: ProductMaster[]) => {
-        console.log('product master list = ', list);
-
         this.productMasters = list;
 
         const uniqueNames = Array.from(new Set(list.map((x) => x.name))).sort();

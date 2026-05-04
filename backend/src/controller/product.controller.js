@@ -241,7 +241,6 @@ exports.updateProduct = async (req, res) => {
       return res.status(400).json({ message: 'No fields to update' });
     }
 
-    sets.push('"create_date" = NOW()');
     sets.push('"update_date" = NOW()');
     params.push(id);
 

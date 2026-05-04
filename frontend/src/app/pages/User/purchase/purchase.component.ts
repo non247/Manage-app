@@ -141,8 +141,6 @@ export class PurchaseComponent implements OnInit {
   loadProductMasters(): void {
     this.purchaseService.getProductMaster().subscribe({
       next: (list: ProductMaster[]) => {
-        console.log('product master list =', list);
-
         this.productMasters = list || [];
 
         const uniqueNames = Array.from(
@@ -181,18 +179,12 @@ export class PurchaseComponent implements OnInit {
     );
 
     if (exact) {
-      console.log('getMaster exact =', exact);
       return exact;
     }
 
     const fallback = this.productMasters.find(
       (x) => (x.name || '').trim().toLowerCase() === normalizedName
     );
-
-    console.log('getMaster fallback =', fallback, {
-      inputName: name,
-      inputCategory: category,
-    });
 
     return fallback;
   }
@@ -337,7 +329,6 @@ export class PurchaseComponent implements OnInit {
     this.newProduct.name = selectedName;
 
     const master = this.getMaster(selectedName, this.newProduct.category);
-    console.log('onCreateNameChange master =', master);
 
     if (!master) {
       this.newProduct.code = '';
@@ -353,8 +344,6 @@ export class PurchaseComponent implements OnInit {
     this.newProduct.total =
       this.toInt(this.newProduct.quantity, 1) *
       this.toInt(this.newProduct.price, 0);
-
-    console.log('newProduct after name change =', this.newProduct);
   }
 
   onCreateCancel(): void {
@@ -389,8 +378,6 @@ export class PurchaseComponent implements OnInit {
       image: this.createProductImage || this.newProduct.image || '',
     };
 
-    console.log('🔥 FINAL payload =', payload);
-
     if (!payload.code) {
       Swal.fire({
         icon: 'warning',
@@ -401,9 +388,7 @@ export class PurchaseComponent implements OnInit {
     }
 
     this.purchaseService.create(payload).subscribe({
-      next: (res) => {
-        console.log('create success response =', res);
-
+      next: () => {
         Swal.fire({
           icon: 'success',
           title: 'บันทึกสำเร็จ',

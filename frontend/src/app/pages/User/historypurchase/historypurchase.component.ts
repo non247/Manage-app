@@ -357,9 +357,4 @@ export class HistorypurchaseComponent implements OnInit {
     this.previewImageUrl = '';
     this.showImagePreview = false;
   }
-
-  /* ================= EXPORT ================= */
-  exportToExcel(): void {
-    console.log('Export Excel');
-  }
 }

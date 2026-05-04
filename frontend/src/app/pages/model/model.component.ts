@@ -255,7 +255,6 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
             Number(b.forecasted_totalsold ?? 0) -
             Number(a.forecasted_totalsold ?? 0)
         );
-        console.log('Forecast result:', res);
         // Defer chart rendering until canvas is in the DOM (browser only)
         if (this.isBrowser) {
           setTimeout(() => this.renderForecastChart(), 0);
