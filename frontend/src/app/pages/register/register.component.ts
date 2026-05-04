@@ -100,7 +100,7 @@ export class RegisterComponent {
         Swal.fire({
           icon: 'success',
           title: 'สมัครสมาชิกสำเร็จ',
-          text: 'กำลังพาไปหน้าเข้าสู่ระบบ',
+          text: 'กำลังเปลี่ยนเส้นทางไปยังหน้าเข้าสู่ระบบ',
           showConfirmButton: false,
           timer: 1500,
           timerProgressBar: true,

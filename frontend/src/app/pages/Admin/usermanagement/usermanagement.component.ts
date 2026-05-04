@@ -148,6 +148,19 @@ export class UsermanagementComponent implements OnInit {
       return;
     }
 
+    // ตรวจสอบรูปแบบ Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.newUser.Email.trim())) {
+      Swal.fire('แจ้งเตือน', 'กรุณากรอกอีเมลให้ถูกต้อง', 'warning');
+      return;
+    }
+
+    // ตรวจสอบความยาวรหัสผ่าน
+    if (this.newUser.Password.trim().length < 6) {
+      Swal.fire('แจ้งเตือน', 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', 'warning');
+      return;
+    }
+
     this.userService.createUser(this.newUser).subscribe({
       next: () => {
         Swal.fire('สำเร็จ', 'เพิ่มผู้ใช้เรียบร้อยแล้ว', 'success');
