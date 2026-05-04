@@ -54,6 +54,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   predictedFlavors: { name: string; sold: number; totalSales?: number }[] = [];
   totalForecastSold = 0;
 
+  forecastStartDate: string = '';
+  forecastEndDate: string = '';
+
   weekOffset = 0;
 
   private dashboardData?: DashboardResponse;
@@ -113,7 +116,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private toNumber(v: any): number {
-    if (typeof v === 'string') v = v.replace(/,/g, '');
+    if (typeof v === 'string') v = v.replaceAll(',', '');
     const n = Number(v);
     return Number.isFinite(n) ? n : 0;
   }
@@ -276,10 +279,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
 
+    // Store dates for display
+    this.forecastStartDate = monday.toLocaleDateString('th-TH-u-ca-gregory', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    this.forecastEndDate = sunday.toLocaleDateString('th-TH-u-ca-gregory', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
     const payload = {
       start_date: this.formatDateForAPI(monday),
       end_date: this.formatDateForAPI(sunday),
-      is_holiday: 0,
     };
 
     this.modelService.getSaleForecastData(payload).subscribe({
@@ -290,15 +304,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.predictedFlavors = results
           .map((item: any) => ({
             name: item.flavor,
-            sold: this.toNumber(item.forecasted_totalsold),
+            sold: this.toNumber(item.forecasted_totalsold_rounded),
           }))
           .filter((item: any) => item.name && item.sold > 0)
           .sort((a: any, b: any) => b.sold - a.sold);
 
         // Calculate total forecast sold
         this.totalForecastSold = results.reduce(
-          (sum: number, item: { forecasted_totalsold: any }) =>
-            sum + this.toNumber(item.forecasted_totalsold),
+          (sum: number, item: { forecasted_totalsold_rounded: any }) =>
+            sum + this.toNumber(item.forecasted_totalsold_rounded),
           0
         );
       },

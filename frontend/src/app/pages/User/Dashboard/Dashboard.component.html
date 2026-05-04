@@ -10,7 +10,10 @@
       <div class="bottom-grid">
         <div class="forecast-box">
           <div class="forecast-header">
-            <h3>พยากรณ์การขายไอศกรีม</h3>
+            <h3>
+              พยากรณ์การขายไอศครีม ตั้งแต่วันที่
+              {{ forecastStartDate }} ถึงวันที่ {{ forecastEndDate }}
+            </h3>
           </div>
 
           <div *ngIf="totalForecastSold > 0" class="forecast-summary">
@@ -41,9 +44,7 @@
           </div>
 
           <ng-template #noForecast>
-            <div class="forecast-empty">
-              ยังไม่มีข้อมูลเพียงพอสำหรับการพยากรณ์
-            </div>
+            <div class="forecast-empty">ไม่พบข้อมูลการพยากรณ์</div>
           </ng-template>
         </div>
         <div class="panel product-panel">
