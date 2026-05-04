@@ -17,9 +17,11 @@ export interface Product {
 /** ✅ สินค้า master จากหน้า product */
 export interface ProductMaster {
   id: number;
+  code: string;
   name: string;
   price: number;
-  image?: string; // ✅ ฟิลด์รูป
+  image?: string;
+  category?: string;
 }
 
 @Injectable({
