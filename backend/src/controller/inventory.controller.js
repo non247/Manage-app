@@ -16,14 +16,14 @@ exports.getInventory = async (req, res) => {
 
 exports.createInventory = async (req, res) => {
   try {
-    const { name, category, quantity, price, date } = req.body;
+    const { code, name, category, quantity, price, date } = req.body;
 
     await pool.query(
       `
-      INSERT INTO "Inventory" (name, category, quantity, price, date)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO "Inventory" (code, name, category, quantity, price, date)
+      VALUES ($1, $2, $3, $4, $5, $6)
       `,
-      [name, category, quantity, price, date]
+      [code, name, category, quantity, price, date]
     );
 
     res.status(201).json({ message: 'เพิ่มข้อมูลสำเร็จ' });
@@ -36,19 +36,20 @@ exports.createInventory = async (req, res) => {
 exports.updateInventory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, quantity, price, date } = req.body;
+    const { code, name, category, quantity, price, date } = req.body;
 
     await pool.query(
       `
       UPDATE "Inventory"
-      SET name = $1,
-          category = $2,
-          quantity = $3,
-          price = $4,
-          date = $5
-      WHERE id = $6
+      SET code = $1,
+          name = $2,
+          category = $3,
+          quantity = $4,
+          price = $5,
+          date = $6
+      WHERE id = $7
       `,
-      [name, category, quantity, price, date, id]
+      [code, name, category, quantity, price, date, id]
     );
 
     res.status(200).json({ message: 'แก้ไขข้อมูลสำเร็จ' });

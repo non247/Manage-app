@@ -16,7 +16,9 @@ export interface Product {
 /** ✅ สินค้า master จากหน้า product (ถ้าฟิลด์เหมือนกัน ใช้ตัว Product เดิมก็ได้) */
 export interface ProductMaster {
   id: number;
+  code?: string;
   name: string;
+  category?: string;
   price: number;
   image?: string; // ถ้าคุณมีฟิลด์รูป
 }

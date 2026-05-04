@@ -150,8 +150,8 @@ exports.createProduct = async (req, res) => {
 
     const result = await client.query(
       `
-      INSERT INTO public."Product" ("code", "name", "category", "price", "image")
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO public."Product" ("code", "name", "category", "price", "image", "create_date", "update_date")
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING
         "Id" AS id,
         "code" AS code,
@@ -164,9 +164,19 @@ exports.createProduct = async (req, res) => {
       [code, cleanName, cleanCategory, cleanPrice, image]
     );
 
+    // Insert matching row into Inventory with quantity = 0
+    const newProduct = result.rows[0];
+    await client.query(
+      `
+      INSERT INTO "Inventory" (code, name, category, price, date, quantity)
+      VALUES ($1, $2, $3, $4, NOW(), 0)
+      `,
+      [newProduct.code, newProduct.name, newProduct.category, newProduct.price]
+    );
+
     await client.query('COMMIT');
 
-    return res.status(201).json(result.rows[0]);
+    return res.status(201).json(newProduct);
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('createProduct error:', err);
@@ -231,6 +241,8 @@ exports.updateProduct = async (req, res) => {
       return res.status(400).json({ message: 'No fields to update' });
     }
 
+    sets.push('"create_date" = NOW()');
+    sets.push('"update_date" = NOW()');
     params.push(id);
 
     const sql = `
@@ -243,16 +255,43 @@ exports.updateProduct = async (req, res) => {
         "name" AS name,
         "category" AS category,
         "price" AS price,
-        "image" AS image
+        "image" AS image,
+        "create_date" AS create_date,
+        "update_date" AS update_date
     `;
 
-    const result = await pool.query(sql, params);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Product not found' });
+      const result = await client.query(sql, params);
+
+      if (result.rowCount === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ message: 'Product not found' });
+      }
+
+      const updated = result.rows[0];
+
+      // Sync price and date in Inventory (matched by product code)
+      await client.query(
+        `UPDATE "Inventory"
+         SET price = $1,
+             name = $2,
+             category = $3,
+             date  = NOW()
+         WHERE code = $4`,
+        [updated.price, updated.name, updated.category, updated.code]
+      );
+
+      await client.query('COMMIT');
+      return res.json(updated);
+    } catch (innerErr) {
+      await client.query('ROLLBACK');
+      throw innerErr;
+    } finally {
+      client.release();
     }
-
-    return res.json(result.rows[0]);
   } catch (err) {
     console.error('updateProduct error:', err);
     return res
