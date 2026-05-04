@@ -26,19 +26,19 @@ export class ResetpasswordComponent {
   showConfirmPassword = false;
   loading = false;
 
-  private apiUrl = 'http://localhost:3000/api/auth/reset-password';
+  private readonly apiUrl = '/api/auth/reset-password';
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private http: HttpClient
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.token = params['token'] || '';
 
-      console.log('TOKEN =', this.token);
+      // console.log('TOKEN =', this.token);
 
       if (!this.token) {
         this.errorMessage = 'ไม่พบ token สำหรับรีเซ็ตรหัสผ่าน';
@@ -66,7 +66,7 @@ export class ResetpasswordComponent {
     }
 
     if (this.newPassword !== this.confirmPassword) {
-      this.errorMessage = 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน';
+      this.errorMessage = 'รหัสผ่านไม่ตรงกัน';
       return;
     }
 
