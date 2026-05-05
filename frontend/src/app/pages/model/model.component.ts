@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -40,7 +39,7 @@ Chart.register(...registerables);
   templateUrl: './model.component.html',
   styleUrl: './model.component.scss',
 })
-export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ModelComponent implements OnInit, OnDestroy {
   @ViewChild('forecastChartCanvas')
   forecastChartCanvas!: ElementRef<HTMLCanvasElement>;
 
@@ -68,13 +67,6 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.initialForm();
     this.onSubmit();
-  }
-
-  ngAfterViewInit(): void {
-    // Canvas element is now available, safe to render (browser only)
-    if (this.isBrowser) {
-      this.onSubmit();
-    }
   }
 
   forecastForm!: FormGroup;
@@ -177,7 +169,7 @@ export class ModelComponent implements OnInit, AfterViewInit, OnDestroy {
         labels,
         datasets: [
           {
-            label: 'จำนวนที่พยากรณ์ (ถ้วย)',
+            label: 'จำนวนที่พยากรณ์',
             data: totals,
             backgroundColor: labels.map((_, index) =>
               this.getFlavorColor(index)
