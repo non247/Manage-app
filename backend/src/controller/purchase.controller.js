@@ -15,9 +15,6 @@ exports.getAllPurchase = async (req, res) => {
       FROM public."Purchase"
       ORDER BY create_date DESC
     `);
-
-    console.log('getAllPurchase result =', result.rows);
-
     res.json(result.rows);
   } catch (err) {
     console.error('getAllPurchase error:', err);

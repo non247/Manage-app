@@ -119,7 +119,6 @@ try {
 
 try {
   app.use('/api/purchasehistory', purchasehistory);
-  console.log('✅ purchasehistory mounted');
 } catch (e) {
   console.error('❌ purchasehistory mount fail', e);
 }

@@ -1,5 +1,4 @@
 const pool = require('../config/database');
-console.log('🔥 NEW PRODUCT CONTROLLER LOADED');
 
 // helper: สร้าง code จาก running number
 const makeProductCode = (num) => `P${String(num).padStart(4, '0')}`;
@@ -43,12 +42,8 @@ exports.getAllProducts = async (req, res) => {
       `;
       params.push(`%${search}%`);
     }
-
     sql += ` ORDER BY p."Id" DESC`;
-
     const result = await pool.query(sql, params);
-    console.log('getAllProducts result =', result.rows);
-
     res.status(200).json(result.rows);
   } catch (err) {
     console.error('getAllProducts error:', err.message);
