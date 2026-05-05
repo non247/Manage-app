@@ -46,6 +46,19 @@ export class SidebarUserComponent {
     }
   }
 
+  // ✅ Hover เข้า
+  onMouseEnter() {
+    this.disableAnimation = false;
+    this.isCollapsed = false;
+  }
+
+  // ✅ Hover ออก
+  onMouseLeave() {
+    if (!this.openedByHamburger) {
+      this.isCollapsed = true;
+    }
+  }
+
   // ✅ คลิกเมนู
   navigateTo(path: string) {
     this.disableAnimation = false;

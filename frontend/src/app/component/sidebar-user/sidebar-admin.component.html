@@ -11,6 +11,8 @@
   class="sidebar"
   [class.collapsed]="isCollapsed"
   [class.no-anim]="disableAnimation"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
 >
   <div class="top">
     <ul class="nav-links">
