@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -71,6 +71,11 @@ export class AdminhistoryComponent implements OnInit {
     { label: 'ถ้วย', value: 'ถ้วย' },
   ];
 
+  private readonly platformId = inject(PLATFORM_ID);
+  get isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
   constructor(
     private readonly historyService: HistoryService,
     private readonly router: Router
@@ -80,17 +85,20 @@ export class AdminhistoryComponent implements OnInit {
   ngOnInit(): void {
     this.loadProductMasters();
 
-    const items = history.state?.items as Product[] | undefined;
+    if (this.isBrowser) {
+      const items = history.state?.items as Product[] | undefined;
 
-    if (Array.isArray(items) && items.length > 0) {
-      const normalized = this.withTotal(items);
-      const aggregated = this.aggregateProducts(normalized);
+      if (Array.isArray(items) && items.length > 0) {
+        const normalized = this.withTotal(items);
+        const aggregated = this.aggregateProducts(normalized);
 
-      this.products = this.mapProductsWithMasterImage(aggregated);
-      this.filteredProducts = [...this.products];
-    } else {
-      this.loadProducts();
+        this.products = this.mapProductsWithMasterImage(aggregated);
+        this.filteredProducts = [...this.products];
+        return; // ✅ Stop here if we got items from history
+      }
     }
+
+    this.loadProducts();
   }
 
   /* ================= IMAGE HELPERS ================= */

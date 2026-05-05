@@ -109,7 +109,7 @@ export class InventoryComponent implements OnInit {
   /* ================= INT ONLY ================= */
   toInt(value: any, min = 0): number {
     const n = Math.floor(Number(value) || 0);
-    return n < min ? min : n;
+    return Math.max(n, min);
   }
 
   /* ================= IMAGE HELPERS ================= */
@@ -351,8 +351,8 @@ export class InventoryComponent implements OnInit {
     const currentQty = this.toInt(p.quantity, 0);
     if (currentQty <= 0) {
       Swal.fire({
-        title: 'สินค้าหมด',
-        text: 'ไม่สามารถขายได้',
+        title: 'แจ้งเตื่อน',
+        text: 'ไม่สามารถขายได้ เนื่องจากสินค้าหมด',
         icon: 'warning',
       });
       return;
@@ -489,8 +489,8 @@ export class InventoryComponent implements OnInit {
     const existing = this.saleDraftItems.find((x) => x.id === p.id);
     if (existing) {
       Swal.fire({
-        title: 'เพิ่มแล้ว',
-        text: 'สินค้านี้ถูกเพิ่มในรายการแล้ว (ลบออกก่อน หากต้องการเลือกใหม่)',
+        title: 'เพิ่มสินค้านี้ไปแล้ว',
+        text: 'สินค้านี้ถูกเพิ่มในรายการแล้ว (หากต้องการเลือกกรุณาลบสินค้านี้ออกก่อน)',
         icon: 'info',
       });
       return;
@@ -622,7 +622,7 @@ export class InventoryComponent implements OnInit {
           if (failList.length === 0) {
             Swal.fire({
               title: 'สำเร็จ',
-              text: `ส่งไปประวัติการขายแล้ว ${successCount} รายการ`,
+              text: `เพิ่มรายการขาย ${successCount} รายการแล้ว`,
               icon: 'success',
               timer: 1500,
               showConfirmButton: false,
