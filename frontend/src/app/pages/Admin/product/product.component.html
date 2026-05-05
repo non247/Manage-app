@@ -206,13 +206,6 @@
                 </span>
               </th>
 
-              <th pSortableColumn="quantity" scope="col" class="col-qty">
-                <span class="th-wrap">
-                  <span>จำนวน</span>
-                  <p-sortIcon field="quantity"></p-sortIcon>
-                </span>
-              </th>
-
               <th pSortableColumn="price" scope="col" class="col-price">
                 <span class="th-wrap">
                   <span>ราคา</span>
@@ -243,7 +236,6 @@
               <td>{{ p.code }}</td>
               <td class="name">{{ p.name }}</td>
               <td>{{ p.category }}</td>
-              <td>{{ p.quantity | number }}</td>
               <td>{{ p.price | number }}</td>
 
               <td class="action-cell">

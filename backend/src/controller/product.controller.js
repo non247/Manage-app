@@ -15,7 +15,6 @@ exports.getAllProducts = async (req, res) => {
         p.name,
         p.category,
         p.price,
-        COALESCE(pu.total_quantity, 0) AS quantity,
         p.image
       FROM public."Product" p
       LEFT JOIN (
