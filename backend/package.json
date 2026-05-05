@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.2.55",
+  "version": "1.0.0",
   "scripts": {
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
