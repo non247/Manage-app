@@ -45,10 +45,6 @@ export class AppComponent {
 
         // ===== อ่าน role =====
         this.role = currentRoute.snapshot.data['role'] || '';
-
-        // debug (ลบออกทีหลังได้)
-        console.log('role:', this.role);
-        console.log('hideSidebar:', this.hideSidebar);
       });
   }
 }
