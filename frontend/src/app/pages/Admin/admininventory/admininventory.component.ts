@@ -193,7 +193,7 @@ export class AdminInventoryComponent implements OnInit {
   private withTotal(p: Product): Product {
     const qty = this.toInt(p.quantity, 0); // ✅ แก้ตรงนี้ให้เหลือ 0 ได้
     const price = this.toInt(p.price, 0);
-    const date = this.normalizeYmd(p.date);
+    const date = this.normalizeYmd((p as any).update_date ?? p.date);
     return { ...p, quantity: qty, price, date, total: qty * price };
   }
 

@@ -146,7 +146,7 @@ export class AdminhistoryComponent implements OnInit {
     return (list || []).map((x) => {
       const quantity = Number((x as any).quantity ?? 0) || 0;
       const price = Number((x as any).price ?? 0) || 0;
-      const date = this.normalizeYmd((x as any).date);
+      const date = this.normalizeYmd((x as any).create_date ?? (x as any).date);
 
       return {
         ...x,
