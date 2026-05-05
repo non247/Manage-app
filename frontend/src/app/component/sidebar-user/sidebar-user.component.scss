@@ -89,8 +89,33 @@
   width: 260px; // ขนาดเต็ม
   background-color: #ffbdcb;
   padding-top: 85px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: width 0.3s ease-in-out;
+
+  /* Custom scrollbar styling for a premium look */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(215, 47, 98, 0.2); /* Subtle matching color */
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(215, 47, 98, 0.4);
+  }
+
+  /* Adjust for smaller screen heights (like laptops) */
+  @media (max-height: 800px) {
+    padding-top: 60px;
+  }
+
+  @media (max-height: 650px) {
+    padding-top: 50px;
+  }
 
   &.no-anim {
     transition: none !important; // ปิด animation ชั่วคราว
@@ -125,6 +150,15 @@
         gap: 10px;
         margin-bottom: 20px;
         padding: 10px; // ระยะคงที่ ไม่ขยับ
+
+        @media (max-height: 800px) {
+          margin-bottom: 12px;
+        }
+
+        @media (max-height: 650px) {
+          margin-bottom: 8px;
+          padding: 8px;
+        }
         color: rgb(74, 74, 74);
         text-decoration: none;
         transition:
