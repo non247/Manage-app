@@ -1,5 +1,7 @@
 const pool = require('../config/database');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 // ================= HELPER: GENERATE USER CODE =================
 const makeUserCode = async (role) => {
@@ -23,7 +25,7 @@ const makeUserCode = async (role) => {
 
   if (result.rowCount > 0) {
     const lastCode = result.rows[0].Code; // เช่น M0003 หรือ E0012
-    const numberPart = parseInt(String(lastCode).slice(1), 10);
+    const numberPart = Number.parseInt(String(lastCode).slice(1), 10);
 
     if (!Number.isNaN(numberPart)) {
       nextNumber = numberPart + 1;
@@ -232,15 +234,46 @@ exports.deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      `DELETE FROM public."User" WHERE "Id" = $1`,
+    // 1. Cannot delete yourself
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (String(decoded.sub) === String(id)) {
+          return res.status(400).json({ message: 'Cannot delete yourself' });
+        }
+      } catch (err) {
+        console.error('Token verify error in deleteUser:', err);
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+    }
+
+    // 2. Cannot delete the last admin
+    // First, get the target user to see if they are an admin
+    const targetUserRes = await pool.query(
+      `SELECT "Role" FROM public."User" WHERE "Id" = $1`,
       [id]
     );
 
-    if (result.rowCount === 0) {
+    if (targetUserRes.rowCount === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    const targetUser = targetUserRes.rows[0];
+
+    if (targetUser.Role === 'admin') {
+      const adminCountRes = await pool.query(
+        `SELECT COUNT(*) FROM public."User" WHERE "Role" = 'admin'`
+      );
+      const adminCount = Number.parseInt(adminCountRes.rows[0].count, 10);
+      if (adminCount <= 1) {
+        return res
+          .status(400)
+          .json({ message: 'Cannot delete the last admin' });
+      }
+    }
+    await pool.query(`DELETE FROM public."User" WHERE "Id" = $1`, [id]);
     return res.json({ message: 'User deleted' });
   } catch (err) {
     console.error('deleteUser error:', err);
